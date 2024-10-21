@@ -1,5 +1,12 @@
+import { Text, Title } from './style';
+
 const MainPage = () => {
-  return <div>MainPage</div>;
+  return (
+    <>
+      <Title>MainPage</Title>
+      <div css={Text}></div>
+    </>
+  );
 };
 
 export default MainPage;
