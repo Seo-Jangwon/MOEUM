@@ -1,3 +1,6 @@
-const theme = {};
+import { PRIMITIVE_COLORS, TYPOGRAPHY } from '@/styles/tokens';
 
-export default theme;
+export const theme = {
+  colors: PRIMITIVE_COLORS,
+  typography: TYPOGRAPHY
+};

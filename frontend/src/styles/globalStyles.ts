@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 
 const globalStyles = css`
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
   html,
   body,
   div,
@@ -86,9 +87,21 @@ const globalStyles = css`
     padding: 0;
     border: 0;
     font-size: 100%;
+    font-family: 'Pretendard';
     font: inherit;
     vertical-align: baseline;
     text-decoration: none;
+  }
+  /* hide scrollbar */
+  * {
+    scrollbar-width: none;
+    box-sizing: border-box;
+
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
   /* HTML5 display-role reset for older browsers */
   article,

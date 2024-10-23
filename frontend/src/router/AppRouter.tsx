@@ -3,6 +3,9 @@ import { lazy, Suspense } from 'react';
 import App from '@/App';
 import MainPage from '@/pages/MainPage';
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
+const SignInPage = lazy(() => import('@/pages/SignInPage'));
+const SignUpPage = lazy(() => import('@/pages/SignUpPage'));
+const FAQPage = lazy(() => import('@/pages/FAQPage'));
 
 const router = createBrowserRouter([
   {
@@ -13,6 +16,18 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <MainPage />,
+      },
+      {
+        path: 'signin',
+        element: <SignInPage />,
+      },
+      {
+        path: 'signup',
+        element: <SignUpPage />,
+      },
+      {
+        path: 'faq',
+        element: <FAQPage />,
       },
     ],
   },
