@@ -29,3 +29,34 @@ export const s_button = css`
   right: 5px;
   border-radius: 15px;
 `;
+
+export const s_div_warning = css`
+  color: red;
+  font-size: 16px;
+  display: flex;
+  height: 100%;
+  padding: 10px;
+  
+`
+
+export const s_main = css`
+  position: relative;
+  gap: 5px;
+`;
+
+export const s_icon_yes = css`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: green;
+  font-size: 30px;
+`;
+
+// 나중에 extends 사용해서 줄이기
+export const s_icon_no = css`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: red;
+  font-size: 30px;
+`;
