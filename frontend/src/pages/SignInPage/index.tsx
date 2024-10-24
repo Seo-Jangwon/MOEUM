@@ -23,6 +23,8 @@ import Header from '@/components/Header/Header';
 const SignInPage = () => {
   // const [emailInput, setEmailInput] = useState('이메일');
   // const [passwordInput, setPasswordInput] = useState('비밀번호');
+
+
   return (
     <Container>
       <Header search={false} />

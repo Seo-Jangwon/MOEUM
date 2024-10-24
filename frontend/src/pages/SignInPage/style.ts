@@ -39,7 +39,7 @@ export const s_content = css`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 0.8rem;
   text-align: center;
 `;
 
