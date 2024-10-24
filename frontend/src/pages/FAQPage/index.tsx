@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import Card from './Card/Card';
-import Header from './Header/Header';
-import { CardBody, FAQPageStyle, TitleTextStyle } from './style';
+import Card from './CardInFAQ/CardInFAQ';
+import { s_BodyContainer, s_FAQPage, s_TitleText, s_1vs1Container, s_1vs1text } from './style';
 import Accordion from './Accordion/Accordion';
+import Header from '@/components/Header/Header';
 
 interface categoryData {
   imgUrl: string;
@@ -62,10 +62,10 @@ const FAQPage = () => {
   }
 
   return (
-    <div css={FAQPageStyle}>
-      <Header />
-      <div css={TitleTextStyle}>자주 묻는 질문</div>
-      <div css={CardBody}>
+    <div css={s_FAQPage}>
+      <Header search={true} />
+      <div css={s_TitleText}>자주 묻는 질문</div>
+      <div css={s_BodyContainer}>
         {categoryDatas.current.map((item, index) => {
           return (
             <Card
@@ -91,6 +91,12 @@ const FAQPage = () => {
             />
           );
         })}
+      </div>
+      <div css={s_1vs1Container}>
+        <div css={s_1vs1text}>찾으시는 내용이 없나요?</div>
+        <a href="1vs1" css={s_1vs1text}>
+          1:1 문의 바로가기 &gt;{' '}
+        </a>
       </div>
     </div>
   );
