@@ -28,3 +28,4 @@ dist-ssr
 
 # ENV
 .env
+*storybook.log

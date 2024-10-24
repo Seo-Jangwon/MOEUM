@@ -1,7 +1,6 @@
-import { css } from '@emotion/react';
-import { theme } from '@/styles/theme';
+import { css, Theme } from '@emotion/react';
 
-export const s_input = css`
+export const s_input = (theme: Theme) => css`
   width: 490px;
   height: 53px;
   border: 1px solid ${theme.colors.white};

@@ -7,7 +7,7 @@ interface LoginDataProps {
   placeholder: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isEmail?: boolean;
-  onSend? : () => void;
+  onSend?: () => void;
 }
 
 const LoginData = ({ value, placeholder, onChange, isEmail, onSend }: LoginDataProps) => {
@@ -15,9 +15,11 @@ const LoginData = ({ value, placeholder, onChange, isEmail, onSend }: LoginDataP
   const [email] = useState(isEmail);
 
   return (
-    <div css={css`
+    <div
+      css={css`
         position: relative;
-    `}>
+      `}
+    >
       <input
         type={value}
         placeholder={currentPlaceholder}
@@ -27,10 +29,7 @@ const LoginData = ({ value, placeholder, onChange, isEmail, onSend }: LoginDataP
         css={s_input}
       />
       {email && (
-        <button
-          css={s_button}
-          onClick={onSend}
-        >
+        <button css={s_button} onClick={onSend}>
           전송
         </button>
       )}

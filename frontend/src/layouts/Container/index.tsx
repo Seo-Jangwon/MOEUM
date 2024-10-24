@@ -1,4 +1,3 @@
-import Header from '@/components/Header/Header';
 import { s_container } from './style';
 
 interface ContainerProps {
@@ -6,12 +5,7 @@ interface ContainerProps {
 }
 
 const Container = ({ children }: ContainerProps) => {
-  return (
-    <div css={s_container}>
-      <Header />
-      {children}
-    </div>
-  );
+  return <div css={s_container}>{children}</div>;
 };
 
 export default Container;
