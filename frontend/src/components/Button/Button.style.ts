@@ -1,21 +1,23 @@
-import { css } from '@emotion/react';
+import { css, Theme } from '@emotion/react';
 import { ButtonType } from './Button.type';
-import { theme } from '@/styles/theme';
 
-const ButtonStyles = {
+const ButtonStyles = (theme: Theme) => ({
   grad: css`
-    color: ${theme.colors.white};
+    color: #f7f7f7;
+    border: 0;
     background: linear-gradient(90deg, ${theme.colors.primary} 0%, ${theme.colors.secondary} 100%);
   `,
-  primary: css``,
+  primary: css`
+    color: #aaaaaa;
+  `,
   secondary: css``,
   outline: css``,
   danger: css``,
-};
+});
 
-export const buttonStyle = (type: ButtonType) => css`
+export const buttonStyle = (theme: Theme, type: ButtonType) => css`
   padding: 0.5rem 2.5rem;
-  font-size: large;
+  cursor: pointer;
   border-radius: 10px;
-  ${ButtonStyles[type]};
+  ${ButtonStyles(theme)[type]};
 `;

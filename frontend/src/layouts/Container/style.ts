@@ -1,7 +1,6 @@
-import { theme } from '@/styles/theme';
-import { css } from '@emotion/react';
+import { css, Theme } from '@emotion/react';
 
-export const s_container = css`
+export const s_container = (theme: Theme) => css`
   display: flex;
   height: 100vh;
   flex-direction: column;

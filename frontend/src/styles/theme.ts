@@ -1,6 +1,6 @@
-import { PRIMITIVE_COLORS, TYPOGRAPHY } from '@/styles/tokens';
+import { DARK_PALETTE, LIGHT_PALETTE, TYPOGRAPHY } from '@/styles/tokens';
 
-export const theme = {
-  colors: PRIMITIVE_COLORS,
-  typography: TYPOGRAPHY
-};
+export const theme = (isLightMode: boolean) => ({
+  colors: isLightMode ? LIGHT_PALETTE : DARK_PALETTE,
+  typography: TYPOGRAPHY,
+});

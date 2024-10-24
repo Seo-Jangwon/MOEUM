@@ -1,7 +1,6 @@
-import { theme } from '@/styles/theme';
-import { css } from '@emotion/react';
+import { css, Theme } from '@emotion/react';
 
-export const s_input = css`
+export const s_input = (theme: Theme) => css`
   width: 30rem;
   padding: 0.75rem 1.5rem;
   font-size: x-large;

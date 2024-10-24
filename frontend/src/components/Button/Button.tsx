@@ -1,14 +1,15 @@
+import { ComponentProps } from 'react';
 import { buttonStyle } from './Button.style';
 import { ButtonType } from './Button.type';
 
-interface ButtonProps {
-  type: ButtonType;
+export interface ButtonProps extends ComponentProps<'button'> {
+  variant: ButtonType;
   children: React.ReactNode;
 }
 
-const Button = ({ type, children, ...restProps }: ButtonProps) => {
+const Button = ({ variant, children, ...restProps }: ButtonProps) => {
   return (
-    <button css={buttonStyle(type)} {...restProps}>
+    <button css={(theme) => buttonStyle(theme, variant)} {...restProps}>
       {children}
     </button>
   );
