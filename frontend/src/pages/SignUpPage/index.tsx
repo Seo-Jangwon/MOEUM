@@ -32,6 +32,11 @@ const SignUpPage = () => {
     console.log('인증번호 발송');
   };
 
+  // 인증번호 확인 함수
+  const handleCertificationCode = () => {
+    console.log('인증번호 확인');
+  }
+
   return (
     <Container>
       {/* 로그인 폼 */}
@@ -58,6 +63,7 @@ const SignUpPage = () => {
             value={'text'}
             placeholder={'닉네임'}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNickname(e.target.value)}
+            isNickname = {true}
           />
           <RegisterData
             value={'text'}
@@ -68,11 +74,13 @@ const SignUpPage = () => {
           />
           {isShoow && (
             <RegisterData
-              value={'password'}
+              value={'text'}
               placeholder={'인증번호 확인'}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setCertificationNumber(e.target.value)
               }
+              certification={true}
+              onSend={handleCertificationCode}
             />
           )}
           <RegisterData
@@ -88,7 +96,13 @@ const SignUpPage = () => {
             checkPassword={true}
             passwordValue={password}
           />
-          <Button variant="grad">회원가입</Button>
+          <Button variant="grad" css={{
+            width:"180px",
+            height: "48px",
+            fontSize: "18px",
+            fontWeight: "bold",
+            marginTop: "16px"
+          }}>다음</Button>
         </main>
       </form>
     </Container>
