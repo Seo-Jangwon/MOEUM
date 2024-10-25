@@ -11,30 +11,6 @@ export const s_container = (theme: Theme) => css`
   color: ${theme.colors.white};
 `;
 
-export const s_primary_ball = (theme: Theme) => css`
-  position: absolute;
-  left: 10rem;
-  bottom: 8rem;
-  height: 20rem;
-  width: 20rem;
-  background-color: ${theme.colors.primary};
-  border-radius: 100%;
-  mix-blend-mode: screen;
-  filter: blur(37.5px);
-`;
-
-export const s_secondary_ball = (theme: Theme) => css`
-  position: absolute;
-  right: 10rem;
-  top: 10rem;
-  height: 20rem;
-  width: 20rem;
-  background-color: ${theme.colors.secondary};
-  border-radius: 100%;
-  mix-blend-mode: screen;
-  filter: blur(37.5px);
-`;
-
 export const s_content = css`
   display: flex;
   flex-direction: column;

@@ -1,7 +1,5 @@
 import {
   s_container,
-  s_primary_ball,
-  s_secondary_ball,
   s_content,
   s_titlebox,
   s_input,
@@ -24,8 +22,6 @@ const SignInPage = () => {
 
   return (
     <main css={s_container}>
-      <figure css={s_primary_ball} />
-      <figure css={s_secondary_ball} />
       <section css={s_content}>
         <article css={s_titlebox}>
           <p css={{ color: '#444444' }}>모음에 오신 걸 환영해요!</p>
