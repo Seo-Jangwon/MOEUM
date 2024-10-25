@@ -7,6 +7,7 @@ const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const SignInPage = lazy(() => import('@/pages/SignInPage'));
 const SignUpPage = lazy(() => import('@/pages/SignUpPage'));
 const FAQPage = lazy(() => import('@/pages/FAQPage'));
+const WelcomePage = lazy(() => import('@/pages/WelcomePage'));
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <MainPage />,
+      },
+      {
+        path: 'welcome',
+        element: <WelcomePage />,
       },
       {
         path: 'signin',
