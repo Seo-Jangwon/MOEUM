@@ -1,18 +1,15 @@
-import { css } from '@emotion/react';
+import { css, Theme } from '@emotion/react';
 
-export const FAQPageStyle = css`
-  background-color: #171717;
+export const s_FAQPage = (theme: Theme) => css`
+  background-color: ${theme.colors.background};
 `;
-export const TitleTextStyle = css`
+export const s_TitleText = css`
   font-size: 36px;
   color: white;
   text-align: center;
   padding: 30px 0 40px 0;
 `;
-export const FAQBody = css`
-  display: flex;
-`;
-export const CardBody = css`
+export const s_BodyContainer = css`
   display: grid;
   align-items: center;
   justify-content: center;
@@ -22,5 +19,29 @@ export const CardBody = css`
   grid-template-rows: 1fr;
   @media (max-width: 767px) {
     padding: 0 10vw;
+  }
+  margin: 0 0 30px 0;
+`;
+
+export const s_1vs1Container = css`
+  flex-direction: column;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+`;
+
+export const s_1vs1text = (theme: Theme) => css`
+  color: ${theme.colors.lightgray};
+  padding: 5px 0;
+`;
+
+export const s_1vs1textWithAnchor = (theme: Theme) => css`
+  color: ${theme.colors.lightgray};
+  padding: 5px 0;
+  :hover {
+    cursor: pointer;
   }
 `;

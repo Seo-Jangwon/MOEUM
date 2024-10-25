@@ -1,6 +1,6 @@
-import { css } from '@emotion/react';
+import { css, Theme } from '@emotion/react';
 
-export const CardDiv = css`
+export const s_cardContainer = css`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,18 +20,19 @@ export const CardDiv = css`
   }
 `;
 
-export const CardClicked = css`
-  background-color: #f7309d;
+export const s_ClickedCard = (theme: Theme) => css`
+  background-color: ${theme.colors.primary};
 `;
 
-export const CardUnClicked = css`
-  background-color: #444444;
+export const s_UnClickedCard = (theme: Theme) => css`
+  background-color: ${theme.colors.lightgray};
   :hover {
-    background-color: #30ddf7;
+    background-color: ${theme.colors.secondary};
+    cursor: pointer;
   }
 `;
 
-export const CardImg = css`
+export const s_CardImg = css`
   @media (max-width: 767px) {
     display: none;
     width: 50px;

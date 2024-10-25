@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import { accordionItemStyle, hiddenAccordion } from './style';
-import { css } from '@emotion/react';
+import {
+  s_accordionTitle,
+  s_accordionExpanded,
+  s_accordionCollapsed,
+  s_accordionChild,
+} from './style';
+import { css, Theme } from '@emotion/react';
 
 interface accordionProps {
   imgUrl: string;
@@ -15,14 +20,15 @@ const Accordion: React.FC<accordionProps> = ({ imgUrl, title, description }) => 
   const [isOpened, setIsOpened] = useState<boolean>(false);
   return (
     <div>
-      <div css={accordionItemStyle}>
+      <div css={s_accordionTitle}>
         <img src={imgUrl} alt="" />
         <div>{title}</div>
         <button onClick={openAccordion}>▼</button>
       </div>
       <div
-        css={css`
-          ${isOpened ? accordionItemStyle : hiddenAccordion}
+        css={(theme) => css`
+          ${s_accordionChild(theme)}
+          ${isOpened ? s_accordionExpanded : s_accordionCollapsed}
         `}
       >
         {description}
