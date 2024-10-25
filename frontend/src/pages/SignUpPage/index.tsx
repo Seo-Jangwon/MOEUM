@@ -100,34 +100,22 @@ const SignUpPage = () => {
             당신이 어떤 사람인지 알고 싶어요.
           </p>
         </div>
-        <RegisterData
-          value={'text'}
-          placeholder={'닉네임'}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNickname(e.target.value)}
-          isNickname={true}
-        />
-        <RegisterData
-          value={'email'}
-          placeholder={'이메일'}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-          isEmail={true}
-          onSend={handleShowCertificationField}
-        />
-        {isShow && (
+        <div css={css`
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          align-items: center;
+        `}>
           <RegisterData
             value={'text'}
             placeholder={'닉네임'}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNickname(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNickname(e.target.value)}
             isNickname={true}
           />
           <RegisterData
-            value={'text'}
+            value={'email'}
             placeholder={'이메일'}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setEmail(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
             isEmail={true}
             onSend={handleShowCertificationField}
           />
@@ -145,26 +133,22 @@ const SignUpPage = () => {
           <RegisterData
             value={'password'}
             placeholder={'비밀번호 (8~15자, 특수문자 포함)'}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setPassword(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             isPassword={true}
           />
           <RegisterData
             value={'password'}
             placeholder={'비밀번호 확인'}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setCheckPassword(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCheckPassword(e.target.value)}
             checkPassword={true}
             passwordValue={password}
           />
-          <Button variant="grad" type="submit">
+          <Button variant="grad" type="submit" css={{width: '25%', height: "45px", marginTop: '25px'}}>
             다음
           </Button>
-        </main>
-      </form>
-    </Container>
+        </div>
+      </main>
+    </form>
   );
 };
 

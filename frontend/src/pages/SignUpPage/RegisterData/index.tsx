@@ -143,16 +143,9 @@ const RegisterData = ({
           ) : (
             <FaRegCircleXmark css={s_icon_no} />
           )}
-        </div>
-
-        {/* 인증코드 확인 버튼 토글 */}
-        <div css={s_button_send}>
-          {certification && (
-            <Button variant="grad" onClick={onSend} type="button">
-              확인
-            </Button>
-          )}
         </span>
+
+      
       )}
       <br />
     </div>
