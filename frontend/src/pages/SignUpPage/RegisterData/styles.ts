@@ -12,6 +12,7 @@ export const s_input = (theme: Theme, isValidInput:boolean) => css`
   font-size: 24px;
   text-indent: 24px;
   outline: none;
+  border-color: ${isValidInput ? theme.colors.white : 'red'};
 
   ::placeholder {
     color: ${theme.colors.white};
