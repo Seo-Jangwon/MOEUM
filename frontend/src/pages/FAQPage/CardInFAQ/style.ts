@@ -28,6 +28,7 @@ export const s_UnClickedCard = (theme: Theme) => css`
   background-color: ${theme.colors.lightgray};
   :hover {
     background-color: ${theme.colors.secondary};
+    cursor: pointer;
   }
 `;
 

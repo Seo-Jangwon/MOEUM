@@ -1,6 +1,13 @@
 import { useRef, useState } from 'react';
 import Card from './CardInFAQ/CardInFAQ';
-import { s_BodyContainer, s_FAQPage, s_TitleText, s_1vs1Container, s_1vs1text } from './style';
+import {
+  s_BodyContainer,
+  s_FAQPage,
+  s_TitleText,
+  s_1vs1Container,
+  s_1vs1text,
+  s_1vs1textWithAnchor,
+} from './style';
 import Accordion from './Accordion/Accordion';
 import Header from '@/components/Header/Header';
 
@@ -62,8 +69,7 @@ const FAQPage = () => {
   }
 
   return (
-    <div css={s_FAQPage}>
-      <Header search={true} />
+    <>
       <div css={s_TitleText}>자주 묻는 질문</div>
       <div css={s_BodyContainer}>
         {categoryDatas.current.map((item, index) => {
@@ -94,11 +100,11 @@ const FAQPage = () => {
       </div>
       <div css={s_1vs1Container}>
         <div css={s_1vs1text}>찾으시는 내용이 없나요?</div>
-        <a href="1vs1" css={s_1vs1text}>
+        <a href="1vs1" css={s_1vs1textWithAnchor}>
           1:1 문의 바로가기 &gt;{' '}
         </a>
       </div>
-    </div>
+    </>
   );
 };
 

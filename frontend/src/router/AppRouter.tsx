@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import MainPage from '@/pages/MainPage';
 import AppLayout from '@/layouts/AppLayout';
+import MusicPlayPage from '@/pages/MusicPlayPage';
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const SignInPage = lazy(() => import('@/pages/SignInPage'));
 const SignUpPage = lazy(() => import('@/pages/SignUpPage'));
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: 'faq',
         element: <FAQPage />,
+      },
+      {
+        path: 'music/:id',
+        element: <MusicPlayPage />,
       },
     ],
   },

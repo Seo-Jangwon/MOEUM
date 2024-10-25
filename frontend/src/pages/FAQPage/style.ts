@@ -36,6 +36,11 @@ export const s_1vs1Container = css`
 export const s_1vs1text = (theme: Theme) => css`
   color: ${theme.colors.lightgray};
   padding: 5px 0;
+`;
+
+export const s_1vs1textWithAnchor = (theme: Theme) => css`
+  color: ${theme.colors.lightgray};
+  padding: 5px 0;
   :hover {
     cursor: pointer;
   }
