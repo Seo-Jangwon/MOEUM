@@ -1,5 +1,4 @@
 import RegisterData from './RegisterData';
-import Container from '@/layouts/Container';
 import Button from '@/components/Button/Button';
 import { useState } from 'react';
 import { s_from } from './styles';
@@ -82,68 +81,65 @@ const SignUpPage = () => {
   };
 
   return (
-    <Container>
-      {/* 로그인 폼 */}
-      <form onSubmit={login} css={s_from}>
-        <main css={s_content}>
-          <div css={s_titlebox}>
-            <p
-              css={(theme) => css`
-                color: ${theme.colors.lightgray};
-              `}
-            >
-              모음에 오신 걸 환영해요
-            </p>
-            <p
-              css={(theme) => css`
-                color: ${theme.colors.white};
-                margin-bottom: 20px;
-              `}
-            >
-              당신이 어떤 사람인지 알고 싶어요.
-            </p>
-          </div>
+    <form onSubmit={login} css={s_from}>
+      <main css={s_content}>
+        <div css={s_titlebox}>
+          <p
+            css={(theme) => css`
+              color: ${theme.colors.lightgray};
+            `}
+          >
+            모음에 오신 걸 환영해요
+          </p>
+          <p
+            css={(theme) => css`
+              color: ${theme.colors.white};
+              margin-bottom: 20px;
+            `}
+          >
+            당신이 어떤 사람인지 알고 싶어요.
+          </p>
+        </div>
+        <RegisterData
+          value={'text'}
+          placeholder={'닉네임'}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNickname(e.target.value)}
+          isNickname={true}
+        />
+        <RegisterData
+          value={'email'}
+          placeholder={'이메일'}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+          isEmail={true}
+          onSend={handleShowCertificationField}
+        />
+        {isShow && (
           <RegisterData
             value={'text'}
-            placeholder={'닉네임'}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNickname(e.target.value)}
-            isNickname={true}
+            placeholder={'인증번호 확인'}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setCertificationNumber(e.target.value)
+            }
+            certification={true}
+            onSend={handleCertificationCode}
           />
-          <RegisterData
-            value={'email'}
-            placeholder={'이메일'}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-            isEmail={true}
-            onSend={handleShowCertificationField}
-          />
-          {isShow && (
-            <RegisterData
-              value={'text'}
-              placeholder={'인증번호 확인'}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setCertificationNumber(e.target.value)
-              }
-              certification={true}
-              onSend={handleCertificationCode}
-            />
-          )}
-          <RegisterData
-            value={'password'}
-            placeholder={'비밀번호 (8~15자, 특수문자 포함)'}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-            isPassword={true}
-          />
-          <RegisterData
-            value={'password'}
-            placeholder={'비밀번호 확인'}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCheckPassword(e.target.value)}
-            checkPassword={true}
-            passwordValue={password}
-          />
-          <Button variant="grad">다음</Button>
-        </main>
-      </form>
-    </Container>
+        )}
+        <RegisterData
+          value={'password'}
+          placeholder={'비밀번호 (8~15자, 특수문자 포함)'}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+          isPassword={true}
+        />
+        <RegisterData
+          value={'password'}
+          placeholder={'비밀번호 확인'}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCheckPassword(e.target.value)}
+          checkPassword={true}
+          passwordValue={password}
+        />
+        <Button variant="grad">다음</Button>
+      </main>
+    </form>
   );
 };
 

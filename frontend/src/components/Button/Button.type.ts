@@ -1,1 +1,1 @@
-export type ButtonType = 'grad' | 'primary'| 'secondary' | 'outline' | 'danger';
+export type ButtonVariants = 'grad' | 'primary' | 'secondary' | 'outline' | 'danger';

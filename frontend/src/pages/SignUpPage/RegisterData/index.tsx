@@ -3,7 +3,6 @@ import { s_input, s_button_send, s_main, s_icon_yes, s_icon_no } from './styles'
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { FaRegCircleXmark } from 'react-icons/fa6';
 import Button from '@/components/Button/Button';
-import { css } from '@emotion/react';
 
 interface LoginDataProps {
   value: string;
@@ -34,7 +33,6 @@ const RegisterData = ({
   const [email] = useState(isEmail);
   const [isValidPassword, setIsValidPassword] = useState(false);
   const [isPasswordMatch, setIsPasswordMatch] = useState(false);
-  const [isPasswordMatch, setIsPasswordMatch] = useState(false);
   const [showIcon, setShowIcon] = useState(false);
   const [isValidInput, setIsValidInput] = useState(true);
 
@@ -64,9 +62,7 @@ const RegisterData = ({
   };
 
   // 이메일 확인 함수
-  // 이메일 확인 함수
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e);
     onChange(e);
     const email = e.target.value;
 
@@ -110,59 +106,59 @@ const RegisterData = ({
 
   return (
     <div css={s_main}>
-    <div css={s_main}>
-      <input
-        maxLength={30}
-        type={value}
-        placeholder={currentPlaceholder}
-        onChange={
-          isEmail ? handleEmailChange : isNickname ? handleNicknameChange : handlePasswordChange
-        }
-        onFocus={() => setCurrentPlaceholder('')}
-        onBlur={() => setCurrentPlaceholder(placeholder)}
-        css={(theme) => s_input(theme, isValidInput)}
-      />
-      {/* 이메일 버튼 토글 */}
-      <div css={s_button_send}>
-        {email && showIcon && (
-          <Button variant="grad" onClick={onSend} type='button'>
-            전송
-          </Button>
-        )}
-      </div>
-
-      {/* 인증코드 확인 버튼 토글 */}
-      <div css={s_button_send}>
-        {certification && (
-          <Button variant="grad" onClick={onSend} type='button'>
-            확인
-          </Button>
-        )}
-      </div>
-
-      {/* 비밀번호 정규식 확인 토글 */}
-      {isPassword && showIcon && (
-        <span>
-          {isValidPassword ? (
-            <IoMdCheckmarkCircleOutline css={s_icon_yes} />
-          ) : (
-            <FaRegCircleXmark css={s_icon_no} />
+      <div css={s_main}>
+        <input
+          maxLength={30}
+          type={value}
+          placeholder={currentPlaceholder}
+          onChange={
+            isEmail ? handleEmailChange : isNickname ? handleNicknameChange : handlePasswordChange
+          }
+          onFocus={() => setCurrentPlaceholder('')}
+          onBlur={() => setCurrentPlaceholder(placeholder)}
+          css={(theme) => s_input(theme, isValidInput)}
+        />
+        {/* 이메일 버튼 토글 */}
+        <div css={s_button_send}>
+          {email && showIcon && (
+            <Button variant="grad" onClick={onSend} type="button">
+              전송
+            </Button>
           )}
-        </span>
-      )}
+        </div>
 
-      {/* 비밀번호 일치 확인 토글 */}
-      {checkPassword && showIcon && (
-        <span>
-          {isPasswordMatch ? (
-            <IoMdCheckmarkCircleOutline css={s_icon_yes} />
-          ) : (
-            <FaRegCircleXmark css={s_icon_no} />
+        {/* 인증코드 확인 버튼 토글 */}
+        <div css={s_button_send}>
+          {certification && (
+            <Button variant="grad" onClick={onSend} type="button">
+              확인
+            </Button>
           )}
-        </span>
-      )}
-      <br />
-    </div>
+        </div>
+
+        {/* 비밀번호 정규식 확인 토글 */}
+        {isPassword && showIcon && (
+          <span>
+            {isValidPassword ? (
+              <IoMdCheckmarkCircleOutline css={s_icon_yes} />
+            ) : (
+              <FaRegCircleXmark css={s_icon_no} />
+            )}
+          </span>
+        )}
+
+        {/* 비밀번호 일치 확인 토글 */}
+        {checkPassword && showIcon && (
+          <span>
+            {isPasswordMatch ? (
+              <IoMdCheckmarkCircleOutline css={s_icon_yes} />
+            ) : (
+              <FaRegCircleXmark css={s_icon_no} />
+            )}
+          </span>
+        )}
+        <br />
+      </div>
     </div>
   );
 };
