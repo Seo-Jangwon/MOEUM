@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 export const s_container = (theme: Theme) => css`
   display: flex;
-  height: 100%;
+  flex-grow: 1;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -89,7 +89,7 @@ export const s_oauth_box = css`
 
 export const Line = styled.div`
   width: 100%;
-  background: ${(props) => props.theme.colors.lightgray};
+  background: ${({ theme }) => theme.colors.lightgray};
   height: 0.5px;
 `;
 

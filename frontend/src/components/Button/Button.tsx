@@ -1,9 +1,9 @@
 import { ComponentProps } from 'react';
 import { buttonStyle } from './Button.style';
-import { ButtonType } from './Button.type';
+import { ButtonVariants } from './Button.type';
 
 export interface ButtonProps extends ComponentProps<'button'> {
-  variant: ButtonType;
+  variant: ButtonVariants;
   children: React.ReactNode;
 }
 
