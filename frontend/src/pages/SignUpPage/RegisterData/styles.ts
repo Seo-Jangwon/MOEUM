@@ -7,7 +7,7 @@ export const s_input = (theme: Theme, isValidInput:boolean) => css`
   background-color: transparent;
   border-radius: 14px;
   border-color: ${isValidInput ? 'initial' : 'red'}; 
-
+  border: 2px solid;
   color: ${theme.colors.white};
   font-size: 24px;
   text-indent: 24px;

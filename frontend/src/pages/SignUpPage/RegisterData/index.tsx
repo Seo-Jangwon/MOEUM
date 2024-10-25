@@ -4,7 +4,6 @@ import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { FaRegCircleXmark } from 'react-icons/fa6';
 import Button from '@/components/Button/Button';
 import { css } from '@emotion/react';
-import { theme } from '@/styles/theme';
 
 interface LoginDataProps {
   value: string;
@@ -35,8 +34,9 @@ const RegisterData = ({
   const [email] = useState(isEmail);
   const [isValidPassword, setIsValidPassword] = useState(false);
   const [isPasswordMatch, setIsPasswordMatch] = useState(false);
+  const [isPasswordMatch, setIsPasswordMatch] = useState(false);
   const [showIcon, setShowIcon] = useState(false);
-  const [isValidInput, setIsValidInput] = useState(true); // <--- 추가: 입력값이 유효한지 여부를 저장하는 상태
+  const [isValidInput, setIsValidInput] = useState(true);
 
   // 닉네임 형식
   const validateNickname = (nickname: string) => {
@@ -52,7 +52,7 @@ const RegisterData = ({
     if (isNickname) {
       const result = validateNickname(nickname);
       setIsValidInput(result);
-      return result;
+      // `alert` 제거
     }
   };
 
@@ -64,7 +64,9 @@ const RegisterData = ({
   };
 
   // 이메일 확인 함수
+  // 이메일 확인 함수
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e);
     onChange(e);
     const email = e.target.value;
 
@@ -72,6 +74,7 @@ const RegisterData = ({
       const result = validateEmail(email);
       setShowIcon(result);
       setIsValidInput(result);
+      // `alert` 제거
     }
   };
 
@@ -94,16 +97,19 @@ const RegisterData = ({
       const isValid = validatePassword(password);
       setIsValidPassword(isValid);
       setIsValidInput(isValid);
+      // `alert` 제거
     }
 
     if (checkPassword) {
       const isMatch = password === passwordValue;
       setIsPasswordMatch(isMatch);
       setIsValidInput(isMatch);
+      // `alert` 제거
     }
   };
 
   return (
+    <div css={s_main}>
     <div css={s_main}>
       <input
         maxLength={30}
@@ -119,7 +125,7 @@ const RegisterData = ({
       {/* 이메일 버튼 토글 */}
       <div css={s_button_send}>
         {email && showIcon && (
-          <Button variant="grad" onClick={onSend}>
+          <Button variant="grad" onClick={onSend} type='button'>
             전송
           </Button>
         )}
@@ -128,7 +134,7 @@ const RegisterData = ({
       {/* 인증코드 확인 버튼 토글 */}
       <div css={s_button_send}>
         {certification && (
-          <Button variant="grad" onClick={onSend}>
+          <Button variant="grad" onClick={onSend} type='button'>
             확인
           </Button>
         )}
@@ -156,6 +162,7 @@ const RegisterData = ({
         </span>
       )}
       <br />
+    </div>
     </div>
   );
 };
