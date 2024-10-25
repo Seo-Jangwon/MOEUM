@@ -116,30 +116,55 @@ const SignUpPage = () => {
         {isShow && (
           <RegisterData
             value={'text'}
-            placeholder={'인증번호 확인'}
+            placeholder={'닉네임'}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setCertificationNumber(e.target.value)
+              setNickname(e.target.value)
             }
-            certification={true}
-            onSend={handleCertificationCode}
+            isNickname={true}
           />
-        )}
-        <RegisterData
-          value={'password'}
-          placeholder={'비밀번호 (8~15자, 특수문자 포함)'}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-          isPassword={true}
-        />
-        <RegisterData
-          value={'password'}
-          placeholder={'비밀번호 확인'}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCheckPassword(e.target.value)}
-          checkPassword={true}
-          passwordValue={password}
-        />
-        <Button variant="grad">다음</Button>
-      </main>
-    </form>
+          <RegisterData
+            value={'text'}
+            placeholder={'이메일'}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
+            isEmail={true}
+            onSend={handleShowCertificationField}
+          />
+          {isShow && (
+            <RegisterData
+              value={'text'}
+              placeholder={'인증번호 확인'}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setCertificationNumber(e.target.value)
+              }
+              certification={true}
+              onSend={handleCertificationCode}
+            />
+          )}
+          <RegisterData
+            value={'password'}
+            placeholder={'비밀번호 (8~15자, 특수문자 포함)'}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+            isPassword={true}
+          />
+          <RegisterData
+            value={'password'}
+            placeholder={'비밀번호 확인'}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setCheckPassword(e.target.value)
+            }
+            checkPassword={true}
+            passwordValue={password}
+          />
+          <Button variant="grad" type="submit">
+            다음
+          </Button>
+        </main>
+      </form>
+    </Container>
   );
 };
 
