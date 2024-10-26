@@ -9,3 +9,6 @@
 *.njsproj
 *.sln
 *.sw?
+
+**/application.yml
+**/application-secret.yml
