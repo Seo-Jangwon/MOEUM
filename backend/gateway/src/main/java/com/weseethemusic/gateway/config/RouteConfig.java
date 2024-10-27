@@ -29,13 +29,13 @@ public class RouteConfig {
 
             .route("auth-service", r -> r
                 .path("/auth/**")  // 토큰 재발급
-                .uri("http://localhost:8080"))
+                .uri("http://localhost:8081"))
 
             // Member Service - Public Routes
             .route("member-service-public", r -> r
                 .path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login")
-                .uri("http://localhost:8080"))
+                .uri("http://localhost:8082"))
 
             // Member Service - Protected Routes
             .route("member-service-protected", r -> r
@@ -44,7 +44,7 @@ public class RouteConfig {
                 .not(p -> p.path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login"))
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8080"))
+                .uri("http://localhost:8082"))
 
             // Music Service Routes
             .route("music-playlist", r -> r
