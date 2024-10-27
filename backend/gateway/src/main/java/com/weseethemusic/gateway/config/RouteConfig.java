@@ -1,6 +1,7 @@
 package com.weseethemusic.gateway.config;
 
 import com.weseethemusic.gateway.filter.JwtAuthenticationFilter;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -10,14 +11,20 @@ import org.springframework.context.annotation.Configuration;
 public class RouteConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
-    public RouteConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public RouteConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+        CircuitBreakerFactory circuitBreakerFactory) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.circuitBreakerFactory = circuitBreakerFactory;
     }
 
+    /**
+     * 게이트웨이 라우팅 설정 정의 각 서비스별 라우트 구성, 필터 적용
+     */
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-        // JWT 필터 설정
+        // JWT 인증 필요없는 공개 경로
         JwtAuthenticationFilter.Config authConfig = new JwtAuthenticationFilter.Config()
             .requireRefreshToken(true)
             .addExcludedPath("/members/register/token")
@@ -29,6 +36,11 @@ public class RouteConfig {
 
             .route("auth-service", r -> r
                 .path("/auth/**")  // 토큰 재발급
+                .filters(f -> f
+                    .circuitBreaker(config -> config
+                        .setName("auth-service")
+                        .setFallbackUri("/fallback/auth"))
+                    .retry(3)) // 재시도 3번까지 ok
                 .uri("http://localhost:8081"))
 
             // Member Service - Public Routes
@@ -49,7 +61,11 @@ public class RouteConfig {
             // Music Service Routes
             .route("music-playlist", r -> r
                 .path("/musics/playlist/**")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
+                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig))
+                    .circuitBreaker(config -> config
+                        .setName("music-service")
+                        .setFallbackUri("/fallback/music"))
+                    .retry(3))
                 .uri("http://localhost:8080"))
 
             .route("music-search", r -> r
