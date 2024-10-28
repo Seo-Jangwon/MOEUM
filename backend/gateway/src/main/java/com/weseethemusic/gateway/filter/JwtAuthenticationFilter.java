@@ -69,6 +69,7 @@ public class JwtAuthenticationFilter extends
                     return chain.filter(exchange.mutate()
                         .request(exchange.getRequest().mutate()
                             .header("X-User-Id", userId)
+                            .header("X-Role", role)
                             .build())
                         .build());
 
