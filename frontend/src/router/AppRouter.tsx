@@ -8,6 +8,8 @@ const SignInPage = lazy(() => import('@/pages/SignInPage'));
 const SignUpPage = lazy(() => import('@/pages/SignUpPage'));
 const FAQPage = lazy(() => import('@/pages/FAQPage'));
 const WelcomePage = lazy(() => import('@/pages/WelcomePage'));
+const CalibrationPage = lazy(() => import('@/pages/CalibrationPage'))
+
 
 const router = createBrowserRouter([
   {
@@ -22,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: 'welcome',
         element: <WelcomePage />,
+      },
+      {
+        path: 'calibration',
+        element: <CalibrationPage />,
       },
       {
         path: 'signin',

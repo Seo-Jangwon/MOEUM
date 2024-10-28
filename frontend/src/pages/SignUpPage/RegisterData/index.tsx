@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { s_input, s_button_send, s_main, s_icon_yes, s_icon_no } from './styles';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { FaRegCircleXmark } from 'react-icons/fa6';
