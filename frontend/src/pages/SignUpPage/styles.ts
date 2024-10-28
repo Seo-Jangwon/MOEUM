@@ -2,7 +2,7 @@ import { Theme, css } from '@emotion/react';
 
 export const s_from = css`
   display: flex;
-  flex-grow: 1;
+  height: 100%;
   flex-direction: column;
   justify-content: center;
   align-items: center;

@@ -6,8 +6,8 @@ import {
   s_form,
   s_links,
   s_oauth_box,
-  Line,
   s_line_text,
+  Line,
 } from './style';
 import Button from '@/components/Button/Button';
 import { Link } from 'react-router-dom';
@@ -24,16 +24,13 @@ const SignInPage = () => {
     <main css={s_container}>
       <section css={s_content}>
         <article css={s_titlebox}>
-          <p css={{ color: '#444444' }}>모음에 오신 걸 환영해요!</p>
+          <p css={(theme) => ({ color: theme.colors.lightgray })}>모음에 오신 걸 환영해요!</p>
           <p>당신이 어떤 사람인지 알고 싶어요.</p>
         </article>
         <form css={s_form}>
           <input css={s_input} placeholder="이메일" type="text" />
           <input css={s_input} placeholder="비밀번호" type="text" />
-          <Button
-            css={{ fontSize: 'x-large', fontWeight: '600', marginTop: '24px' }}
-            variant="grad"
-          >
+          <Button css={{ fontSize: 'x-large', marginTop: '24px' }} variant="grad">
             로그인
           </Button>
         </form>

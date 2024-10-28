@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 export const s_container = (theme: Theme) => css`
   display: flex;
-  flex-grow: 1;
+  height: 100%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
