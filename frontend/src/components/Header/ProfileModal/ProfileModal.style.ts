@@ -1,6 +1,6 @@
-import { css } from '@emotion/react';
+import { css, Theme } from '@emotion/react';
 
-export const s_fullScreenWithModal = css`
+export const s_fullScreenWithModal = (theme: Theme) => css`
   position: fixed;
   top: 0;
   left: 0;
@@ -9,9 +9,12 @@ export const s_fullScreenWithModal = css`
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: ${theme.colors.lightgray};
+  opacity: 0.5;
+  z-index: 5;
 `;
 
-export const s_modalContainer = css`
+export const s_modalContainer = (theme: Theme) => css`
   @media (min-width: 768px) {
     height: 50vh;
     width: 50vw;
@@ -24,10 +27,11 @@ export const s_modalContainer = css`
     top: 15vh;
     left: 15vw;
   }
+  background-color: ${theme.colors.dark};
+  border: 3px solid ${theme.colors.dark};
   border-radius: 10px;
   height: 400px;
   width: 200px;
-  background-color: white;
   display: flex;
   position: absolute;
   left: 0;
@@ -51,8 +55,9 @@ export const s_img = css`
   margin-bottom: 20px;
 `;
 
-export const s_text = css`
+export const s_text = (theme: Theme) => css`
   font-size: 20px;
   margin-bottom: 5px;
   text-align: center;
+  color: ${theme.colors.white};
 `;
