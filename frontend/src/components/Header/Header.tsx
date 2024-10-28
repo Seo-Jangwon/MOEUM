@@ -16,20 +16,20 @@ const Header = ({ search }: HeaderProps) => {
   const { isLoggedIn } = useAuthStore();
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
-  function changeProfileModalState() {
-    setIsProfileModalOpen(!isProfileModalOpen);
-  }
   return (
     <nav css={s_container}>
-      <NavLink css={s_logo} to="/">
-        <img src="/logo.svg" alt="logo" />
-      </NavLink>
-      <SideBar />
+      <div css={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <SideBar.Button />
+        <SideBar.Content />
+        <NavLink css={s_logo} to="/">
+          <img src="/logo.svg" alt="logo" />
+        </NavLink>
+      </div>
       {search && <SearchBox />}
       {search && (
         <>
           {isLoggedIn ? (
-            <img src="/logo.svg" onClick={changeProfileModalState} />
+            <img src="/logo.svg" onClick={() => setIsProfileModalOpen(true)} />
           ) : (
             <Button
               variant="inverted"
@@ -41,7 +41,9 @@ const Header = ({ search }: HeaderProps) => {
           )}
         </>
       )}
-      {isProfileModalOpen ? <ProfileModal changeModalStatus={changeProfileModalState} /> : null}
+      {isProfileModalOpen ? (
+        <ProfileModal changeModalStatus={() => setIsProfileModalOpen(false)} />
+      ) : null}
     </nav>
   );
 };

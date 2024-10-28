@@ -5,7 +5,7 @@ export const s_container = css`
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  padding: 0 80px;
+  padding: 0 16px;
   height: 80px;
 `;
 
