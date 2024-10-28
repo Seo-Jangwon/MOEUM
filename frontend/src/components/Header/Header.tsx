@@ -28,7 +28,7 @@ const Header = ({ search }: HeaderProps) => {
       {search && <SearchBox />}
       {search && (
         <>
-          {isLoggedIn === true ? (
+          {isLoggedIn ? (
             <img src="/logo.svg" onClick={changeProfileModalState} />
           ) : (
             <Button
@@ -41,9 +41,7 @@ const Header = ({ search }: HeaderProps) => {
           )}
         </>
       )}
-      {isProfileModalOpen === true ? (
-        <ProfileModal changeModalStatus={changeProfileModalState} />
-      ) : null}
+      {isProfileModalOpen ? <ProfileModal changeModalStatus={changeProfileModalState} /> : null}
     </nav>
   );
 };
