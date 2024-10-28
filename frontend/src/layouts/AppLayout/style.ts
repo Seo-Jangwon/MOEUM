@@ -4,8 +4,8 @@ export const s_container = (theme: Theme) => css`
   display: flex;
   height: 100vh;
   flex-direction: column;
-  transition: 0.5s ease;
   background-color: ${theme.colors.background};
+  transition: background-color 0.5s ease  ;
 `;
 
 export const s_content = css`
