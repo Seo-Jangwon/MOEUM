@@ -1,15 +1,17 @@
-import { useRef, useState } from 'react';
+import { css, Theme } from '@emotion/react';
+import { ReactNode, useRef, useState } from 'react';
+import { CiUnlock } from 'react-icons/ci';
+import { FaRegUser } from 'react-icons/fa6';
+import { IoMdCard, IoMdPhonePortrait } from 'react-icons/io';
+import Accordion from './Accordion/Accordion';
 import Card from './CardInFAQ/CardInFAQ';
 import {
-  s_BodyContainer,
-  s_FAQPage,
-  s_TitleText,
   s_1vs1Container,
   s_1vs1text,
   s_1vs1textWithAnchor,
+  s_BodyContainer,
+  s_TitleText,
 } from './style';
-import Accordion from './Accordion/Accordion';
-import Header from '@/components/Header/Header';
 
 interface categoryData {
   imgUrl: string;
@@ -17,9 +19,9 @@ interface categoryData {
 }
 
 interface detailData {
-  imgUrl: string;
   title: string;
   description: string;
+  leftIcon: ReactNode;
 }
 
 const FAQPage = () => {
@@ -33,25 +35,49 @@ const FAQPage = () => {
   const detailDatas = useRef<detailData[][]>([
     [
       {
-        imgUrl: '/logo.svg',
+        leftIcon: (
+          <IoMdPhonePortrait
+            css={(theme: Theme) => css`
+              color: ${theme.colors.secondary};
+            `}
+          />
+        ),
         title: '2대 이상의 모바일 기기에서 이용하고 싶어요.',
         description:
           '하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마 ',
       },
       {
-        imgUrl: '/logo.svg',
+        leftIcon: (
+          <CiUnlock
+            css={(theme: Theme) => css`
+              color: ${theme.colors.secondary};
+            `}
+          />
+        ),
         title: '회원 탈퇴를 하고 싶어요.',
         description:
           '하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마 ',
       },
       {
-        imgUrl: '/logo.svg',
+        leftIcon: (
+          <IoMdCard
+            css={(theme: Theme) => css`
+              color: ${theme.colors.secondary};
+            `}
+          />
+        ),
         title: '상위 요금제로 업그레이드하고 싶어요.',
         description:
           '하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마 ',
       },
       {
-        imgUrl: '/logo.svg',
+        leftIcon: (
+          <FaRegUser
+            css={(theme: Theme) => css`
+              color: ${theme.colors.secondary};
+            `}
+          />
+        ),
         title: '비밀번호를 잊어버렸어요.',
         description:
           '하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마하지마 ',
@@ -90,9 +116,9 @@ const FAQPage = () => {
         {detailDatas.current[isClicked].map((item, index) => {
           return (
             <Accordion
-              imgUrl={item.imgUrl}
               title={item.title}
               description={item.description}
+              leftIcon={item.leftIcon}
               key={index}
             />
           );

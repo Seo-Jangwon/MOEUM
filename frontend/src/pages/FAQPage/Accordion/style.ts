@@ -2,19 +2,35 @@ import { css, Theme } from '@emotion/react';
 
 export const s_accordionTitle = (theme: Theme) => css`
   display: flex;
-  align-items: center;
-  text-align: left;
-  border: 1px solid white;
+  justify-content: space-between;
+  border: 1px solid ${theme.colors.white};
+  text-align: center;
+  border-radius: 10px;
   color: ${theme.colors.white};
   word-break: normal;
-  padding: 0px 20px;
+  padding: 10px 20px;
   transition: all 0.3s ease-in-out;
+  :hover {
+    cursor: pointer;
+  }
   @media (max-width: 767px) {
-    margin: 0px 5vw;
+    margin: 0px 5vw 5px;
+    font-size: 16px;
   }
   @media (min-width: 768px) {
-    margin: 0px 20vw;
+    margin: 0px 20vw 5px;
+    font-size: 24px;
   }
+`;
+
+export const s_accordionTitleOpen = (theme: Theme) => css`
+  background-color: ${theme.colors.primary};
+`;
+
+export const s_accordionLeftChild = css`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 export const s_accordionChild = (theme: Theme) => css`
@@ -39,7 +55,7 @@ export const s_accordionExpanded = css`
   height: 100%;
   padding: 5px 20px;
   margin: 0px 20vw 20px 20vw;
-  border-radius: 0 0 10px 10px;
+  border-radius: 10px;
 `;
 
 export const s_accordionCollapsed = css`

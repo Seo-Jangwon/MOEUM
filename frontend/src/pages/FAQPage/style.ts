@@ -3,9 +3,9 @@ import { css, Theme } from '@emotion/react';
 export const s_FAQPage = (theme: Theme) => css`
   background-color: ${theme.colors.background};
 `;
-export const s_TitleText = css`
+export const s_TitleText = (theme: Theme) => css`
   font-size: 36px;
-  color: white;
+  color: ${theme.colors.white};
   text-align: center;
   padding: 30px 0 40px 0;
 `;
