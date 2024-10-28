@@ -1,7 +1,5 @@
 import { css, Theme } from '@emotion/react';
 
-const transition = '0.5s ease';
-
 export const s_label = css`
   height: 32px;
   width: 64px;
@@ -24,7 +22,7 @@ export const s_container = (theme: Theme) => css`
   width: 100%;
   padding: 4px;
   margin: 0;
-  transition: ${transition};
+  transition: 0.5s ease;
   position: relative;
 
   :before {
@@ -37,7 +35,7 @@ export const s_container = (theme: Theme) => css`
     position: absolute;
     z-index: 2;
     transform: translate(0);
-    transition: transform ${transition};
+    transition: transform 0.5s ease;
   }
 
   &:checked::before {
@@ -53,6 +51,6 @@ export const s_icons = (theme: Theme) => css`
   align-items: center;
   justify-content: space-between;
   color: ${theme.colors.dark};
-  transition: ${transition};
+  transition: 0.5s ease;
   z-index: 1;
 `;
