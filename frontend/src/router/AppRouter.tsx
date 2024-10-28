@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import MainPage from '@/pages/MainPage';
 import AppLayout from '@/layouts/AppLayout';
 import MusicPlayPage from '@/pages/MusicPlayPage';
@@ -43,10 +43,6 @@ const router = createBrowserRouter([
   },
 ]);
 
-const AppRouter = () => (
-  <Suspense>
-    <RouterProvider router={router} />
-  </Suspense>
-);
+const AppRouter = () => <RouterProvider router={router} />;
 
 export default AppRouter;

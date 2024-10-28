@@ -3,7 +3,7 @@ import { css, Theme } from '@emotion/react';
 export const s_container = css`
   display: flex;
   width: 100%;
-  top: 0;
+  justify-content: space-between;
   align-items: center;
   padding: 0 80px;
   height: 80px;

@@ -4,6 +4,7 @@ export interface ColorType {
   white: string;
   lightgray: string;
   background: string;
+  dark: string;
 }
 
 export interface TypographyType {

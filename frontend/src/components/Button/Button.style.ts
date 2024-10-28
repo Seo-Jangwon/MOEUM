@@ -8,16 +8,28 @@ const ButtonStyles = (theme: Theme) => ({
     border: 0;
     background: linear-gradient(90deg, ${theme.colors.primary} 0%, ${theme.colors.secondary} 100%);
   `,
-  primary: css`
-    color: #aaaaaa;
+  inverted: css`
+    color: ${theme.colors.dark};
+    border: 0;
+    background-color: ${theme.colors.white};
   `,
-  secondary: css``,
-  outline: css``,
-  danger: css``,
+  outline: css`
+    color: ${theme.colors.lightgray};
+    background: transparent;
+    border: 1px solid ${theme.colors.lightgray};
+  `,
+  danger: css`
+    color: #f7f7f7;
+    border: 0;
+    background: linear-gradient(90deg, #f73030 0%, ${theme.colors.primary} 100%);
+  `,
 });
 
 export const buttonStyle = (theme: Theme, variant: ButtonVariants) => css`
-  padding: 0.5rem 2.5rem;
+  padding: 5px 20px;
+  font-size: large;
+  font-weight: 600;
+  transition: 0.5s ease;
   cursor: pointer;
   border-radius: 10px;
   ${ButtonStyles(theme)[variant]};
