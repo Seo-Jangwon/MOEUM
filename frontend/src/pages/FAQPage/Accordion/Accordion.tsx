@@ -7,6 +7,7 @@ import {
   s_accordionLeftChild,
   s_accordionTitle,
   s_accordionTitleOpen,
+  s_accordionTitleText,
 } from './style';
 
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
@@ -33,7 +34,7 @@ const Accordion: React.FC<accordionProps> = ({ title, description, leftIcon }) =
       >
         <div css={s_accordionLeftChild}>
           {leftIcon}
-          <div>{title}</div>
+          <div css={s_accordionTitleText}>{title}</div>
         </div>
         <MdOutlineKeyboardArrowDown />
       </div>

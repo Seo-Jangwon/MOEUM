@@ -9,7 +9,7 @@ export const s_accordionTitle = (theme: Theme) => css`
   color: ${theme.colors.white};
   word-break: normal;
   padding: 10px 20px;
-  transition: all 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
   :hover {
     cursor: pointer;
   }
@@ -31,6 +31,10 @@ export const s_accordionLeftChild = css`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+`;
+
+export const s_accordionTitleText = css`
+  padding-left: 10px;
 `;
 
 export const s_accordionChild = (theme: Theme) => css`

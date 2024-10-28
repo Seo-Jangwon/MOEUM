@@ -1,8 +1,7 @@
 import { css, Theme } from '@emotion/react';
 import { ReactNode, useRef, useState } from 'react';
-import { CiUnlock } from 'react-icons/ci';
 import { FaRegUser } from 'react-icons/fa6';
-import { IoMdCard, IoMdPhonePortrait } from 'react-icons/io';
+import { IoMdCard, IoMdExit, IoMdPhonePortrait } from 'react-icons/io';
 import Accordion from './Accordion/Accordion';
 import Card from './CardInFAQ/CardInFAQ';
 import {
@@ -14,7 +13,7 @@ import {
 } from './style';
 
 interface categoryData {
-  imgUrl: string;
+  iconImage: ReactNode;
   text: string;
 }
 
@@ -26,10 +25,22 @@ interface detailData {
 
 const FAQPage = () => {
   const categoryDatas = useRef<categoryData[]>([
-    { imgUrl: '/logo.svg', text: '계정' },
-    { imgUrl: '/logo.svg', text: '요금/결제' },
-    { imgUrl: '/logo.svg', text: '사용 방법' },
-    { imgUrl: '/logo.svg', text: '기타' },
+    {
+      iconImage: <FaRegUser style={{ height: '50px', width: '50px', paddingBottom: '7px' }} />,
+      text: '계정',
+    },
+    {
+      iconImage: <IoMdCard style={{ height: '50px', width: '50px', paddingBottom: '7px' }} />,
+      text: '요금/결제',
+    },
+    {
+      iconImage: <FaRegUser style={{ height: '50px', width: '50px', paddingBottom: '7px' }} />,
+      text: '사용 방법',
+    },
+    {
+      iconImage: <FaRegUser style={{ height: '50px', width: '50px', paddingBottom: '7px' }} />,
+      text: '기타',
+    },
   ]);
 
   const detailDatas = useRef<detailData[][]>([
@@ -48,7 +59,7 @@ const FAQPage = () => {
       },
       {
         leftIcon: (
-          <CiUnlock
+          <IoMdExit
             css={(theme: Theme) => css`
               color: ${theme.colors.secondary};
             `}
@@ -102,7 +113,7 @@ const FAQPage = () => {
           return (
             <Card
               key={index}
-              imgUrl={item.imgUrl}
+              iconImage={item.iconImage}
               text={item.text}
               isClicked={isClicked == index ? true : false}
               onClick={() => {

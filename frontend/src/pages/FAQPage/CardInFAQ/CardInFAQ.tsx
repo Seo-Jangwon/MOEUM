@@ -1,14 +1,15 @@
 import { css } from '@emotion/react';
 import { s_ClickedCard, s_cardContainer, s_CardImg, s_UnClickedCard } from './style';
+import { ReactNode } from 'react';
 
 interface CardProps {
-  imgUrl: string;
+  iconImage: ReactNode;
   text: string;
   isClicked?: boolean;
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-const CardInFAQ: React.FC<CardProps> = ({ imgUrl, text, isClicked = false, onClick = null }) => {
+const CardInFAQ: React.FC<CardProps> = ({ iconImage, text, isClicked = false, onClick = null }) => {
   return (
     <div
       onClick={onClick != null ? onClick : () => {}}
@@ -17,7 +18,7 @@ const CardInFAQ: React.FC<CardProps> = ({ imgUrl, text, isClicked = false, onCli
         ${isClicked ? s_ClickedCard(theme) : s_UnClickedCard(theme)};
       `}
     >
-      <img css={s_CardImg} src={imgUrl} alt="" />
+      <div css={s_CardImg}>{iconImage}</div>
       <div>{text}</div>
     </div>
   );

@@ -4,7 +4,12 @@ export const s_FAQPage = (theme: Theme) => css`
   background-color: ${theme.colors.background};
 `;
 export const s_TitleText = (theme: Theme) => css`
-  font-size: 36px;
+  @media (max-width: 677px) {
+    font-size: 24px;
+  }
+  @media (min-width: 678px) {
+    font-size: 36px;
+  }
   color: ${theme.colors.white};
   text-align: center;
   padding: 30px 0 40px 0;

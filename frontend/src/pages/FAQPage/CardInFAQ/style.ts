@@ -13,8 +13,9 @@ export const s_cardContainer = css`
   }
   @media (max-width: 767px) {
     height: 5vw;
-    width: 70px;
-    font-size: 16px;
+    width: 20vw;
+    font-size: 14px;
+    font-weight: 500;
     border-radius: 5px;
     margin: 0 3px;
   }
