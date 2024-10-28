@@ -10,7 +10,7 @@ import {
   s_accordionTitleText,
 } from './style';
 
-import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
+import { IoIosArrowDown } from 'react-icons/io';
 
 interface accordionProps {
   title: string;
@@ -36,7 +36,7 @@ const Accordion: React.FC<accordionProps> = ({ title, description, leftIcon }) =
           {leftIcon}
           <div css={s_accordionTitleText}>{title}</div>
         </div>
-        <MdOutlineKeyboardArrowDown />
+        <IoIosArrowDown />
       </div>
       <div
         css={(theme) => css`
