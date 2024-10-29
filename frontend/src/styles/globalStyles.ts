@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 
 const globalStyles = css`
   @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+  /* CSS Reset */
   html,
   body,
   div,
@@ -92,17 +93,6 @@ const globalStyles = css`
     vertical-align: baseline;
     text-decoration: none;
   }
-  /* hide scrollbar */
-  * {
-    scrollbar-width: none;
-    box-sizing: border-box;
-
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
   /* HTML5 display-role reset for older browsers */
   article,
   aside,
@@ -138,6 +128,19 @@ const globalStyles = css`
   table {
     border-collapse: collapse;
     border-spacing: 0;
+  }
+  /* hide scrollbar */
+  * {
+    scrollbar-width: none;
+    box-sizing: border-box;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  button {
+    cursor: pointer;
   }
 `;
 

@@ -1,11 +1,21 @@
-import LightModeToggleSwitch from '@/components/LightModeToggleSwitch/LightModeToggleSwitch';
-import { s_container } from './SideBarContent.style';
+import LightModeToggleButton from '@/components/Button/LightModeToggleButton/LightModeToggleButton';
+import * as S from './SideBarContent.style';
+import { FiX } from 'react-icons/fi';
+interface SideBarContentProps {
+  isOpen: boolean;
+  closeHandler: () => void;
+}
 
-const SideBarContent = () => {
+const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
   return (
-    <aside css={s_container}>
-      <LightModeToggleSwitch />
-    </aside>
+    <S.Container className={isOpen ? 'open' : ''}>
+      <S.Header>
+        <S.CloseButton onClick={closeHandler}>
+          <FiX size={32} />
+        </S.CloseButton>
+        <LightModeToggleButton />
+      </S.Header>
+    </S.Container>
   );
 };
 

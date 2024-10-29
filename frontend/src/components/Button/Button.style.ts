@@ -30,7 +30,7 @@ export const buttonStyle = (theme: Theme, variant: ButtonVariants) => css`
   font-size: large;
   font-weight: 600;
   transition: 0.5s ease;
-  cursor: pointer;
+
   border-radius: 10px;
   ${ButtonStyles(theme)[variant]};
 `;
