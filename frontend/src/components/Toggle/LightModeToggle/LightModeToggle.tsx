@@ -1,8 +1,8 @@
 import useThemeStore from '@/stores/themeStore';
-import { s_container, s_icons, s_label } from './LightModeToggleButton.style';
+import { s_container, s_icons, s_label } from './LightModeToggle.style';
 import { BiMoon, BiSun } from 'react-icons/bi';
 
-const LightModeToggleButton = () => {
+const LightModeToggle = () => {
   const { lightMode, toggleLightMode } = useThemeStore();
 
   return (
@@ -15,11 +15,11 @@ const LightModeToggleButton = () => {
         css={s_container}
         id="toggle"
         checked={lightMode}
-        onChange={() => toggleLightMode()}
+        onChange={toggleLightMode}
         type="checkbox"
       />
     </label>
   );
 };
 
-export default LightModeToggleButton;
+export default LightModeToggle;

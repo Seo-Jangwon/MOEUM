@@ -1,4 +1,4 @@
-import LightModeToggleButton from '@/components/Button/LightModeToggleButton/LightModeToggleButton';
+import LightModeToggle from '@/components/Toggle/LightModeToggle/LightModeToggle';
 import * as S from './SideBarContent.style';
 import { FiX } from 'react-icons/fi';
 interface SideBarContentProps {
@@ -13,7 +13,7 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
         <S.CloseButton onClick={closeHandler}>
           <FiX size={32} />
         </S.CloseButton>
-        <LightModeToggleButton />
+        <LightModeToggle />
       </S.Header>
     </S.Container>
   );

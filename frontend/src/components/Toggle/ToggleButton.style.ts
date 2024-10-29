@@ -37,21 +37,10 @@ export const s_container = (theme: Theme) => css`
     transform: translate(0);
     transition: transform 0.5s ease;
   }
-
+  &:checked {
+    background: ${theme.colors.primary};
+  }
   &:checked::before {
     transform: translateX(24px);
   }
-`;
-
-export const s_icons = (theme: Theme) => css`
-  position: absolute;
-  inset: 0;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: ${theme.colors.dark};
-  transition: 0.5s ease;
-  cursor: pointer;
-  z-index: 1;
 `;

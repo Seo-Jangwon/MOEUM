@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 export const Container = styled.aside`
   display: flex;
   position: fixed;
+  z-index: 100;
   padding: 24px;
   width: 600px;
   height: 100%;
@@ -15,6 +16,10 @@ export const Container = styled.aside`
 
   @media (max-width: 767px) {
     width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    opacity: 0.9;
   }
 
   &.open {

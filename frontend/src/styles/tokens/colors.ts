@@ -5,6 +5,7 @@ export const DARK_PALETTE = {
   lightgray: '#AAAAAA',
   background: '#171717',
   dark: '#171717',
+  gray: '#444444',
 };
 export const LIGHT_PALETTE = {
   primary: '#F7309D',
@@ -13,4 +14,5 @@ export const LIGHT_PALETTE = {
   lightgray: '#AAAAAA',
   background: 'transparent',
   dark: '#F7F7F7',
+  gray: '#444444',
 };

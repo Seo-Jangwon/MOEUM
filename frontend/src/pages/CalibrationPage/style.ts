@@ -4,6 +4,7 @@ export const s_content = css`
   height: 100%;
   font-size: 2.2rem;
   display: flex;
+  margin-top: 4rem;
   justify-content: center;
   text-align: center;
   font-weight: 600;
