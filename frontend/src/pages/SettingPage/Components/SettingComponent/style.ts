@@ -3,7 +3,7 @@ import { css, Theme } from '@emotion/react';
 export const s_componentContainer = (theme: Theme) => css`
   display: flex;
   justify-content: space-between;
-  border: 1px solid ${theme.colors.white};
+  border: 1.5px solid ${theme.colors.white};
   text-align: center;
   border-radius: 10px;
   color: ${theme.colors.white};

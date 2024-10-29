@@ -2,17 +2,18 @@ import apiClient from '@/api/apiClient';
 import ToggleButton from '@/components/Toggle/ToggleButton';
 import useSettingStore from '@/stores/settingStore';
 import { ReactNode } from 'react';
-import { IoIosArrowDown } from 'react-icons/io';
+import { IoIosArrowDown, IoIosArrowDropright } from 'react-icons/io';
 import { PiVibrate } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import SettingComponent from './Components/SettingComponent/SettingComponent';
 import { s_componentsContainer, s_titleContainer } from './style';
+import { FaRegUser } from 'react-icons/fa6';
+import { BiEqualizer } from 'react-icons/bi';
 
 interface settingComponentsData {
   iconImage: ReactNode;
   text: string;
   rightButton: ReactNode;
-  componentClickListener?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 const SettingPage = () => {
   const navigate = useNavigate();
@@ -50,10 +51,14 @@ const SettingPage = () => {
     {
       iconImage: <PiVibrate />,
       text: '색상 조정 다시하기',
-      rightButton: <IoIosArrowDown />,
-      componentClickListener: () => {
-        navigate('/calibration');
-      },
+      rightButton: (
+        <IoIosArrowDropright
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            navigate('/calibration');
+          }}
+        />
+      ),
     },
     {
       iconImage: <PiVibrate />,
@@ -74,10 +79,20 @@ const SettingPage = () => {
       ),
     },
     {
-      iconImage: <PiVibrate />,
+      iconImage: <BiEqualizer />,
       text: '이퀄라이저',
       rightButton: <IoIosArrowDown />,
-      componentClickListener: () => {},
+    },
+    {
+      iconImage: <FaRegUser />,
+      text: '프로필',
+      rightButton: (
+        <IoIosArrowDropright
+          onClick={() => {
+            navigate('/profile');
+          }}
+        />
+      ),
     },
   ];
   return (

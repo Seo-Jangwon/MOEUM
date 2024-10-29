@@ -5,17 +5,11 @@ interface SettingComponentProps {
   iconImage: ReactNode;
   text: string;
   rightButton: ReactNode;
-  componentClickListener?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-const SettingComponent: React.FC<SettingComponentProps> = ({
-  iconImage,
-  text,
-  rightButton,
-  componentClickListener,
-}) => {
+const SettingComponent: React.FC<SettingComponentProps> = ({ iconImage, text, rightButton }) => {
   return (
-    <div css={s_componentContainer} onClick={componentClickListener}>
+    <div css={s_componentContainer}>
       <div css={s_componentLeftChild}>
         {iconImage}
         <div css={s_componentTitleText}>{text}</div>

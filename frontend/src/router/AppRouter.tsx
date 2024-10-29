@@ -4,6 +4,7 @@ import MainPage from '@/pages/MainPage';
 import AppLayout from '@/layouts/AppLayout';
 import MusicPlayPage from '@/pages/MusicPlayPage';
 import SettingPage from '@/pages/SettingPage';
+import ProfilePage from '@/pages/ProfilePage';
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const SignInPage = lazy(() => import('@/pages/SignInPage'));
 const SignUpPage = lazy(() => import('@/pages/SignUpPage'));
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: 'settings',
         element: <SettingPage />,
+      },
+      {
+        path: 'profile',
+        element: <ProfilePage />,
       },
     ],
   },
