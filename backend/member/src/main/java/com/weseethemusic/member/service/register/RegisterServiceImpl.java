@@ -1,4 +1,4 @@
-package com.weseethemusic.member.service;
+package com.weseethemusic.member.service.register;
 
 import static com.weseethemusic.member.common.entity.Member.Role.USER;
 
@@ -8,6 +8,7 @@ import com.weseethemusic.member.common.util.SecurityUtil;
 import com.weseethemusic.member.dto.RegisterDto;
 import com.weseethemusic.member.repository.MemberRepository;
 import java.time.Duration;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @Slf4j
-public class MemberServiceImpl implements MemberService {
+@AllArgsConstructor
+public class RegisterServiceImpl implements RegisterService {
 
     private static final Duration TOKEN_VALIDITY_DURATION = Duration.ofMinutes(5);
     private static final Duration VERIFICATION_VALIDITY_DURATION = Duration.ofMinutes(30);
@@ -32,15 +34,6 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
-
-    public MemberServiceImpl(JavaMailSender emailSender, MemberRepository memberRepository,
-        PasswordEncoder passwordEncoder,
-        RedisTemplate<String, Object> redisTemplate) {
-        this.emailSender = emailSender;
-        this.memberRepository = memberRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.redisTemplate = redisTemplate;
-    }
 
     /**
      * 회원가입
@@ -115,17 +108,17 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional(readOnly = true, isolation = Isolation.SERIALIZABLE)
-    public boolean checkUser(String email) {
+    public int checkUser(String email) {
         // db에 이메일 존재 하는지
         if (memberRepository.findByEmail(email).isPresent()) {
-            return false;
+            return 1;
         }
         // 이메일이 삭제된 사용자의 패턴과 일치?
         if (email.matches("deleted_\\d+@yoganavi\\.com")) {
-            return false;
+            return 2;
         }
         // 해당하지 않으면 사용 가능
-        return true;
+        return 0;
     }
 
     private String generateToken() {
@@ -146,7 +139,16 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public String sendEmailToken(String email) {
         log.info("이메일 인증 토큰 전송 시작: {}", email);
-        if (checkUser(email)) {
+
+        // 이메일 형식 검증
+        try {
+            InputValidateUtil.validateEmail(email);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("이메일 형식이 유효하지 않습니다.");
+        }
+
+        int valCase = checkUser(email);
+        if (valCase == 0) {
             try {
                 String token = generateToken();
                 String redisKey = getRedisKey(email);
@@ -171,8 +173,10 @@ public class MemberServiceImpl implements MemberService {
                 log.error("이메일 인증 토큰 전송 실패", e);
                 return "인증 번호 전송 실패. 잠시 후 다시 시도해 주세요.";
             }
-        } else {
+        } else if (valCase == 1) {
             return "이미 존재하는 회원입니다.";
+        } else {
+            return "가입할 수 없습니다.";
         }
     }
 
@@ -221,6 +225,5 @@ public class MemberServiceImpl implements MemberService {
         return false;
     }
 
-    
 
 }

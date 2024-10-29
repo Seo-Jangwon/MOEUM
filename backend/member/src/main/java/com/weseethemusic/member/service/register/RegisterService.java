@@ -1,16 +1,16 @@
-package com.weseethemusic.member.service;
+package com.weseethemusic.member.service.register;
 
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.dto.RegisterDto;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface MemberService {
+public interface RegisterService {
 
     Member registerUser(RegisterDto registerDto);
 
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
-    boolean checkUser(String email);
+    int checkUser(String email);
 
     String sendEmailToken(String email);
 

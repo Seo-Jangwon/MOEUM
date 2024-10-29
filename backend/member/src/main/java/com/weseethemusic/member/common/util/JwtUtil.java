@@ -19,11 +19,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.SecretKey;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
@@ -101,6 +96,21 @@ public class JwtUtil {
         return refreshToken;
     }
 
+    public String getEmailFromExpiredToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+            return claims.get("email", String.class);
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().get("email", String.class);
+        } catch (JwtException e) {
+            throw new JwtException("유효하지 않은 토큰 형식입니다.");
+        }
+    }
+
     // access token 생성
     public String generateAccessToken(String email, String role, Long id) {
         return Jwts.builder()
@@ -108,6 +118,7 @@ public class JwtUtil {
             .subject("JWT Token")
             .claim("email", email)
             .claim("role", role)
+            .claim("id", id)
             .issuedAt(new Date())
             .expiration(
                 new Date(System.currentTimeMillis() + accessTokenExpiration))
@@ -164,6 +175,11 @@ public class JwtUtil {
             log.error("토큰 검증 실패: {}", e.getMessage());
             throw e;
         }
+    }
+
+    public boolean validateRefreshToken(String refreshToken, String email) {
+        String storedToken = (String) redisTemplate.opsForValue().get("RT:" + email);
+        return storedToken != null && storedToken.equals(refreshToken);
     }
 
     public String extractToken(String bearerToken) {

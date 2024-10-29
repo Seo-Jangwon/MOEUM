@@ -1,11 +1,11 @@
 package com.weseethemusic.member.controller;
 
 import com.weseethemusic.member.common.entity.Member;
-import com.weseethemusic.member.common.util.JwtUtil;
 import com.weseethemusic.member.dto.RegisterDto;
-import com.weseethemusic.member.service.MemberService;
+import com.weseethemusic.member.service.register.RegisterService;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/members")
-public class MemberController {
+@RequestMapping("/members/register")
+@AllArgsConstructor
+public class RegisterController {
 
-    private final JwtUtil jwtUtil;
-    private final MemberService memberService;
-
-    public MemberController(MemberService usersService,
-        JwtUtil jwtUtil) {
-        this.memberService = usersService;
-        this.jwtUtil = jwtUtil;
-    }
+    private final RegisterService memberService;
 
     /**
      * 회원가입을 위한 인증번호 이메일로 전송
@@ -34,16 +28,56 @@ public class MemberController {
      * @param registerDto 이메일 정보를 담은 DTO
      * @return 인증번호 전송 결과
      */
-    @PostMapping("/register/token")
+    @PostMapping("/token")
     public ResponseEntity<Map<String, Object>> registerUserEmail(
         @RequestBody RegisterDto registerDto) {
         log.info("회원가입 이메일 인증 요청: 이메일 {}", registerDto.getEmail());
 
-        Map<String, Object> response = new HashMap<>();
-        String result = memberService.sendEmailToken(registerDto.getEmail());
-        response.put("message", result);
-        response.put("data", new Object[]{});
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        try {
+            String result = memberService.sendEmailToken(registerDto.getEmail());
+
+            // 이미 존재하는 회원인 경우도 200으로 처리하고 메시지만 다르게
+            if (result.equals("이미 존재하는 회원입니다.")) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 500);
+                response.put("data", null);
+                return ResponseEntity.ok(response);
+            }
+
+            if (result.equals("가입할 수 없습니다.")) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 500);
+                response.put("data", null);
+                return ResponseEntity.ok(response);
+            }
+
+            // 인증번호 전송 실패한 경우
+            if (result.contains("실패")) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("code", 500);
+                errorResponse.put("message", "내부 서버 에러가 발생했습니다.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+            }
+
+            // 성공 응답
+            Map<String, Object> successResponse = new HashMap<>();
+            successResponse.put("code", 200);
+            successResponse.put("data", null);
+            return ResponseEntity.ok(successResponse);
+
+        } catch (IllegalArgumentException e) {
+            // 이메일 형식이 유효하지 않은 경우
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 604);
+            errorResponse.put("message", "이메일 형식이 유효하지 않습니다.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        } catch (Exception e) {
+            // 기타 서버 에러
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 500);
+            errorResponse.put("message", "내부 서버 에러가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     /**
@@ -52,22 +86,35 @@ public class MemberController {
      * @param registerDto 인증번호를 담은 DTO
      * @return 인증번호 확인 결과
      */
-    @PostMapping("/register/check/token")
+    @PostMapping("/check/token")
     public ResponseEntity<Map<String, Object>> checkAuthNumber(
         @RequestBody RegisterDto registerDto) {
-        Map<String, Object> response = new HashMap<>();
 
-        boolean isValid = memberService.validateEmailToken(registerDto.getEmail(),
-            String.valueOf(registerDto.getToken()));
+        try {
+            boolean isValid = memberService.validateEmailToken(
+                registerDto.getEmail(),
+                String.valueOf(registerDto.getToken())
+            );
 
-        if (isValid) {
-            response.put("message", "인증 완료");
-            response.put("data", new Object[]{});
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } else {
-            response.put("message", "인증 실패 (잘못된 인증번호 또는 만료)");
-            response.put("data", new Object[]{});
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            if (isValid) {
+                // 성공
+                Map<String, Object> successResponse = new HashMap<>();
+                successResponse.put("code", 200);
+                successResponse.put("data", null);
+                return ResponseEntity.ok(successResponse);
+            } else {
+                // 인증번호 불일치
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("code", 603);
+                errorResponse.put("message", "인증 번호가 일치하지 않습니다.");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+        } catch (Exception e) {
+            // 서버 에러
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 500);
+            errorResponse.put("message", "내부 서버 에러가 발생했습니다.");
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -77,27 +124,37 @@ public class MemberController {
      * @param registerDto 회원 가입에 필요한 정보 DTO
      * @return 회원 가입 결과
      */
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody RegisterDto registerDto) {
         log.info("회원 가입 요청: 이메일 {}", registerDto.getEmail());
 
-        Map<String, Object> response = new HashMap<>();
         try {
-            Member savedUsers = memberService.registerUser(registerDto);
+            Member savedUser = memberService.registerUser(registerDto);
             log.info("회원가입 성공");
-            response.put("message", "회원가입 성공");
-            response.put("data", new Object[]{});
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+            // 성공 응답
+            Map<String, Object> successResponse = new HashMap<>();
+            successResponse.put("code", 200);
+            successResponse.put("data", null);
+            return ResponseEntity.ok(successResponse);
+
         } catch (IllegalStateException e) {
+            // 보안 문제로 인해 회원가입 불가
             log.info("회원가입 불가: {}", e.getMessage());
-            response.put("message", e.getMessage());
-            response.put("data", new Object[]{});
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            Map<String, Object> errorResponse = new HashMap<>();
+
+            errorResponse.put("code", 702);
+            errorResponse.put("message", "잘못된 요청입니다");
+
+            return ResponseEntity.badRequest().body(errorResponse);
+
         } catch (Exception e) {
+            // 기타 서버 에러
             log.error("회원가입 실패", e);
-            response.put("message", "회원가입 실패: " + e.getMessage());
-            response.put("data", new Object[]{});
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 500);
+            errorResponse.put("message", "내부 서버 에러가 발생했습니다.");
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
