@@ -1,6 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { lazy } from 'react';
-import MainPage from '@/pages/MainPage';
 import AppLayout from '@/layouts/AppLayout';
 import MusicPlayPage from '@/pages/MusicPlayPage';
 import SettingPage from '@/pages/SettingPage';
@@ -10,6 +9,7 @@ const SignUpPage = lazy(() => import('@/pages/SignUpPage'));
 const FAQPage = lazy(() => import('@/pages/FAQPage'));
 const WelcomePage = lazy(() => import('@/pages/WelcomePage'));
 const CalibrationPage = lazy(() => import('@/pages/CalibrationPage'));
+const MainPage = lazy(() => import('@/pages/MainPage'))
 
 const router = createBrowserRouter([
   {
