@@ -1,4 +1,4 @@
-const SideBarIcon = () => (
+const SideBarButtonIcon = () => (
   <svg strokeWidth={1.5} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M3 5H11"
@@ -23,4 +23,4 @@ const SideBarIcon = () => (
     />
   </svg>
 );
-export default SideBarIcon;
+export default SideBarButtonIcon;

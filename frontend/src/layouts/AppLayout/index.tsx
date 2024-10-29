@@ -31,7 +31,7 @@ const AppLayout = () => {
   return (
     <ThemeProvider theme={theme(isLightMode)}>
       <Global styles={globalStyles} />
-      <div css={{ display: 'flex', flexDirection: 'column' }}>
+      <div css={{ display: 'flex', flexDirection: 'column', width: '100vw' }}>
         {getBackground(pathName)}
         {getHeader(pathName)}
         <Suspense>

@@ -1,11 +1,15 @@
-export interface ColorType {
-  primary: string;
-  secondary: string;
-  white: string;
-  lightgray: string;
-  background: string;
-  dark: string;
-}
+export type Color =
+  | 'primary'
+  | 'secondary'
+  | 'white'
+  | 'lightgray'
+  | 'background'
+  | 'dark'
+  | 'gray';
+
+export type ColorType = {
+  [key in Color]: string;
+};
 
 export interface TypographyType {
   heading: string;

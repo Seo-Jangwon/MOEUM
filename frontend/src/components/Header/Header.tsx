@@ -18,7 +18,7 @@ const Header = ({ search }: HeaderProps) => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
   return (
     <nav css={s_container}>
-      <div css={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+      <div css={{ display: 'flex', gap: '8px', alignItems: 'center', zIndex: 1 }}>
         <SideBar />
         <NavLink css={s_logo} to="/">
           <img src="/logo.svg" alt="logo" />
@@ -26,19 +26,19 @@ const Header = ({ search }: HeaderProps) => {
       </div>
       {search && <SearchBox />}
       {search && (
-        <>
+        <div style={{ zIndex: 1 }}>
           {isLoggedIn ? (
             <img src="/logo.svg" onClick={() => setIsProfileModalOpen(true)} />
           ) : (
             <Button
               variant="inverted"
-              style={{ borderRadius: '12px', padding: '10px' }}
+              style={{ borderRadius: '12px', padding: '8px' }}
               onClick={() => navigate('signin')}
             >
               로그인 / 회원가입
             </Button>
           )}
-        </>
+        </div>
       )}
       {isProfileModalOpen ? (
         <ProfileModal changeModalStatus={() => setIsProfileModalOpen(false)} />
