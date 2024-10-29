@@ -41,7 +41,7 @@ const SettingPage = () => {
       rightButton: (
         <ToggleButton
           value={vibration}
-          onClickListener={() => {
+          onToggle={() => {
             toggleVibration();
             settingChanged();
           }}
@@ -71,7 +71,7 @@ const SettingPage = () => {
       rightButton: (
         <ToggleButton
           value={visualization}
-          onClickListener={() => {
+          onToggle={() => {
             toggleVisualization();
             settingChanged();
           }}
