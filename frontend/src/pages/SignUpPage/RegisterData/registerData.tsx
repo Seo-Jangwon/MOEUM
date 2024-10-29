@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { s_input, s_button_send, s_main, s_icon_yes, s_icon_no } from './styles';
-import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
-import { FaRegCircleXmark } from 'react-icons/fa6';
+import { s_input, s_button_send, s_main,} from './styles';
 import Button from '@/components/Button/Button';
 
 interface LoginDataProps {
@@ -95,7 +93,7 @@ const RegisterData = ({
 
     if (checkPassword) {
       const isMatch = password === passwordValue;
-      setIsPasswordMatch(isMatch);
+      setIsPasswordMatch(isMatch)
       setIsValidInput(isMatch);
     }
   };
@@ -134,19 +132,6 @@ const RegisterData = ({
           </Button>
         )}
       </div>
-
-      {/* 비밀번호 정규식 확인 토글 */}
-      {isPassword && showIcon && (
-        <span>
-          {isValidPassword ? (
-            <IoMdCheckmarkCircleOutline css={s_icon_yes} />
-          ) : (
-            <FaRegCircleXmark css={s_icon_no} />
-          )}
-        </span>
-
-      
-      )}
       <br />
     </div>
   );

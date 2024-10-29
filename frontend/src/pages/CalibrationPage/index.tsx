@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import SelectColor from './SelectColor';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ProgressBar from './ProgressBar';
 import { s_content, s_titlebox } from './style';
 import { useNavigate } from 'react-router-dom';
@@ -31,7 +31,7 @@ const mokData = [
 
 const Calibration = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [selectedColors, setSelectedColors] = useState<number[]>([]);
+  const selectedColors = useRef<number[]>([])
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,8 +45,7 @@ const Calibration = () => {
   }, [currentIndex, navigate]);
 
   const handleNext = (selectedIndex: number) => {
-    setSelectedColors((prevColors) => [...prevColors, selectedIndex]);
-
+    selectedColors.current.push(selectedIndex)
     setCurrentIndex((prevIndex) => prevIndex + 1);
   };
 
@@ -76,9 +75,7 @@ const Calibration = () => {
             />
           </div>
         ) : ( <div css={css`
-          font-size: 64px;
-          font-weight: 700;
-          color: white;
+          
         `}>
           완료하였습니다.
         </div>)}
