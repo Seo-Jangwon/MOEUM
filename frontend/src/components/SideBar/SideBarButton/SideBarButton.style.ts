@@ -6,5 +6,4 @@ export const s_button = (theme: Theme) => css`
   width: 36px;
   height: 36px;
   background: none;
-  cursor: pointer;
 `;

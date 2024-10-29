@@ -5,6 +5,7 @@ export const s_label = css`
   width: 64px;
   position: relative;
   display: inline-block;
+  cursor: pointer;
 `;
 
 export const s_container = (theme: Theme) => css`

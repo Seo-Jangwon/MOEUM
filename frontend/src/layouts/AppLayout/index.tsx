@@ -3,15 +3,14 @@ import { theme } from '@/styles/theme';
 import globalStyles from '@/styles/globalStyles';
 import { ThemeProvider, Global } from '@emotion/react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { s_container, s_content } from './style';
 import {
-  backgroundWithBallPaths,
+  backgroundContainBallPaths,
   headerWithoutSearchPaths,
   WithoutHeaderPaths,
 } from '@/constants/path/pathMap';
-import BackgroundWithBall from '@/components/Background/BackgroundWithBall';
 import useThemeStore from '@/stores/themeStore';
 import { Suspense } from 'react';
+import Background from '@/components/Background/Background';
 
 const getHeader = (pathName: string) => {
   if (WithoutHeaderPaths.includes(pathName)) return null;
@@ -20,7 +19,8 @@ const getHeader = (pathName: string) => {
 };
 
 const getBackground = (pathName: string) => {
-  if (backgroundWithBallPaths.includes(pathName)) return <BackgroundWithBall />;
+  if (backgroundContainBallPaths.includes(pathName)) return <Background ball="contain" />;
+  return <Background />;
 };
 
 const AppLayout = () => {
@@ -31,14 +31,12 @@ const AppLayout = () => {
   return (
     <ThemeProvider theme={theme(isLightMode)}>
       <Global styles={globalStyles} />
-      <div css={s_container}>
+      <div css={{ display: 'flex', flexDirection: 'column' }}>
         {getBackground(pathName)}
         {getHeader(pathName)}
-        <div css={s_content}>
-          <Suspense>
-            <Outlet />
-          </Suspense>
-        </div>
+        <Suspense>
+          <Outlet />
+        </Suspense>
       </div>
     </ThemeProvider>
   );
