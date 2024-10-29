@@ -3,17 +3,14 @@ package com.weseethemusic.member.service;
 import static com.weseethemusic.member.common.entity.Member.Role.USER;
 
 import com.weseethemusic.member.common.entity.Member;
-import com.weseethemusic.member.common.event.MemberEvent;
 import com.weseethemusic.member.common.util.InputValidateUtil;
 import com.weseethemusic.member.common.util.SecurityUtil;
 import com.weseethemusic.member.dto.RegisterDto;
 import com.weseethemusic.member.repository.MemberRepository;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,16 +31,14 @@ public class MemberServiceImpl implements MemberService {
     private final JavaMailSender emailSender;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final RedisTemplate<String, Object> redisTemplate;
 
     public MemberServiceImpl(JavaMailSender emailSender, MemberRepository memberRepository,
-        PasswordEncoder passwordEncoder, KafkaTemplate<String, Object> kafkaTemplate,
+        PasswordEncoder passwordEncoder,
         RedisTemplate<String, Object> redisTemplate) {
         this.emailSender = emailSender;
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
-        this.kafkaTemplate = kafkaTemplate;
         this.redisTemplate = redisTemplate;
     }
 
@@ -71,29 +66,17 @@ public class MemberServiceImpl implements MemberService {
             }
 
             String hashPwd = passwordEncoder.encode(registerDto.getPassword());
-            Member member = Member.builder()
-                .email(registerDto.getEmail())
-                .password(hashPwd)
-                .nickname(registerDto.getNickname())
-                .bIsDeleted(false)
-                .role(USER)
-                .build();
+            Member member = new Member();
+            member.setEmail(registerDto.getEmail());
+            member.setPassword(hashPwd);
+            member.setNickname(registerDto.getNickname());
+            member.setBIsDeleted(false);
+            member.setRole(USER);
 
             Member saveMember = memberRepository.save(member);
 
             // 인증 완료 상태 삭제
             redisTemplate.delete(verifiedKey);
-
-            try {
-                kafkaTemplate.send("member-event", MemberEvent.builder()
-                    .eventType("CREATED")
-                    .memberId(member.getId())
-                    .nickname(member.getNickname())
-                    .email(member.getEmail())
-                    .build()).get(5, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                log.error("member - Kafka 이벤트 발행 실패. 회원가입은 완료됨. 회원 ID: {}", saveMember.getId(), e);
-            }
 
             log.info("member - 사용자 등록 완료: 사용자 ID {}", saveMember.getId());
             return saveMember;
@@ -237,5 +220,7 @@ public class MemberServiceImpl implements MemberService {
         }
         return false;
     }
+
+    
 
 }
