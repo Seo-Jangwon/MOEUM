@@ -1,4 +1,4 @@
-import RegisterData from './RegisterData';
+import RegisterData from './RegisterData/registerData';
 import Button from '@/components/Button/Button';
 import { useState } from 'react';
 import { s_from } from './styles';

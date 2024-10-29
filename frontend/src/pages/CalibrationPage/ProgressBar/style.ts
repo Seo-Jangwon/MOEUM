@@ -4,7 +4,7 @@ export const s_div_bgc = (theme: Theme) => css`
   width: 100%;
   background-color: ${theme.colors.lightgray};
   border-radius: 5px;
-  overflow: hidden;
+  /* overflow: hidden; */
 `;
 
 export const s_div = (theme: Theme) => css`

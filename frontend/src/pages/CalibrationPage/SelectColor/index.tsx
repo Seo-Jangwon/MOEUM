@@ -12,8 +12,8 @@ const SelectColor = ({ question, colors, onSend }: SelectColorProps) => {
     <div>
       <h2 css={s_h2}>{question}</h2>
       <div>
-        {colors.map((colorArray, index) => {
-          const gradient = `linear-gradient(${colorArray.join(', ')})`;
+        {colors.map((item, index) => {
+          const gradient = `linear-gradient(${item.join(', ')})`;
           return (
             <button
               key={index}
