@@ -19,8 +19,7 @@ const Header = ({ search }: HeaderProps) => {
   return (
     <nav css={s_container}>
       <div css={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-        <SideBar.Button />
-        <SideBar.Content />
+        <SideBar />
         <NavLink css={s_logo} to="/">
           <img src="/logo.svg" alt="logo" />
         </NavLink>

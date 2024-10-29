@@ -89,7 +89,7 @@ const SignUpPage = () => {
               color: ${theme.colors.lightgray};
             `}
           >
-            모음에 오신 걸 환영해요
+            모음에 오신 걸 환영해요!
           </p>
           <p
             css={(theme) => css`
@@ -100,12 +100,14 @@ const SignUpPage = () => {
             당신이 어떤 사람인지 알고 싶어요.
           </p>
         </div>
-        <div css={css`
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          align-items: center;
-        `}>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+          `}
+        >
           <RegisterData
             value={'text'}
             placeholder={'닉네임'}
@@ -143,7 +145,11 @@ const SignUpPage = () => {
             checkPassword={true}
             passwordValue={password}
           />
-          <Button variant="grad" type="submit" css={{width: '25%', height: "45px", marginTop: '25px'}}>
+          <Button
+            variant="grad"
+            type="submit"
+            css={{ width: '25%', height: '45px', marginTop: '25px' }}
+          >
             다음
           </Button>
         </div>

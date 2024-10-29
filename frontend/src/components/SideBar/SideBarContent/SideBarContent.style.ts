@@ -1,12 +1,35 @@
-import { css, Theme } from '@emotion/react';
+import styled from '@emotion/styled';
 
-export const s_container = (theme: Theme) => css`
-  display: none;
+export const Container = styled.aside`
+  display: flex;
+  position: fixed;
+  padding: 24px;
   width: 600px;
   height: 100%;
   flex-direction: column;
-  position: fixed;
   left: 0;
   bottom: 0;
-  background-color: ${theme.colors.dark};
+  transition: 0.5s;
+  transform: translate3d(-100%, 0, 0);
+  background-color: ${({ theme }) => theme.colors.dark};
+
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+
+  &.open {
+    transform: translate3d(0%, 0, 0);
+  }
+`;
+
+export const Header = styled.header`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const CloseButton = styled.button`
+  border: 0;
+  background: none;
+  color: ${({ theme }) => theme.colors.white};
 `;

@@ -19,9 +19,9 @@ export const s_button = css`
   height: 200px;
   border: none;
   border-radius: 30px;
-  cursor: pointer;
+
   transition: 0.2s;
   &:hover {
-    transform: scale(1.1)
+    transform: scale(1.1);
   }
 `;
