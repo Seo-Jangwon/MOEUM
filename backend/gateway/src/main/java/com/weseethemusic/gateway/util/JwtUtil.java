@@ -93,7 +93,17 @@ public class JwtUtil {
     public String getUserIdFromToken(String token) {
         try {
             Claims claims = validateToken(token);
-            return claims.getSubject();
+            return claims.get("id", String.class);
+        } catch (Exception e) {
+            log.error("토큰에서 userid 추출 실패", e);
+            throw e;
+        }
+    }
+
+    public String getRoleFromToken(String token) {
+        try {
+            Claims claims = validateToken(token);
+            return claims.get("role", String.class);
         } catch (Exception e) {
             log.error("토큰에서 userid 추출 실패", e);
             throw e;

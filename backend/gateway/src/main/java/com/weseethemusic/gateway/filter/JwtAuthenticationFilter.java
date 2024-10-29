@@ -64,10 +64,12 @@ public class JwtAuthenticationFilter extends
             switch (status) {
                 case VALID:
                     String userId = jwtUtil.getUserIdFromToken(extractedToken);
+                    String role = jwtUtil.getRoleFromToken(extractedToken);
                     log.info("gateway - 유저: {}에 대한 토큰 검증 완료", userId);
                     return chain.filter(exchange.mutate()
                         .request(exchange.getRequest().mutate()
                             .header("X-User-Id", userId)
+                            .header("X-Role", role)
                             .build())
                         .build());
 
