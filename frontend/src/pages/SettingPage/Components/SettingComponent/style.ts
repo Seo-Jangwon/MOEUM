@@ -9,13 +9,13 @@ export const s_componentContainer = (theme: Theme) => css`
   color: ${theme.colors.white};
   padding: 10px 20px;
   @media (max-width: 767px) {
-    margin: 0px 5vw 15px;
-    width: 90vw;
+    margin: 0px 15vw 15px;
+    width: 70vw;
     font-size: 20px;
   }
   @media (min-width: 768px) {
-    margin: 0px 20vw 20px;
-    width: 60vw;
+    margin: 0px 30vw 20px;
+    width: 40vw;
     font-size: 24px;
   }
 `;

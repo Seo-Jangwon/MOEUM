@@ -16,12 +16,12 @@ export const s_fullScreenWithModal = (theme: Theme) => css`
 
 export const s_modalContainer = (theme: Theme) => css`
   @media (min-width: 768px) {
-    height: 50vh;
-    width: 50vw;
-    top: 25vh;
-    left: 25vw;
+    height: 70vh;
+    width: 35vw;
+    top: 15vh;
+    left: 32.5vw;
   }
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     height: 70vh;
     width: 70vw;
     top: 15vh;
