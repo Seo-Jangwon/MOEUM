@@ -2,13 +2,13 @@ import apiClient from '@/api/apiClient';
 import ToggleButton from '@/components/Toggle/ToggleButton';
 import useSettingStore from '@/stores/settingStore';
 import { ReactNode } from 'react';
+import { BiEqualizer } from 'react-icons/bi';
+import { FaRegUser } from 'react-icons/fa6';
 import { IoIosArrowDown, IoIosArrowDropright } from 'react-icons/io';
 import { PiVibrate } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import SettingComponent from './Components/SettingComponent/SettingComponent';
 import { s_componentsContainer, s_titleContainer } from './style';
-import { FaRegUser } from 'react-icons/fa6';
-import { BiEqualizer } from 'react-icons/bi';
 
 interface settingComponentsData {
   iconImage: ReactNode;

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react";
-import { useState } from "react";
+import { css } from '@emotion/react';
+import { useState } from 'react';
 
 interface Position {
   top: number;
@@ -21,13 +21,13 @@ const FloatingBalls = () => {
   const moveBall = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     setBallPosition: React.Dispatch<React.SetStateAction<Position>>,
-    initialPosition: Position
+    initialPosition: Position,
   ) => {
     const { clientX, clientY } = e;
 
     // 마우스와 원의 초기 위치 차이를 계산
     let offsetX = initialPosition.left - clientX; // 반대 방향으로 이동하도록 설정
-    let offsetY = initialPosition.top - clientY;  // 반대 방향으로 이동하도록 설정
+    let offsetY = initialPosition.top - clientY; // 반대 방향으로 이동하도록 설정
 
     // 최대 이동 거리를 50px로 제한
     const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
@@ -63,7 +63,9 @@ const FloatingBalls = () => {
     top: ${top}px;
     left: ${left}px;
     filter: blur(15px);
-    transition: top 0.3s ease, left 0.3s ease;
+    transition:
+      top 0.3s ease,
+      left 0.3s ease;
   `;
 
   return (
@@ -79,12 +81,12 @@ const FloatingBalls = () => {
     >
       {/* 첫 번째 공 */}
       <div
-        css={ballStyle(firstBallPosition.top, firstBallPosition.left, "#ff00ff")}
+        css={ballStyle(firstBallPosition.top, firstBallPosition.left, '#ff00ff')}
         onMouseMove={handleMouseMoveFirstBall} // 마우스가 움직일 때마다 반응
       />
       {/* 두 번째 공 */}
       <div
-        css={ballStyle(secondBallPosition.top, secondBallPosition.left, "#00ffff")}
+        css={ballStyle(secondBallPosition.top, secondBallPosition.left, '#00ffff')}
         onMouseMove={handleMouseMoveSecondBall} // 마우스가 움직일 때마다 반응
       />
     </div>

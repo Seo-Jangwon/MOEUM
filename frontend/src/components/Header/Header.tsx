@@ -1,10 +1,10 @@
+import useAuthStore from '@/stores/authStore';
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { s_container, s_logo } from './Header.style';
+import Button from '../Button/Button';
 import SearchBox from '../SearchBox/SearchBox';
 import SideBar from '../SideBar/SideBar';
-import Button from '../Button/Button';
-import { useState } from 'react';
-import useAuthStore from '@/stores/authStore';
+import { s_container, s_logo } from './Header.style';
 import ProfileModal from './ProfileModal/ProfileModal';
 
 interface HeaderProps {

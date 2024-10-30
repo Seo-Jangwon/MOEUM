@@ -1,6 +1,6 @@
 import LightModeToggle from '@/components/Toggle/LightModeToggle/LightModeToggle';
-import * as S from './SideBarContent.style';
 import { FiX } from 'react-icons/fi';
+import * as S from './SideBarContent.style';
 interface SideBarContentProps {
   isOpen: boolean;
   closeHandler: () => void;

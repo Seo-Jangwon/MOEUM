@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import welcomeImg from '@/assets/Welcome.png';
 import { css } from '@emotion/react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const s_img = css`
   @keyframes fadeInBackground {

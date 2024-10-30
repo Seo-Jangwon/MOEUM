@@ -32,7 +32,6 @@ export const s_div_img = css`
     width: 25vw;
     height: 20vw;
   }
-  
 `;
 
 export const s_div_button = (theme: Theme) => css`

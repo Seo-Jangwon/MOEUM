@@ -1,20 +1,20 @@
-import {
-  s_container,
-  s_content,
-  s_titlebox,
-  s_input,
-  s_form,
-  s_links,
-  s_oauth_box,
-  s_line_text,
-  Line,
-} from './style';
-import Button from '@/components/Button/Button';
-import { Link } from 'react-router-dom';
-import OauthButton from './components/OauthButton/OauthButton';
 import facebookLogo from '@/assets/oauth/faceboook_logo.svg';
 import googleLogo from '@/assets/oauth/google_logo.svg';
 import kakaoLogo from '@/assets/oauth/kakao_logo.svg';
+import Button from '@/components/Button/Button';
+import { Link } from 'react-router-dom';
+import OauthButton from './components/OauthButton/OauthButton';
+import {
+  Line,
+  s_container,
+  s_content,
+  s_form,
+  s_input,
+  s_line_text,
+  s_links,
+  s_oauth_box,
+  s_titlebox,
+} from './style';
 
 const SignInPage = () => {
   // const [emailInput, setEmailInput] = useState('이메일');

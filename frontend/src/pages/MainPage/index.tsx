@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { s_h2, s_p, s_div_button, s_div_img, s_div_musicList } from './style';
-import { css } from '@emotion/react';
 import Button from '@/components/Button/Button';
-import MusicCard from './MusicCard/MusicCard';
-import newImage from './image/newyml.jpg';
-import recommend from './image/recommend.jpg';
-import famous from './image/famous.jpg';
+import { css } from '@emotion/react';
+import { useState } from 'react';
 import { HiOutlineArrowCircleRight } from 'react-icons/hi';
 import { IoPlay } from 'react-icons/io5';
+import MusicCard from './MusicCard/MusicCard';
+import famous from './image/famous.jpg';
+import newImage from './image/newyml.jpg';
+import recommend from './image/recommend.jpg';
+import { s_div_button, s_div_img, s_div_musicList, s_h2, s_p } from './style';
 
 interface DiscographyItem {
   category: string;
@@ -190,7 +190,6 @@ const MainPage = () => {
                 font-size: 24px;
                 transform: scale(0);
                 :hover {
-                 
                 }
               `}
             />
