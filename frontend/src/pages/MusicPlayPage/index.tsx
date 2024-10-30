@@ -1,4 +1,3 @@
-import Header from '@/components/Header/Header';
 import { css } from '@emotion/react';
 import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';

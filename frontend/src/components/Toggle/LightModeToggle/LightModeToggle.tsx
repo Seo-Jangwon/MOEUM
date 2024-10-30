@@ -1,6 +1,6 @@
 import useThemeStore from '@/stores/themeStore';
-import { s_container, s_icons, s_label } from './LightModeToggle.style';
 import { BiMoon, BiSun } from 'react-icons/bi';
+import { s_container, s_icons, s_label } from './LightModeToggle.style';
 
 const LightModeToggle = () => {
   const { lightMode, toggleLightMode } = useThemeStore();

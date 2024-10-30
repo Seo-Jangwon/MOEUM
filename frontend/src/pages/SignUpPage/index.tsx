@@ -1,10 +1,10 @@
-import RegisterData from './RegisterData/registerData';
 import Button from '@/components/Button/Button';
-import { useState } from 'react';
-import { s_from } from './styles';
 import { css } from '@emotion/react';
-import { s_content, s_titlebox } from '../SignInPage/style';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { s_content, s_titlebox } from '../SignInPage/style';
+import RegisterData from './RegisterData/registerData';
+import { s_from } from './styles';
 
 const SignUpPage = () => {
   // 각 필드에 대한 상태 관리

@@ -1,6 +1,5 @@
 package com.weseethemusic.member.common.util;
 
-import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -13,10 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
@@ -34,18 +30,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
 
-    public enum TokenStatus {
-        VALID,
-        INVALID,
-        NOT_FOUND,
-        EXPIRED
-    }
 
-    private final MemberRepository memberRepository;
     private final RedisTemplate<String, Object> redisTemplate;  // Object로 변경
 
-    public JwtUtil(MemberRepository memberRepository, RedisTemplate<String, Object> redisTemplate) {
-        this.memberRepository = memberRepository;
+    public JwtUtil(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -126,42 +114,6 @@ public class JwtUtil {
             .compact();
     }
 
-    // refresh token 검증, 새로운 access token 및 refresh token 발급
-    public Map<String, String> reissueTokens(String refreshToken) {
-        try {
-            Claims claims = validateToken(refreshToken);
-            String email = claims.get("email", String.class);
-
-            // Redis에서 토큰 직접 조회
-            String storedToken = (String) redisTemplate.opsForValue().get("RT:" + email);
-
-            if (storedToken == null || !storedToken.equals(refreshToken)) {
-                throw new RuntimeException("Invalid refresh token");
-            }
-
-            // 사용자 역할 조회
-            Optional<Member> member = memberRepository.findByEmail(email);
-            if (!member.isPresent()) {
-                throw new RuntimeException("User not found");
-            }
-            String role = member.get().getRole();
-            Long id = member.get().getId();
-
-            // 새로운 액세스 토큰과 리프레시 토큰 발급
-            String newAccessToken = generateAccessToken(email, role, id);
-            String newRefreshToken = generateRefreshToken(email);
-
-            Map<String, String> tokens = new HashMap<>();
-            tokens.put("accessToken", newAccessToken);
-            tokens.put("refreshToken", newRefreshToken);
-
-            return tokens;
-        } catch (ExpiredJwtException e) {
-            throw new RuntimeException("Refresh token has expired");
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to reissue tokens: " + e.getMessage());
-        }
-    }
 
     // 토큰 검증
     public Claims validateToken(String token) {
@@ -193,20 +145,6 @@ public class JwtUtil {
         String token = extractToken(bearerToken);
         Claims claims = validateToken(token);
         return claims.get("email", String.class);
-    }
-
-    public Long getUserIdFromToken(String bearerToken) {
-        String token = extractToken(bearerToken);
-        Claims claims = validateToken(token);
-        String email = claims.get("email", String.class);
-
-        Optional<Member> userOptional = memberRepository.findByEmail(email);
-
-        if (userOptional.isPresent()) {
-            return userOptional.get().getId();
-        } else {
-            throw new RuntimeException("해당 email의 유저를 찾을 수 없음: " + email);
-        }
     }
 
     public String getRoleFromToken(String bearerToken) {

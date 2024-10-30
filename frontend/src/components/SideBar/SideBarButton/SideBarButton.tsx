@@ -1,7 +1,7 @@
 // import SideBarButtonIcon from '@/assets/icon/sidebar-icon.svg';
 import { ComponentPropsWithoutRef } from 'react';
-import SideBarButtonIcon from './SideBarButtonIcon';
 import { s_button } from './SideBarButton.style';
+import SideBarButtonIcon from './SideBarButtonIcon';
 
 const SideBarButton = ({ ...restProps }: ComponentPropsWithoutRef<'button'>) => {
   return (

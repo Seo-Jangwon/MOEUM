@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
-import SelectColor from './SelectColor';
-import { useState, useEffect, useRef } from 'react';
-import ProgressBar from './ProgressBar';
-import { s_content, s_titlebox } from './style';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ProgressBar from './ProgressBar';
+import SelectColor from './SelectColor';
+import { s_content, s_titlebox } from './style';
 
 const mokData = [
   {
@@ -31,21 +31,21 @@ const mokData = [
 
 const Calibration = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const selectedColors = useRef<number[]>([])
+  const selectedColors = useRef<number[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (currentIndex >= mokData.length) {
       const timer = setTimeout(() => {
         navigate('/');
-      }, 2000); 
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
   }, [currentIndex, navigate]);
 
   const handleNext = (selectedIndex: number) => {
-    selectedColors.current.push(selectedIndex)
+    selectedColors.current.push(selectedIndex);
     setCurrentIndex((prevIndex) => prevIndex + 1);
   };
 
@@ -74,11 +74,9 @@ const Calibration = () => {
               onSend={handleNext}
             />
           </div>
-        ) : ( <div css={css`
-          
-        `}>
-          완료하였습니다.
-        </div>)}
+        ) : (
+          <div css={css``}>완료하였습니다.</div>
+        )}
         <div>
           <ProgressBar currentIndex={currentIndex} total={mokData.length} />
         </div>

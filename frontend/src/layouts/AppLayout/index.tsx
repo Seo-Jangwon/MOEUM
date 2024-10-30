@@ -1,16 +1,16 @@
+import Background from '@/components/Background/Background';
 import Header from '@/components/Header/Header';
-import { theme } from '@/styles/theme';
-import globalStyles from '@/styles/globalStyles';
-import { ThemeProvider, Global } from '@emotion/react';
-import { Outlet, useLocation } from 'react-router-dom';
 import {
   backgroundContainBallPaths,
   headerWithoutSearchPaths,
   WithoutHeaderPaths,
 } from '@/constants/path/pathMap';
 import useThemeStore from '@/stores/themeStore';
+import globalStyles from '@/styles/globalStyles';
+import { theme } from '@/styles/theme';
+import { Global, ThemeProvider } from '@emotion/react';
 import { Suspense } from 'react';
-import Background from '@/components/Background/Background';
+import { Outlet, useLocation } from 'react-router-dom';
 
 const getHeader = (pathName: string) => {
   if (WithoutHeaderPaths.includes(pathName)) return null;

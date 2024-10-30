@@ -1,16 +1,16 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { lazy } from 'react';
 import AppLayout from '@/layouts/AppLayout';
 import MusicPlayPage from '@/pages/MusicPlayPage';
-import SettingPage from '@/pages/SettingPage';
 import ProfilePage from '@/pages/ProfilePage';
+import SettingPage from '@/pages/SettingPage';
+import { lazy } from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const SignInPage = lazy(() => import('@/pages/SignInPage'));
 const SignUpPage = lazy(() => import('@/pages/SignUpPage'));
 const FAQPage = lazy(() => import('@/pages/FAQPage'));
 const WelcomePage = lazy(() => import('@/pages/WelcomePage'));
 const CalibrationPage = lazy(() => import('@/pages/CalibrationPage'));
-const MainPage = lazy(() => import('@/pages/MainPage'))
+const MainPage = lazy(() => import('@/pages/MainPage'));
 
 const router = createBrowserRouter([
   {

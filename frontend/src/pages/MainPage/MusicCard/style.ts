@@ -7,7 +7,6 @@ export const s_img = css`
   cursor: pointer;
   transition: 0.2s;
   :hover {
-    filter: brightness(0.5)
-    
+    filter: brightness(0.5);
   }
 `;

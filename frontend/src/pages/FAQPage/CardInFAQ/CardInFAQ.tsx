@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
-import { s_ClickedCard, s_cardContainer, s_CardImg, s_UnClickedCard } from './style';
 import { ReactNode } from 'react';
+import { s_cardContainer, s_CardImg, s_ClickedCard, s_UnClickedCard } from './style';
 
 interface CardProps {
   iconImage: ReactNode;

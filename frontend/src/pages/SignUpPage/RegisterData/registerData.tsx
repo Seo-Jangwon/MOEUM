@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { s_input, s_button_send, s_main,} from './styles';
 import Button from '@/components/Button/Button';
+import { useState } from 'react';
+import { s_button_send, s_input, s_main } from './styles';
 
 interface LoginDataProps {
   value: string;
@@ -29,8 +29,8 @@ const RegisterData = ({
 }: LoginDataProps) => {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(placeholder);
   const [email] = useState(isEmail);
-  const [isValidPassword, setIsValidPassword] = useState(true); 
-  const [isPasswordMatch, setIsPasswordMatch] = useState(true); 
+  const [isValidPassword, setIsValidPassword] = useState(true);
+  const [isPasswordMatch, setIsPasswordMatch] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
   const [isValidInput, setIsValidInput] = useState(true);
 
@@ -93,7 +93,7 @@ const RegisterData = ({
 
     if (checkPassword) {
       const isMatch = password === passwordValue;
-      setIsPasswordMatch(isMatch)
+      setIsPasswordMatch(isMatch);
       setIsValidInput(isMatch);
     }
   };
@@ -105,11 +105,7 @@ const RegisterData = ({
         type={value}
         placeholder={currentPlaceholder}
         onChange={
-          isEmail
-            ? handleEmailChange
-            : isNickname
-            ? handleNicknameChange
-            : handlePasswordChange
+          isEmail ? handleEmailChange : isNickname ? handleNicknameChange : handlePasswordChange
         }
         onFocus={() => setCurrentPlaceholder('')}
         onBlur={() => setCurrentPlaceholder(placeholder)}

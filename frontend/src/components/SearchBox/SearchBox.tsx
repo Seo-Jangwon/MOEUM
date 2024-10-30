@@ -1,8 +1,8 @@
 import useThemeStore from '@/stores/themeStore';
-import { s_button, s_container, s_input, s_wrapper } from './SearchBox.style';
+import { useState } from 'react';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { RiCloseLargeFill } from 'react-icons/ri';
-import { useState } from 'react';
+import { s_button, s_container, s_input, s_wrapper } from './SearchBox.style';
 
 const SearchBox = () => {
   const [userInput, setUserInput] = useState<string | undefined>(undefined);
