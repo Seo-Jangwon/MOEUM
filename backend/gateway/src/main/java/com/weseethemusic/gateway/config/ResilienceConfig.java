@@ -63,13 +63,9 @@ public class ResilienceConfig {
         public Health health() {
             Map<String, Health> services = new HashMap<>();
 
-            // Auth 서비스 헬스체크
-            services.put("auth-service",
-                checkServiceHealth("http://localhost:8081/actuator/health"));
-
             // Member 서비스 헬스체크
             services.put("member-service",
-                checkServiceHealth("http://localhost:8082/actuator/health"));
+                checkServiceHealth("http://localhost:8081/actuator/health"));
 
             // Music 서비스 헬스체크
             services.put("music-service",
