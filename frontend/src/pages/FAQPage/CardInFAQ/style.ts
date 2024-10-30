@@ -11,7 +11,7 @@ export const s_cardContainer = css`
     height: 10vw;
     width: 10vw;
   }
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     height: 5vw;
     width: 20vw;
     font-size: 14px;
@@ -34,7 +34,7 @@ export const s_UnClickedCard = (theme: Theme) => css`
 `;
 
 export const s_CardImg = css`
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     display: none;
     width: 50px;
     height: 50px;

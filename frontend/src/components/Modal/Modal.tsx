@@ -21,7 +21,6 @@ const Modal = ({
   positiveButtonClickListener,
   negativeButtonClickListener,
 }: profileModalProps) => {
-  useEffect(() => {}, []);
   return (
     <form>
       <div onClick={negativeButtonClickListener} css={s_fullScreenWithModal}></div>

@@ -8,13 +8,13 @@ export const s_componentContainer = (theme: Theme) => css`
   border-radius: 10px;
   color: ${theme.colors.white};
   padding: 10px 20px;
-  @media (max-width: 767px) {
-    margin: 0px 15vw 15px;
+  @media (max-width: 768px) {
+    margin-bottom:  15px;
     width: 70vw;
     font-size: 20px;
   }
   @media (min-width: 768px) {
-    margin: 0px 30vw 20px;
+    margin-bottom:  20px;
     width: 40vw;
     font-size: 24px;
   }
@@ -28,6 +28,10 @@ export const s_componentLeftChild = css`
 
 export const s_componentTitleText = css`
   padding-left: 10px;
+  
+  @media (max-width : 768px) {
+    font-size:16px;
+  }
 `;
 
 export const s_accordionChild = (theme: Theme) => css`
@@ -38,7 +42,7 @@ export const s_accordionChild = (theme: Theme) => css`
   word-break: normal;
   transition: height 0.3s ease-in-out;
   transition: opacity 0.3s ease-in-out;
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     margin: 0px 5vw 5px 5vw;
   }
   @media (min-width: 768px) {

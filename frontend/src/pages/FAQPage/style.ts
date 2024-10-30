@@ -4,10 +4,10 @@ export const s_FAQPage = (theme: Theme) => css`
   background-color: ${theme.colors.background};
 `;
 export const s_TitleText = (theme: Theme) => css`
-  @media (max-width: 677px) {
+  @media (max-width: 768px) {
     font-size: 24px;
   }
-  @media (min-width: 678px) {
+  @media (min-width: 768px) {
     font-size: 36px;
   }
   color: ${theme.colors.white};
@@ -22,7 +22,7 @@ export const s_BodyContainer = css`
   place-items: center;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr;
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     padding: 0 10vw;
   }
   margin: 0 0 30px 0;

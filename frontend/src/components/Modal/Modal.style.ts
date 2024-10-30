@@ -67,6 +67,9 @@ export const s_modalTitleContainer = css`
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 768px) {
+    font-size:24px;
+  }
 `;
 export const s_modalBodyContainer = css`
   height: 50%;

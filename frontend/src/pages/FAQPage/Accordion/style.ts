@@ -11,7 +11,7 @@ export const s_accordionTitle = (theme: Theme) => css`
   padding: 10px 20px;
   transition: background-color 0.3s ease-in-out;
   cursor: pointer;
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     margin: 0px 5vw 5px;
     font-size: 16px;
   }
@@ -43,7 +43,7 @@ export const s_accordionChild = (theme: Theme) => css`
   word-break: normal;
   transition: height 0.3s ease-in-out;
   transition: opacity 0.3s ease-in-out;
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     margin: 0px 5vw 5px 5vw;
   }
   @media (min-width: 768px) {

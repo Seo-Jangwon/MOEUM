@@ -10,11 +10,11 @@ export const s_titleContainer = (theme: Theme) => css`
   height: 10vh;
   color: ${theme.colors.white};
   font-weight: 600;
-  @media (max-width: 677px) {
+  @media (max-width: 768px) {
     font-size: 32px;
     margin-bottom: 3vh;
   }
-  @media (min-width: 678px) {
+  @media (min-width: 768px) {
     font-size: 40px;
     margin-bottom: 10vh;
   }
