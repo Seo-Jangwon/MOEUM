@@ -1,22 +1,26 @@
 package com.weseethemusic.gateway.config;
 
+import com.weseethemusic.gateway.constants.SecurityConstants;
 import com.weseethemusic.gateway.filter.JwtAuthenticationFilter;
+import java.util.List;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Mono;
 
 @Configuration
 public class RouteConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CircuitBreakerFactory circuitBreakerFactory;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;;
 
     public RouteConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
         CircuitBreakerFactory circuitBreakerFactory) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.circuitBreakerFactory = circuitBreakerFactory;
     }
 
     /**
@@ -26,7 +30,6 @@ public class RouteConfig {
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         // JWT 인증 필요없는 공개 경로
         JwtAuthenticationFilter.Config authConfig = new JwtAuthenticationFilter.Config()
-            .requireRefreshToken(true)
             .addExcludedPath("/members/register/token")
             .addExcludedPath("/members/register/check/token")
             .addExcludedPath("/members/register")
@@ -34,29 +37,41 @@ public class RouteConfig {
 
         return builder.routes()
 
-            .route("auth-service", r -> r
-                .path("/auth/**")  // 토큰 재발급
-                .filters(f -> f
-                    .circuitBreaker(config -> config
-                        .setName("auth-service")
-                        .setFallbackUri("/fallback/auth"))
-                    .retry(3)) // 재시도 3번까지 ok
-                .uri("http://localhost:8081"))
-
-            // Member Service - Public Routes
             .route("member-service-public", r -> r
                 .path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login")
-                .uri("http://localhost:8082"))
+                .uri("http://localhost:8081"))
 
-            // Member Service - Protected Routes
+            // Member Service - Token Refresh Route
+            .route("member-token-refresh", r -> r
+                .path("/member/token")
+                .filters(f -> f
+                    .modifyRequestBody(String.class, String.class,
+                        (exchange, body) -> {
+                            // 쿠키에서 리프레시 토큰 추출하여 헤더로 변환
+                            ServerHttpRequest request = exchange.getRequest();
+                            MultiValueMap<String, HttpCookie> cookies = request.getCookies();
+                            List<HttpCookie> refreshTokenCookies = cookies.get(SecurityConstants.REFRESH_TOKEN_COOKIE);
+
+                            if (refreshTokenCookies != null && !refreshTokenCookies.isEmpty()) {
+                                String refreshToken = refreshTokenCookies.get(0).getValue();
+                                // 새 요청에 헤더 추가
+                                exchange.getRequest().mutate()
+                                    .header(SecurityConstants.REFRESH_TOKEN_HEADER, refreshToken)
+                                    .build();
+                            }
+                            return Mono.just(body);
+                        }))
+                .uri("http://localhost:8081"))
+
+            // Member Service - Protected Routes (인증 필요)
             .route("member-service-protected", r -> r
                 .path("/members/**")
                 .and()
                 .not(p -> p.path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login"))
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8082"))
+                .uri("http://localhost:8081"))
 
             // Music Service Routes
             .route("music-playlist", r -> r
