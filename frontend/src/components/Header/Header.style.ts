@@ -2,14 +2,20 @@ import { css, Theme } from '@emotion/react';
 
 export const s_container = css`
   display: flex;
-  position: relative;
+  position: fixed;
   width: 100%;
+  top: 0;
+  left: 0;
   justify-content: space-between;
   align-items: center;
   padding: 0 16px;
   height: 80px;
-  overflow: hidden;
-  /* background: #121212; */
+  ::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(50px);
+  }
 `;
 
 export const s_logo = (theme: Theme) => css`

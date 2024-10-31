@@ -13,13 +13,10 @@ export const Container = styled.aside`
   transition: 0.5s;
   transform: translate3d(-100%, 0, 0);
   background-color: ${({ theme }) => theme.colors.dark};
+  box-shadow: inset 0 0 0.5px;
 
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     width: 100%;
-  }
-
-  @media (min-width: 768px) {
-    opacity: 0.9;
   }
 
   &.open {
