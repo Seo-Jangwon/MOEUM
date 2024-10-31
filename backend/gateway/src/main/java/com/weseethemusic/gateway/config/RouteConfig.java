@@ -61,7 +61,7 @@ public class RouteConfig {
 
             // Member Service - Token Refresh Route
             .route("member-token-refresh", r -> r
-                .path("/member/token")
+                .path("/members/token")
                 .filters(f -> f
                     .modifyRequestBody(String.class, String.class,
                         (exchange, body) -> {

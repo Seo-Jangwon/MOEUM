@@ -78,7 +78,7 @@ public class JwtAuthenticationFilter extends
                         log.info("gateway - 토큰 만료. 토큰 재발급하러 감");
                         return chain.filter(exchange.mutate()
                             .request(exchange.getRequest().mutate()
-                                .path("/auth/refresh")
+                                .path("/members/token")
                                 .header(SecurityConstants.REFRESH_TOKEN_HEADER, refreshToken)
                                 .build())
                             .build());
