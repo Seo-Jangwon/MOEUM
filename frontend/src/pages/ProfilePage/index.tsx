@@ -1,3 +1,4 @@
+import apiClient from '@/api/apiClient';
 import Modal from '@/components/Modal/Modal';
 import { ReactNode, useRef, useState } from 'react';
 import { FaPlus } from 'react-icons/fa6';
@@ -7,8 +8,13 @@ import { PiVibrate } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import SettingComponent from '../SettingPage/Components/SettingComponent/SettingComponent';
 import logo from '../SignUpPage/image/logo.png';
-import { s_componentsContainer, s_modalInputStyle, s_modalText, s_textContainer, s_titleContainer } from './style';
-import apiClient from '@/api/apiClient';
+import {
+  s_componentsContainer,
+  s_modalInputStyle,
+  s_modalText,
+  s_textContainer,
+  s_titleContainer,
+} from './style';
 
 interface profileComponentsData {
   iconImage: ReactNode;
@@ -30,7 +36,7 @@ const ProfilePage = () => {
   const modalDataIdx = useRef<number>(0);
   const [submitData, setSubmitData] = useState<string>('');
   const [submitImage, setSubmitImage] = useState<File | null>(null);
-  const [passwordText, setPasswordText] = useState<string>("현재의 비밀번호를 입력해주세요.");
+  const [passwordText, setPasswordText] = useState<string>('현재의 비밀번호를 입력해주세요.');
   const passwordFlag = useRef<boolean>(false);
 
   function openModalAndChangeIdx(idx: number) {
@@ -39,7 +45,7 @@ const ProfilePage = () => {
   }
 
   function closeModal() {
-    setSubmitData("");
+    setSubmitData('');
     setSubmitImage(null);
     setIsModalOpen(false);
   }
@@ -53,7 +59,7 @@ const ProfilePage = () => {
       text: '닉네임 변경',
       rightButton: (
         <FaPlus
-        style={{cursor:"pointer"}}
+          style={{ cursor: 'pointer' }}
           onClick={() => {
             openModalAndChangeIdx(0);
           }}
@@ -65,7 +71,7 @@ const ProfilePage = () => {
       text: '프로필 사진 변경',
       rightButton: (
         <FaPlus
-        style={{cursor:"pointer"}}
+          style={{ cursor: 'pointer' }}
           onClick={() => {
             openModalAndChangeIdx(1);
           }}
@@ -77,7 +83,7 @@ const ProfilePage = () => {
       text: '비밀번호 변경',
       rightButton: (
         <IoIosArrowDropright
-        style={{cursor:"pointer"}}
+          style={{ cursor: 'pointer' }}
           onClick={() => {
             openModalAndChangeIdx(2);
           }}
@@ -89,7 +95,7 @@ const ProfilePage = () => {
       text: '회원 탈퇴',
       rightButton: (
         <ImCross
-        style={{cursor:"pointer", color:"red"}}
+          style={{ cursor: 'pointer', color: 'red' }}
           onClick={() => {
             openModalAndChangeIdx(3);
           }}
@@ -155,8 +161,9 @@ const ProfilePage = () => {
     changeSubmitData('');
   }
 
-  function changePassword(){
-    if(!passwordFlag.current){//현재 비밀번호 인증이 되기 전
+  function changePassword() {
+    if (!passwordFlag.current) {
+      //현재 비밀번호 인증이 되기 전
       apiClient({
         method: 'POST',
         url: '/members/edit/checkuser',
@@ -164,13 +171,10 @@ const ProfilePage = () => {
       })
         .then((response) => {
           if (response.data.code === 200) {
-            setPasswordText("새롭게 사용하실 비밀번호를 입력해주세요.")
-          }
-          else if(response.data.code ===602){
-            alert("비밀번호가 일치하지 않습니다. 다시 시도해 주십시오.");
-
-          }
-           else {
+            setPasswordText('새롭게 사용하실 비밀번호를 입력해주세요.');
+          } else if (response.data.code === 602) {
+            alert('비밀번호가 일치하지 않습니다. 다시 시도해 주십시오.');
+          } else {
             alert('오류가 발생하였습니다. 다시 시도해 주십시오');
             navigate(0);
           }
@@ -179,9 +183,9 @@ const ProfilePage = () => {
           alert('오류가 발생하였습니다. 다시 시도해 주십시오.');
           console.log(err);
           navigate(0);
-        })
-    }
-    else{//현재 비밀번호 인증 후
+        });
+    } else {
+      //현재 비밀번호 인증 후
       apiClient({
         method: 'PUT',
         url: '/members/edit/credentials',
@@ -189,7 +193,7 @@ const ProfilePage = () => {
       })
         .then((response) => {
           if (response.data.code === 200) {
-            alert("비밀번호 변경이 완료되었습니다.")
+            alert('비밀번호 변경이 완료되었습니다.');
           } else {
             alert('잘못된 접근입니다.');
           }
@@ -197,9 +201,10 @@ const ProfilePage = () => {
         .catch((err) => {
           alert('오류가 발생하였습니다. 다시 시도해 주십시오.');
           console.log(err);
-        }).finally(()=>{
-          navigate(0);
         })
+        .finally(() => {
+          navigate(0);
+        });
     }
     changeSubmitData('');
   }
@@ -208,7 +213,6 @@ const ProfilePage = () => {
     apiClient({
       method: 'PUT',
       url: '/members/delete',
-      data: { email: submitData },
     })
       .then((response) => {
         if (response.data.code === 200) {
@@ -234,7 +238,10 @@ const ProfilePage = () => {
       title: '닉네임 변경',
       modalBody: (
         <>
-        <div css={s_modalText}>새로운 닉네임을 입력해주세요.<br/> 그 후 확인 버튼을 눌러주세요.</div>
+          <div css={s_modalText}>
+            새로운 닉네임을 입력해주세요.
+            <br /> 그 후 확인 버튼을 눌러주세요.
+          </div>
           <input
             css={s_modalInputStyle}
             type="text"
@@ -253,7 +260,10 @@ const ProfilePage = () => {
       title: '프로필 사진 변경',
       modalBody: (
         <>
-        <div css={s_modalText}>새로운 프로필 사진을 선택하신 후,<br/> 확인 버튼을 눌러주세요.</div>
+          <div css={s_modalText}>
+            새로운 프로필 사진을 선택하신 후,
+            <br /> 확인 버튼을 눌러주세요.
+          </div>
           <input
             css={s_modalInputStyle}
             type="file"
@@ -276,23 +286,24 @@ const ProfilePage = () => {
     },
     {
       title: '비밀번호 변경',
-      modalBody: 
-      <>
-        <div css={s_modalText}>
-          {passwordText}<br />
-          그 후 확인 버튼을 눌러주세요.
-        </div>
-        <input
+      modalBody: (
+        <>
+          <div css={s_modalText}>
+            {passwordText}
+            <br />그 후 확인 버튼을 눌러주세요.
+          </div>
+          <input
             css={s_modalInputStyle}
-          type="password"
-          minLength={8}
-          maxLength={20}
-          value={submitData}
-          onChange={(e) => {
-            changeSubmitData(e.target.value);
-          }}
-        />
-      </>,
+            type="password"
+            minLength={8}
+            maxLength={20}
+            value={submitData}
+            onChange={(e) => {
+              changeSubmitData(e.target.value);
+            }}
+          />
+        </>
+      ),
       positiveButtonClickListener: changePassword,
       negativeButtonClickListener: closeModal,
     },
@@ -301,18 +312,10 @@ const ProfilePage = () => {
       modalBody: (
         <>
           <div css={s_modalText}>
-            탈퇴하시려면 <br />
-            이메일을 입력해주세요.
+            정말 탈퇴하시겠습니까?
+            <br />
+            탈퇴하시려면 확인 버튼을 눌러주세요.
           </div>
-          <input
-            type="text"
-            css={s_modalInputStyle}
-            maxLength={20}
-            value={submitData}
-            onChange={(e) => {
-              changeSubmitData(e.target.value);
-            }}
-          />
         </>
       ),
       positiveButtonClickListener: deleteUser,
@@ -325,7 +328,7 @@ const ProfilePage = () => {
         {isModalOpen ? <Modal {...editModalComponentsData[modalDataIdx.current]} /> : null}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div>
-            <img src={logo} css={{ backgroundColor: 'gray', opacity: 0.7 }} />
+            <img src={logo} css={{ backgroundColor: 'gray', opacity: 0.7, borderRadius: '25px' }} />
           </div>
           &nbsp;
           <p>닉네임</p>

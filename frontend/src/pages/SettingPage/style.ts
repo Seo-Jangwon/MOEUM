@@ -24,5 +24,5 @@ export const s_componentsContainer = css`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 `;
