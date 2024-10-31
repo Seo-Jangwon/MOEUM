@@ -1,4 +1,4 @@
-package com.weseethemusic.model;
+package com.weseethemusic.common.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
