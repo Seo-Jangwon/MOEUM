@@ -2,26 +2,12 @@ import apiClient from '@/api/apiClient';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import MusicList from './MusicList/MusicList';
+import { s_container } from './style';
 
 const testData = {
   code: 200,
   data: {
     musics: [
-      {
-        id: 1,
-        title: 'APT.',
-        albumImage: '/apt.png',
-        artists: [
-          {
-            id: 123,
-            name: 'Bruno Mars',
-          },
-          {
-            id: 124,
-            name: '로제 (ROSÉ)',
-          },
-        ],
-      },
       {
         id: 1,
         title: 'APT.',
@@ -318,7 +304,12 @@ const SearchPage = () => {
             //   playListDatas.current = response.data.data.playlists;
             setIsLoading(false);
           } else {
-            alert('에러 뜸 ㅅㄱ');
+            //alert('에러 뜸 ㅅㄱ');
+            musicDatas.current = testData.data.musics;
+            albumDatas.current = testData.data.albums;
+            artistDatas.current = testData.data.artists;
+            playListDatas.current = testData.data.playlists;
+            setIsLoading(false);
           }
         })
         .catch((err) => {
@@ -336,9 +327,9 @@ const SearchPage = () => {
       {isLoading ? (
         <div>로딩중</div>
       ) : (
-        <div>
-          {' '}
-          <MusicList musicList={musicDatas.current} />{' '}
+        <div css={s_container}>
+          <MusicList musicList={musicDatas.current} />
+          <MusicList musicList={musicDatas.current} />
         </div>
       )}
     </div>
