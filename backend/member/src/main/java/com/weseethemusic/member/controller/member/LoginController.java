@@ -1,16 +1,18 @@
-package com.weseethemusic.member.controller;
+package com.weseethemusic.member.controller.member;
 
 import com.weseethemusic.member.common.constants.SecurityConstants;
 import com.weseethemusic.member.dto.LoginRequestDto;
 import com.weseethemusic.member.dto.LoginResponseDto;
 import com.weseethemusic.member.service.login.LoginService;
+import jakarta.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,14 +29,15 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    @PostMapping("/login")
+    @PostMapping
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequestDto request,
-        ServerHttpResponse response) {
+        HttpServletResponse response) {
         try {
             LoginResponseDto loginResult = loginService.login(request);
 
             // 리프레시 토큰 쿠키에
-            ResponseCookie refreshTokenCookie = ResponseCookie.from(SecurityConstants.REFRESH_TOKEN_COOKIE,
+            ResponseCookie refreshTokenCookie = ResponseCookie.from(
+                    SecurityConstants.REFRESH_TOKEN_COOKIE,
                     loginResult.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
@@ -42,7 +45,7 @@ public class LoginController {
                 .maxAge(Duration.ofDays(7))
                 .sameSite("Strict")
                 .build();
-            response.addCookie(refreshTokenCookie);
+            response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
             // 성공 응답
             Map<String, Object> successResponse = new HashMap<>();
@@ -61,6 +64,15 @@ public class LoginController {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("code", 601);
             errorResponse.put("message", "회원 정보가 일치하지 않습니다.");
+            return ResponseEntity.badRequest().body(errorResponse);
+
+        } catch (BadCredentialsException e) {
+            // 회원 정보 불일치
+            log.info("로그인 실패: 회원 정보 없음");
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("code", 601);
+            errorResponse.put("message", "회원 정보가 없습니다.");
             return ResponseEntity.badRequest().body(errorResponse);
 
         } catch (Exception e) {
