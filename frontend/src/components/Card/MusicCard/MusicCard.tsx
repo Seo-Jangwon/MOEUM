@@ -1,6 +1,7 @@
 import { IoPlay } from 'react-icons/io5';
 import { s_button, s_icon, s_img } from './style';
 import { ComponentPropsWithoutRef } from 'react';
+import { css } from '@emotion/react';
 
 interface MusicCardProps extends ComponentPropsWithoutRef<'button'> {
   category: string;
@@ -10,10 +11,16 @@ interface MusicCardProps extends ComponentPropsWithoutRef<'button'> {
 
 const MusicCard = ({ category, title, image, ...restProps }: MusicCardProps) => {
   return (
+    <>
     <button css={s_button} {...restProps}>
       <img src={image} alt="image" css={s_img} />
       <IoPlay className="play-icon" css={s_icon} />
     </button>
+    <p css={css`
+      font-size: 16px;
+      padding: 4px;
+    `}>{title}</p>
+    </>
   );
 };
 
