@@ -4,13 +4,12 @@ import com.weseethemusic.dto.PalateRequestDto;
 import com.weseethemusic.dto.PalateResponseDto;
 import com.weseethemusic.dto.SettingRequestDto;
 import com.weseethemusic.dto.SettingResponseDto;
-import com.weseethemusic.model.Calibration;
-import com.weseethemusic.model.Setting;
+import com.weseethemusic.common.model.Calibration;
+import com.weseethemusic.common.model.Setting;
 import com.weseethemusic.repository.CalibrationRepository;
 import com.weseethemusic.repository.SettingRespository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
