@@ -1,4 +1,4 @@
-package com.weseethemusic.member.controller;
+package com.weseethemusic.member.controller.member;
 
 import com.weseethemusic.member.common.constants.SecurityConstants;
 import com.weseethemusic.member.service.jwt.JwtService;
