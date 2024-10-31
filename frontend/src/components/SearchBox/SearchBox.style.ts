@@ -2,7 +2,10 @@ import { css, Theme } from '@emotion/react';
 
 export const s_wrapper = css`
   display: flex;
+  position: absolute;
+  left: 0;
   width: 100%;
+  align-items: center;
   justify-content: center;
 `;
 
