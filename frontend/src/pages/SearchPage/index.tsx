@@ -1,6 +1,7 @@
 import apiClient from '@/api/apiClient';
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import MusicList from './MusicList/MusicList';
 
 const testData = {
   code: 200,
@@ -293,40 +294,55 @@ export interface PlayListI {
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
-  console.log(searchParams.get('keyword'));
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
   const musicDatas = useRef<MusicI[]>([]);
   const albumDatas = useRef<AlbumI[]>([]);
   const artistDatas = useRef<ArtistI[]>([]);
   const playListDatas = useRef<PlayListI[]>([]);
   useEffect(() => {
-    apiClient({
-      method: 'GET',
-      url: `/musics/search`,
-      params: { keyword: searchParams.get('keyword') },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.data.code === 200) {
-          //   musicDatas.current = response.data.data.musics;
-          //   albumDatas.current = response.data.data.albums;
-          //   artistDatas.current = response.data.data.artists;
-          //   playListDatas.current = response.data.data.playlists;
-          setIsLoading(false);
-        } else {
-          alert('에러 뜸 ㅅㄱ');
-        }
+    const keyword = searchParams.get('keyword');
+    if (keyword === null || keyword === '') {
+      navigate('/');
+    } else {
+      apiClient({
+        method: 'GET',
+        url: `/musics/search`,
+        params: { keyword: searchParams.get('keyword') },
       })
-      .catch((err) => {
-        console.log(err);
-        musicDatas.current = testData.data.musics;
-        albumDatas.current = testData.data.albums;
-        artistDatas.current = testData.data.artists;
-        playListDatas.current = testData.data.playlists;
-        setIsLoading(false);
-      });
+        .then((response) => {
+          if (response.data.code === 200) {
+            //   musicDatas.current = response.data.data.musics;
+            //   albumDatas.current = response.data.data.albums;
+            //   artistDatas.current = response.data.data.artists;
+            //   playListDatas.current = response.data.data.playlists;
+            setIsLoading(false);
+          } else {
+            alert('에러 뜸 ㅅㄱ');
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          musicDatas.current = testData.data.musics;
+          albumDatas.current = testData.data.albums;
+          artistDatas.current = testData.data.artists;
+          playListDatas.current = testData.data.playlists;
+          setIsLoading(false);
+        });
+    }
   }, []);
-  return <div>{isLoading ? <div>로딩중</div> : <div>{musicDatas.current[0].title}</div>}</div>;
+  return (
+    <div>
+      {isLoading ? (
+        <div>로딩중</div>
+      ) : (
+        <div>
+          {' '}
+          <MusicList musicList={musicDatas.current} />{' '}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default SearchPage;
