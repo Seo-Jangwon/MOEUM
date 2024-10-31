@@ -11,6 +11,7 @@ const FAQPage = lazy(() => import('@/pages/FAQPage'));
 const WelcomePage = lazy(() => import('@/pages/WelcomePage'));
 const CalibrationPage = lazy(() => import('@/pages/CalibrationPage'));
 const MainPage = lazy(() => import('@/pages/MainPage'));
+const SearchPage = lazy(() => import('@/pages/SearchPage'))
 
 const router = createBrowserRouter([
   {
@@ -54,6 +55,11 @@ const router = createBrowserRouter([
         path: 'profile',
         element: <ProfilePage />,
       },
+      {
+        path: 'search',
+        element: <SearchPage />,
+      },
+     
     ],
   },
 ]);
