@@ -17,14 +17,14 @@ public class SecurityConfig {
         return http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.disable())
-            .authorizeExchange(exchanges -> exchanges
+            .authorizeExchange(exchanges -> exchanges.anyExchange().permitAll()
                 // 인증 불필요
-                .pathMatchers("/members/register/token",
-                    "/members/register/check/token",
-                    "/members/register",
-                    "/members/login").permitAll()
-                // 나머지는 인증 필요
-                .anyExchange().authenticated()
+//                .pathMatchers("/members/register/token",
+//                    "/members/register/check/token",
+//                    "/members/register",
+//                    "/members/login").permitAll()
+//                // 나머지는 인증 필요
+//                .anyExchange().authenticated()
             )
             .build();
     }

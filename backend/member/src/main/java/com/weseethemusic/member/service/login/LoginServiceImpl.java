@@ -38,7 +38,7 @@ public class LoginServiceImpl implements LoginService {
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> {
                 log.warn("존재하지 않는 사용자로 로그인 시도: {}", email);
-                return new BadCredentialsException("사용자가 존재하지 않습니다.");
+                throw new BadCredentialsException("사용자가 존재하지 않습니다.");
             });
 
         // 삭제된 계정 체크

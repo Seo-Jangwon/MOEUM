@@ -1,6 +1,6 @@
 package com.weseethemusic.repository;
 
-import com.weseethemusic.model.Setting;
+import com.weseethemusic.common.model.Setting;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

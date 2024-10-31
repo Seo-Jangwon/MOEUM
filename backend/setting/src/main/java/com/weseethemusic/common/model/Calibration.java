@@ -1,4 +1,4 @@
-package com.weseethemusic.model;
+package com.weseethemusic.common.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
