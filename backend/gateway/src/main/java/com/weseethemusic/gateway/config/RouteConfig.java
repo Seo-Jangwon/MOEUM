@@ -3,7 +3,7 @@ package com.weseethemusic.gateway.config;
 import com.weseethemusic.gateway.constants.SecurityConstants;
 import com.weseethemusic.gateway.filter.JwtAuthenticationFilter;
 import java.util.List;
-import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -16,10 +16,27 @@ import reactor.core.publisher.Mono;
 @Configuration
 public class RouteConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;;
+    @Value("${service.url.member}")
+    private String memberServiceUrl;
 
-    public RouteConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-        CircuitBreakerFactory circuitBreakerFactory) {
+    @Value("${service.url.music}")
+    private String musicServiceUrl;
+
+    @Value("${service.url.player}")
+    private String playerServiceUrl;
+
+    @Value("${service.url.history}")
+    private String historyServiceUrl;
+
+    @Value("${service.url.settings}")
+    private String settingsServiceUrl;
+
+    @Value("${service.url.recommendations}")
+    private String recommendationsServiceUrl;
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public RouteConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
@@ -40,7 +57,7 @@ public class RouteConfig {
             .route("member-service-public", r -> r
                 .path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login")
-                .uri("http://localhost:8081"))
+                .uri(memberServiceUrl))
 
             // Member Service - Token Refresh Route
             .route("member-token-refresh", r -> r
@@ -51,7 +68,8 @@ public class RouteConfig {
                             // 쿠키에서 리프레시 토큰 추출하여 헤더로 변환
                             ServerHttpRequest request = exchange.getRequest();
                             MultiValueMap<String, HttpCookie> cookies = request.getCookies();
-                            List<HttpCookie> refreshTokenCookies = cookies.get(SecurityConstants.REFRESH_TOKEN_COOKIE);
+                            List<HttpCookie> refreshTokenCookies = cookies.get(
+                                SecurityConstants.REFRESH_TOKEN_COOKIE);
 
                             if (refreshTokenCookies != null && !refreshTokenCookies.isEmpty()) {
                                 String refreshToken = refreshTokenCookies.get(0).getValue();
@@ -62,7 +80,7 @@ public class RouteConfig {
                             }
                             return Mono.just(body);
                         }))
-                .uri("http://localhost:8081"))
+                .uri(memberServiceUrl))
 
             // Member Service - Protected Routes (인증 필요)
             .route("member-service-protected", r -> r
@@ -71,7 +89,7 @@ public class RouteConfig {
                 .not(p -> p.path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login"))
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8081"))
+                .uri(memberServiceUrl))
 
             // Music Service Routes
             .route("music-playlist", r -> r
@@ -81,44 +99,44 @@ public class RouteConfig {
                         .setName("music-service")
                         .setFallbackUri("/fallback/music"))
                     .retry(3))
-                .uri("http://localhost:8080"))
+                .uri(musicServiceUrl))
 
             .route("music-search", r -> r
                 .path("/musics/search")
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8080"))
+                .uri(musicServiceUrl))
 
             .route("music-detail", r -> r
                 .path("/musics/detail/**")
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8080"))
+                .uri(musicServiceUrl))
 
             .route("music-like", r -> r
                 .path("/musics/*/like")
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8080"))
+                .uri(musicServiceUrl))
 
             .route("music-artist", r -> r
                 .path("/musics/artist/**")
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8080"))
+                .uri(musicServiceUrl))
 
             .route("music-recommend", r -> r
                 .path("/musics/recommend", "/musics/popular", "/musics/latest")
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8080"))
+                .uri(musicServiceUrl))
 
             // Player Service Routes
             .route("player-service", r -> r
                 .path("/player/**")
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8080"))
+                .uri(playerServiceUrl))
 
             // History Service Routes
             .route("history-service", r -> r
                 .path("/history/**")
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8080"))
+                .uri(historyServiceUrl))
 
             // Settings Service Routes
             .route("settings-service", r -> r
@@ -126,13 +144,13 @@ public class RouteConfig {
                 .filters(f -> f
                     .filter(jwtAuthenticationFilter.apply(authConfig))
                     .rewritePath("/setting", "/settings"))
-                .uri("http://localhost:8080"))
+                .uri(settingsServiceUrl))
 
             // Recommendations Service Routes
             .route("recommendations-service", r -> r
                 .path("/recommendations")
                 .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri("http://localhost:8080"))
+                .uri(recommendationsServiceUrl))
 
             .build();
     }
