@@ -67,7 +67,8 @@ public class JwtServiceImpl implements JwtService {
                 String newAccessToken = jwtUtil.generateAccessToken(
                     email,
                     member.get().getRole(),
-                    member.get().getId()
+                    member.get().getId(),
+                    jwtUtil.checkOAuthToken(token)
                 );
 
                 log.info("액세스 토큰 재발급 성공");

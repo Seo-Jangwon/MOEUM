@@ -41,7 +41,7 @@ class JwtServiceImplTest {
     private String email = "test@example.com";
 
     @Test
-    @DisplayName("토큰 재발급 성공")
+    @DisplayName("토큰 재발급 성공 - 일반 로그인")
     void reIssueTokenSuccess() {
         // given
         String expiredAccessToken = "expired.access.token";
@@ -55,7 +55,9 @@ class JwtServiceImplTest {
         when(jwtUtil.validateRefreshToken(validRefreshToken, email)).thenReturn(true);
         when(jwtUtil.getEmailFromExpiredToken(expiredAccessToken)).thenReturn(email);
         when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
-        when(jwtUtil.generateAccessToken(email, member.getRole(), member.getId())).thenReturn("new.access.token");
+        when(jwtUtil.checkOAuthToken(expiredAccessToken)).thenReturn(false);
+        when(jwtUtil.generateAccessToken(email, member.getRole(), member.getId(), false))
+            .thenReturn("new.access.token");
 
         // when
         String newAccessToken = jwtService.reIssueRefreshToken(validAccessToken, validRefreshToken);
@@ -63,6 +65,34 @@ class JwtServiceImplTest {
         // then
         assertNotNull(newAccessToken);
         assertEquals("new.access.token", newAccessToken);
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 성공 - OAuth 로그인")
+    void reIssueTokenSuccessWithOAuth() {
+        // given
+        String expiredAccessToken = "expired.access.token";
+        Member member = createMember();
+        Claims claims = Mockito.mock(Claims.class);
+        when(claims.get("email", String.class)).thenReturn(email);
+
+        when(jwtUtil.extractToken(validAccessToken)).thenReturn(expiredAccessToken);
+        when(jwtUtil.validateToken(expiredAccessToken)).thenThrow(new ExpiredJwtException(null, null, "만료된 토큰"));
+        when(jwtUtil.validateToken(validRefreshToken)).thenReturn(claims);
+        when(jwtUtil.validateRefreshToken(validRefreshToken, email)).thenReturn(true);
+        when(jwtUtil.getEmailFromExpiredToken(expiredAccessToken)).thenReturn(email);
+        when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
+        when(jwtUtil.checkOAuthToken(expiredAccessToken)).thenReturn(true);
+        when(jwtUtil.generateAccessToken(email, member.getRole(), member.getId(), true))
+            .thenReturn("new.oauth.access.token");
+
+        // when
+        String newAccessToken = jwtService.reIssueRefreshToken(validAccessToken, validRefreshToken);
+
+        // then
+        assertNotNull(newAccessToken);
+        assertEquals("new.oauth.access.token", newAccessToken);
+        verify(jwtUtil).generateAccessToken(email, member.getRole(), member.getId(), true);
     }
 
     @Test
@@ -110,7 +140,8 @@ class JwtServiceImplTest {
         when(claims.get("email", String.class)).thenReturn(email);
 
         when(jwtUtil.extractToken(validAccessToken)).thenReturn(expiredAccessToken);
-        when(jwtUtil.validateToken(expiredAccessToken)).thenThrow(new ExpiredJwtException(null, null, "만료된 토큰"));
+        when(jwtUtil.validateToken(expiredAccessToken)).thenThrow(
+            new ExpiredJwtException(null, null, "만료된 토큰"));
         when(jwtUtil.validateToken(validRefreshToken)).thenReturn(claims);
         when(jwtUtil.validateRefreshToken(validRefreshToken, email)).thenReturn(false);
 
@@ -131,7 +162,8 @@ class JwtServiceImplTest {
         when(claims.get("email", String.class)).thenReturn(email);
 
         when(jwtUtil.extractToken(validAccessToken)).thenReturn(expiredAccessToken);
-        when(jwtUtil.validateToken(expiredAccessToken)).thenThrow(new ExpiredJwtException(null, null, "만료된 토큰"));
+        when(jwtUtil.validateToken(expiredAccessToken)).thenThrow(
+            new ExpiredJwtException(null, null, "만료된 토큰"));
         when(jwtUtil.validateToken(validRefreshToken)).thenReturn(claims);
         when(jwtUtil.validateRefreshToken(validRefreshToken, email)).thenReturn(true);
         when(jwtUtil.getEmailFromExpiredToken(expiredAccessToken)).thenReturn(differentEmail);

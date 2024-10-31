@@ -3,6 +3,7 @@ package com.weseethemusic.member.service.login;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
@@ -65,7 +66,8 @@ class LoginServiceImplTest2 {
         // given
         when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(testMember));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(jwtUtil.generateAccessToken(anyString(), anyString(), anyLong())).thenReturn("access.token");
+        when(jwtUtil.generateAccessToken(anyString(), anyString(), anyLong(), anyBoolean()))
+            .thenReturn("access.token");
         when(jwtUtil.generateRefreshToken(anyString())).thenReturn("refresh.token");
 
         // when
@@ -79,7 +81,8 @@ class LoginServiceImplTest2 {
         // verify
         verify(memberRepository).findByEmail(loginRequest.getEmail());
         verify(passwordEncoder).matches(loginRequest.getPassword(), testMember.getPassword());
-        verify(jwtUtil).generateAccessToken(testMember.getEmail(), testMember.getRole(), testMember.getId());
+        verify(jwtUtil).generateAccessToken(testMember.getEmail(), testMember.getRole(),
+            testMember.getId(), false);
         verify(jwtUtil).generateRefreshToken(testMember.getEmail());
     }
 

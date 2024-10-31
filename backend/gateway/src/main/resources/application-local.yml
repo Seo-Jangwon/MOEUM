@@ -1,0 +1,53 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: member-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/members/**
+          metadata:
+            health-check-url: /actuator/health
+
+        - id: settings-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/musics/**
+          metadata:
+            health-check-url: /actuator/health
+
+        - id: music-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/musics/**
+          metadata:
+            health-check-url: /actuator/health
+
+        - id: player-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/player/**
+          metadata:
+            health-check-url: /actuator/health
+
+        - id: history-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/history/**
+          metadata:
+            health-check-url: /actuator/health
+
+        - id: recommendations-service
+          uri: http://localhost:8086
+          predicates:
+            - Path=/recommendations/**
+          metadata:
+            health-check-url: /actuator/health
+service:
+  url:
+    member: http://localhost:8081
+    music: http://localhost:8084
+    player: http://localhost:8085
+    history: http://localhost:8085
+    settings: http://localhost:8081
+    recommendations: http://localhost:8086

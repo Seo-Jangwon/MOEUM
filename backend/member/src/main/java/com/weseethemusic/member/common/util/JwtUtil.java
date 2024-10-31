@@ -24,7 +24,6 @@ import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Component;
 
 
-
 // JwtUtil.java
 @Slf4j
 @Component
@@ -100,13 +99,14 @@ public class JwtUtil {
     }
 
     // access token 생성
-    public String generateAccessToken(String email, String role, Long id) {
+    public String generateAccessToken(String email, String role, Long id, boolean isOAuth) {
         return Jwts.builder()
             .issuer("MoDoo")
             .subject("JWT Token")
             .claim("email", email)
             .claim("role", role)
             .claim("id", id)
+            .claim("isOAuth", isOAuth)
             .issuedAt(new Date())
             .expiration(
                 new Date(System.currentTimeMillis() + accessTokenExpiration))
@@ -145,6 +145,11 @@ public class JwtUtil {
         String token = extractToken(bearerToken);
         Claims claims = validateToken(token);
         return claims.get("email", String.class);
+    }
+
+    public boolean checkOAuthToken(String token) {
+        Claims claims = validateToken(token);
+        return claims.get("isOAuth", boolean.class);
     }
 
     public String getRoleFromToken(String bearerToken) {
