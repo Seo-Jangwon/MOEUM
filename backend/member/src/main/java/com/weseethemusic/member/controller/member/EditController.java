@@ -1,4 +1,4 @@
-package com.weseethemusic.member.controller;
+package com.weseethemusic.member.controller.member;
 
 import com.weseethemusic.member.dto.EditRequestDto;
 import com.weseethemusic.member.dto.EditResponseDto;

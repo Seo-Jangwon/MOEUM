@@ -1,4 +1,4 @@
-package com.weseethemusic.member.controller;
+package com.weseethemusic.member.controller.member;
 
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.dto.RegisterDto;
