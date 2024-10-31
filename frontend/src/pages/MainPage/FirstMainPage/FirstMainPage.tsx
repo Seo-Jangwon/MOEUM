@@ -1,14 +1,13 @@
-import { useState } from 'react';
-import { s_h2, s_p, s_div_button, s_div_musicList, s_div_selector } from './style';
-import { css } from '@emotion/react';
 import Button from '@/components/Button/Button';
+import MusicCard from '@/components/Card/MusicCard/MusicCard';
+import { css } from '@emotion/react';
+import { useState } from 'react';
+import { HiOutlineArrowCircleRight } from 'react-icons/hi';
+import { Link } from 'react-router-dom';
+import famous from './image/famous.jpg';
 import newImage from './image/newyml.jpg';
 import recommend from './image/recommend.jpg';
-import famous from './image/famous.jpg';
-import { HiOutlineArrowCircleRight } from 'react-icons/hi';
-import MusicCard from '@/components/Card/MusicCard/MusicCard';
-import { Link } from 'react-router-dom';
-import { to } from './../../../../node_modules/rollup/dist/es/shared/node-entry';
+import { s_div_button, s_div_musicList, s_div_selector, s_h2, s_p } from './style';
 
 interface DiscographyItem {
   category: string;
