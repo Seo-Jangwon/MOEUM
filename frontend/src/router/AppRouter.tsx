@@ -1,6 +1,7 @@
 import AppLayout from '@/layouts/AppLayout';
 import MusicPlayPage from '@/pages/MusicPlayPage';
 import ProfilePage from '@/pages/ProfilePage';
+import SearchPage from '@/pages/SearchPage';
 import SettingPage from '@/pages/SettingPage';
 import { lazy } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: 'profile',
         element: <ProfilePage />,
+      },
+      {
+        path: 'search',
+        element: <SearchPage />,
       },
     ],
   },
