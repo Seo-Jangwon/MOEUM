@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
@@ -70,7 +71,8 @@ class LoginServiceImplTest {
         // given
         when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(testMember));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(jwtUtil.generateAccessToken(anyString(), anyString(), anyLong())).thenReturn("access.token");
+        when(jwtUtil.generateAccessToken(anyString(), anyString(), anyLong(), anyBoolean()))
+            .thenReturn("access.token");
         when(jwtUtil.generateRefreshToken(anyString())).thenReturn("refresh.token");
 
         // when
@@ -84,7 +86,8 @@ class LoginServiceImplTest {
         // verify
         verify(memberRepository).findByEmail(loginRequest.getEmail());
         verify(passwordEncoder).matches(loginRequest.getPassword(), testMember.getPassword());
-        verify(jwtUtil).generateAccessToken(testMember.getEmail(), testMember.getRole(), testMember.getId());
+        verify(jwtUtil).generateAccessToken(testMember.getEmail(), testMember.getRole(),
+            testMember.getId(), false);
         verify(jwtUtil).generateRefreshToken(testMember.getEmail());
     }
 
@@ -144,7 +147,8 @@ class LoginServiceImplTest {
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(memberRepository.findById(anyLong())).thenReturn(Optional.of(testMember));
         when(memberRepository.save(any(Member.class))).thenReturn(testMember);
-        when(jwtUtil.generateAccessToken(anyString(), anyString(), anyLong())).thenReturn("access.token");
+        when(jwtUtil.generateAccessToken(anyString(), anyString(), anyLong(), anyBoolean()))
+            .thenReturn("access.token");
         when(jwtUtil.generateRefreshToken(anyString())).thenReturn("refresh.token");
 
         // when
@@ -159,7 +163,8 @@ class LoginServiceImplTest {
 
         // verify (times(2)로 수정)
         verify(memberRepository).findByEmail(loginRequest.getEmail());
-        verify(passwordEncoder, times(2)).matches(loginRequest.getPassword(), testMember.getPassword());
+        verify(passwordEncoder, times(2)).matches(loginRequest.getPassword(),
+            testMember.getPassword());
         verify(memberRepository).save(testMember);
     }
 
