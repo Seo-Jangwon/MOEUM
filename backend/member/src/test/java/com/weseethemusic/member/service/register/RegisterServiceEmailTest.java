@@ -21,7 +21,6 @@ import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.repository.MemberRepository;
 import java.time.Duration;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

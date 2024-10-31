@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
@@ -37,67 +38,118 @@ public class ResilienceConfig {
      * 각 서비스의 헬스체크 수행하는 컴포넌트 생성
      */
     @Bean
-    public HealthIndicator serviceHealthIndicator(WebClient.Builder webClientBuilder) {
-        return new ServiceHealthIndicator(webClientBuilder.build());
+    public HealthIndicator serviceHealthIndicator(
+        WebClient.Builder webClientBuilder,
+        @Value("${service.url.member}") String memberServiceUrl,
+        @Value("${service.url.music}") String musicServiceUrl,
+        @Value("${service.url.player}") String playerServiceUrl,
+        @Value("${service.url.history}") String historyServiceUrl,
+        @Value("${service.url.settings}") String settingsServiceUrl,
+        @Value("${service.url.recommendations}") String recommendationsServiceUrl) {
+
+        return new ServiceHealthIndicator(
+            webClientBuilder.build(),
+            memberServiceUrl,
+            musicServiceUrl,
+            playerServiceUrl,
+            historyServiceUrl,
+            settingsServiceUrl,
+            recommendationsServiceUrl
+        );
+    }
+}
+
+/**
+ * 서비스 헬스체크 수행하는 클래스 각 서비스의 actuator/health 엔드포인트 호출하여 상태 확인
+ */
+@Component
+@Slf4j
+class ServiceHealthIndicator implements HealthIndicator {
+
+    private final WebClient webClient;
+    private final String memberServiceUrl;
+    private final String musicServiceUrl;
+    private final String playerServiceUrl;
+    private final String historyServiceUrl;
+    private final String settingsServiceUrl;
+    private final String recommendationsServiceUrl;
+
+    public ServiceHealthIndicator(
+        WebClient webClient,
+        @Value("${service.url.member}") String memberServiceUrl,
+        @Value("${service.url.music}") String musicServiceUrl,
+        @Value("${service.url.player}") String playerServiceUrl,
+        @Value("${service.url.history}") String historyServiceUrl,
+        @Value("${service.url.settings}") String settingsServiceUrl,
+        @Value("${service.url.recommendations}") String recommendationsServiceUrl) {
+        this.webClient = webClient;
+        this.memberServiceUrl = memberServiceUrl;
+        this.musicServiceUrl = musicServiceUrl;
+        this.playerServiceUrl = playerServiceUrl;
+        this.historyServiceUrl = historyServiceUrl;
+        this.settingsServiceUrl = settingsServiceUrl;
+        this.recommendationsServiceUrl = recommendationsServiceUrl;
     }
 
     /**
-     * 서비스 헬스체크 수행하는 내부 클래스 각 서비스의 actuator/health 엔드포인트 호출하여 상태 확인
+     * 각 서비스의 헬스체크
+     *
+     * @return 전체 서비스의 상태 정보 담은 health 객체
      */
-    @Component
-    @Slf4j
-    public static class ServiceHealthIndicator implements HealthIndicator {
+    @Override
+    public Health health() {
+        Map<String, Health> services = new HashMap<>();
 
-        private final WebClient webClient;
+        // Member 서비스 헬스체크
+        services.put("member-service",
+            checkServiceHealth(memberServiceUrl + "/actuator/health"));
 
-        public ServiceHealthIndicator(WebClient webClient) {
-            this.webClient = webClient;
-        }
+        // Music 서비스 헬스체크
+        services.put("music-service",
+            checkServiceHealth(musicServiceUrl + "/actuator/health"));
 
-        /**
-         * 각 서비스의 헬스체크
-         *
-         * @return 전체 서비스의 상태 정보 담은 health 객체
-         */
-        @Override
-        public Health health() {
-            Map<String, Health> services = new HashMap<>();
+        // Player 서비스 헬스체크
+        services.put("player-service",
+            checkServiceHealth(playerServiceUrl + "/actuator/health"));
 
-            // Member 서비스 헬스체크
-            services.put("member-service",
-                checkServiceHealth("http://localhost:8081/actuator/health"));
+        // History 서비스 헬스체크
+        services.put("history-service",
+            checkServiceHealth(historyServiceUrl + "/actuator/health"));
 
-            // Music 서비스 헬스체크
-            services.put("music-service",
-                checkServiceHealth("http://localhost:8080/actuator/health"));
+        // Settings 서비스 헬스체크
+        services.put("settings-service",
+            checkServiceHealth(settingsServiceUrl + "/actuator/health"));
 
-            // 모든 서비스가 UP 상태인지
-            boolean allUp = services.values().stream()
-                .allMatch(health -> health.getStatus().equals(Status.UP));
+        // Recommendations 서비스 헬스체크
+        services.put("recommendations-service",
+            checkServiceHealth(recommendationsServiceUrl + "/actuator/health"));
 
-            return allUp ? Health.up().withDetails(services).build()
-                : Health.down().withDetails(services).build();
-        }
+        // 모든 서비스가 UP 상태인지
+        boolean allUp = services.values().stream()
+            .allMatch(health -> health.getStatus().equals(Status.UP));
 
-        /**
-         * 개별 서비스 헬스체크 수행
-         *
-         * @param healthUrl 헬스체크 URL
-         * @return 해당 서비스의 상태
-         */
-        private Health checkServiceHealth(String healthUrl) {
-            try {
-                webClient.get()
-                    .uri(healthUrl)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block(Duration.ofSeconds(3)); // 3초 타임아웃
+        return allUp ? Health.up().withDetails(services).build()
+            : Health.down().withDetails(services).build();
+    }
 
-                return Health.up().build();
-            } catch (Exception e) {
-                log.warn("URL: {}에 대한 헬스체크 실패", healthUrl, e);
-                return Health.down(e).build();
-            }
+    /**
+     * 개별 서비스 헬스체크 수행
+     *
+     * @param healthUrl 헬스체크 URL
+     * @return 해당 서비스의 상태
+     */
+    private Health checkServiceHealth(String healthUrl) {
+        try {
+            webClient.get()
+                .uri(healthUrl)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block(Duration.ofSeconds(3)); // 3초 타임아웃
+
+            return Health.up().build();
+        } catch (Exception e) {
+            log.warn("URL: {}에 대한 헬스체크 실패", healthUrl, e);
+            return Health.down(e).build();
         }
     }
 }

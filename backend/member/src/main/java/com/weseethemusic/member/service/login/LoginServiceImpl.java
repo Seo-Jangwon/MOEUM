@@ -76,7 +76,8 @@ public class LoginServiceImpl implements LoginService {
         String accessToken = jwtUtil.generateAccessToken(
             member.getEmail(),
             member.getRole(),
-            member.getId()
+            member.getId(),
+            false // 일반 로그인은 OAuth가 false
         );
         String refreshToken = jwtUtil.generateRefreshToken(member.getEmail());
 
