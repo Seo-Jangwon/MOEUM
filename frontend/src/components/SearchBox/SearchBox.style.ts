@@ -2,21 +2,20 @@ import { css, Theme } from '@emotion/react';
 
 export const s_wrapper = css`
   display: flex;
-  position: absolute;
-  left: 0;
   width: 100%;
   justify-content: center;
 `;
 
-export const s_container = (theme: Theme, lightMode: boolean) => css`
+export const s_container = (theme: Theme, lightMode: boolean, recentKeywordScreen: boolean) => css`
   display: flex;
+  position: relative;
   justify-content: space-around;
   align-items: center;
   gap: 16px;
   width: 400px;
   height: 36px;
   border: none;
-  border-radius: 12px;
+  border-radius: ${recentKeywordScreen ? '5px 5px 0 0' : '10px'};
   background: ${lightMode ? '#AAA' : '#444'};
   color: ${lightMode ? '#d2d2d2' : '#aaa'};
   padding: 0 10px;
@@ -49,4 +48,34 @@ export const s_button = css`
   border: none;
   padding: 0;
   color: inherit;
+`;
+
+export const s_searchKeywordContainer = (theme: Theme) => css`
+  position: absolute;
+  z-index: 100;
+  background-color: inherit;
+  display: flex;
+  border-radius: 0 0 15px 15px;
+  padding: 10px 5px;
+  flex-direction: column-reverse;
+  width: 100%;
+  top: 38px;
+  outline: 2px solid ${theme.colors.white};
+  color: inherit;
+`;
+
+export const s_searchKeywordButtonContainer = css`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const s_searchKeywordDiv = css`
+  display: flex;
+  padding: 0 5px;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2px 0;
+  text-align: center;
 `;

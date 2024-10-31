@@ -68,7 +68,7 @@ export const s_modalTitleContainer = css`
   justify-content: center;
   align-items: center;
   @media (max-width: 768px) {
-    font-size:24px;
+    font-size: 24px;
   }
 `;
 export const s_modalBodyContainer = css`
@@ -88,6 +88,7 @@ export const s_cancelButtonContainer = css`
 export const s_button = (theme: Theme) => css`
   width: 60px;
   height: 30px;
+  color: ${theme.colors.dark};
   background-color: ${theme.colors.white};
   border-radius: 10px;
   font-size: 18px;

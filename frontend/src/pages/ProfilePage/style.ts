@@ -55,14 +55,15 @@ export const s_modalText = css`
 
 export const s_modalInputStyle = css`
   height: 3.5vh;
+  @media (min-width : 768px) {
+    font-size: 20px;
+    width:30vw;
+  }
+  @media (max-width : 768px) {
+    font-size:16px;
   width:60vw;
   &[type='file'] {
     width: 68vw;  
   }
-  @media (min-width : 768px) {
-    font-size: 20px;
-  }
-  @media (max-width : 768px) {
-    font-size:16px;
   }
 `;
