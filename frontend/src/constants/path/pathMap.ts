@@ -1,3 +1,3 @@
-export const headerWithoutSearchPaths = ['/signin', '/signup'];
-export const backgroundContainBallPaths = ['/signin', '/signup'];
-export const WithoutHeaderPaths = ['/welcome'];
+export const headerWithoutSearchPaths = ['signin', 'signup'];
+export const backgroundContainBallPaths = ['signin', 'signup', 'artist'];
+export const WithoutHeaderPaths = ['welcome'];
