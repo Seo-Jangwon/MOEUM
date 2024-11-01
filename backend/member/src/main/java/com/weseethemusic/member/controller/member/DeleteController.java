@@ -22,7 +22,7 @@ public class DeleteController {
 
     @PutMapping
     public ResponseEntity<Map<String, Object>> deleteMember(
-        @RequestHeader("X-USER-ID") Long userId) {
+        @RequestHeader("X-Member-Id") Long userId) {
 
         log.info("회원 탈퇴 요청: userId: {}", userId);
         try {

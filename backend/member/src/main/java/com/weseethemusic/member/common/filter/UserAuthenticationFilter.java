@@ -24,7 +24,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String userId = request.getHeader("X-USER-ID");
+        String userId = request.getHeader("X-Member-Id");
         String role = request.getHeader("X-ROLE");
 
         if (userId != null && role != null) {

@@ -26,7 +26,7 @@ public class SettingController {
 
     // 환경 설정 편집
     @PutMapping
-    public ResponseEntity<Object> updateSetting(@RequestHeader("X-User-Id") Long userId,
+    public ResponseEntity<Object> updateSetting(@RequestHeader("X-Member-Id") Long userId,
         @RequestBody SettingRequestDto settingRequestDto) {
         try {
             settingService.updateSetting(userId, settingRequestDto);
@@ -42,7 +42,7 @@ public class SettingController {
 
     // 환경 설정 조회
     @GetMapping
-    public ResponseEntity<Object> getSetting(@RequestHeader("X-User-Id") Long userId) {
+    public ResponseEntity<Object> getSetting(@RequestHeader("X-Member-Id") Long userId) {
         try {
             SettingResponseDto settingResponseDto = settingService.getSetting(userId);
 
@@ -57,7 +57,7 @@ public class SettingController {
 
     // 색상 환경 설정 변경
     @PutMapping("/palate")
-    public ResponseEntity<Object> updatePalate(@RequestHeader("X-User-Id") Long userId, @RequestBody
+    public ResponseEntity<Object> updatePalate(@RequestHeader("X-Member-Id") Long userId, @RequestBody
     PalateRequestDto palateRequestDto) {
         try {
             settingService.updatePalate(userId, palateRequestDto);
@@ -72,7 +72,7 @@ public class SettingController {
 
     // 색상 환경 설정 조회
     @GetMapping("/palate")
-    public ResponseEntity<Object> getPalate(@RequestHeader("X-User-Id") Long userId) {
+    public ResponseEntity<Object> getPalate(@RequestHeader("X-Member-Id") Long userId) {
         try {
             PalateResponseDto palateResponseDto = settingService.getPalate(userId);
             Map<String, Object> response = new HashMap<>();

@@ -28,7 +28,7 @@ public class EditController {
 
     @PutMapping("/nickname")
     public ResponseEntity<Map<String, Object>> updateNickname(
-        @RequestHeader("X-USER-ID") Long userId,
+        @RequestHeader("X-Member-Id") Long userId,
         @RequestBody EditRequestDto editRequestDto) {
 
         Map<String, Object> response = new HashMap<>();
@@ -55,7 +55,7 @@ public class EditController {
 
     @PostMapping("/checkuser")
     public ResponseEntity<Map<String, Object>> checkUser(
-        @RequestHeader("X-USER-ID") Long userId,
+        @RequestHeader("X-Member-Id") Long userId,
         @RequestBody EditRequestDto editRequestDto
     ) {
         Map<String, Object> response = new HashMap<>();
@@ -81,7 +81,7 @@ public class EditController {
 
     @PutMapping(value = "/password")
     public ResponseEntity<Map<String, Object>> updatePassword(
-        @RequestHeader("X-USER-ID") Long userId,
+        @RequestHeader("X-Member-Id") Long userId,
         EditRequestDto editRequestDto) {
 
         Map<String, Object> response = new HashMap<>();
@@ -114,7 +114,7 @@ public class EditController {
 
     @PutMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> updateProfileImage(
-        @RequestHeader("X-USER-ID") Long userId,
+        @RequestHeader("X-Member-Id") Long userId,
         @ModelAttribute EditRequestDto editRequestDto) {
 
         Map<String, Object> response = new HashMap<>();
