@@ -26,7 +26,7 @@ const Header = ({ search }: HeaderProps) => {
       </div>
       {search && <SearchBox />}
       {search && (
-        <div style={{ zIndex: 1 }}>
+        <div style={{ zIndex: 0 }}>
           {isLoggedIn ? (
             <img src="/logo.svg" onClick={() => setIsProfileModalOpen(true)} />
           ) : (
