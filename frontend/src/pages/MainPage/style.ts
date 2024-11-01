@@ -4,7 +4,7 @@ export const s_container = css`
   display: flex;
   width: 75%;
   flex-direction: column;
-  align-self: center;
+  margin: 0 auto;
   gap: 120px;
 `;
 

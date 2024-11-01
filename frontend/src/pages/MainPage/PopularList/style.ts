@@ -28,6 +28,11 @@ export const s_popular_box = (theme: Theme) => css`
   background-color: ${theme.colors.gray};
   border-radius: 20px;
   height: 120px;
+  border: 0;
+  :hover {
+    filter: brightness(0.5);
+    transition: 0.3s;
+  }
 `;
 
 export const s_div_data = css`
