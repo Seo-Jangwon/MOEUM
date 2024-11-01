@@ -7,7 +7,6 @@ export const s_div_header = css`
   align-items: center;
 `;
 
-
 export const s_div_h3 = (theme: Theme) => css`
   display: flex;
   align-items: center;

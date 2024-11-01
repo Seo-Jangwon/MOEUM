@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { RiCloseLargeFill } from 'react-icons/ri';
 import { RxCross2 } from 'react-icons/rx';
+import { useNavigate } from 'react-router-dom';
 import {
   s_button,
   s_container,
@@ -15,13 +16,18 @@ import {
 } from './SearchBox.style';
 
 const SearchBox = () => {
+  const navigate = useNavigate();
   const { searches, removeAllSearchKeyword, addSearchKeyword, removeSearchKeyword } =
     useSearchedKeywordStore();
   const [userInput, setUserInput] = useState<string>('');
   const [isInputFocused, setIsInputFocosed] = useState<boolean>(false);
   const lightMode = useThemeStore((state) => state.lightMode);
 
-  function search() {}
+  function search() {
+    const searchKeyword = userInput;
+    setUserInput('');
+    navigate(`/search?keyword=${searchKeyword}`);
+  }
   return (
     <div css={s_wrapper}>
       <div
@@ -42,6 +48,7 @@ const SearchBox = () => {
               if (userInput !== '') {
                 addSearchKeyword(userInput);
                 search();
+                e.currentTarget?.blur();
               }
             }
           }}
