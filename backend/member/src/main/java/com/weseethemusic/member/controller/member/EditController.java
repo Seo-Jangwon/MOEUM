@@ -1,7 +1,7 @@
 package com.weseethemusic.member.controller.member;
 
-import com.weseethemusic.member.dto.EditRequestDto;
-import com.weseethemusic.member.dto.EditResponseDto;
+import com.weseethemusic.member.dto.member.EditRequestDto;
+import com.weseethemusic.member.dto.member.EditResponseDto;
 import com.weseethemusic.member.service.eidt.EditService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.HashMap;

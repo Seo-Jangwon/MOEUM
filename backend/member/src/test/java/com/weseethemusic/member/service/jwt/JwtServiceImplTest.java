@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -12,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.common.util.JwtUtil;
-import com.weseethemusic.member.repository.MemberRepository;
+import com.weseethemusic.member.repository.member.MemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

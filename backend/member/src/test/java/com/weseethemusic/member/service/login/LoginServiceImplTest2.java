@@ -12,9 +12,9 @@ import static org.mockito.Mockito.when;
 
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.common.util.JwtUtil;
-import com.weseethemusic.member.dto.LoginRequestDto;
-import com.weseethemusic.member.dto.LoginResponseDto;
-import com.weseethemusic.member.repository.MemberRepository;
+import com.weseethemusic.member.dto.member.LoginRequestDto;
+import com.weseethemusic.member.dto.member.LoginResponseDto;
+import com.weseethemusic.member.repository.member.MemberRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

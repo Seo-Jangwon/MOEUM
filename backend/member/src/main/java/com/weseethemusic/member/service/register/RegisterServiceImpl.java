@@ -2,11 +2,15 @@ package com.weseethemusic.member.service.register;
 
 import static com.weseethemusic.member.common.entity.Member.Role.USER;
 
+import com.weseethemusic.member.common.entity.Calibration;
 import com.weseethemusic.member.common.entity.Member;
+import com.weseethemusic.member.common.entity.Setting;
 import com.weseethemusic.member.common.util.InputValidateUtil;
 import com.weseethemusic.member.common.util.SecurityUtil;
-import com.weseethemusic.member.dto.RegisterDto;
-import com.weseethemusic.member.repository.MemberRepository;
+import com.weseethemusic.member.dto.member.RegisterDto;
+import com.weseethemusic.member.repository.member.MemberRepository;
+import com.weseethemusic.member.repository.setting.CalibrationRepository;
+import com.weseethemusic.member.repository.setting.SettingRespository;
 import java.time.Duration;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +34,8 @@ public class RegisterServiceImpl implements RegisterService {
     private static final String EMAIL_TOKEN_PREFIX = "email:token:";
     private static final String EMAIL_VERIFIED_PREFIX = "email:verified:";
 
+    private final SettingRespository settingRespository;
+    private final CalibrationRepository calibrationRepository;
     private final JavaMailSender emailSender;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -67,6 +73,24 @@ public class RegisterServiceImpl implements RegisterService {
             member.setRole(USER);
 
             Member saveMember = memberRepository.save(member);
+
+            // Setting 생성
+            Setting setting = new Setting();
+            setting.setMember(saveMember);
+            settingRespository.save(setting);
+
+            // Calibration 생성
+            Calibration calibration = new Calibration();
+            calibration.setMember(saveMember);
+            calibration.setQ1("#000000");
+            calibration.setQ2("#000000");
+            calibration.setQ3("#000000");
+            calibration.setQ4("#000000");
+            calibration.setQ5("#000000");
+            calibration.setQ6("#000000");
+            calibration.setQ7("#000000");
+            calibration.setQ8("#000000");
+            calibrationRepository.save(calibration);
 
             // 인증 완료 상태 삭제
             redisTemplate.delete(verifiedKey);

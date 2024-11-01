@@ -1,7 +1,7 @@
 package com.weseethemusic.member.service.register;
 
 import com.weseethemusic.member.common.entity.Member;
-import com.weseethemusic.member.dto.RegisterDto;
+import com.weseethemusic.member.dto.member.RegisterDto;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 

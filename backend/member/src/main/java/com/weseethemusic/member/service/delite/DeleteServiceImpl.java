@@ -1,7 +1,11 @@
 package com.weseethemusic.member.service.delite;
 
+import com.weseethemusic.member.common.entity.Calibration;
 import com.weseethemusic.member.common.entity.Member;
-import com.weseethemusic.member.repository.MemberRepository;
+import com.weseethemusic.member.common.entity.Setting;
+import com.weseethemusic.member.repository.member.MemberRepository;
+import com.weseethemusic.member.repository.setting.CalibrationRepository;
+import com.weseethemusic.member.repository.setting.SettingRespository;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -22,6 +26,8 @@ public class DeleteServiceImpl implements DeleteService {
     private static final ZoneId KOREA_ZONE_ID = ZoneId.of("Asia/Seoul");
     private static final Duration DELETE_DELAY = Duration.ofDays(7);
     private final MemberRepository memberRepository;
+    private final SettingRespository settingRespository;
+    private final CalibrationRepository calibrationRepository;
 
 
     /**
@@ -67,6 +73,21 @@ public class DeleteServiceImpl implements DeleteService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void processDeletedMember(Member member) {
         log.info("사용자 삭제 처리 시작: 사용자 ID {}", member.getId());
+
+        // Setting 삭제
+        Setting setting = settingRespository.findByMemberId(member.getId());
+        if (setting != null) {
+            settingRespository.delete(setting);
+            log.info("사용자 {} Setting 삭제 완료", member.getId());
+        }
+
+        // Calibration 삭제
+        Calibration calibration = calibrationRepository.findByMemberId(member.getId());
+        if (calibration != null) {
+            calibrationRepository.delete(calibration);
+            log.info("사용자 {} Calibration 삭제 완료", member.getId());
+        }
+
         member.setBIsDeleted(true);
         anonymizeUserData(member);
         memberRepository.save(member);

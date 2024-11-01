@@ -1,8 +1,8 @@
 package com.weseethemusic.member.controller.member;
 
 import com.weseethemusic.member.common.constants.SecurityConstants;
-import com.weseethemusic.member.dto.LoginRequestDto;
-import com.weseethemusic.member.dto.LoginResponseDto;
+import com.weseethemusic.member.dto.member.LoginRequestDto;
+import com.weseethemusic.member.dto.member.LoginResponseDto;
 import com.weseethemusic.member.service.login.LoginService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.Duration;
