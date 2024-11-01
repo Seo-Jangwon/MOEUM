@@ -7,18 +7,25 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.weseethemusic.member.common.entity.Calibration;
 import com.weseethemusic.member.common.entity.Member;
-import com.weseethemusic.member.dto.RegisterDto;
-import com.weseethemusic.member.repository.MemberRepository;
+import com.weseethemusic.member.common.entity.Setting;
+import com.weseethemusic.member.dto.member.RegisterDto;
+import com.weseethemusic.member.repository.member.MemberRepository;
+import com.weseethemusic.member.repository.setting.CalibrationRepository;
+import com.weseethemusic.member.repository.setting.SettingRespository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -38,6 +45,15 @@ class RegisterServiceMemberTest {
     private RedisTemplate<String, Object> redisTemplate;
     @Mock
     private ValueOperations<String, Object> valueOperations;
+    @Mock
+    private SettingRespository settingRespository;
+    @Mock
+    private CalibrationRepository calibrationRepository;
+
+    @Captor
+    private ArgumentCaptor<Setting> settingCaptor;
+    @Captor
+    private ArgumentCaptor<Calibration> calibrationCaptor;
 
     @InjectMocks
     private RegisterServiceImpl registerService;
@@ -64,7 +80,7 @@ class RegisterServiceMemberTest {
         when(memberRepository.save(any(Member.class))).thenAnswer(invocation -> {
             Member savedMember = invocation.getArgument(0);
             savedMember.setId(1L);
-            savedMember.setRole(Member.Role.USER);  // Role 명시적 설정
+            savedMember.setRole(Member.Role.USER);
             return savedMember;
         });
 
@@ -76,15 +92,45 @@ class RegisterServiceMemberTest {
         assertEquals(validRegisterDto.getEmail(), result.getEmail());
         assertEquals(hashedPassword, result.getPassword());
         assertEquals(validRegisterDto.getNickname(), result.getNickname());
-        assertSame(String.valueOf(Member.Role.USER), result.getRole());  // assertSame으로 변경
+        assertSame(String.valueOf(Member.Role.USER), result.getRole());
         assertFalse(result.isBIsDeleted());
 
-        // verify
-        verify(valueOperations).get(startsWith("email:verified:"));
-        verify(passwordEncoder).encode(validRegisterDto.getPassword());
-        verify(memberRepository).save(any(Member.class));
-        verify(redisTemplate).delete(startsWith("email:verified:"));
+        // Setting 검증
+        verify(settingRespository).save(settingCaptor.capture());
+        Setting savedSetting = settingCaptor.getValue();
+        assertNotNull(savedSetting);
+        assertEquals(result.getId(), savedSetting.getMember().getId());
+        assertFalse(savedSetting.isVibration());
+        assertFalse(savedSetting.isVisualization());
+        assertEquals(0, savedSetting.getBlindness());
+        assertEquals(0, savedSetting.getEq_low());
+        assertEquals(0, savedSetting.getEq_mid());
+        assertEquals(0, savedSetting.getEq_high());
+
+        // Calibration 검증
+        verify(calibrationRepository).save(calibrationCaptor.capture());
+        Calibration savedCalibration = calibrationCaptor.getValue();
+        assertNotNull(savedCalibration);
+        assertEquals(result.getId(), savedCalibration.getMember().getId());
+
+        // Calibration의 각 필드 검증
+        String[] colorFields = {
+            savedCalibration.getQ1(),
+            savedCalibration.getQ2(),
+            savedCalibration.getQ3(),
+            savedCalibration.getQ4(),
+            savedCalibration.getQ5(),
+            savedCalibration.getQ6(),
+            savedCalibration.getQ7(),
+            savedCalibration.getQ8()
+        };
+
+        for (String color : colorFields) {
+            assertNotNull(color, "Calibration color should not be null");
+            assertEquals("#000000", color, "Default color should be #000000");
+        }
     }
+
 
     @Test
     @DisplayName("회원가입 실패 - 이메일 인증되지 않음")

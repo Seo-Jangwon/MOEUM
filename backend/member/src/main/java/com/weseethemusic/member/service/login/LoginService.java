@@ -1,8 +1,8 @@
 package com.weseethemusic.member.service.login;
 
 import com.weseethemusic.member.common.entity.Member;
-import com.weseethemusic.member.dto.LoginRequestDto;
-import com.weseethemusic.member.dto.LoginResponseDto;
+import com.weseethemusic.member.dto.member.LoginRequestDto;
+import com.weseethemusic.member.dto.member.LoginResponseDto;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 

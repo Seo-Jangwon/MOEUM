@@ -2,9 +2,9 @@ package com.weseethemusic.member.service.login;
 
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.common.util.JwtUtil;
-import com.weseethemusic.member.dto.LoginRequestDto;
-import com.weseethemusic.member.dto.LoginResponseDto;
-import com.weseethemusic.member.repository.MemberRepository;
+import com.weseethemusic.member.dto.member.LoginRequestDto;
+import com.weseethemusic.member.dto.member.LoginResponseDto;
+import com.weseethemusic.member.repository.member.MemberRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

@@ -1,7 +1,7 @@
 package com.weseethemusic.member.controller.member;
 
 import com.weseethemusic.member.common.entity.Member;
-import com.weseethemusic.member.dto.RegisterDto;
+import com.weseethemusic.member.dto.member.RegisterDto;
 import com.weseethemusic.member.service.register.RegisterService;
 import java.util.HashMap;
 import java.util.Map;

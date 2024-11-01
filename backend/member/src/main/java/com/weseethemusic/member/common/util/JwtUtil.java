@@ -1,6 +1,5 @@
 package com.weseethemusic.member.common.util;
 
-import com.weseethemusic.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

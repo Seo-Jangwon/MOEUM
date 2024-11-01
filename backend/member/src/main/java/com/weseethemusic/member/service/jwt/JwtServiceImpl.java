@@ -2,7 +2,7 @@ package com.weseethemusic.member.service.jwt;
 
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.common.util.JwtUtil;
-import com.weseethemusic.member.repository.MemberRepository;
+import com.weseethemusic.member.repository.member.MemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

@@ -7,8 +7,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.weseethemusic.member.common.entity.Calibration;
 import com.weseethemusic.member.common.entity.Member;
-import com.weseethemusic.member.repository.MemberRepository;
+import com.weseethemusic.member.common.entity.Setting;
+import com.weseethemusic.member.repository.member.MemberRepository;
+import com.weseethemusic.member.repository.setting.CalibrationRepository;
+import com.weseethemusic.member.repository.setting.SettingRespository;
 import com.weseethemusic.member.service.delite.DeleteServiceImpl;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -27,6 +31,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class DeleteServiceImplTest {
 
     @Mock
+    private SettingRespository settingRespository;    // 추가
+    @Mock
+    private CalibrationRepository calibrationRepository;    // 추가
+
+    @Mock
     private MemberRepository memberRepository;
 
     private DeleteServiceImpl deleteService;
@@ -38,7 +47,11 @@ class DeleteServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        deleteService = new DeleteServiceImpl(memberRepository);
+        deleteService = new DeleteServiceImpl(
+            memberRepository,
+            settingRespository,
+            calibrationRepository
+        );
     }
 
     @Test
@@ -67,6 +80,69 @@ class DeleteServiceImplTest {
         ) / 60;
 
         assertThat(diffInMinutes).isLessThan(1);
+    }
+
+    @Test
+    void processDeletedMember_ShouldDeleteSettingsAndCalibration() {
+        // Given
+        Member member = createMember(1L, "test@test.com");
+        Setting setting = new Setting();
+        setting.setMember(member);
+        Calibration calibration = new Calibration();
+        calibration.setMember(member);
+
+        when(settingRespository.findByMemberId(member.getId())).thenReturn(setting);
+        when(calibrationRepository.findByMemberId(member.getId())).thenReturn(calibration);
+
+        // When
+        deleteService.processDeletedMember(member);
+
+        // Then
+        verify(settingRespository).delete(setting);
+        verify(calibrationRepository).delete(calibration);
+
+        verify(memberRepository, times(2)).save(memberCaptor.capture());
+        Member savedMember = memberCaptor.getValue();
+
+        assertThat(savedMember.isBIsDeleted()).isTrue();
+        assertThat(savedMember.getEmail()).isEqualTo("deleted_1@yoganavi.com");
+        assertThat(savedMember.getNickname()).isEqualTo("삭제된 사용자1");
+        assertThat(savedMember.getProfileImage()).isNull();
+        assertThat(savedMember.getProvider()).isNull();
+    }
+
+    @Test
+    void processDeletedUsers_ShouldDeleteAllRelatedData() {
+        // Given
+        Member member1 = createMember(1L, "test1@test.com");
+        Member member2 = createMember(2L, "test2@test.com");
+
+        Setting setting1 = new Setting();
+        setting1.setMember(member1);
+        Setting setting2 = new Setting();
+        setting2.setMember(member2);
+
+        Calibration calibration1 = new Calibration();
+        calibration1.setMember(member1);
+        Calibration calibration2 = new Calibration();
+        calibration2.setMember(member2);
+
+        when(memberRepository.findMembersToDelete(any()))
+            .thenReturn(Arrays.asList(member1, member2));
+        when(settingRespository.findByMemberId(member1.getId())).thenReturn(setting1);
+        when(settingRespository.findByMemberId(member2.getId())).thenReturn(setting2);
+        when(calibrationRepository.findByMemberId(member1.getId())).thenReturn(calibration1);
+        when(calibrationRepository.findByMemberId(member2.getId())).thenReturn(calibration2);
+
+        // When
+        deleteService.processDeletedUsers();
+
+        // Then
+        verify(settingRespository).delete(setting1);
+        verify(settingRespository).delete(setting2);
+        verify(calibrationRepository).delete(calibration1);
+        verify(calibrationRepository).delete(calibration2);
+        verify(memberRepository, times(4)).save(any(Member.class));
     }
 
     @Test

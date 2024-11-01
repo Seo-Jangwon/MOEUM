@@ -1,7 +1,6 @@
 package com.weseethemusic.member.service.eidt;
 
-import com.weseethemusic.member.common.entity.Member;
-import com.weseethemusic.member.dto.EditResponseDto;
+import com.weseethemusic.member.dto.member.EditResponseDto;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
