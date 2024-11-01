@@ -83,21 +83,6 @@ const testData = {
           },
         ],
       },
-      {
-        id: 1,
-        title: 'APT.',
-        albumImage: '/apt.png',
-        artists: [
-          {
-            id: 123,
-            name: 'Bruno Mars',
-          },
-          {
-            id: 124,
-            name: '로제 (ROSÉ)',
-          },
-        ],
-      },
     ],
     albums: [
       {
