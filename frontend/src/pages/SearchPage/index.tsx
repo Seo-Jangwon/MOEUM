@@ -1,8 +1,16 @@
 import apiClient from '@/api/apiClient';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import testImage1 from '../../assets/lalaticon/lala1.png';
+import testImage2 from '../../assets/lalaticon/lala2.png';
+import testImage3 from '../../assets/lalaticon/lala3.png';
+import testImage4 from '../../assets/lalaticon/lala4.png';
+import testImage5 from '../../assets/lalaticon/lala5.png';
+import testImage6 from '../../assets/lalaticon/lala6.png';
+import testImage7 from '../../assets/lalaticon/lala7.png';
+import testImage8 from '../../assets/lalaticon/lala8.png';
+import testImage9 from '../../assets/lalaticon/lala9.png';
 import CardList from './CardList/CardList';
-import testImage from './i15949156695.png';
 import MusicList from './MusicList/MusicList';
 import { s_container } from './style';
 
@@ -13,7 +21,7 @@ const testData = {
       {
         id: 1,
         title: 'APT.',
-        albumImage: testImage,
+        albumImage: testImage1,
         artists: [
           {
             id: 123,
@@ -28,7 +36,7 @@ const testData = {
       {
         id: 1,
         title: 'APT.',
-        albumImage: testImage,
+        albumImage: testImage2,
         artists: [
           {
             id: 123,
@@ -43,7 +51,7 @@ const testData = {
       {
         id: 1,
         title: 'APT.',
-        albumImage: testImage,
+        albumImage: testImage3,
         artists: [
           {
             id: 123,
@@ -58,7 +66,7 @@ const testData = {
       {
         id: 1,
         title: 'APT.',
-        albumImage: testImage,
+        albumImage: testImage4,
         artists: [
           {
             id: 123,
@@ -73,7 +81,7 @@ const testData = {
       {
         id: 1,
         title: 'APT.',
-        albumImage: testImage,
+        albumImage: testImage5,
         artists: [
           {
             id: 123,
@@ -90,151 +98,151 @@ const testData = {
       {
         id: 123,
         name: '24K Magic',
-        image: testImage,
+        image: testImage6,
       },
       {
         id: 123,
         name: '24K Magic',
-        image: testImage,
+        image: testImage7,
       },
       {
         id: 123,
         name: '24K Magic',
-        image: testImage,
+        image: testImage8,
       },
       {
         id: 123,
         name: '24K Magic',
-        image: testImage,
+        image: testImage9,
       },
       {
         id: 123,
         name: '24K Magic',
-        image: testImage,
+        image: testImage1,
       },
       {
         id: 123,
         name: '24K Magic',
-        image: testImage,
+        image: testImage2,
       },
       {
         id: 123,
         name: '24K Magic',
-        image: testImage,
+        image: testImage3,
       },
       {
         id: 123,
         name: '24K Magic',
-        image: testImage,
+        image: testImage4,
       },
       {
         id: 123,
         name: '24K Magic',
-        image: testImage,
+        image: testImage5,
       },
     ],
     artists: [
       {
         id: 123,
         name: 'Bruno Mars',
-        image: testImage,
+        image: testImage6,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: testImage,
+        image: testImage7,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: testImage,
+        image: testImage8,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: testImage,
+        image: testImage9,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: testImage,
+        image: testImage1,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: testImage,
+        image: testImage2,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: testImage,
+        image: testImage3,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: testImage,
+        image: testImage4,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: testImage,
+        image: testImage5,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: testImage,
+        image: testImage6,
       },
     ],
     playlists: [
       {
         id: 1,
         name: '플레이리스트 1',
-        image: testImage,
+        image: testImage7,
       },
       {
         id: 1,
         name: '플레이리스트 1',
-        image: testImage,
+        image: testImage8,
       },
       {
         id: 1,
         name: '플레이리스트 1',
-        image: testImage,
+        image: testImage9,
       },
       {
         id: 1,
         name: '플레이리스트 1',
-        image: testImage,
+        image: testImage1,
       },
       {
         id: 1,
         name: '플레이리스트 1',
-        image: testImage,
+        image: testImage2,
       },
       {
         id: 1,
         name: '플레이리스트 1',
-        image: testImage,
+        image: testImage3,
       },
       {
         id: 1,
         name: '플레이리스트 1',
-        image: testImage,
+        image: testImage4,
       },
       {
         id: 1,
         name: '플레이리스트 1',
-        image: testImage,
+        image: testImage5,
       },
       {
         id: 1,
         name: '플레이리스트 1',
-        image: testImage,
+        image: testImage6,
       },
       {
         id: 1,
         name: '플레이리스트 1',
-        image: testImage,
+        image: testImage7,
       },
     ],
   },
@@ -250,24 +258,6 @@ export interface MusicI {
 export interface dataI {
   id: number;
   name: string;
-  image: string;
-}
-
-export interface AlbumI {
-  id: number;
-  title: string;
-  image: string;
-}
-
-export interface ArtistI {
-  id: number;
-  name: string;
-  image: string;
-}
-
-export interface PlayListI {
-  id: number;
-  title: string;
   image: string;
 }
 
