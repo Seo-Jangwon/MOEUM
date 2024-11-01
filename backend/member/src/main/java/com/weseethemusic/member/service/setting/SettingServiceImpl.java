@@ -23,16 +23,16 @@ public class SettingServiceImpl implements SettingService {
     // 환경 설정 편집
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void updateSetting(Long userId, SettingRequestDto settingRequestDto) {
+    public void updateSetting(Long memberId, SettingRequestDto settingRequestDto) {
 
-        Setting setting = settingRespository.findByMemberId(userId);
+        Setting setting = settingRespository.findByMemberId(memberId);
         if (setting != null) {
             setting.setVibration(settingRequestDto.isVibration());
             setting.setVisualization(settingRequestDto.isVisualization());
             setting.setBlindness(settingRequestDto.getBlindness());
-            setting.setEq_low(settingRequestDto.getEq()[0]);
-            setting.setEq_mid(settingRequestDto.getEq()[1]);
-            setting.setEq_high(settingRequestDto.getEq()[2]);
+            setting.setEqLow(settingRequestDto.getEq()[0]);
+            setting.setEqMid(settingRequestDto.getEq()[1]);
+            setting.setEqHigh(settingRequestDto.getEq()[2]);
             settingRespository.save(setting);
         }
     }
@@ -40,24 +40,24 @@ public class SettingServiceImpl implements SettingService {
     // 환경 설정 조회
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
-    public SettingResponseDto getSetting(Long userId) {
+    public SettingResponseDto getSetting(Long memberId) {
 
-        Setting setting = settingRespository.findByMemberId(userId);
+        Setting setting = settingRespository.findByMemberId(memberId);
 
         return new SettingResponseDto(
             setting.isVibration(),
             setting.isVisualization(),
             setting.getBlindness(),
-            new int[]{setting.getEq_low(), setting.getEq_mid(), setting.getEq_high()}
+            new int[]{setting.getEqLow(), setting.getEqMid(), setting.getEqHigh()}
         );
     }
 
     // 색상 환경 설정 변경
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void updatePalate(Long userId, PalateRequestDto palateRequestDto) {
+    public void updatePalate(Long memberId, PalateRequestDto palateRequestDto) {
 
-        Calibration calibration = calibrationRepository.findByMemberId(userId);
+        Calibration calibration = calibrationRepository.findByMemberId(memberId);
         if (calibration != null) {
             calibration.setQ1(palateRequestDto.getQ()[0]);
             calibration.setQ2(palateRequestDto.getQ()[1]);
@@ -74,9 +74,9 @@ public class SettingServiceImpl implements SettingService {
     // 색상 환경 설정 조회
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
-    public PalateResponseDto getPalate(Long userId) {
+    public PalateResponseDto getPalate(Long memberId) {
 
-        Calibration calibration = calibrationRepository.findByMemberId(userId);
+        Calibration calibration = calibrationRepository.findByMemberId(memberId);
 
         return new PalateResponseDto(
             new String[]{

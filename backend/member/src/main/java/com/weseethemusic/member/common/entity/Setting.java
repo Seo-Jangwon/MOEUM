@@ -23,31 +23,31 @@ public class Setting {
     private Long id;
 
     @OneToOne
-    @MapsId
+    @MapsId(value = "id")
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean vibration = false;
+    private boolean vibration;
 
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean visualization = false;
+    private boolean visualization;
 
     @Column(nullable = false, columnDefinition = "TINYINT(4) default 0")
-    private int blindness = 0;
+    private int blindness;
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private int eq_low = 0;
+    private int eqLow;
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private int eq_mid = 0;
+    private int eqMid;
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private int eq_high = 0;
+    private int eqHigh;
 
 }

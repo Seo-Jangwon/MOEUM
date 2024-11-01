@@ -24,16 +24,16 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String userId = request.getHeader("X-Member-Id");
+        String memberId = request.getHeader("X-Member-Id");
         String role = request.getHeader("X-ROLE");
 
-        if (userId != null && role != null) {
+        if (memberId != null && role != null) {
             List<GrantedAuthority> authorities = Collections.singletonList(
                 new SimpleGrantedAuthority("ROLE_" + role)
             );
 
             Authentication auth = new UsernamePasswordAuthenticationToken(
-                userId,
+                memberId,
                 null,
                 authorities
             );

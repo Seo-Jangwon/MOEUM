@@ -1,6 +1,6 @@
 package com.weseethemusic.member.controller.member;
 
-import com.weseethemusic.member.service.delite.DeleteService;
+import com.weseethemusic.member.service.delete.DeleteService;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -22,11 +22,11 @@ public class DeleteController {
 
     @PutMapping
     public ResponseEntity<Map<String, Object>> deleteMember(
-        @RequestHeader("X-Member-Id") Long userId) {
+        @RequestHeader("X-Member-Id") Long memberId) {
 
-        log.info("회원 탈퇴 요청: userId: {}", userId);
+        log.info("회원 탈퇴 요청: memberId: {}", memberId);
         try {
-            deleteService.requestDeleteUser(userId);
+            deleteService.requestDeleteUser(memberId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);

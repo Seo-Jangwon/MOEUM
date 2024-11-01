@@ -1,4 +1,4 @@
-package com.weseethemusic.member.service.delite;
+package com.weseethemusic.member.service.delete;
 
 import com.weseethemusic.member.common.entity.Calibration;
 import com.weseethemusic.member.common.entity.Member;
@@ -11,7 +11,7 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DeleteServiceImpl implements DeleteService {
 
     private static final ZoneId KOREA_ZONE_ID = ZoneId.of("Asia/Seoul");
@@ -33,13 +33,13 @@ public class DeleteServiceImpl implements DeleteService {
     /**
      * 회원 삭제 요청
      *
-     * @param userId 사용자 id
+     * @param memberId 사용자 id
      */
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void requestDeleteUser(Long userId) {
-        log.info("사용자 삭제 요청: 사용자 ID {}", userId);
-        Member member = memberRepository.findById(userId)
+    public void requestDeleteUser(Long memberId) {
+        log.info("사용자 삭제 요청: 사용자 ID {}", memberId);
+        Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new RuntimeException("사용자 없음"));
 
         ZonedDateTime nowKorea = ZonedDateTime.now(KOREA_ZONE_ID);
@@ -47,7 +47,7 @@ public class DeleteServiceImpl implements DeleteService {
 
         member.setDeletedAt(Date.from(deletionTimeKorea.toInstant()));
         memberRepository.save(member);
-        log.info("사용자 {} 삭제 예정: {}", userId, deletionTimeKorea);
+        log.info("사용자 {} 삭제 예정: {}", memberId, deletionTimeKorea);
     }
 
     @Override

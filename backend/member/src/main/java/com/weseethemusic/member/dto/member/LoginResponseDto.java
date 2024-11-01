@@ -1,11 +1,12 @@
 package com.weseethemusic.member.dto.member;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
 @Builder
+@Data
 public class LoginResponseDto {
+
     private String accessToken;
     private String refreshToken;
     private String message;

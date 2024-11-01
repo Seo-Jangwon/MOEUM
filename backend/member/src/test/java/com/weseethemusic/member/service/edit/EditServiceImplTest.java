@@ -12,7 +12,6 @@ import com.weseethemusic.member.common.service.PresignedUrlService;
 import com.weseethemusic.member.common.service.S3Service;
 import com.weseethemusic.member.dto.member.EditResponseDto;
 import com.weseethemusic.member.repository.member.MemberRepository;
-import com.weseethemusic.member.service.eidt.EditServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +61,7 @@ class EditServiceImplTest {
         testMember.setNickname(NICKNAME);
         testMember.setPassword("Password123!");
         testMember.setProfileImage(PROFILE_IMAGE);
-        
+
         when(s3Service.extractKeyFromUrl(anyString())).thenReturn(EXTRACTED_KEY);
         when(presignedUrlService.getPresignedUrl(anyString())).thenReturn("presigned-url");
     }
