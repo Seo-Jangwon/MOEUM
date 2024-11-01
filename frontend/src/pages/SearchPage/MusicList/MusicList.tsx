@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { MusicI } from '..';
-import testImage from '../i15949156695.png';
 import {
   s_container,
   s_elementsContainer,
   s_firstElement,
   s_firstElementImage,
+  s_firstElementText,
   s_otherElement,
   s_otherElementContainer,
   s_otherElementImage,
@@ -20,14 +20,21 @@ const MusicList = ({ musicList }: { musicList: MusicI[] }) => {
     <div css={s_container}>
       <div css={s_titleContainer}>
         <div>노래</div>
-        <div>더 보기</div>
+        {/* 노래 상세 검색 페이지로 이동 로직 필요 */}
+        <div style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+          더 보기
+        </div>
       </div>
       <div css={s_elementsContainer}>
         {musicList.length > 0 ? (
           <>
-            <div css={s_firstElement}>
-              <img src={testImage} alt="이미지" css={s_firstElementImage} />
-              <div>
+            <div
+              css={s_firstElement}
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate(`/music/${musicList[0].id}`)}
+            >
+              <img src={musicList[0].albumImage} alt="이미지" css={s_firstElementImage} />
+              <div css={s_firstElementText}>
                 <div>{musicList[0].title}</div>
                 <div>
                   {' '}
@@ -36,7 +43,10 @@ const MusicList = ({ musicList }: { musicList: MusicI[] }) => {
                       <span
                         style={{ cursor: 'pointer' }}
                         key={index}
-                        onClick={() => navigate(`/artist/${artist.id}`)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/artist/${artist.id}`);
+                        }}
                       >
                         {artist.name} &nbsp;
                       </span>
@@ -48,18 +58,25 @@ const MusicList = ({ musicList }: { musicList: MusicI[] }) => {
             <div css={s_otherElementContainer}>
               {musicList.slice(1).map((item, index) => {
                 return (
-                  <div css={s_otherElement} key={index}>
-                    <span css={s_otherElementLeftChild}>
-                      <img css={s_otherElementImage} src={testImage} alt="" />
+                  <div
+                    css={s_otherElement}
+                    onClick={() => navigate(`/music/${item.id}`)}
+                    key={index}
+                  >
+                    <div css={s_otherElementLeftChild}>
+                      <img css={s_otherElementImage} src={item.albumImage} alt="" />
                       {item.title}
-                    </span>
+                    </div>
                     <div css={s_otherElementRightChild}>
                       {item.artists.map((artist, index) => {
                         return (
                           <span
                             style={{ cursor: 'pointer' }}
                             key={index}
-                            onClick={() => navigate(`/artist/${artist.id}`)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/artist/${artist.id}`);
+                            }}
                           >
                             {artist.name} &nbsp;
                           </span>

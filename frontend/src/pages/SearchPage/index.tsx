@@ -1,6 +1,8 @@
 import apiClient from '@/api/apiClient';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import CardList from './CardList/CardList';
+import testImage from './i15949156695.png';
 import MusicList from './MusicList/MusicList';
 import { s_container } from './style';
 
@@ -11,7 +13,7 @@ const testData = {
       {
         id: 1,
         title: 'APT.',
-        albumImage: '/apt.png',
+        albumImage: testImage,
         artists: [
           {
             id: 123,
@@ -26,7 +28,7 @@ const testData = {
       {
         id: 1,
         title: 'APT.',
-        albumImage: '/apt.png',
+        albumImage: testImage,
         artists: [
           {
             id: 123,
@@ -41,7 +43,7 @@ const testData = {
       {
         id: 1,
         title: 'APT.',
-        albumImage: '/apt.png',
+        albumImage: testImage,
         artists: [
           {
             id: 123,
@@ -56,7 +58,7 @@ const testData = {
       {
         id: 1,
         title: 'APT.',
-        albumImage: '/apt.png',
+        albumImage: testImage,
         artists: [
           {
             id: 123,
@@ -71,7 +73,7 @@ const testData = {
       {
         id: 1,
         title: 'APT.',
-        albumImage: '/apt.png',
+        albumImage: testImage,
         artists: [
           {
             id: 123,
@@ -87,152 +89,152 @@ const testData = {
     albums: [
       {
         id: 123,
-        title: '24K Magic',
-        image: '/24k.png',
+        name: '24K Magic',
+        image: testImage,
       },
       {
         id: 123,
-        title: '24K Magic',
-        image: '/24k.png',
+        name: '24K Magic',
+        image: testImage,
       },
       {
         id: 123,
-        title: '24K Magic',
-        image: '/24k.png',
+        name: '24K Magic',
+        image: testImage,
       },
       {
         id: 123,
-        title: '24K Magic',
-        image: '/24k.png',
+        name: '24K Magic',
+        image: testImage,
       },
       {
         id: 123,
-        title: '24K Magic',
-        image: '/24k.png',
+        name: '24K Magic',
+        image: testImage,
       },
       {
         id: 123,
-        title: '24K Magic',
-        image: '/24k.png',
+        name: '24K Magic',
+        image: testImage,
       },
       {
         id: 123,
-        title: '24K Magic',
-        image: '/24k.png',
+        name: '24K Magic',
+        image: testImage,
       },
       {
         id: 123,
-        title: '24K Magic',
-        image: '/24k.png',
+        name: '24K Magic',
+        image: testImage,
       },
       {
         id: 123,
-        title: '24K Magic',
-        image: '/24k.png',
+        name: '24K Magic',
+        image: testImage,
       },
     ],
     artists: [
       {
         id: 123,
         name: 'Bruno Mars',
-        image: '/bruno.png',
+        image: testImage,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: '/bruno.png',
+        image: testImage,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: '/bruno.png',
+        image: testImage,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: '/bruno.png',
+        image: testImage,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: '/bruno.png',
+        image: testImage,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: '/bruno.png',
+        image: testImage,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: '/bruno.png',
+        image: testImage,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: '/bruno.png',
+        image: testImage,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: '/bruno.png',
+        image: testImage,
       },
       {
         id: 123,
         name: 'Bruno Mars',
-        image: '/bruno.png',
+        image: testImage,
       },
     ],
     playlists: [
       {
         id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
+        name: '플레이리스트 1',
+        image: testImage,
       },
       {
         id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
+        name: '플레이리스트 1',
+        image: testImage,
       },
       {
         id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
+        name: '플레이리스트 1',
+        image: testImage,
       },
       {
         id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
+        name: '플레이리스트 1',
+        image: testImage,
       },
       {
         id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
+        name: '플레이리스트 1',
+        image: testImage,
       },
       {
         id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
+        name: '플레이리스트 1',
+        image: testImage,
       },
       {
         id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
+        name: '플레이리스트 1',
+        image: testImage,
       },
       {
         id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
+        name: '플레이리스트 1',
+        image: testImage,
       },
       {
         id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
+        name: '플레이리스트 1',
+        image: testImage,
       },
       {
         id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
+        name: '플레이리스트 1',
+        image: testImage,
       },
     ],
   },
@@ -243,6 +245,12 @@ export interface MusicI {
   title: string;
   albumImage: string;
   artists: { id: number; name: string }[];
+}
+
+export interface dataI {
+  id: number;
+  name: string;
+  image: string;
 }
 
 export interface AlbumI {
@@ -268,9 +276,9 @@ const SearchPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const musicDatas = useRef<MusicI[]>([]);
-  const albumDatas = useRef<AlbumI[]>([]);
-  const artistDatas = useRef<ArtistI[]>([]);
-  const playListDatas = useRef<PlayListI[]>([]);
+  const albumDatas = useRef<dataI[]>([]);
+  const artistDatas = useRef<dataI[]>([]);
+  const playListDatas = useRef<dataI[]>([]);
   useEffect(() => {
     const keyword = searchParams.get('keyword');
     if (keyword === null || keyword === '') {
@@ -308,16 +316,23 @@ const SearchPage = () => {
     }
   }, []);
   return (
-    <div>
+    <>
       {isLoading ? (
         <div>로딩중</div>
       ) : (
         <div css={s_container}>
           <MusicList musicList={musicDatas.current} />
-          <MusicList musicList={musicDatas.current} />
+          <CardList
+            dataList={artistDatas.current}
+            category="아티스트"
+            clickUrl="artist"
+            isBorder={true}
+          />
+          <CardList dataList={artistDatas.current} category="앨범" clickUrl="album" />
+          <CardList dataList={artistDatas.current} category="플레이리스트" clickUrl="playlist" />
         </div>
       )}
-    </div>
+    </>
   );
 };
 
