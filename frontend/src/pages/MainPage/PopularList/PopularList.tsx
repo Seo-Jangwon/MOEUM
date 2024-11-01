@@ -52,7 +52,7 @@ const PopularList = () => {
         css={s_popular_container}
       >
         {mokData.music.map((item, index) => (
-          <button key={index} css={s_popular_box}>
+          <div key={index} css={s_popular_box}>
             <div
               css={css`
                 border-radius: 100%;
@@ -76,7 +76,7 @@ const PopularList = () => {
               <h5 css={s_h5_title}>{item.title}</h5>
               <p css={s_p_artist}>{item.artist}</p>
             </div>
-          </button>
+          </div>
         ))}
       </div>
     </>
