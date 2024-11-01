@@ -1,10 +1,10 @@
 import AppLayout from '@/layouts/AppLayout';
 import MusicPlayPage from '@/pages/MusicPlayPage';
-import ProfilePage from '@/pages/ProfilePage';
-import SearchPage from '@/pages/SearchPage';
-import SettingPage from '@/pages/SettingPage';
 import { lazy } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+const DetailPage = lazy(() => import('@/pages/DetailPage'));
+const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
+const SettingPage = lazy(() => import('@/pages/SettingPage'));
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const SignInPage = lazy(() => import('@/pages/SignInPage'));
 const SignUpPage = lazy(() => import('@/pages/SignUpPage'));
@@ -12,6 +12,7 @@ const FAQPage = lazy(() => import('@/pages/FAQPage'));
 const WelcomePage = lazy(() => import('@/pages/WelcomePage'));
 const CalibrationPage = lazy(() => import('@/pages/CalibrationPage'));
 const MainPage = lazy(() => import('@/pages/MainPage'));
+const SearchPage = lazy(() => import('@/pages/SearchPage'));
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,14 @@ const router = createBrowserRouter([
       {
         path: 'music/:id',
         element: <MusicPlayPage />,
+      },
+      {
+        path: 'album/:id',
+        element: <DetailPage variant="album" />,
+      },
+      {
+        path: 'artist/:id',
+        element: <DetailPage variant="artist" />,
       },
       {
         path: 'settings',

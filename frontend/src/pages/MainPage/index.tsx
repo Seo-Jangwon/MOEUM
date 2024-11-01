@@ -1,19 +1,28 @@
-import FirstMainPage from './FirstMainPage/FirstMainPage';
-import SecondMainPage from './SecondMainPage/SecondMainPage';
-import ThirdMainPage from './ThirdMainPage/ThirdMainPage';
-import { s_scroll, s_scroll_container } from './style';
+import GenreList from './GenreList/GenreList';
+import NewList from './NewList/NewList';
+import PopularList from './PopularList/PopularList';
+import PopularPlayList from './PopularPlayList/PopularPlayList';
+import { s_box, s_container } from './style';
 
 const MainPage = () => {
   return (
-    <div css={s_scroll_container}>
-      <div css={s_scroll}>
-        <FirstMainPage />
+    // 전체 레이아웃
+    <div css={s_container}>
+      {/* 신곡 리스트 */}
+      <div css={s_box}>
+        <NewList />
       </div>
-      <div css={s_scroll}>
-        <SecondMainPage />
+      {/* 인기 리스트 */}
+      <div css={s_box}>
+        <PopularList />
       </div>
-      <div css={s_scroll}>
-        <ThirdMainPage />
+      {/* 플레이 리스트 */}
+      <div css={s_box}>
+        <PopularPlayList />
+      </div>
+      {/* 장르 리스트 */}
+      <div css={s_box}>
+        <GenreList />
       </div>
     </div>
   );
