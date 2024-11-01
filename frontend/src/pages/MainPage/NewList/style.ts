@@ -11,11 +11,11 @@ export const s_div_h3 = (theme: Theme) => css`
   display: flex;
   align-items: center;
   gap: 18px;
-  font-size: 48px;
+  font-size: 36px;
   color: ${theme.colors.white};
   font-weight: 800;
   @media (max-width: 1024px) {
-    font-size: 36px;
+    font-size: 30px;
   }
   @media (max-width: 767px) {
     font-size: 24px;
@@ -57,7 +57,6 @@ export const s_div_list = css`
   display: flex;
   overflow-x: auto;
   gap: 40px;
-  margin-top: 20px;
   scroll-behavior: smooth;
   padding-bottom: 10px;
 `;
@@ -87,16 +86,16 @@ export const s_img = css`
 export const s_p = (theme: Theme) => css`
   color: ${theme.colors.white};
   font-weight: 600;
-  font-size: 24px;
+  font-size: 18px;
   padding-bottom: 5px;
 `;
 
-export const s_icon = (theme: Theme) => css`
+export const s_icon = css`
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: ${theme.colors.white};
+  color: #f7f7f7;
   font-size: 48px;
   opacity: 0;
   transition: 0.2s;
@@ -105,14 +104,13 @@ export const s_icon = (theme: Theme) => css`
   }
 `;
 
-export const s_lottie = (theme: Theme) => css`
+export const s_lottie = css`
   position: absolute;
   top: 50%;
   left: 50%;
   width: 50%;
   height: 50%;
   transform: translate(-50%, -50%);
-  color: #341232;
 `;
 
 
