@@ -115,22 +115,12 @@ const NewList = () => {
       <div css={s_div_list} ref={listRef}>
         {mokData.music.map((item, index) => (
           <div key={index} css={s_div_img}>
-            <button
-              css={s_play_button}
-              onClick={() => handlePlayClick(index)}
-            >
+            <button css={s_play_button} onClick={() => handlePlayClick(index)}>
               <img src={lala} alt="라라" css={s_img} />
               {playingIndex === index ? (
-                <Lottie
-                  animationData={playMusic}
-                  loop={true}
-                  css={s_lottie}
-                />
+                <Lottie animationData={playMusic} loop={true} css={s_lottie} />
               ) : (
-                <FaPlay
-                  css={s_icon}
-                  className="icon"
-                />
+                <FaPlay css={s_icon} className="icon" />
               )}
             </button>
             <div>

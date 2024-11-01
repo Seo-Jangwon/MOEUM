@@ -1,6 +1,8 @@
 import { css } from '@emotion/react';
 import { FiCrosshair } from 'react-icons/fi';
+import lala from '../image/lala.jpg';
 import { s_div_header } from '../NewList/style';
+import { s_div_h3, s_div_item_box, s_div_item_container, s_h5 } from './style';
 
 interface PlayList {
   title: string;
@@ -28,13 +30,7 @@ const PopularPlayList = () => {
     <>
       <div css={s_div_header}>
         <div
-          css={css`
-            display: flex;
-            gap: 18px;
-            font-size: 48px;
-            color: #30f751;
-            font-weight: 800;
-          `}
+          css={s_div_h3}
         >
           <FiCrosshair />
           <h3>인기 플레이리스트</h3>
@@ -42,27 +38,16 @@ const PopularPlayList = () => {
         <button>모두보기</button>
       </div>
       <div
-        css={css`
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 20px;
-        `}
+        css={s_div_item_container}
       >
         {mokData.data.map((item, index) => (
-          <div
+          <button
             key={index}
-            css={css`
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              height: 100px;
-              background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)),
-                url('../image/lala.jpg');
-              border-radius: 20px;
-            `}
+            css={s_div_item_box(lala)}
           >
-            <h3>{item.title}</h3>
-          </div>
+         
+            <h5 css={s_h5}>{item.title}</h5>
+          </button>
         ))}
       </div>
     </>

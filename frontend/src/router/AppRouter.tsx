@@ -12,7 +12,8 @@ const FAQPage = lazy(() => import('@/pages/FAQPage'));
 const WelcomePage = lazy(() => import('@/pages/WelcomePage'));
 const CalibrationPage = lazy(() => import('@/pages/CalibrationPage'));
 const MainPage = lazy(() => import('@/pages/MainPage'));
-const SearchPage = lazy(() => import('@/pages/SearchPage'));
+const SearchPage = lazy(() => import('@/pages/SearchPage'))
+const RecentRecordPage = lazy(() => import('@/pages/RecordPage'))
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: 'signup',
         element: <SignUpPage />,
+      },
+      {
+        path: 'record',
+        element: <RecentRecordPage />,
       },
       {
         path: 'faq',
