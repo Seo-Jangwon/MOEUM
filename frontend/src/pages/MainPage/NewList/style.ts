@@ -43,7 +43,6 @@ export const s_play_button = css`
   position: relative;
   width: 100%;
   padding: 0;
-  cursor: pointer;
   :hover .icon {
     opacity: 1;
   }
