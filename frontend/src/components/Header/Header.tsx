@@ -32,10 +32,10 @@ const Header = ({ search }: HeaderProps) => {
           ) : (
             <Button
               variant="inverted"
-              style={{ borderRadius: '12px', padding: '8px' }}
+              style={{ borderRadius: '12px', padding: '8px 20px' }}
               onClick={() => navigate('signin')}
             >
-              로그인 / 회원가입
+              로그인 
             </Button>
           )}
         </div>

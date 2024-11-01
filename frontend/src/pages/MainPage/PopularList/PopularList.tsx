@@ -59,6 +59,7 @@ const PopularList = () => {
                 overflow: hidden;
                 margin: 2%;
                 height: 73.5%;
+                aspect-ratio: 1 / 1;
               
               `}
             >
