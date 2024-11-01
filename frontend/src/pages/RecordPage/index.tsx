@@ -12,7 +12,7 @@ interface Record {
   heart: boolean;
 }
 
-const mokData: { music: Record[] } = {
+const initialData: { music: Record[] } = {
   music: [
     {
       title: '라라',
@@ -39,11 +39,16 @@ const mokData: { music: Record[] } = {
 };
 
 const RecordPage = () => {
-  const [isHeart, setIsHeart] = useState<boolean>(false);
+  const [mokData, setMokData] = useState<{ music: Record[] }>(initialData);
 
-  const handleHeart = () => {
-    setIsHeart(!isHeart);
+  const handleHeart = (index: number) => {
+    setMokData((prevData) => {
+      const newMusic = [...prevData.music];
+      newMusic[index].heart = !newMusic[index].heart;
+      return { music: newMusic };
+    });
   };
+
   return (
     // 전체 레이아웃
     <div css={s_container}>
@@ -65,32 +70,36 @@ const RecordPage = () => {
               justify-content: space-between;
               border-bottom: 1px solid white;
               align-items: center;
+              padding: 10px 0;
               :hover > div > div > img {
                 filter: brightness(50%);
                 transition: 0.3s;
               }
             `}
           >
-            {/* 이미지 */}
+            {/* 이미지와 제목 */}
             <div
               css={css`
                 display: flex;
                 align-items: center;
+                width: 40%;
               `}
             >
               <div
                 css={css`
-                  gap: 10px;
-                  width: 20%;
+                  width: 80px;
+                  height: 80px;
+                  margin-right: 20px;
                 `}
               >
                 <img
                   src={lala}
                   alt="라라"
                   css={css`
-                    width: 80%;
-                    height: 80%;
+                    width: 100%;
+                    height: 100%;
                     padding: 2px;
+                    border-radius: 8px;
                   `}
                 />
               </div>
@@ -104,9 +113,19 @@ const RecordPage = () => {
                 {item.title}
               </h4>
             </div>
-            {/* 제목, 아티스트  */}
+            {/* 아티스트 */}
             <p css={s_p}>{item.artist}</p>
-            { <VscHeart onClick={handleHeart} />}
+            {/* 하트 아이콘 */}
+            <VscHeart
+              onClick={() => handleHeart(index)}
+              css={css`
+                cursor: pointer;
+                color: ${item.heart ? 'red' : 'white'};
+                font-size: 24px;
+                transition: color 0.3s;
+              `}
+            />
+            {/* 시간 */}
             <p css={s_p}>{item.time}</p>
           </div>
         ))}
