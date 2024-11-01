@@ -3,6 +3,8 @@ package com.weseethemusic.member.service.eidt;
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.common.service.PresignedUrlService;
 import com.weseethemusic.member.common.service.S3Service;
+import com.weseethemusic.member.common.util.InputValidateUtil;
+import com.weseethemusic.member.common.util.SecurityUtil;
 import com.weseethemusic.member.dto.member.EditResponseDto;
 import com.weseethemusic.member.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,6 +32,16 @@ public class EditServiceImpl implements EditService {
         log.info("사용자 id: {} 닉네임 변경", userId);
 
         try {
+            // 닉네임 기본 유효성 검사
+            InputValidateUtil.validateNickname(nickname);
+
+            // 보안 검사
+            if (SecurityUtil.containsXSSPayload(nickname) ||
+                SecurityUtil.containsHtmlTags(nickname) ||
+                SecurityUtil.containsSQLInjection(nickname)) {
+                throw new IllegalArgumentException("닉네임에 유효하지 않은 문자열 발견");
+            }
+
             Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + userId));
 
@@ -37,6 +49,9 @@ public class EditServiceImpl implements EditService {
             Member updatedMember = memberRepository.save(member);
 
             return convertToResponseDto(updatedMember);
+        } catch (IllegalArgumentException e) {
+            log.error("닉네임 유효성 검사 실패: {}", e.getMessage());
+            throw e;
         } catch (EntityNotFoundException e) {
             log.error("사용자를 찾을 수 없음: {}", e.getMessage());
             throw e;
@@ -52,10 +67,17 @@ public class EditServiceImpl implements EditService {
         log.info("사용자 id: {} 비밀번호 확인", userId);
 
         try {
+
+            // 닉네임 기본 유효성 검사
+            InputValidateUtil.validatePassword(password);
+
             Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + userId));
 
             return passwordEncoder.matches(password, member.getPassword());
+        } catch (IllegalArgumentException e) {
+            log.error("비밀번호 유효성 검사 실패: {}", e.getMessage());
+            throw e;
         } catch (EntityNotFoundException e) {
             log.error("사용자를 찾을 수 없음: {}", e.getMessage());
             throw e;
@@ -71,6 +93,10 @@ public class EditServiceImpl implements EditService {
         log.info("사용자 id: {} 비밀번호 변경", userId);
 
         try {
+
+            // 닉네임 기본 유효성 검사
+            InputValidateUtil.validatePassword(password);
+
             Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + userId));
 
@@ -80,6 +106,9 @@ public class EditServiceImpl implements EditService {
             Member updatedMember = memberRepository.save(member);
 
             return convertToResponseDto(updatedMember);
+        } catch (IllegalArgumentException e) {
+            log.error("비밀번호 유효성 검사 실패: {}", e.getMessage());
+            throw e;
         } catch (EntityNotFoundException e) {
             log.error("사용자를 찾을 수 없음: {}", e.getMessage());
             throw e;
@@ -113,6 +142,16 @@ public class EditServiceImpl implements EditService {
         log.info("사용자 id: {} 프로필 이미지 업데이트", userId);
 
         try {
+
+            String originalFilename = file.getOriginalFilename();
+
+            // 파일명 보안 검사
+            if (SecurityUtil.containsXSSPayload(originalFilename) ||
+                SecurityUtil.containsHtmlTags(originalFilename) ||
+                SecurityUtil.containsSQLInjection(originalFilename)) {
+                throw new IllegalArgumentException("파일 이름에 유효하지 않은 문자 포함.");
+            }
+
             Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + userId));
 
@@ -122,7 +161,6 @@ public class EditServiceImpl implements EditService {
             }
 
             // 새 파일명
-            String originalFilename = file.getOriginalFilename();
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             String newFileName = String.format("profile/%d_%d%s",
                 userId, System.currentTimeMillis(), extension);
@@ -134,6 +172,9 @@ public class EditServiceImpl implements EditService {
             Member updatedMember = memberRepository.save(member);
             return convertToResponseDto(updatedMember);
 
+        } catch (IllegalArgumentException e) {
+            log.error("파일 이름 유효성 검사 실패: {}", e.getMessage());
+            throw e;
         } catch (EntityNotFoundException e) {
             log.error("사용자를 찾을 수 없음: {}", e.getMessage());
             throw e;
