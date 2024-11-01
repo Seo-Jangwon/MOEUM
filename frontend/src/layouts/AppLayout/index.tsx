@@ -41,10 +41,20 @@ const AppLayout = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme(isLightMode)}>
         <Global styles={globalStyles} />
-        <div css={{ height: '100%' }}>
+        <div css={{ height: '100%', position: 'relative' }}>
           {getBackground(pathName)}
           {getHeader(pathName)}
-          <div css={{ marginTop: '80px', height: 'calc(100vh - 80px)' }}>
+          <div
+            css={{
+              position: 'absolute',
+              top: '80px',
+              left: '0',
+              width: '100%',
+              height: 'calc(100vh - 80px)',
+              minHeight: '600px',
+              zIndex: -1,
+            }}
+          >
             <Suspense>
               <Outlet />
             </Suspense>
