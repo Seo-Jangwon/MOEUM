@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { FiActivity } from 'react-icons/fi';
-import lala from '../image/lala.jpg';
+import lala from '@/assets/lalaticon/lala4.png'
 import { s_div_header } from '../NewList/style';
 import { s_div_data, s_div_h3, s_h5_title, s_p_artist, s_popular_box, s_popular_container } from './style';
 

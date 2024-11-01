@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useState } from 'react';
 import { VscHeart } from 'react-icons/vsc';
-import lala from '../MainPage/image/lala.jpg';
+import lala from '../../assets/lalaticon/lala.jpg';
 import { s_container, s_div_title, s_p } from './style';
 
 interface Record {
