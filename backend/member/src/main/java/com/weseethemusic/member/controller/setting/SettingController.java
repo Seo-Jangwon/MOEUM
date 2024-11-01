@@ -26,10 +26,10 @@ public class SettingController {
 
     // 환경 설정 편집
     @PutMapping
-    public ResponseEntity<Object> updateSetting(@RequestHeader("X-Member-Id") Long userId,
+    public ResponseEntity<Object> updateSetting(@RequestHeader("X-Member-Id") Long memberId,
         @RequestBody SettingRequestDto settingRequestDto) {
         try {
-            settingService.updateSetting(userId, settingRequestDto);
+            settingService.updateSetting(memberId, settingRequestDto);
 
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);
@@ -42,9 +42,9 @@ public class SettingController {
 
     // 환경 설정 조회
     @GetMapping
-    public ResponseEntity<Object> getSetting(@RequestHeader("X-Member-Id") Long userId) {
+    public ResponseEntity<Object> getSetting(@RequestHeader("X-Member-Id") Long memberId) {
         try {
-            SettingResponseDto settingResponseDto = settingService.getSetting(userId);
+            SettingResponseDto settingResponseDto = settingService.getSetting(memberId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);
@@ -57,10 +57,10 @@ public class SettingController {
 
     // 색상 환경 설정 변경
     @PutMapping("/palate")
-    public ResponseEntity<Object> updatePalate(@RequestHeader("X-Member-Id") Long userId, @RequestBody
+    public ResponseEntity<Object> updatePalate(@RequestHeader("X-Member-Id") Long memberId, @RequestBody
     PalateRequestDto palateRequestDto) {
         try {
-            settingService.updatePalate(userId, palateRequestDto);
+            settingService.updatePalate(memberId, palateRequestDto);
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);
             response.put("data", null);
@@ -72,9 +72,9 @@ public class SettingController {
 
     // 색상 환경 설정 조회
     @GetMapping("/palate")
-    public ResponseEntity<Object> getPalate(@RequestHeader("X-Member-Id") Long userId) {
+    public ResponseEntity<Object> getPalate(@RequestHeader("X-Member-Id") Long memberId) {
         try {
-            PalateResponseDto palateResponseDto = settingService.getPalate(userId);
+            PalateResponseDto palateResponseDto = settingService.getPalate(memberId);
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);
             response.put("data", palateResponseDto);

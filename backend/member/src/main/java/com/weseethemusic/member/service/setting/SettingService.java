@@ -10,14 +10,14 @@ public interface SettingService {
 
 
     // 환경 설정 편집
-    void updateSetting(Long userId, SettingRequestDto settingRequestDto);
+    void updateSetting(Long memberId, SettingRequestDto settingRequestDto);
 
     // 환경 설정 조회
-    SettingResponseDto getSetting(Long userId);
+    SettingResponseDto getSetting(Long memberId);
 
     // 색상 환경 설정 변경
-    void updatePalate(Long userId, PalateRequestDto palateRequestDto);
+    void updatePalate(Long memberId, PalateRequestDto palateRequestDto);
 
     // 색상 환경 설정 조회
-    PalateResponseDto getPalate(Long userId);
+    PalateResponseDto getPalate(Long memberId);
 }

@@ -13,7 +13,6 @@ import com.weseethemusic.member.common.entity.Setting;
 import com.weseethemusic.member.repository.member.MemberRepository;
 import com.weseethemusic.member.repository.setting.CalibrationRepository;
 import com.weseethemusic.member.repository.setting.SettingRespository;
-import com.weseethemusic.member.service.delite.DeleteServiceImpl;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;

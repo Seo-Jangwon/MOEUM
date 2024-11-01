@@ -1,4 +1,4 @@
-package com.weseethemusic.member.service.eidt;
+package com.weseethemusic.member.service.edit;
 
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.common.service.PresignedUrlService;
@@ -28,8 +28,8 @@ public class EditServiceImpl implements EditService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public EditResponseDto updateNickname(Long userId, String nickname) {
-        log.info("사용자 id: {} 닉네임 변경", userId);
+    public EditResponseDto updateNickname(Long memberId, String nickname) {
+        log.info("사용자 id: {} 닉네임 변경", memberId);
 
         try {
             // 닉네임 기본 유효성 검사
@@ -42,8 +42,8 @@ public class EditServiceImpl implements EditService {
                 throw new IllegalArgumentException("닉네임에 유효하지 않은 문자열 발견");
             }
 
-            Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + userId));
+            Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + memberId));
 
             member.setNickname(nickname);
             Member updatedMember = memberRepository.save(member);
@@ -63,16 +63,16 @@ public class EditServiceImpl implements EditService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean checkUser(Long userId, String password) {
-        log.info("사용자 id: {} 비밀번호 확인", userId);
+    public boolean checkUser(Long memberId, String password) {
+        log.info("사용자 id: {} 비밀번호 확인", memberId);
 
         try {
 
             // 닉네임 기본 유효성 검사
             InputValidateUtil.validatePassword(password);
 
-            Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + userId));
+            Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + memberId));
 
             return passwordEncoder.matches(password, member.getPassword());
         } catch (IllegalArgumentException e) {
@@ -89,16 +89,16 @@ public class EditServiceImpl implements EditService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public EditResponseDto updatePassword(Long userId, String password) {
-        log.info("사용자 id: {} 비밀번호 변경", userId);
+    public EditResponseDto updatePassword(Long memberId, String password) {
+        log.info("사용자 id: {} 비밀번호 변경", memberId);
 
         try {
 
             // 닉네임 기본 유효성 검사
             InputValidateUtil.validatePassword(password);
 
-            Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + userId));
+            Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + memberId));
 
             String encodedPassword = passwordEncoder.encode(password);
             member.setPassword(encodedPassword);
@@ -138,8 +138,8 @@ public class EditServiceImpl implements EditService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public EditResponseDto updateProfileImage(Long userId, MultipartFile file) {
-        log.info("사용자 id: {} 프로필 이미지 업데이트", userId);
+    public EditResponseDto updateProfileImage(Long memberId, MultipartFile file) {
+        log.info("사용자 id: {} 프로필 이미지 업데이트", memberId);
 
         try {
 
@@ -152,8 +152,8 @@ public class EditServiceImpl implements EditService {
                 throw new IllegalArgumentException("파일 이름에 유효하지 않은 문자 포함.");
             }
 
-            Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + userId));
+            Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없음. id: " + memberId));
 
             // 기존 이미지가 있다면 삭제
             if (member.getProfileImage() != null && !member.getProfileImage().isEmpty()) {
@@ -163,7 +163,7 @@ public class EditServiceImpl implements EditService {
             // 새 파일명
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             String newFileName = String.format("profile/%d_%d%s",
-                userId, System.currentTimeMillis(), extension);
+                memberId, System.currentTimeMillis(), extension);
 
             // S3에 업로드
             String fileUrl = s3Service.uploadFile(file, newFileName);
