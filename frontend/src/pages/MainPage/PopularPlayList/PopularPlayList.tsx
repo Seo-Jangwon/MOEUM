@@ -1,6 +1,5 @@
-import { css } from '@emotion/react';
 import { FiCrosshair } from 'react-icons/fi';
-import lala from '../image/lala.jpg';
+import lala from '@/assets/lalaticon/lala8.png'
 import { s_div_header } from '../NewList/style';
 import { s_div_h3, s_div_item_box, s_div_item_container, s_h5 } from './style';
 

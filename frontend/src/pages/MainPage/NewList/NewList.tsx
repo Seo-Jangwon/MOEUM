@@ -2,7 +2,7 @@ import Lottie from 'lottie-react';
 import { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft, FaArrowRight, FaPlay } from 'react-icons/fa';
 import { FiClock } from 'react-icons/fi';
-import lala from '../image/lala.jpg';
+import lala from '@/assets/lalaticon/lala2.png';
 import playMusic from '../image/playMusic.json';
 
 import {
