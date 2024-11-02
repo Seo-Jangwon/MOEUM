@@ -2,8 +2,8 @@ package com.weseethemusic.member.service.setting;
 
 import com.weseethemusic.member.common.entity.Calibration;
 import com.weseethemusic.member.common.entity.Setting;
-import com.weseethemusic.member.dto.setting.PalateRequestDto;
-import com.weseethemusic.member.dto.setting.PalateResponseDto;
+import com.weseethemusic.member.dto.setting.CalibrationRequestDto;
+import com.weseethemusic.member.dto.setting.CalibrationResponseDto;
 import com.weseethemusic.member.dto.setting.SettingRequestDto;
 import com.weseethemusic.member.dto.setting.SettingResponseDto;
 import com.weseethemusic.member.repository.setting.CalibrationRepository;
@@ -55,18 +55,18 @@ public class SettingServiceImpl implements SettingService {
     // 색상 환경 설정 변경
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void updatePalate(Long memberId, PalateRequestDto palateRequestDto) {
+    public void updateCalibration(Long memberId, CalibrationRequestDto calibrationRequestDto) {
 
         Calibration calibration = calibrationRepository.findByMemberId(memberId);
         if (calibration != null) {
-            calibration.setQ1(palateRequestDto.getQ()[0]);
-            calibration.setQ2(palateRequestDto.getQ()[1]);
-            calibration.setQ3(palateRequestDto.getQ()[2]);
-            calibration.setQ4(palateRequestDto.getQ()[3]);
-            calibration.setQ5(palateRequestDto.getQ()[4]);
-            calibration.setQ6(palateRequestDto.getQ()[5]);
-            calibration.setQ7(palateRequestDto.getQ()[6]);
-            calibration.setQ8(palateRequestDto.getQ()[7]);
+            calibration.setQ1(calibrationRequestDto.getQ()[0]);
+            calibration.setQ2(calibrationRequestDto.getQ()[1]);
+            calibration.setQ3(calibrationRequestDto.getQ()[2]);
+            calibration.setQ4(calibrationRequestDto.getQ()[3]);
+            calibration.setQ5(calibrationRequestDto.getQ()[4]);
+            calibration.setQ6(calibrationRequestDto.getQ()[5]);
+            calibration.setQ7(calibrationRequestDto.getQ()[6]);
+            calibration.setQ8(calibrationRequestDto.getQ()[7]);
             calibrationRepository.save(calibration);
         }
     }
@@ -74,11 +74,11 @@ public class SettingServiceImpl implements SettingService {
     // 색상 환경 설정 조회
     @Override
     @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
-    public PalateResponseDto getPalate(Long memberId) {
+    public CalibrationResponseDto getCalibration(Long memberId) {
 
         Calibration calibration = calibrationRepository.findByMemberId(memberId);
 
-        return new PalateResponseDto(
+        return new CalibrationResponseDto(
             new String[]{
                 calibration.getQ1(),
                 calibration.getQ2(),

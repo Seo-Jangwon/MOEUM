@@ -1,10 +1,9 @@
 package com.weseethemusic.member.service.setting;
 
-import com.weseethemusic.member.dto.setting.PalateRequestDto;
-import com.weseethemusic.member.dto.setting.PalateResponseDto;
+import com.weseethemusic.member.dto.setting.CalibrationRequestDto;
+import com.weseethemusic.member.dto.setting.CalibrationResponseDto;
 import com.weseethemusic.member.dto.setting.SettingRequestDto;
 import com.weseethemusic.member.dto.setting.SettingResponseDto;
-import jakarta.transaction.Transactional;
 
 public interface SettingService {
 
@@ -16,8 +15,9 @@ public interface SettingService {
     SettingResponseDto getSetting(Long memberId);
 
     // 색상 환경 설정 변경
-    void updatePalate(Long memberId, PalateRequestDto palateRequestDto);
+    void updateCalibration(Long memberId, CalibrationRequestDto calibrationRequestDto);
 
     // 색상 환경 설정 조회
-    PalateResponseDto getPalate(Long memberId);
+    CalibrationResponseDto getCalibration(Long memberId);
+
 }

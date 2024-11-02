@@ -23,7 +23,7 @@ public class Calibration {
     private Long id;
 
     @OneToOne
-    @MapsId
+    @MapsId(value = "id")
     @JoinColumn(name = "member_id")
     private Member member;
 

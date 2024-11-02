@@ -1,7 +1,7 @@
 package com.weseethemusic.member.controller.setting;
 
-import com.weseethemusic.member.dto.setting.PalateRequestDto;
-import com.weseethemusic.member.dto.setting.PalateResponseDto;
+import com.weseethemusic.member.dto.setting.CalibrationRequestDto;
+import com.weseethemusic.member.dto.setting.CalibrationResponseDto;
 import com.weseethemusic.member.dto.setting.SettingRequestDto;
 import com.weseethemusic.member.dto.setting.SettingResponseDto;
 import com.weseethemusic.member.service.setting.SettingService;
@@ -26,8 +26,7 @@ public class SettingController {
 
     // 환경 설정 편집
     @PutMapping
-    public ResponseEntity<Object> updateSetting(@RequestHeader("X-Member-Id") Long memberId,
-        @RequestBody SettingRequestDto settingRequestDto) {
+    public ResponseEntity<Object> updateSetting(@RequestHeader("X-Member-Id") Long memberId, @RequestBody SettingRequestDto settingRequestDto) {
         try {
             settingService.updateSetting(memberId, settingRequestDto);
 
@@ -57,10 +56,10 @@ public class SettingController {
 
     // 색상 환경 설정 변경
     @PutMapping("/palate")
-    public ResponseEntity<Object> updatePalate(@RequestHeader("X-Member-Id") Long memberId, @RequestBody
-    PalateRequestDto palateRequestDto) {
+    public ResponseEntity<Object> updateCalibration(@RequestHeader("X-Member-Id") Long memberId, @RequestBody
+    CalibrationRequestDto calibrationRequestDto) {
         try {
-            settingService.updatePalate(memberId, palateRequestDto);
+            settingService.updateCalibration(memberId, calibrationRequestDto);
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);
             response.put("data", null);
@@ -72,12 +71,12 @@ public class SettingController {
 
     // 색상 환경 설정 조회
     @GetMapping("/palate")
-    public ResponseEntity<Object> getPalate(@RequestHeader("X-Member-Id") Long memberId) {
+    public ResponseEntity<Object> getCalibration(@RequestHeader("X-Member-Id") Long memberId) {
         try {
-            PalateResponseDto palateResponseDto = settingService.getPalate(memberId);
+            CalibrationResponseDto calibrationResponseDto = settingService.getCalibration(memberId);
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);
-            response.put("data", palateResponseDto);
+            response.put("data", calibrationResponseDto);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
