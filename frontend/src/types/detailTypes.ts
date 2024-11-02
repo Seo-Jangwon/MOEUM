@@ -1,9 +1,9 @@
-type ListData = {
+export type ListData = {
   title: string;
   duration: string;
 };
 
-type CardListData = {
+export type CardListData = {
   name: string;
   image: string;
 };

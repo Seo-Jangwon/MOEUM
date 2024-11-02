@@ -12,6 +12,18 @@ export const detailArtistMock = {
       title: 'Grenade',
       duration: '3:42',
     },
+    {
+      title: 'Lock on Heaven’s Door',
+      duration: '3:42',
+    },
+    {
+      title: 'APT.',
+      duration: '3:42',
+    },
+    {
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
   ],
   cardListData: [
     {
