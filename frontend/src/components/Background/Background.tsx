@@ -1,16 +1,18 @@
 import * as S from './Background.style';
 
+export type BallType = 'contain' | 'clip';
+
 interface BackgroundProps {
-  ball?: 'contain' | 'clip';
+  ball?: BallType;
 }
 
 const Background = ({ ball }: BackgroundProps) => {
   return (
     <S.Container>
-      {Boolean(ball) && (
+      {!!ball && (
         <>
-          <S.PrimaryBall />
-          <S.SecondaryBall />
+          <S.PrimaryBall ball={ball} />
+          <S.SecondaryBall ball={ball} />
         </>
       )}
     </S.Container>

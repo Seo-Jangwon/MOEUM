@@ -2,9 +2,9 @@ import { css } from '@emotion/react';
 
 export const s_container = (cover: string) => css`
   display: flex;
-  width: 960px;
   height: 320px;
   padding: 10px 20px;
+  width: 100%;
   justify-content: space-between;
   align-items: flex-end;
   border-radius: 32px 32px 0px 0px;

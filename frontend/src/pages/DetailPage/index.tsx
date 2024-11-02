@@ -1,4 +1,5 @@
 import useFetchDetail from '@/hooks/useFetchDetail';
+import Flex from '@/layouts/Wrapper/Flex';
 import { useParams } from 'react-router-dom';
 import DetailCardList from './DetailCardList/DetailCardList';
 import DetailCover from './DetailCover/DetailCover';
@@ -34,16 +35,13 @@ const DetailPage = ({ variant }: DetailPageProps) => {
   const { id } = useParams();
   const detailData = useFetchDetail(variant, id!);
   return (
-    <div css={s_container}>
-      <DetailCover title={detailData?.coverTitle as string} cover={detailData?.image as string} />
-      <DetailCover title={detailData?.coverTitle as string} cover={detailData?.image as string} />
-      <DetailCover title={detailData?.coverTitle as string} cover={detailData?.image as string} />
-      <DetailCover title={detailData?.coverTitle as string} cover={detailData?.image as string} />
-      <DetailCover title={detailData?.coverTitle as string} cover={detailData?.image as string} />
-      <DetailCover title={detailData?.coverTitle as string} cover={detailData?.image as string} />
-      <DetailList title={detailData?.listType as string} />
-      <DetailCardList />
-    </div>
+    <Flex>
+      <main css={s_container}>
+        <DetailCover title={detailData!.coverTitle} background={detailData!.image} />
+        <DetailList title={detailData!.listType as string} data={detailData!.listData} />
+        <DetailCardList />
+      </main>
+    </Flex>
   );
 };
 
