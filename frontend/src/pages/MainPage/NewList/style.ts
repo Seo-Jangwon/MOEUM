@@ -1,6 +1,5 @@
 import { Theme, css } from '@emotion/react';
 
-
 export const s_div_header = css`
   display: flex;
   justify-content: space-between;
@@ -20,7 +19,6 @@ export const s_div_h3 = (theme: Theme) => css`
   @media (max-width: 767px) {
     font-size: 24px;
   }
-  
 `;
 
 export const s_button = (theme: Theme) => css`
@@ -111,5 +109,3 @@ export const s_lottie = css`
   height: 50%;
   transform: translate(-50%, -50%);
 `;
-
-

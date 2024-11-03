@@ -1,5 +1,5 @@
+import lala from '@/assets/lalaticon/lala8.png';
 import { FiCrosshair } from 'react-icons/fi';
-import lala from '@/assets/lalaticon/lala8.png'
 import { s_div_header } from '../NewList/style';
 import { s_div_h3, s_div_item_box, s_div_item_container, s_h5 } from './style';
 
@@ -28,23 +28,15 @@ const PopularPlayList = () => {
   return (
     <>
       <div css={s_div_header}>
-        <div
-          css={s_div_h3}
-        >
+        <div css={s_div_h3}>
           <FiCrosshair />
           <h3>인기 플레이리스트</h3>
         </div>
         <button>모두보기</button>
       </div>
-      <div
-        css={s_div_item_container}
-      >
+      <div css={s_div_item_container}>
         {mokData.data.map((item, index) => (
-          <button
-            key={index}
-            css={s_div_item_box(lala)}
-          >
-         
+          <button key={index} css={s_div_item_box(lala)}>
             <h5 css={s_h5}>{item.title}</h5>
           </button>
         ))}

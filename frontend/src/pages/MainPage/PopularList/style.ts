@@ -22,7 +22,6 @@ export const s_popular_container = css`
   @media (max-width: 767px) {
     grid-template-columns: repeat(2, 1fr);
   }
-
 `;
 
 export const s_popular_box = (theme: Theme) => css`

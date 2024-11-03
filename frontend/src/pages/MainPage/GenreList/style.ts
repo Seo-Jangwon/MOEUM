@@ -23,7 +23,6 @@ export const s_div_item_box = css`
     transition: 0.3s;
     filter: brightness(50%);
   }
-  
 `;
 
 export const s_img = css`
@@ -38,5 +37,5 @@ export const s_h5 = (theme: Theme) => css`
   font-size: 300%;
   font-weight: 800;
   transform: translate(-50%, -50%);
-  color: ${theme.colors.primary}
+  color: ${theme.colors.primary};
 `;

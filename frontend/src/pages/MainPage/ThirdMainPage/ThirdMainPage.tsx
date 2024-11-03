@@ -1,13 +1,10 @@
-import { css } from "@emotion/react";
-import { s_h1 } from "../SecondMainPage/style";
-import { s_div_button, s_div_musicList } from "../FirstMainPage/style";
-import MusicCard from "@/components/Card/MusicCard/MusicCard";
-import { HiOutlineArrowCircleRight } from "react-icons/hi";
-import Picture from './image/album.jpg'
-import { Link } from "react-router-dom";
-
-
-
+import MusicCard from '@/components/Card/MusicCard/MusicCard';
+import { css } from '@emotion/react';
+import { HiOutlineArrowCircleRight } from 'react-icons/hi';
+import { Link } from 'react-router-dom';
+import { s_div_button, s_div_musicList } from '../FirstMainPage/style';
+import { s_h1 } from '../SecondMainPage/style';
+import Picture from './image/album.jpg';
 
 interface DiscographyItem {
   category: string;
@@ -74,7 +71,7 @@ const ThirdMainPage = () => {
       css={css`
         width: 80vw;
         display: flex;
-        flex-direction: column; 
+        flex-direction: column;
         gap: 50px;
 
         @media (max-width: 767px) {
@@ -90,7 +87,7 @@ const ThirdMainPage = () => {
       <div css={s_div_musicList}>
         {mokDataFamuous.musicList.map((data, index) => (
           <Link to={data.title}>
-          <MusicCard key={index} category={data.category} title={data.title} image={Picture} />
+            <MusicCard key={index} category={data.category} title={data.title} image={Picture} />
           </Link>
         ))}
         <button css={s_div_button}>
