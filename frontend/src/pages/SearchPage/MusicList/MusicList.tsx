@@ -14,14 +14,25 @@ import {
   s_titleContainer,
 } from './MusicList.style';
 
-const MusicList = ({ musicList }: { musicList: MusicI[] }) => {
+const MusicList = ({
+  musicList,
+  keyword,
+  category,
+}: {
+  musicList: MusicI[];
+  keyword: string;
+  category: string;
+}) => {
   const navigate = useNavigate();
   return (
     <div css={s_container}>
       <div css={s_titleContainer}>
         <div>노래</div>
         {/* 노래 상세 검색 페이지로 이동 로직 필요 */}
-        <div style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+        <div
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate(`/search/${category}?keyword=${keyword}`)}
+        >
           더 보기
         </div>
       </div>

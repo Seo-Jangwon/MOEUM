@@ -13,11 +13,13 @@ const CardList = ({
   dataList,
   category,
   clickUrl,
+  keyword,
   isBorder = false,
 }: {
   dataList: dataI[];
   category: string;
   clickUrl: string;
+  keyword: string;
   isBorder?: boolean;
 }) => {
   const navigate = useNavigate();
@@ -25,7 +27,15 @@ const CardList = ({
   return (
     <div css={s_container}>
       <div css={s_titleContainer}>
-        <span>{category}</span> <span>더 보기</span>{' '}
+        <span>{category}</span>{' '}
+        <span
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            navigate(`/search/${clickUrl}?keyword=${keyword}`);
+          }}
+        >
+          더 보기
+        </span>{' '}
       </div>
 
       {dataList.length > 0 ? (
