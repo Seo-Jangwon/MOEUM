@@ -14,6 +14,7 @@ const CalibrationPage = lazy(() => import('@/pages/CalibrationPage'));
 const MainPage = lazy(() => import('@/pages/MainPage'));
 const SearchPage = lazy(() => import('@/pages/SearchPage'));
 const RecentRecordPage = lazy(() => import('@/pages/RecordPage'));
+const ListPage = lazy(() => import('@/pages/ListPage'))
 
 const router = createBrowserRouter([
   {
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
       {
         path: 'search',
         element: <SearchPage />,
+      },
+      {
+        path: 'list/:id',
+        element: <ListPage />,
       },
     ],
   },

@@ -2,10 +2,16 @@ import { Theme, css } from '@emotion/react';
 
 export const s_div_title = (theme: Theme) => css`
   display: flex;
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 800;
   color: ${theme.colors.secondary};
   gap: 18px;
+  @media (max-width: 1024px) {
+    font-size: 30px;
+  }
+  @media (max-width: 767px) {
+    font-size: 24px;
+  }
 `;
 
 export const s_div_item_container = css`
