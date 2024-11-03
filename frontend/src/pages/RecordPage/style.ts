@@ -5,7 +5,6 @@ export const s_container = css`
   width: 75%;
   flex-direction: column;
   margin: 0 auto;
-
 `;
 
 export const s_div_title = (theme: Theme) => css`

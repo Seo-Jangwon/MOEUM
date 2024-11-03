@@ -1,8 +1,15 @@
+import lala from '@/assets/lalaticon/lala4.png';
 import { css } from '@emotion/react';
 import { FiActivity } from 'react-icons/fi';
-import lala from '@/assets/lalaticon/lala4.png'
 import { s_div_header } from '../NewList/style';
-import { s_div_data, s_div_h3, s_h5_title, s_p_artist, s_popular_box, s_popular_container } from './style';
+import {
+  s_div_data,
+  s_div_h3,
+  s_h5_title,
+  s_p_artist,
+  s_popular_box,
+  s_popular_container,
+} from './style';
 
 interface Music {
   title: string;
@@ -48,9 +55,7 @@ const PopularList = () => {
         </div>
         <button>모두보기</button>
       </div>
-      <div
-        css={s_popular_container}
-      >
+      <div css={s_popular_container}>
         {mokData.music.map((item, index) => (
           <div key={index} css={s_popular_box}>
             <div
@@ -60,7 +65,6 @@ const PopularList = () => {
                 margin: 2%;
                 height: 73.5%;
                 aspect-ratio: 1 / 1;
-              
               `}
             >
               <img

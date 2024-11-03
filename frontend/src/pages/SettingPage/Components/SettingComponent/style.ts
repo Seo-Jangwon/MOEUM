@@ -9,12 +9,12 @@ export const s_componentContainer = (theme: Theme) => css`
   color: ${theme.colors.white};
   padding: 10px 20px;
   @media (max-width: 768px) {
-    margin-bottom:  15px;
+    margin-bottom: 15px;
     width: 70vw;
     font-size: 20px;
   }
   @media (min-width: 768px) {
-    margin-bottom:  20px;
+    margin-bottom: 20px;
     width: 40vw;
     font-size: 24px;
   }
@@ -28,9 +28,9 @@ export const s_componentLeftChild = css`
 
 export const s_componentTitleText = css`
   padding-left: 10px;
-  
-  @media (max-width : 768px) {
-    font-size:16px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
   }
 `;
 
