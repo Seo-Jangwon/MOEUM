@@ -1,5 +1,6 @@
 import lala from '@/assets/lalaticon/lala7.png';
 import { FiThumbsUp } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 import { s_div_header } from '../NewList/style';
 import { s_div_item_box, s_div_item_container, s_div_title, s_h5, s_img } from './style';
 
@@ -37,6 +38,10 @@ const mokData: { music: Music[] } = {
 };
 
 const GenreList = () => {
+  const navigate = useNavigate();
+  const handlePage = (path: string) => {
+    navigate(path);
+  };
   return (
     <>
       <div css={s_div_header}>
@@ -44,7 +49,7 @@ const GenreList = () => {
           <FiThumbsUp />
           <h3>오늘의 장르</h3>
         </div>
-        <button>모두보기</button>
+        <button onClick={() => handlePage('/list/genre')}>모두보기</button>
       </div>
       <div css={s_div_item_container}>
         {mokData.music.map((item, index) => (

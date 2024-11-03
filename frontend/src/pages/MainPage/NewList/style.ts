@@ -50,6 +50,11 @@ export const s_play_button = css`
   }
 `;
 
+export const s_div_button = css`
+  display: flex;
+  align-items: center;
+`;
+
 export const s_div_list = css`
   display: flex;
   overflow-x: auto;
