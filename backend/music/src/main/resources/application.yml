@@ -1,7 +1,13 @@
+server:
+  port: 8082
+
 spring:
+  application:
+    name: Moeum Music
+  profiles:
+    active: local, secret
   config:
-    import: classpath:application-secret.yml
+    import: optional:classpath:application-secret.yml
 
   jpa:
-    hibernate:
-      ddl-auto: update
+    show-sql: true

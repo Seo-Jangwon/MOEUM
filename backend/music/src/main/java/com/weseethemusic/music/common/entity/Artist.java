@@ -19,16 +19,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Artist {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-  @Column(nullable = false)
-  private String name;
+    @Column(nullable = false)
+    private String name;
 
-  private String imageName;
-
-  @ManyToMany(mappedBy = "artists")
-  private Set<Music> musics;
+    private String imageName;
 
 }
