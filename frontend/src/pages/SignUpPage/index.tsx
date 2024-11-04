@@ -1,3 +1,4 @@
+import apiClient from '@/api/apiClient';
 import Button from '@/components/Button/Button';
 import { css } from '@emotion/react';
 import { useState } from 'react';
@@ -66,18 +67,52 @@ const SignUpPage = () => {
     console.log('비밀번호:', password);
     console.log('비밀번호 확인:', checkPassword);
 
+    const data = apiClient
+      .post('/members/register', {
+        email,
+        nickname,
+        password,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     navigate('/signin');
   };
 
   // 인증번호 전송 함수
   const handleShowCertificationField = () => {
     setIsShow(true);
-    console.log('인증번호 발송');
+    // console.log('인증번호 발송');
+    const data = apiClient
+      .post('/members/register/token', {
+        email,
+      })
+      .then((res) => {
+        console.log(res);
+        setIsShow(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // 인증번호 확인 함수
   const handleCertificationCode = () => {
     console.log('인증번호 확인');
+    const data = apiClient
+      .post('/members/register/check/token', {
+        token: certificationNumber,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
