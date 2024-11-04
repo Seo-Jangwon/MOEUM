@@ -173,7 +173,7 @@ const MusicPlayPage: React.FC = () => {
     raf = requestAnimationFrame(loop);
 
     return () => {
-      cancelAnimationFrame(raf);
+      // cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
     };
   }, []);

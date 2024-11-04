@@ -23,7 +23,6 @@ const CardList = ({
   isBorder?: boolean;
 }) => {
   const navigate = useNavigate();
-  console.log(clickUrl);
   return (
     <div css={s_container}>
       <div css={s_titleContainer}>

@@ -67,15 +67,31 @@ const SearchBox = () => {
               {searches.slice(-10).map((item, index) => {
                 return (
                   <div key={index} css={s_searchKeywordDiv}>
-                    {item}
-                    <RxCross2 onClick={() => removeSearchKeyword(index)} />
+                    <span
+                      style={{ cursor: 'pointer' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/search?keyword=${item}`);
+                      }}
+                    >
+                      {item}
+                    </span>
+                    <RxCross2
+                      style={{ cursor: 'pointer' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeSearchKeyword(index);
+                      }}
+                    />
                   </div>
                 );
               })}
             </div>
             <div css={s_searchKeywordButtonContainer}>
               <div>최근 검색어</div>
-              <div onClick={removeAllSearchKeyword}>전체 삭제</div>
+              <div style={{ cursor: 'pointer' }} onClick={removeAllSearchKeyword}>
+                전체 삭제
+              </div>
             </div>
           </div>
         ) : null}
