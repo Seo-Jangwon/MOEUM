@@ -21,7 +21,9 @@ const mokData: { music: Music[] } = {
     { title: '라라랜드', image: 'dfd.jpg' },
     { title: '라라랜드', image: 'dfd.jpg' },
     { title: '라라랜드', image: 'dfd.jpg' },
-    // 필요에 따라 더 많은 데이터를 추가하세요
+    { title: '라라랜드', image: 'dfd.jpg' },
+    { title: '라라랜드', image: 'dfd.jpg' },
+    { title: '라라랜드', image: 'dfd.jpg' },
   ],
 };
 
@@ -57,9 +59,23 @@ const ListPage = () => {
                 background: transparent;
                 border: 0;
                 position: relative;
+                overflow: hidden;
+                cursor: pointer;
+
+                :hover::before {
+                  content: '';
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                  height: 100%;
+                  background-color: rgba(0, 0, 0, 0.5);
+                  border-radius: 20px;
+                }
+
                 :hover > p {
                   opacity: 1;
-                  transition: 0.3s;
+                  transition: opacity 0.3s;
                 }
               `}
             >
@@ -69,10 +85,7 @@ const ListPage = () => {
                 css={css`
                   width: 100%;
                   border-radius: 20px;
-                  :hover {
-                    filter: brightness(50%);
-                    transition: 0.3s;
-                  }
+                  display: block;
                 `}
               />
               <p
@@ -85,6 +98,8 @@ const ListPage = () => {
                   left: 50%;
                   transform: translate(-50%, -50%);
                   opacity: 0;
+                  z-index: 1;
+                  transition: opacity 0.3s;
                 `}
               >
                 {item.title}

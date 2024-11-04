@@ -1,10 +1,11 @@
 import Button from '@/components/Button/Button';
 import { css } from '@emotion/react';
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { s_content, s_titlebox } from '../SignInPage/style';
 import RegisterData from './RegisterData/registerData';
-import { s_from } from './styles';
+import { s_div_signUpBox, s_from } from './styles';
 
 const SignUpPage = () => {
   // 각 필드에 대한 상태 관리
@@ -80,6 +81,12 @@ const SignUpPage = () => {
     console.log('인증번호 확인');
   };
 
+  useEffect(() => {
+    const data = axios
+      .get('https://weseethemusic.com/api/v1/members/register/token')
+      .then((res) => console.log(res));
+  },[]);
+
   return (
     <form onSubmit={login} css={s_from}>
       <main css={s_content}>
@@ -100,14 +107,7 @@ const SignUpPage = () => {
             당신이 어떤 사람인지 알고 싶어요.
           </p>
         </div>
-        <div
-          css={css`
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-          `}
-        >
+        <div css={s_div_signUpBox}>
           <RegisterData
             value={'text'}
             placeholder={'닉네임'}
