@@ -1,5 +1,10 @@
+import DotDotDot from '@/components/DotDotDot/DotDotDot';
+import { ReactNode, useState } from 'react';
+import { FaRegTrashCan } from 'react-icons/fa6';
+import { RiMenuAddLine } from 'react-icons/ri';
 import lala from '../../assets/lalaticon/lala.jpg';
 import Heart from '../DetailPage/DetailCover/DetailCoverHeart';
+import Modal from './Modal/Modal';
 import {
   s_container,
   s_div_container,
@@ -43,10 +48,133 @@ const mokData: { music: Record[] } = {
       time: '4:10',
       heart: true,
     },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
+    {
+      title: '라라',
+      image: 'lala.jpg',
+      artist: 'LALA',
+      time: '4:10',
+      heart: true,
+    },
   ],
 };
 
 const RecordPage = () => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  // 모달 열기 함수
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+  interface DropDownItems {
+    iconImage: ReactNode;
+    text: string;
+    clickHandler: () => void;
+  }
+
+  const items: DropDownItems[] = [
+    {
+      iconImage: <RiMenuAddLine />,
+      text: '플레이리스트 추가',
+      clickHandler: openModal,
+    },
+    {
+      iconImage: <FaRegTrashCan />,
+      text: '기록에서 삭제',
+      clickHandler: () => {
+        console.log('기록에서 삭제');
+      },
+    },
+  ];
+
   return (
     // 전체 레이아웃
     <div css={s_container}>
@@ -69,10 +197,14 @@ const RecordPage = () => {
             <p css={s_p}>{item.artist}</p>
             {/* 하트 아이콘 */}
             <Heart isLike={item.heart} />
+            {/* 드롭다운 */}
+            <DotDotDot data={items} />
             {/* 시간 */}
             <p css={s_p}>{item.time}</p>
           </div>
         ))}
+        {/* 모달 컴포넌트 */}
+        <Modal isOpen={isModalOpen} onClose={closeModal} />
       </div>
     </div>
   );

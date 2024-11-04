@@ -60,8 +60,6 @@ const ListPage = () => {
                 border: 0;
                 position: relative;
                 overflow: hidden;
-                cursor: pointer;
-
                 :hover::before {
                   content: '';
                   position: absolute;
