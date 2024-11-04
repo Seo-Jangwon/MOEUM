@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class LikeMusicId implements Serializable {
 
     private long memberId;
-    private Music music;
+    private Long musicId;
 
 }

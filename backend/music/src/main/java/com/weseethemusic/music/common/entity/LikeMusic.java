@@ -1,5 +1,6 @@
 package com.weseethemusic.music.common.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -22,11 +23,14 @@ import lombok.Setter;
 public class LikeMusic {
 
     @Id
-    private long memberId;
+    @Column(name = "member_id")
+    private Long memberId;
 
     @Id
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "music_id", nullable = false)
-    private Music music;
+    @Column(name = "music_id")
+    private Long musicId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "music_id", insertable = false, updatable = false)
+    private Music music;
 }

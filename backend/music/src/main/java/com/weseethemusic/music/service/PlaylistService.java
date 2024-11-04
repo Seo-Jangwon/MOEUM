@@ -14,4 +14,6 @@ public interface PlaylistService {
     List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId);
 
     List<PlaylistResponse> getMyPlaylists(Long memberId);
+
+    List<PlaylistMusicResponse> updatePlaylist(Long playlistId, String title, List<Long> musicIds);
 }

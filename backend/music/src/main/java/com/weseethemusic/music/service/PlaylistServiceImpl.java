@@ -12,12 +12,14 @@ import com.weseethemusic.music.dto.playlist.PlaylistMusicResponse;
 import com.weseethemusic.music.dto.playlist.PlaylistResponse;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
+import com.weseethemusic.music.repository.PlaylistMusicRepository;
 import com.weseethemusic.music.repository.PlaylistRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PlaylistServiceImpl implements PlaylistService {
 
     private final PlaylistRepository playlistRepository;
+    private final PlaylistMusicRepository playlistMusicRepository;
     private final MusicRepository musicRepository;
     private final PresignedUrlService presignedUrlService;
     private final ArtistMusicRepository artistMusicRepository;
@@ -43,44 +46,50 @@ public class PlaylistServiceImpl implements PlaylistService {
             throw new IllegalArgumentException("음악이 존재하지 않습니다.");
         }
 
-        // 플레이리스트 생성
-        Playlist playlist = new Playlist();
-        playlist.setName(request.getTitle());
-        playlist.setMemberId(memberId);
-        playlist.setCreatedAt(LocalDateTime.now());
-        playlist.setUpdatedAt(LocalDateTime.now());
+        try {
+            // 플레이리스트 생성
+            Playlist playlist = new Playlist();
+            playlist.setName(request.getTitle());
+            playlist.setMemberId(memberId);
+            playlist.setCreatedAt(LocalDateTime.now());
+            playlist.setUpdatedAt(LocalDateTime.now());
+            Playlist savedPlaylist = playlistRepository.save(playlist);
 
-        // 플레이리스트에 음악 추가
-        for (int i = 0; i < musics.size(); i++) {
-            PlaylistMusic playlistMusic = new PlaylistMusic();
-            playlistMusic.setPlaylist(playlist);
-            playlistMusic.setMusic(musics.get(i));
-            playlistMusic.setTrackOrder(i);
-            playlistMusic.setAddedAt(LocalDateTime.now());
-            playlist.getPlaylistMusics().add(playlistMusic);
+            // 플레이리스트 음악 추가
+            for (int i = 0; i < musics.size(); i++) {
+                PlaylistMusic playlistMusic = new PlaylistMusic();
+                playlistMusic.setPlaylistId(savedPlaylist.getId());
+                playlistMusic.setMusicId(musics.get(i).getId());
+                playlistMusic.setOrder(i);
+                playlistMusic.setAddedAt(LocalDateTime.now());
+                playlistMusicRepository.save(playlistMusic);
+            }
+
+            return savedPlaylist.getId();
+        } catch (Exception e) {
+            log.error("플레이리스트 생성 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 생성에 실패했습니다.");
         }
-
-        // 저장 및 id return
-        Playlist savedPlaylist = playlistRepository.save(playlist);
-        return savedPlaylist.getId();
     }
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deletePlaylist(Long memberId, Long playlistId) {
+        Playlist playlist = playlistRepository.findById(playlistId)
+            .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
+
+        if (!playlist.getMemberId().equals(memberId)) {
+            throw new RuntimeException("플레이리스트 삭제 권한이 없습니다.");
+        }
+
         try {
-            Playlist playlist = playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
-
-            // 플레이리스트 소유자 확인
-            if (!playlist.getMemberId().equals(memberId.toString())) {
-                throw new RuntimeException("플레이리스트 삭제 권한이 없습니다.");
-            }
-
+            // 플레이리스트 음악 삭제
+            playlistMusicRepository.deleteByPlaylistId(playlistId);
+            // 플레이리스트 삭제
             playlistRepository.delete(playlist);
-
         } catch (Exception e) {
-            throw new RuntimeException("플레이리스트 삭제 중 오류가 발생했습니다.", e);
+            log.error("플레이리스트 삭제 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 삭제에 실패했습니다.");
         }
     }
 
@@ -88,17 +97,30 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Transactional(readOnly = true)
     public List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId) {
         try {
-            Playlist playlist = playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
+            List<PlaylistMusic> playlistMusics = playlistMusicRepository
+                .findByPlaylistIdOrderByOrder(playlistId);
 
-            List<PlaylistMusic> playlistMusics = new ArrayList<>(playlist.getPlaylistMusics());
-            // trackOrder로 정렬
-            Collections.sort(playlistMusics,
-                Comparator.comparingInt(PlaylistMusic::getTrackOrder));
+            if (playlistMusics.isEmpty()) {
+                throw new RuntimeException("플레이리스트를 찾을 수 없습니다.");
+            }
+
+            // 필요한 음악 ID 목록 추출
+            List<Long> musicIds = new ArrayList<>();
+            for (PlaylistMusic playlistMusic : playlistMusics) {
+                musicIds.add(playlistMusic.getMusicId());
+            }
+
+            // 음악 정보 한 번에 조회
+            List<Music> musics = musicRepository.findAllById(musicIds);
+
+            Map<Long, Music> musicMap = new HashMap<>();
+            for (Music music : musics) {
+                musicMap.put(music.getId(), music);
+            }
 
             List<PlaylistMusicResponse> responses = new ArrayList<>();
             for (PlaylistMusic playlistMusic : playlistMusics) {
-                Music music = playlistMusic.getMusic();
+                Music music = musicMap.get(playlistMusic.getMusicId());
                 Album album = music.getAlbum();
 
                 // 아티스트 목록 생성
@@ -106,13 +128,18 @@ public class PlaylistServiceImpl implements PlaylistService {
                 List<Artist> artists = artistMusicRepository.findAllByMusic(music);
 
                 for (Artist artist : artists) {
-                    artistResponses.add(new ArtistResponse(artist.getId(), artist.getName()));
+                    ArtistResponse artistResponse = new ArtistResponse(
+                        artist.getId(),
+                        artist.getName()
+                    );
+                    artistResponses.add(artistResponse);
                 }
 
                 // presignedUrl 생성
-                String presignedUrl = presignedUrlService.getPresignedUrl(album.getImageName());
+                String presignedUrl = presignedUrlService.getPresignedUrl(
+                    album.getImageName()
+                );
 
-                // response 객체 생성 및 추가
                 PlaylistMusicResponse response = new PlaylistMusicResponse(
                     music.getId(),
                     music.getName(),
@@ -125,9 +152,11 @@ public class PlaylistServiceImpl implements PlaylistService {
 
             return responses;
         } catch (Exception e) {
-            throw new RuntimeException("플레이리스트 음악 조회 중 오류가 발생했습니다.", e);
+            log.error("플레이리스트 음악 조회 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 음악 조회에 실패했습니다.");
         }
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -137,43 +166,94 @@ public class PlaylistServiceImpl implements PlaylistService {
             List<PlaylistResponse> responses = new ArrayList<>();
 
             for (Playlist playlist : playlists) {
-                // 플레이리스트의 총 곡 수
-                int totalMusicCount = playlist.getPlaylistMusics().size();
+                List<PlaylistMusic> playlistMusics = playlistMusicRepository.findByPlaylistIdOrderByOrder(
+                    playlist.getId());
 
-                // 총 재생 시간
+                // 총 재생 시간과 음악 수 계산
+                int totalMusicCount = playlistMusics.size();
                 int totalSeconds = 0;
-                String latestImage = null;
-                int latestTrackOrder = -1;
 
-                List<PlaylistMusic> playlistMusics = playlist.getPlaylistMusics();
-                for (PlaylistMusic playlistMusic : playlistMusics) {
-                    totalSeconds += playlistMusic.getMusic().getDuration();
+                // 최신 음악의 이미지를 가져오기 위해 가장 높은 trackOrder를 가진 음악 조회
+                PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
+                        playlist.getId())
+                    .orElse(null);
 
-                    // 가장 최근에 추가된 곡 이미지
-                    if (playlistMusic.getTrackOrder() > latestTrackOrder) {
-                        latestTrackOrder = playlistMusic.getTrackOrder();
-                        latestImage = playlistMusic.getMusic().getAlbum().getImageName();
+                if (latestMusic != null) {
+                    Music music = musicRepository.findById(latestMusic.getMusicId())
+                        .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
+
+                    // 이미지 URL 생성
+                    String imageUrl = presignedUrlService.getPresignedUrl(
+                        music.getAlbum().getImageName());
+
+                    // 총 재생 시간 계산
+                    List<Long> musicIds = new ArrayList<>();
+                    for (PlaylistMusic playlistMusic : playlistMusics) {
+                        musicIds.add(playlistMusic.getMusicId());
                     }
+
+                    List<Music> musics = musicRepository.findAllById(musicIds);
+
+                    for (Music m : musics) {
+                        totalSeconds += m.getDuration();
+                    }
+
+                    PlaylistResponse response = new PlaylistResponse(
+                        playlist.getId(),
+                        playlist.getName(),
+                        imageUrl,
+                        formatTotalDuration(totalSeconds),
+                        totalMusicCount
+                    );
+                    responses.add(response);
                 }
-
-                // presignedUrl
-                String imageUrl = latestImage != null ?
-                    presignedUrlService.getPresignedUrl(latestImage) : null;
-
-                PlaylistResponse response = new PlaylistResponse(
-                    playlist.getId(),
-                    playlist.getName(),
-                    imageUrl,
-                    formatTotalDuration(totalSeconds),
-                    totalMusicCount
-                );
-
-                responses.add(response);
             }
 
             return responses;
         } catch (Exception e) {
-            throw new RuntimeException("플레이리스트 목록 조회 중 오류가 발생했습니다.", e);
+            log.error("플레이리스트 목록 조회 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 목록 조회에 실패했습니다.");
+        }
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<PlaylistMusicResponse> updatePlaylist(Long playlistId, String title,
+        List<Long> musicIds) {
+        try {
+            // 플레이리스트 존재 확인
+            Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
+
+            // 제목 업데이트
+            playlist.setName(title);
+            playlist.setUpdatedAt(LocalDateTime.now());
+            playlistRepository.save(playlist);
+
+            // 음악 존재 여부 확인
+            List<Music> musics = musicRepository.findAllById(musicIds);
+            if (musics.size() != musicIds.size()) {
+                throw new RuntimeException("존재하지 않는 음악이 포함되어 있습니다.");
+            }
+
+            // 기존 플레이리스트 음악 모두 삭제
+            playlistMusicRepository.deleteByPlaylistId(playlistId);
+
+            // 새로운 음악 추가
+            for (int i = 0; i < musicIds.size(); i++) {
+                PlaylistMusic playlistMusic = new PlaylistMusic();
+                playlistMusic.setPlaylistId(playlistId);
+                playlistMusic.setMusicId(musicIds.get(i));
+                playlistMusic.setOrder(i * 1000.0);
+                playlistMusic.setAddedAt(LocalDateTime.now());
+                playlistMusicRepository.save(playlistMusic);
+            }
+
+            // 업데이트된 목록 반환
+            return getPlaylistMusics(playlistId);
+        } catch (Exception e) {
+            log.error("플레이리스트 수정 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 수정에 실패했습니다.");
         }
     }
 
