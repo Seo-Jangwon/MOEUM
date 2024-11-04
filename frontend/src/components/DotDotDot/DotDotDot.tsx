@@ -23,7 +23,7 @@ const DotDotDot: React.FC<DotDotDotProps>= ({ data }) => {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div >
       <AiOutlineMore css={s_icon} onClick={handleDropDown} />
       {isDropDown && (
         <ul

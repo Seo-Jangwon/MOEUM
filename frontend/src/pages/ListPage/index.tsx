@@ -30,6 +30,7 @@ const mokData: { music: Music[] } = {
 const ListPage = () => {
   const { id } = useParams();
   return (
+    
     <div css={s_container}>
       {/* 전체 박스 */}
       <div>
