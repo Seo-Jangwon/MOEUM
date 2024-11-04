@@ -1,10 +1,10 @@
 import MusicCard from '@/components/Card/MusicCard/MusicCard';
-import { HiOutlineArrowCircleRight } from 'react-icons/hi';
-import { s_div_button, s_div_musicList } from '../FirstMainPage/style';
 import { css } from '@emotion/react';
+import { HiOutlineArrowCircleRight } from 'react-icons/hi';
+import { Link } from 'react-router-dom';
+import { s_div_button, s_div_musicList } from '../FirstMainPage/style';
 import Musk from './image/musk.jpg';
 import { s_h1 } from './style';
-import { Link } from 'react-router-dom';
 
 interface DiscographyItem {
   category: string;

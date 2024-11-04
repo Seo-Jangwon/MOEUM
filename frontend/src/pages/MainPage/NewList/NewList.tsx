@@ -1,12 +1,13 @@
+import lala from '@/assets/lalaticon/lala2.png';
 import Lottie from 'lottie-react';
 import { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft, FaArrowRight, FaPlay } from 'react-icons/fa';
 import { FiClock } from 'react-icons/fi';
-import lala from '@/assets/lalaticon/lala2.png';
 import playMusic from '../image/playMusic.json';
 
 import {
   s_button,
+  s_div_button,
   s_div_h3,
   s_div_header,
   s_div_img,
@@ -103,7 +104,8 @@ const NewList = () => {
           <FiClock />
           <h3>최신 발매곡</h3>
         </div>
-        <div>
+        <div css={s_div_button}>
+          <button>모두보기</button>
           <button css={s_button} onClick={handlePrev}>
             <FaArrowLeft />
           </button>

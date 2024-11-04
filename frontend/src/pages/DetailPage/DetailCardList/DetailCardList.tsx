@@ -1,7 +1,5 @@
 const DetailCardList = () => {
-  return (
-    <div>DetailCardList</div>
-  )
-}
+  return <div>DetailCardList</div>;
+};
 
-export default DetailCardList
+export default DetailCardList;

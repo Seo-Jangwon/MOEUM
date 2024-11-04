@@ -3,12 +3,12 @@ import DetailCoverHeart from './DetailCoverHeart';
 
 interface DetailCoverProps {
   title: string;
-  cover: string;
+  background: string;
 }
 
-const DetailCover = ({ title, cover }: DetailCoverProps) => {
+const DetailCover = ({ title, background }: DetailCoverProps) => {
   return (
-    <section css={s_container(cover)}>
+    <section css={s_container(background)}>
       <article css={s_article}>
         <h1 css={s_title}>{title}</h1>
         <DetailCoverHeart isLike={true} />

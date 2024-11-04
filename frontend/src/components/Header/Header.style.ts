@@ -10,6 +10,7 @@ export const s_container = css`
   align-items: center;
   padding: 0 16px;
   height: 80px;
+  z-index: 90;
   ::before {
     content: '';
     position: absolute;

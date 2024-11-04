@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { BallType } from './Background';
 
 export const Container = styled.div`
   position: fixed;
@@ -12,24 +13,31 @@ export const Container = styled.div`
 
 const SIZE = '20vw';
 
-export const PrimaryBall = styled.figure`
+const BALL_POSITION = {
+  contain: '5vw',
+  clip: '-12vw',
+};
+
+export const PrimaryBall = styled.figure<{ ball: BallType }>`
   position: absolute;
-  left: 5vw;
+  left: ${({ ball }) => BALL_POSITION[ball]};
   bottom: 5vw;
   height: ${SIZE};
   width: ${SIZE};
+  transition: 0.5s ease-in-out;
   background-color: ${({ theme }) => theme.colors.primary};
   border-radius: 100%;
   mix-blend-mode: screen;
   filter: blur(2vw);
 `;
 
-export const SecondaryBall = styled.figure`
+export const SecondaryBall = styled.figure<{ ball: BallType }>`
   position: absolute;
-  right: 5vw;
+  right: ${({ ball }) => BALL_POSITION[ball]};
   top: 10vh;
   height: ${SIZE};
   width: ${SIZE};
+  transition: 0.5s ease-in-out;
   background-color: ${({ theme }) => theme.colors.secondary};
   border-radius: 100%;
   mix-blend-mode: screen;

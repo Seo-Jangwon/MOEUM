@@ -12,8 +12,10 @@ const FAQPage = lazy(() => import('@/pages/FAQPage'));
 const WelcomePage = lazy(() => import('@/pages/WelcomePage'));
 const CalibrationPage = lazy(() => import('@/pages/CalibrationPage'));
 const MainPage = lazy(() => import('@/pages/MainPage'));
-const SearchPage = lazy(() => import('@/pages/SearchPage'))
-const RecentRecordPage = lazy(() => import('@/pages/RecordPage'))
+const SearchPage = lazy(() => import('@/pages/SearchPage'));
+const RecentRecordPage = lazy(() => import('@/pages/RecordPage'));
+const ListPage = lazy(() => import('@/pages/ListPage'));
+const SearchMorePage = lazy(() => import('@/pages/SearchMorePage'));
 
 const router = createBrowserRouter([
   {
@@ -72,6 +74,26 @@ const router = createBrowserRouter([
       {
         path: 'search',
         element: <SearchPage />,
+      },
+      {
+        path: 'search/music',
+        element: <SearchMorePage variant="music" />,
+      },
+      {
+        path: 'search/album',
+        element: <SearchMorePage variant="album" />,
+      },
+      {
+        path: 'search/artist',
+        element: <SearchMorePage variant="artist" />,
+      },
+      {
+        path: 'search/playlist',
+        element: <SearchMorePage variant="playlist" />,
+      },
+      {
+        path: 'list/:id',
+        element: <ListPage />,
       },
     ],
   },
