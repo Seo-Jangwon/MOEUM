@@ -17,8 +17,7 @@ export type SearchDetailVariants = 'music' | 'album' | 'artist' | 'playlist';
 interface SearchDetailPageProps {
   variant: SearchDetailVariants;
 }
-
-const testData = {
+export const testData = {
   code: 200,
   data: {
     musics: [

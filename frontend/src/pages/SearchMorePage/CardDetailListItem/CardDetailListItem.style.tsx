@@ -5,14 +5,13 @@ export const s_container = (theme: Theme) => css`
   word-break: break-all;
   border: 2px solid ${theme.colors.white};
   cursor: pointer;
-
+  margin: 0 5%;
+  width: 90%;
   @media (max-width: 768px) {
-    width: 90%;
     height: 6vh;
     border-radius: 10px;
   }
   @media (min-width: 768px) {
-    width: 60%;
     height: 8vh;
     border-radius: 20px;
   }
