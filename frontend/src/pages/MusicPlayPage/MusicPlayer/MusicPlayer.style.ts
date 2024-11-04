@@ -45,7 +45,6 @@ export const s_playerBar = css`
   height: 5%;
   background-color: orange;
   opacity: 0.5;
-  display: flex;
   align-items: center;
   bottom: 0;
   left: 0;

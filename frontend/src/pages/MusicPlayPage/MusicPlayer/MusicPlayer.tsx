@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { css } from '@emotion/react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   s_canvas,
@@ -140,11 +141,22 @@ const MusicPlayer = () => {
   const playerBarRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [playerBarVisible, setPlayerBarVisible] = useState<boolean>(false);
+  let timeoutId: NodeJS.Timeout;
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const handleMouseMove = () => {
+      setPlayerBarVisible(true);
+      clearTimeout(timeoutId);
 
+      timeoutId = setTimeout(() => {
+        setPlayerBarVisible(false);
+      }, 3000); // 3초 후 playerBar 숨김
+    };
+
+    const canvas = canvasRef.current;
+
+    if (!canvas) return;
+    canvasRef.current?.addEventListener('mousemove', handleMouseMove);
     const context = canvas.getContext('2d');
     if (!context) return;
 
@@ -172,19 +184,9 @@ const MusicPlayer = () => {
     }
     raf = requestAnimationFrame(loop);
 
-    document.onfullscreenchange = () => {
-      if (!document.fullscreenElement) {
-        playerBarRef.current.style.bottom = '0';
-        playerBarRef.current.style.width = '100%';
-        playerBarRef.current.style.left = '0';
-      } else {
-        playerBarRef.current.style.bottom = '0';
-        playerBarRef.current.style.width = '100%';
-        playerBarRef.current.style.left = '0';
-      }
-    };
     return () => {
-      // cancelAnimationFrame(raf);
+      canvasRef.current?.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(timeoutId);
       window.removeEventListener('resize', resize);
     };
   }, []);
@@ -214,7 +216,13 @@ const MusicPlayer = () => {
       <div css={s_container}>
         <div css={s_videoContainer} ref={divRef}>
           <canvas css={s_canvas} ref={canvasRef} />
-          <div ref={playerBarRef} css={s_playerBar}>
+          <div
+            ref={playerBarRef}
+            css={css`
+              display: ${playerBarVisible ? 'flex' : 'none'};
+              ${s_playerBar}
+            `}
+          >
             <button>이전 곡</button>
             <button>재생</button>
             <button>다음 곡</button>
