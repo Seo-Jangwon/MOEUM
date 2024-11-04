@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ArtistMusicId implements Serializable {
 
-    private Long artistId;
-    private Long musicId;
+    private Artist artist;
+    private Music music;
 
 }

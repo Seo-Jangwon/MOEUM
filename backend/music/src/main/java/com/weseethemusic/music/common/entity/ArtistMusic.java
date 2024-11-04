@@ -19,20 +19,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArtistMusic {
-    @Id
-    @Column(name = "artist_id")
-    private Long artistId;
 
     @Id
-    @Column(name = "music_id")
-    private Long musicId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artist_id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "music_id", insertable = false, updatable = false)
+    @Id
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "music_id", nullable = false)
     private Music music;
 
 }

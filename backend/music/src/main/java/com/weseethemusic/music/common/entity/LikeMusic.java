@@ -23,14 +23,11 @@ import lombok.Setter;
 public class LikeMusic {
 
     @Id
-    @Column(name = "member_id")
-    private Long memberId;
+    private long memberId;
 
     @Id
-    @Column(name = "music_id")
-    private Long musicId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "music_id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "music_id", nullable = false)
     private Music music;
+
 }
