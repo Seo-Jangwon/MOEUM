@@ -20,6 +20,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           padding: 20px;
           border-radius: 8px;
           display: flex;
+          
         `}
         // onClick={(e) => e.stopPropagation()}
       >

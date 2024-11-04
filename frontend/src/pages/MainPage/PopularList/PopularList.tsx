@@ -1,6 +1,7 @@
 import lala from '@/assets/lalaticon/lala4.png';
 import { css } from '@emotion/react';
 import { FiActivity } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 import { s_div_header } from '../NewList/style';
 import {
   s_div_data,
@@ -46,6 +47,10 @@ const mokData: { music: Music[] } = {
 };
 
 const PopularList = () => {
+  const navigate = useNavigate();
+  const clickHandler = (index :number )=> {
+    navigate(`music/${index}`);
+  };
   return (
     <>
       <div css={s_div_header}>
@@ -57,7 +62,7 @@ const PopularList = () => {
       </div>
       <div css={s_popular_container}>
         {mokData.music.map((item, index) => (
-          <div key={index} css={s_popular_box}>
+          <div key={index} css={s_popular_box} onClick={() => clickHandler(index)}>
             <div
               css={css`
                 border-radius: 100%;

@@ -18,6 +18,7 @@ import {
   s_p,
   s_play_button,
 } from './style';
+import { useNavigate } from 'react-router-dom';
 
 interface Music {
   title: string;
@@ -50,6 +51,7 @@ const NewList = () => {
   const listRef = useRef<HTMLDivElement>(null);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  const navigate = useNavigate()
 
   const updateItemsPerPage = () => {
     if (window.innerWidth <= 900) {
@@ -95,6 +97,7 @@ const NewList = () => {
 
   const handlePlayClick = (index: number) => {
     setPlayingIndex((prevIndex) => (prevIndex === index ? null : index));
+    navigate(`music/${index}`)
   };
 
   return (
