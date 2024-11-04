@@ -25,7 +25,7 @@ public class S3Config {
     /**
      * S3 클라이언트를 생성하고 반환
      *
-     * @return  S3 클라이언트 객체
+     * @return S3 클라이언트 객체
      */
     @Bean
     public S3Client s3Client() {
