@@ -17,11 +17,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Genre {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-  @Column(nullable = false, length = 10)
-  private String name;
+    @Column(nullable = false, length = 10)
+    private String name;
 
 }

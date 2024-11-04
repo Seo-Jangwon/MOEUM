@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
@@ -23,35 +24,31 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Music {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-  @Column(nullable = false)
-  private String name;
+    @Column(nullable = false)
+    private String name;
 
-  @ManyToMany
-  @JoinTable(name = "artist_music", joinColumns = @JoinColumn(name = "music_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
-  private Set<Artist> artists;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "album_id", nullable = false)
+    private Album album;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "album_id", nullable = false)
-  private Album album;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "genre_id", nullable = false)
+    private Genre genre;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "genre_id", nullable = false)
-  private Genre genre;
+    @Column(nullable = false)
+    private int duration;
 
-  @Column(nullable = false)
-  private int duration;
-
-  private double danceability;
-  private double loudness;
-  private boolean mode;
-  private double speechiness;
-  private double acousticness;
-  private double valence;
-  private double tempo;
-  private double energy;
+    private double danceability;
+    private double loudness;
+    private boolean mode;
+    private double speechiness;
+    private double acousticness;
+    private double valence;
+    private double tempo;
+    private double energy;
 
 }

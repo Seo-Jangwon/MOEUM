@@ -10,6 +10,7 @@ import com.weseethemusic.music.dto.playlist.ArtistResponse;
 import com.weseethemusic.music.dto.playlist.CreatePlaylistRequest;
 import com.weseethemusic.music.dto.playlist.PlaylistMusicResponse;
 import com.weseethemusic.music.dto.playlist.PlaylistResponse;
+import com.weseethemusic.music.repository.ArtistMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
 import com.weseethemusic.music.repository.PlaylistRepository;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final MusicRepository musicRepository;
     private final PresignedUrlService presignedUrlService;
+    private final ArtistMusicRepository artistMusicRepository;
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -91,12 +93,8 @@ public class PlaylistServiceImpl implements PlaylistService {
 
             List<PlaylistMusic> playlistMusics = new ArrayList<>(playlist.getPlaylistMusics());
             // trackOrder로 정렬
-            Collections.sort(playlistMusics, new Comparator<PlaylistMusic>() {
-                @Override
-                public int compare(PlaylistMusic pm1, PlaylistMusic pm2) {
-                    return Integer.compare(pm1.getTrackOrder(), pm2.getTrackOrder());
-                }
-            });
+            Collections.sort(playlistMusics,
+                Comparator.comparingInt(PlaylistMusic::getTrackOrder));
 
             List<PlaylistMusicResponse> responses = new ArrayList<>();
             for (PlaylistMusic playlistMusic : playlistMusics) {
@@ -105,7 +103,9 @@ public class PlaylistServiceImpl implements PlaylistService {
 
                 // 아티스트 목록 생성
                 List<ArtistResponse> artistResponses = new ArrayList<>();
-                for (Artist artist : music.getArtists()) {
+                List<Artist> artists = artistMusicRepository.findAllByMusic(music);
+
+                for (Artist artist : artists) {
                     artistResponses.add(new ArtistResponse(artist.getId(), artist.getName()));
                 }
 
