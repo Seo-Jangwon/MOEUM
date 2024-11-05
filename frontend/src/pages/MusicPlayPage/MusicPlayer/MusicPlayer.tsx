@@ -6,6 +6,7 @@ import { FaStepBackward, FaStepForward } from 'react-icons/fa';
 import { FaExpand, FaPause, FaPlay } from 'react-icons/fa6';
 import { useLocation, useNavigate } from 'react-router-dom';
 import beatData from '../beats.json';
+import lalaSong from '../lalaSong.m4a';
 import {
   s_canvas,
   s_container,
@@ -20,6 +21,7 @@ const MusicPlayer = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const rangeRef = useRef<HTMLInputElement | null>(null);
   const playerBarRef = useRef<HTMLDivElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const engineRef = useRef<Engine | null>(null);
   const renderRef = useRef<Render | null>(null);
@@ -29,13 +31,57 @@ const MusicPlayer = () => {
 
   const animationRef = useRef<number>();
 
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const timeIdx = useRef<number>(0);
   const startTime = useRef<number>(0);
-  const [isPaused, setIsPaused] = useState<boolean>(true);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
   const data = useRef(beatData.data.beats[0].lines);
   function changeVideoState() {
     setIsPaused((prev) => !prev);
+    if (isPaused) audioRef.current?.pause();
+    else audioRef.current?.play();
+    handlePlayMusic();
   }
+
+  const handlePlayMusic = () => {
+    console.log(isPaused);
+    if (isPaused && intervalRef.current) {
+      clearInterval(intervalRef.current);
+    } else if (isPaused) {
+    } else {
+      intervalRef.current = setInterval(() => {
+        if (!isPaused) {
+          if (data.current && timeIdx.current < data.current.length) {
+            if (
+              audioRef.current?.currentTime >= data.current[timeIdx.current].time &&
+              engineRef.current !== null
+            ) {
+              const circle = Bodies.circle(500, 300, 20, { restitution: 0.5, friction: 0.01 });
+              World.add(engineRef.current.world, circle);
+              timeIdx.current += 1;
+            }
+
+            /**
+             * 화면 밖으로 나간 물체 삭제
+             */
+            if (engineRef.current !== null) {
+              engineRef.current.world.bodies.forEach((body) => {
+                if (
+                  body.position.y > window.innerHeight ||
+                  body.position.x < 0 ||
+                  body.position.x > window.innerWidth
+                ) {
+                  World.remove(engineRef.current.world, body);
+                }
+              });
+            }
+          }
+        }
+      }, 16);
+    }
+  };
+
   const navigate = useNavigate();
   const location = useLocation();
   const [playerBarVisible, setPlayerBarVisible] = useState<boolean>(false);
@@ -53,6 +99,12 @@ const MusicPlayer = () => {
       }, 3000); // 3초 후 playerBar 숨김
     };
 
+    if (audioRef.current) {
+      audioRef.current.src = lalaSong;
+      audioRef.current.addEventListener('ended', () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      });
+    }
     const canvas = canvasRef.current;
 
     if (!canvas) return;
@@ -95,8 +147,6 @@ const MusicPlayer = () => {
     Runner.run(Runner.create(), engineRef.current);
     pausedTimeRef.current = startTime.current = performance.now() / 1000;
 
-    changeVideoState();
-
     return () => {
       canvasRef.current?.removeEventListener('mousemove', handleMouseMove);
       clearTimeout(timeoutId.current);
@@ -110,62 +160,59 @@ const MusicPlayer = () => {
         World.clear(engineRef.current.world, false);
         Engine.clear(engineRef.current);
       }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, []);
 
-  useEffect(() => {
-    if (engineRef.current === null || renderRef.current === null) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (engineRef.current === null || renderRef.current === null) {
+  //     return;
+  //   }
 
-    //영상이 재생되는 상태일 경우
-    if (!isPaused) {
-      startTime.current = startTime.current + (performance.now() / 1000 - pausedTimeRef.current);
-      createObjectsAtTimes();
-    }
-    function createObjectsAtTimes() {
-      if (data.current && timeIdx.current < data.current.length) {
-        elapsedTimeRef.current = performance.now() / 1000 - startTime.current;
-        console.log(elapsedTimeRef.current);
+  //   //영상이 재생되는 상태일 경우
+  //   if (!isPaused) {
+  //   }
+  //   function createObjectsAtTimes() {
+  //     if (data.current && timeIdx.current < data.current.length) {
+  //       if (
+  //         audioRef.current?.currentTime >= data.current[timeIdx.current].time &&
+  //         engineRef.current !== null
+  //       ) {
+  //         const circle = Bodies.circle(500, 300, 20, { restitution: 0.5, friction: 0.01 });
+  //         World.add(engineRef.current.world, circle);
+  //         timeIdx.current += 1;
+  //       }
 
-        if (
-          elapsedTimeRef.current >= data.current[timeIdx.current].time &&
-          engineRef.current !== null
-        ) {
-          const circle = Bodies.circle(500, 300, 20, { restitution: 0.5, friction: 0.01 });
-          World.add(engineRef.current.world, circle);
-          timeIdx.current += 1;
-        }
+  //       /**
+  //        * 화면 밖으로 나간 물체 삭제
+  //        */
+  //       if (engineRef.current !== null) {
+  //         engineRef.current.world.bodies.forEach((body) => {
+  //           if (
+  //             body.position.y > window.innerHeight ||
+  //             body.position.x < 0 ||
+  //             body.position.x > window.innerWidth
+  //           ) {
+  //             World.remove(engineRef.current.world, body);
+  //           }
+  //         });
+  //       }
 
-        /**
-         * 화면 밖으로 나간 물체 삭제
-         */
-        if (engineRef.current !== null) {
-          engineRef.current.world.bodies.forEach((body) => {
-            if (
-              body.position.y > window.innerHeight ||
-              body.position.x < 0 ||
-              body.position.x > window.innerWidth
-            ) {
-              World.remove(engineRef.current.world, body);
-            }
-          });
-        }
+  //       // 다음 호출 설정
+  //       if (isPaused) animationRef.current = requestAnimationFrame(createObjectsAtTimes);
+  //       else if (animationRef.current) cancelAnimationFrame(animationRef.current);
+  //     }
+  //   }
+  //   createObjectsAtTimes();
+  //   return () => {
+  //     if (animationRef.current && !isPaused) {
+  //       cancelAnimationFrame(animationRef.current);
+  //     }
+  //     // if (intervalRef.current) clearInterval(intervalRef.current);
+  //   };
+  // }, [isPaused]);
 
-        // 다음 호출 설정
-        if (!isPaused) animationRef.current = requestAnimationFrame(createObjectsAtTimes);
-        else if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      }
-    }
-    return () => {
-      if (animationRef.current && !isPaused) {
-        cancelAnimationFrame(animationRef.current);
-        pausedTimeRef.current = performance.now() / 1000;
-      }
-    };
-  }, [isPaused]);
-
-  /** 버그 픽스 필요 */
+  /** pip 버그 픽스 필요 */
   const handlePip = () => {
     const video = videoRef.current;
     if (video) {
@@ -197,6 +244,7 @@ const MusicPlayer = () => {
   return (
     <>
       <div css={s_container}>
+        <audio ref={audioRef} />
         <div css={s_videoContainer} ref={divRef}>
           <canvas css={s_canvas} ref={canvasRef} />
           <div
@@ -207,7 +255,7 @@ const MusicPlayer = () => {
             `}
           >
             <FaStepBackward />
-            {isPaused ? (
+            {!isPaused ? (
               <FaPlay onClick={changeVideoState} />
             ) : (
               <FaPause onClick={changeVideoState} />
