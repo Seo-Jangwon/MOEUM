@@ -42,6 +42,9 @@ const GenreList = () => {
   const handlePage = (path: string) => {
     navigate(path);
   };
+  const handleMusicPage = (path: string) => {
+    navigate(path);
+  };
   return (
     <>
       <div css={s_div_header}>
@@ -53,7 +56,7 @@ const GenreList = () => {
       </div>
       <div css={s_div_item_container}>
         {mokData.music.map((item, index) => (
-          <button key={index} css={s_div_item_box}>
+          <button key={index} css={s_div_item_box} onClick={() => handleMusicPage('music/12')}>
             <img src={lala} alt="라라" css={s_img} />
             <h5 css={s_h5}>{item.title}</h5>
           </button>
