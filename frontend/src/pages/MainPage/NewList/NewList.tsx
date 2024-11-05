@@ -108,7 +108,7 @@ const NewList = () => {
           <h3>최신 발매곡</h3>
         </div>
         <div css={s_div_button}>
-          <button>모두보기</button>
+          <button onClick={() => navigate(`list/newList`)}>모두보기</button>
           <button css={s_button} onClick={handlePrev}>
             <FaArrowLeft />
           </button>

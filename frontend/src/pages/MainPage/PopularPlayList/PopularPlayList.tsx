@@ -31,6 +31,9 @@ const PopularPlayList = () => {
   const handlePage = (path: string) => {
     return navigate(path)
   }
+  const handleMusicPage = (path: string) => {
+    return navigate(path)
+  }
 
   return (
     <>
@@ -43,7 +46,7 @@ const PopularPlayList = () => {
       </div>
       <div css={s_div_item_container}>
         {mokData.data.map((item, index) => (
-          <button key={index} css={s_div_item_box(lala)}>
+          <button key={index} css={s_div_item_box(lala)} onClick={() => handleMusicPage('music/1')}>
             <h5 css={s_h5}>{item.title}</h5>
           </button>
         ))}
