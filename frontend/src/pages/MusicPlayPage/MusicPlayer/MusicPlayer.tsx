@@ -31,7 +31,7 @@ const MusicPlayer = () => {
 
   const timeIdx = useRef<number>(0);
   const startTime = useRef<number>(0);
-  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(true);
   const data = useRef(beatData.data.beats[0].lines);
   function changeVideoState() {
     setIsPaused((prev) => !prev);
@@ -56,7 +56,8 @@ const MusicPlayer = () => {
     const canvas = canvasRef.current;
 
     if (!canvas) return;
-    canvasRef.current?.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mousemove', handleMouseMove);
+
     const context = canvas.getContext('2d');
     if (!context) return;
 
@@ -79,8 +80,10 @@ const MusicPlayer = () => {
       element: divRef.current as HTMLElement,
       engine: engineRef.current,
       canvas: canvasRef.current as HTMLCanvasElement,
+
       options: {
         wireframes: false,
+        background: '#FFFF00',
       },
     });
 
@@ -90,6 +93,10 @@ const MusicPlayer = () => {
     Render.run(renderRef.current);
     runnerRef.current = Runner.create();
     Runner.run(Runner.create(), engineRef.current);
+    pausedTimeRef.current = startTime.current = performance.now() / 1000;
+
+    changeVideoState();
+
     return () => {
       canvasRef.current?.removeEventListener('mousemove', handleMouseMove);
       clearTimeout(timeoutId.current);
@@ -110,12 +117,10 @@ const MusicPlayer = () => {
     if (engineRef.current === null || renderRef.current === null) {
       return;
     }
-    startTime.current += performance.now() / 1000 - pausedTimeRef.current;
 
     //영상이 재생되는 상태일 경우
     if (!isPaused) {
-      startTime.current = performance.now() / 1000 - pausedTimeRef.current;
-      console.log(pausedTimeRef.current);
+      startTime.current = startTime.current + (performance.now() / 1000 - pausedTimeRef.current);
       createObjectsAtTimes();
     }
     function createObjectsAtTimes() {
@@ -157,11 +162,10 @@ const MusicPlayer = () => {
         cancelAnimationFrame(animationRef.current);
         pausedTimeRef.current = performance.now() / 1000;
       }
-      console.log(pausedTimeRef.current);
     };
   }, [isPaused]);
 
-  // Function to handle Picture-in-Picture
+  /** 버그 픽스 필요 */
   const handlePip = () => {
     const video = videoRef.current;
     if (video) {
