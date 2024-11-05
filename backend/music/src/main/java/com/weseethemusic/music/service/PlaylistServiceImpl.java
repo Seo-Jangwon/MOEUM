@@ -4,22 +4,27 @@ import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
 import com.weseethemusic.music.common.entity.Music;
 import com.weseethemusic.music.common.entity.Playlist;
+import com.weseethemusic.music.common.entity.PlaylistLike;
 import com.weseethemusic.music.common.entity.PlaylistMusic;
 import com.weseethemusic.music.common.service.PresignedUrlService;
 import com.weseethemusic.music.dto.playlist.ArtistResponse;
 import com.weseethemusic.music.dto.playlist.CreatePlaylistRequest;
+import com.weseethemusic.music.dto.playlist.LikeRequest;
 import com.weseethemusic.music.dto.playlist.PlaylistMusicResponse;
 import com.weseethemusic.music.dto.playlist.PlaylistResponse;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
+import com.weseethemusic.music.repository.PlaylistLikeRepository;
 import com.weseethemusic.music.repository.PlaylistMusicRepository;
 import com.weseethemusic.music.repository.PlaylistRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +41,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final MusicRepository musicRepository;
     private final PresignedUrlService presignedUrlService;
     private final ArtistMusicRepository artistMusicRepository;
+    private final PlaylistLikeRepository playlistLikeRepository;
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -217,6 +223,72 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<PlaylistResponse> getMyPlaylistsAll(Long memberId) {
+        try {
+            // 내가 만든 플레이리스트와 좋아요한 플레이리스트 목록
+            List<Playlist> myPlaylists = playlistRepository.findByMemberId(memberId);
+            List<PlaylistLike> likedPlaylists = playlistLikeRepository.findByMemberId(memberId);
+
+            // 중복 제거
+            Set<Playlist> uniquePlaylists = new LinkedHashSet<>(myPlaylists);
+            for (PlaylistLike like : likedPlaylists) {
+                uniquePlaylists.add(like.getPlaylist());
+            }
+
+            List<PlaylistResponse> responses = new ArrayList<>();
+
+            for (Playlist playlist : uniquePlaylists) {
+                List<PlaylistMusic> playlistMusics = playlistMusicRepository.findByPlaylistIdOrderByOrder(
+                    playlist.getId());
+
+                // 총 재생 시간과 음악 수 계산
+                int totalMusicCount = playlistMusics.size();
+                int totalSeconds = 0;
+
+                // 가장 높은 trackorder
+                PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
+                        playlist.getId())
+                    .orElse(null);
+
+                if (latestMusic != null) {
+                    Music music = musicRepository.findById(latestMusic.getMusicId())
+                        .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
+
+                    // 이미지
+                    String imageUrl = presignedUrlService.getPresignedUrl(
+                        music.getAlbum().getImageName());
+
+                    // 총 재생 시간 계산
+                    List<Long> musicIds = new ArrayList<>();
+                    for (PlaylistMusic playlistMusic : playlistMusics) {
+                        musicIds.add(playlistMusic.getMusicId());
+                    }
+
+                    List<Music> musics = musicRepository.findAllById(musicIds);
+
+                    for (Music m : musics) {
+                        totalSeconds += m.getDuration();
+                    }
+
+                    // 플레이리스트 소유 여부
+                    boolean isOwner = playlist.getMemberId().equals(memberId);
+
+                    PlaylistResponse response = new PlaylistResponse(playlist.getId(),
+                        playlist.getName(), imageUrl, formatTotalDuration(totalSeconds),
+                        totalMusicCount);
+                    responses.add(response);
+                }
+            }
+
+            return responses;
+        } catch (Exception e) {
+            log.error("플레이리스트 목록 조회 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 목록 조회에 실패했습니다.");
+        }
+    }
+
+    @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<PlaylistMusicResponse> updatePlaylist(Long playlistId, String title,
         List<Long> musicIds) {
@@ -257,6 +329,50 @@ public class PlaylistServiceImpl implements PlaylistService {
         }
     }
 
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void likePlaylist(Long playlistId, Long memberId) {
+        try {
+            Optional<PlaylistLike> existingLike = playlistLikeRepository
+                .findByMemberIdAndPlaylistId(memberId, playlistId);
+
+            if (existingLike.isPresent()) {
+                // 이미 좋아요가 있으면 취소
+                playlistLikeRepository.delete(existingLike.get());
+            } else {
+                // 플레이리스트 존재 확인
+                Playlist playlist = playlistRepository.findById(playlistId)
+                    .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
+
+                // 좋아요 추가
+                PlaylistLike playlistLike = new PlaylistLike();
+                playlistLike.setMemberId(memberId);
+                playlistLike.setPlaylist(playlist);
+                playlistLike.setCreatedAt(LocalDateTime.now());
+
+                playlistLikeRepository.save(playlistLike);
+            }
+        } catch (Exception e) {
+            log.error("플레이리스트 좋아요 처리 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 좋아요 처리에 실패했습니다.");
+        }
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void disLikePlaylist(Long playlistId, Long memberId) {
+        try {
+            PlaylistLike playlistLike = playlistLikeRepository
+                .findByMemberIdAndPlaylistId(memberId, playlistId)
+                .orElseThrow(() -> new RuntimeException("좋아요하지 않은 플레이리스트입니다."));
+
+            playlistLikeRepository.delete(playlistLike);
+        } catch (Exception e) {
+            log.error("플레이리스트 좋아요 삭제 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 좋아요 삭제에 실패했습니다.");
+        }
+    }
+
     private String formatDuration(int seconds) {
         int minutes = seconds / 60;
         int remainingSeconds = seconds % 60;
@@ -273,4 +389,5 @@ public class PlaylistServiceImpl implements PlaylistService {
             return String.format("%d분", minutes);
         }
     }
+
 }

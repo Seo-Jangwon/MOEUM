@@ -31,7 +31,7 @@ public class PlaylistLike {
     private Long id;
 
     @Column(nullable = false)
-    private String memberId;
+    private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "playlist_id", nullable = false)

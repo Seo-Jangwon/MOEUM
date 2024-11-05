@@ -9,8 +9,10 @@ import static org.mockito.Mockito.when;
 
 import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
+import com.weseethemusic.music.common.entity.PlaylistLike;
 import com.weseethemusic.music.dto.playlist.PlaylistMusicResponse;
 import com.weseethemusic.music.dto.playlist.PlaylistResponse;
+import com.weseethemusic.music.repository.PlaylistLikeRepository;
 import java.time.LocalDateTime;
 import com.weseethemusic.music.common.entity.Music;
 import com.weseethemusic.music.common.entity.Playlist;
@@ -44,6 +46,8 @@ public class PlaylistServiceTest {
     private PresignedUrlService presignedUrlService;
     @Mock
     private ArtistMusicRepository artistMusicRepository;
+    @Mock
+    private PlaylistLikeRepository playlistLikeRepository;
 
     @InjectMocks
     private PlaylistServiceImpl playlistService;
@@ -271,5 +275,120 @@ public class PlaylistServiceTest {
         assertThat(response).isNotNull();
         verify(playlistMusicRepository).deleteByPlaylistId(playlistId);
         verify(playlistRepository).save(any(Playlist.class));
+    }
+
+    @Test
+    @DisplayName("플레이리스트 좋아요 토글 - 좋아요 추가")
+    void likePlaylist_AddLike_Success() {
+        // given
+        Long memberId = 1L;
+        Long playlistId = 1L;
+        Playlist playlist = createPlaylist(playlistId, 2L, "Test Playlist");  // 다른 사용자의 플레이리스트
+
+        when(playlistLikeRepository.findByMemberIdAndPlaylistId(memberId, playlistId))
+            .thenReturn(Optional.empty());
+        when(playlistRepository.findById(playlistId))
+            .thenReturn(Optional.of(playlist));
+
+        // when
+        playlistService.likePlaylist(playlistId, memberId);
+
+        // then
+        verify(playlistLikeRepository).save(any(PlaylistLike.class));
+    }
+
+    @Test
+    @DisplayName("플레이리스트 좋아요 토글 - 좋아요 취소")
+    void likePlaylist_RemoveLike_Success() {
+        // given
+        Long memberId = 1L;
+        Long playlistId = 1L;
+        PlaylistLike existingLike = new PlaylistLike();
+        existingLike.setId(1L);
+        existingLike.setMemberId(memberId);
+        existingLike.setPlaylist(createPlaylist(playlistId, 2L, "Test Playlist"));
+
+        when(playlistLikeRepository.findByMemberIdAndPlaylistId(memberId, playlistId))
+            .thenReturn(Optional.of(existingLike));
+
+        // when
+        playlistService.likePlaylist(playlistId, memberId);
+
+        // then
+        verify(playlistLikeRepository).delete(existingLike);
+    }
+
+    @Test
+    @DisplayName("플레이리스트 좋아요 삭제 - 성공")
+    void disLikePlaylist_Success() {
+        // given
+        Long memberId = 1L;
+        Long playlistId = 1L;
+        PlaylistLike playlistLike = new PlaylistLike();
+        playlistLike.setId(1L);
+        playlistLike.setMemberId(memberId);
+        playlistLike.setPlaylist(createPlaylist(playlistId, 2L, "Test Playlist"));
+
+        when(playlistLikeRepository.findByMemberIdAndPlaylistId(memberId, playlistId))
+            .thenReturn(Optional.of(playlistLike));
+
+        // when
+        playlistService.disLikePlaylist(playlistId, memberId);
+
+        // then
+        verify(playlistLikeRepository).delete(playlistLike);
+    }
+
+    @Test
+    @DisplayName("플레이리스트 좋아요 삭제 - 존재하지 않는 좋아요")
+    void disLikePlaylist_NotFound() {
+        // given
+        Long memberId = 1L;
+        Long playlistId = 1L;
+
+        when(playlistLikeRepository.findByMemberIdAndPlaylistId(memberId, playlistId))
+            .thenReturn(Optional.empty());
+
+        // then
+        assertThrows(RuntimeException.class, () ->
+            playlistService.disLikePlaylist(playlistId, memberId));
+    }
+
+    @Test
+    @DisplayName("전체 플레이리스트 목록 조회(내 플레이리스트 + 좋아요한 플레이리스트) - 성공")
+    void getMyPlaylistsAll_Success() {
+        // given
+        Long memberId = 1L;
+
+        // 내가 만든 플레이리스트
+        Playlist myPlaylist = createPlaylist(1L, memberId, "내 플레이리스트");
+
+        // 내가 좋아요한 다른 사람의 플레이리스트
+        Playlist likedPlaylist = createPlaylist(2L, 2L, "좋아요한 플레이리스트");
+        PlaylistLike playlistLike = new PlaylistLike();
+        playlistLike.setId(1L);
+        playlistLike.setMemberId(memberId);
+        playlistLike.setPlaylist(likedPlaylist);
+
+        List<Playlist> myPlaylists = List.of(myPlaylist);
+        List<PlaylistLike> likedPlaylists = List.of(playlistLike);
+
+        when(playlistRepository.findByMemberId(memberId)).thenReturn(myPlaylists);
+        when(playlistLikeRepository.findByMemberId(memberId)).thenReturn(likedPlaylists);
+        when(playlistMusicRepository.findByPlaylistIdOrderByOrder(any()))
+            .thenReturn(createPlaylistMusics());
+        when(playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(any()))
+            .thenReturn(Optional.of(createPlaylistMusic(1L, 1L, 1L, 0)));
+        when(musicRepository.findById(any()))
+            .thenReturn(Optional.of(createMusicWithAlbumAndArtists(1L)));
+        when(presignedUrlService.getPresignedUrl(any())).thenReturn("/test.jpg");
+
+        // when
+        List<PlaylistResponse> responses = playlistService.getMyPlaylistsAll(memberId);
+
+        // then
+        assertThat(responses).hasSize(2); // 내 플레이리스트 1개 + 좋아요한 플레이리스트 1개
+        verify(playlistRepository).findByMemberId(memberId);
+        verify(playlistLikeRepository).findByMemberId(memberId);
     }
 }
