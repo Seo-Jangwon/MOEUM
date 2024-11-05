@@ -1,9 +1,11 @@
 import { css } from '@emotion/react';
+import { Bodies, Engine, Render, Runner, World } from 'matter-js';
 import { useEffect, useRef, useState } from 'react';
 import { BsPip } from 'react-icons/bs';
 import { FaStepBackward, FaStepForward } from 'react-icons/fa';
 import { FaExpand, FaPause, FaPlay } from 'react-icons/fa6';
 import { useLocation, useNavigate } from 'react-router-dom';
+import beatData from '../beats.json';
 import {
   s_canvas,
   s_container,
@@ -12,150 +14,41 @@ import {
   s_videoContainer,
 } from './MusicPlayer.style';
 
-const pipe =
-  (...fns: Function[]) =>
-  (x: any) =>
-    fns.reduce((acc, fn) => fn(acc), x);
-const radians = (degrees: number) => degrees * (Math.PI / 180);
-
-let raf: number;
-
-const Modules = {
-  innerCircle: {
-    meta: { name: 'Module 1' },
-
-    draw({ canvas, context, delta }: DrawContext) {
-      const { width, height } = canvas;
-      context.fillStyle = `hsl(${delta / 20}, 100%, 50%)`;
-      context.beginPath();
-      context.arc(
-        width / 2 - Math.sin(delta / 500) * 50,
-        height / 2 + Math.cos(delta / 500) * 50,
-        10,
-        0,
-        Math.PI * 2,
-      );
-      context.fill();
-    },
-  },
-  outerCircle: {
-    meta: { name: 'Module 2' },
-
-    draw({ canvas, context, delta }: DrawContext) {
-      const { width, height } = canvas;
-      context.fillStyle = `hsl(${180 + delta / 20}, 100%, 50%)`;
-      context.beginPath();
-      context.arc(
-        width / 2 - Math.sin(delta / 500) * 70,
-        height / 2 + Math.cos(delta / 500) * 70,
-        10,
-        0,
-        Math.PI * 2,
-      );
-      context.fill();
-    },
-  },
-  fade: {
-    meta: { name: 'Module 3' },
-
-    draw({ canvas, context, delta }: DrawContext) {
-      const { width, height } = canvas;
-      context.fillStyle = `rgba(0, 0, 0, 0.02)`;
-      context.fillRect(0, 0, width, height);
-    },
-  },
-  stretch: {
-    meta: { name: 'Module 4' },
-
-    draw({ canvas, context, delta }: DrawContext) {
-      const { width, height } = canvas;
-      const newWidth = width * 1.0028;
-      const newHeight = height * 1.0028;
-      const dWidth = newWidth - width;
-      const dHeight = newHeight - height;
-      context.drawImage(canvas, -dWidth, -dHeight, newWidth + dWidth, newHeight + dHeight);
-    },
-  },
-  squishy: {
-    meta: { name: 'Squishy' },
-
-    draw({ canvas, context, delta }: DrawContext) {
-      const { width, height } = canvas;
-      context.drawImage(
-        canvas,
-        Math.cos(delta / 900) * 5 + Math.cos(delta / 100),
-        Math.sin(delta / 5000 + 5 * Math.sin(delta / 500)) * 10 - Math.cos(delta / 500),
-        width + 20 * Math.sin(delta / 800),
-        height + 20 * Math.cos(delta / 600 + 2 * Math.sin(delta / 500)),
-      );
-    },
-  },
-};
-
-// Context interface to handle drawing
-interface DrawContext {
-  canvas: HTMLCanvasElement;
-  context: CanvasRenderingContext2D;
-  delta: number;
-}
-function renderer(drawContext: DrawContext, module: any) {
-  drawContext.context.save();
-  module.draw(drawContext);
-  drawContext.context.restore();
-  return drawContext;
-}
-
-// Create render functions from modules
-const ModuleRenderers = Object.keys(Modules).reduce(
-  (obj, name) => {
-    obj[name] = (drawContext: DrawContext) => renderer(drawContext, Modules[name]);
-    return obj;
-  },
-  {} as Record<string, Function>,
-);
-
-// Example interrupt functions
-function interrupt(drawContext: DrawContext) {
-  drawContext.delta = drawContext.delta / 2.1;
-  return drawContext;
-}
-
-function interrupt2(drawContext: DrawContext) {
-  drawContext.delta = drawContext.delta * 2.1;
-  return drawContext;
-}
-
-// Compose draw function using pipe
-const draw = pipe(
-  ModuleRenderers.squishy,
-  ModuleRenderers.fade,
-  ModuleRenderers.stretch,
-  ModuleRenderers.innerCircle,
-  interrupt,
-  ModuleRenderers.outerCircle,
-  interrupt2,
-);
-
 const MusicPlayer = () => {
   const divRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const rangeRef = useRef<HTMLInputElement | null>(null);
   const playerBarRef = useRef<HTMLDivElement | null>(null);
-  const [isPaused, setIsPaused] = useState<boolean>(true);
+
+  const engineRef = useRef<Engine | null>(null);
+  const renderRef = useRef<Render | null>(null);
+  const runnerRef = useRef<Runner | null>(null);
+  const pausedTimeRef = useRef<number>(0);
+  const elapsedTimeRef = useRef<number>(0);
+
+  const animationRef = useRef<number>();
+
+  const timeIdx = useRef<number>(0);
+  const startTime = useRef<number>(0);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const data = useRef(beatData.data.beats[0].lines);
   function changeVideoState() {
     setIsPaused((prev) => !prev);
   }
   const navigate = useNavigate();
   const location = useLocation();
   const [playerBarVisible, setPlayerBarVisible] = useState<boolean>(false);
-  let timeoutId: NodeJS.Timeout;
+  const timeoutId = useRef<NodeJS.Timeout>();
   useEffect(() => {
+    /**
+     * 비디오 내에서 마우스가 3초동안 멈춰있을 경우 재생바를 멈추는 함수
+     */
     const handleMouseMove = () => {
       setPlayerBarVisible(true);
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId.current);
 
-      timeoutId = setTimeout(() => {
+      timeoutId.current = setTimeout(() => {
         setPlayerBarVisible(false);
       }, 3000); // 3초 후 playerBar 숨김
     };
@@ -181,22 +74,92 @@ const MusicPlayer = () => {
     window.addEventListener('resize', resize);
     resize();
 
-    const loop = (delta: number) => {
-      raf = requestAnimationFrame(loop);
-      draw({ canvas, context, delta });
-    };
+    engineRef.current = Engine.create();
+    renderRef.current = Render.create({
+      element: divRef.current as HTMLElement,
+      engine: engineRef.current,
+      canvas: canvasRef.current as HTMLCanvasElement,
+      options: {
+        wireframes: false,
+      },
+    });
 
-    if (raf) {
-      cancelAnimationFrame(raf);
-    }
-    raf = requestAnimationFrame(loop);
+    engineRef.current.gravity.x = -0.5;
+    engineRef.current.gravity.y = 0;
 
+    Render.run(renderRef.current);
+    runnerRef.current = Runner.create();
+    Runner.run(Runner.create(), engineRef.current);
     return () => {
       canvasRef.current?.removeEventListener('mousemove', handleMouseMove);
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId.current);
       window.removeEventListener('resize', resize);
+      if (renderRef.current !== null) {
+        Render.stop(renderRef.current);
+        renderRef.current.canvas.remove();
+      }
+      if (runnerRef.current !== null) Runner.stop(runnerRef.current);
+      if (engineRef.current !== null) {
+        World.clear(engineRef.current.world, false);
+        Engine.clear(engineRef.current);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (engineRef.current === null || renderRef.current === null) {
+      return;
+    }
+    startTime.current += performance.now() / 1000 - pausedTimeRef.current;
+
+    //영상이 재생되는 상태일 경우
+    if (!isPaused) {
+      startTime.current = performance.now() / 1000 - pausedTimeRef.current;
+      console.log(pausedTimeRef.current);
+      createObjectsAtTimes();
+    }
+    function createObjectsAtTimes() {
+      if (data.current && timeIdx.current < data.current.length) {
+        elapsedTimeRef.current = performance.now() / 1000 - startTime.current;
+        console.log(elapsedTimeRef.current);
+
+        if (
+          elapsedTimeRef.current >= data.current[timeIdx.current].time &&
+          engineRef.current !== null
+        ) {
+          const circle = Bodies.circle(500, 300, 20, { restitution: 0.5, friction: 0.01 });
+          World.add(engineRef.current.world, circle);
+          timeIdx.current += 1;
+        }
+
+        /**
+         * 화면 밖으로 나간 물체 삭제
+         */
+        if (engineRef.current !== null) {
+          engineRef.current.world.bodies.forEach((body) => {
+            if (
+              body.position.y > window.innerHeight ||
+              body.position.x < 0 ||
+              body.position.x > window.innerWidth
+            ) {
+              World.remove(engineRef.current.world, body);
+            }
+          });
+        }
+
+        // 다음 호출 설정
+        if (!isPaused) animationRef.current = requestAnimationFrame(createObjectsAtTimes);
+        else if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      }
+    }
+    return () => {
+      if (animationRef.current && !isPaused) {
+        cancelAnimationFrame(animationRef.current);
+        pausedTimeRef.current = performance.now() / 1000;
+      }
+      console.log(pausedTimeRef.current);
+    };
+  }, [isPaused]);
 
   // Function to handle Picture-in-Picture
   const handlePip = () => {
@@ -208,13 +171,22 @@ const MusicPlayer = () => {
     }
   };
 
+  /**
+   * 전체화면이 된 element가 없을 경우 전체화면으로 변환해줌.
+   * 전체화면이 된 element가 있을 경우 전체화면 상태 해제.
+   */
   function handleFullScreen() {
-    divRef.current?.requestFullscreen({ navigationUI: 'show' });
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      divRef.current?.requestFullscreen({ navigationUI: 'show' });
+    }
   }
 
   function onExitPip() {
     console.log('asdf');
     console.log(location.pathname);
+    if (videoRef.current) videoRef.current.removeEventListener('enterpictureinpicture', onExitPip);
     navigate(location.pathname);
   }
 
@@ -232,9 +204,9 @@ const MusicPlayer = () => {
           >
             <FaStepBackward />
             {isPaused ? (
-              <FaPause onClick={changeVideoState} />
-            ) : (
               <FaPlay onClick={changeVideoState} />
+            ) : (
+              <FaPause onClick={changeVideoState} />
             )}
             <FaStepForward />
             <input type="range" ref={rangeRef} />

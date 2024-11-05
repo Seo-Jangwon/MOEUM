@@ -50,5 +50,6 @@ export const s_playerBar = css`
   width: 100%;
   & > * {
     height: 100%;
+    color: blue;
   }
 `;
