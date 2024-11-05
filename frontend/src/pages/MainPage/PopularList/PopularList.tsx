@@ -58,7 +58,7 @@ const PopularList = () => {
           <FiActivity />
           <h3>지금 가장 HOT한 30</h3>
         </div>
-        <button>모두보기</button>
+        <button onClick={() => navigate('list/popular')}>모두보기</button>
       </div>
       <div css={s_popular_container}>
         {mokData.music.map((item, index) => (
