@@ -1,5 +1,8 @@
 import { css } from '@emotion/react';
 import { useEffect, useRef, useState } from 'react';
+import { BsPip } from 'react-icons/bs';
+import { FaStepBackward, FaStepForward } from 'react-icons/fa';
+import { FaExpand, FaPause, FaPlay } from 'react-icons/fa6';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   s_canvas,
@@ -139,6 +142,10 @@ const MusicPlayer = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const rangeRef = useRef<HTMLInputElement | null>(null);
   const playerBarRef = useRef<HTMLDivElement | null>(null);
+  const [isPaused, setIsPaused] = useState<boolean>(true);
+  function changeVideoState() {
+    setIsPaused((prev) => !prev);
+  }
   const navigate = useNavigate();
   const location = useLocation();
   const [playerBarVisible, setPlayerBarVisible] = useState<boolean>(false);
@@ -223,13 +230,17 @@ const MusicPlayer = () => {
               ${s_playerBar}
             `}
           >
-            <button>이전 곡</button>
-            <button>재생</button>
-            <button>다음 곡</button>
+            <FaStepBackward />
+            {isPaused ? (
+              <FaPause onClick={changeVideoState} />
+            ) : (
+              <FaPlay onClick={changeVideoState} />
+            )}
+            <FaStepForward />
             <input type="range" ref={rangeRef} />
             <button>가사시각화</button>
-            <button onClick={handlePip}>pip모드</button>
-            <button onClick={handleFullScreen}>전체화면</button>
+            <BsPip onClick={handlePip} />
+            <FaExpand onClick={handleFullScreen} />
           </div>
         </div>
         <div css={s_infoContainer}>

@@ -43,10 +43,12 @@ export const s_canvas = css`
 export const s_playerBar = css`
   position: absolute;
   height: 5%;
-  background-color: orange;
-  opacity: 0.5;
+  justify-content: space-between;
   align-items: center;
   bottom: 0;
   left: 0;
   width: 100%;
+  & > * {
+    height: 100%;
+  }
 `;

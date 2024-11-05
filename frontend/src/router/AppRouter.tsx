@@ -16,6 +16,8 @@ const SearchPage = lazy(() => import('@/pages/SearchPage'));
 const RecentRecordPage = lazy(() => import('@/pages/RecordPage'));
 const ListPage = lazy(() => import('@/pages/ListPage'));
 const SearchMorePage = lazy(() => import('@/pages/SearchMorePage'));
+const MyStoragePage = lazy(() => import('@/pages/MyStoragePage'));
+const SupportPage = lazy(() => import('@/pages/SupportPage'));
 
 const router = createBrowserRouter([
   {
@@ -44,6 +46,10 @@ const router = createBrowserRouter([
         element: <SignUpPage />,
       },
       {
+        path: 'support',
+        element: <SupportPage />,
+      },
+      {
         path: 'record',
         element: <RecentRecordPage />,
       },
@@ -66,6 +72,10 @@ const router = createBrowserRouter([
       {
         path: 'settings',
         element: <SettingPage />,
+      },
+      {
+        path: 'myStorage',
+        element: <MyStoragePage />,
       },
       {
         path: 'profile',
