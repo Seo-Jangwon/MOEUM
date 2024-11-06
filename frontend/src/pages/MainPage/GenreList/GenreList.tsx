@@ -56,10 +56,10 @@ const GenreList = () => {
       </div>
       <div css={s_div_item_container}>
         {mokData.music.map((item, index) => (
-          <button key={index} css={s_div_item_box} onClick={() => handleMusicPage('music/12')}>
-            <img src={lala} alt="라라" css={s_img} />
-            <h5 css={s_h5}>{item.title}</h5>
-          </button>
+            <button key={index} css={s_div_item_box} onClick={() => handleMusicPage('music/12')}>
+              <img src={lala} alt="라라" css={s_img} />
+              <h5 css={s_h5}>{item.title}</h5>
+            </button>
         ))}
       </div>
     </>

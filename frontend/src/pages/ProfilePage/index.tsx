@@ -4,10 +4,16 @@ import { ReactNode, useRef, useState } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 import { ImCross } from 'react-icons/im';
 import { IoIosArrowDropright } from 'react-icons/io';
-import { PiVibrate } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import SettingComponent from '../SettingPage/Components/SettingComponent/SettingComponent';
 import logo from '../SignUpPage/image/logo.png';
+import { MdDriveFileRenameOutline } from "react-icons/md";
+import { PiImagesSquareBold } from "react-icons/pi";
+import { RiLockPasswordLine } from "react-icons/ri";
+import { BiTrash } from "react-icons/bi";
+
+
+
 import {
   s_componentsContainer,
   s_modalInputStyle,
@@ -55,7 +61,7 @@ const ProfilePage = () => {
 
   const profileComponentsDatas: profileComponentsData[] = [
     {
-      iconImage: <PiVibrate />,
+      iconImage: <MdDriveFileRenameOutline />,
       text: '닉네임 변경',
       rightButton: (
         <FaPlus
@@ -67,7 +73,7 @@ const ProfilePage = () => {
       ),
     },
     {
-      iconImage: <PiVibrate />,
+      iconImage: <PiImagesSquareBold />,
       text: '프로필 사진 변경',
       rightButton: (
         <FaPlus
@@ -79,7 +85,7 @@ const ProfilePage = () => {
       ),
     },
     {
-      iconImage: <PiVibrate />,
+      iconImage: <RiLockPasswordLine />,
       text: '비밀번호 변경',
       rightButton: (
         <IoIosArrowDropright
@@ -91,7 +97,7 @@ const ProfilePage = () => {
       ),
     },
     {
-      iconImage: <PiVibrate />,
+      iconImage: <BiTrash />,
       text: '회원 탈퇴',
       rightButton: (
         <ImCross

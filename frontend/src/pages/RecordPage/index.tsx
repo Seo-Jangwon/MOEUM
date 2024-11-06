@@ -16,6 +16,7 @@ import {
   s_img,
   s_p,
 } from './style';
+import { useNavigate } from 'react-router-dom';
 
 interface Record {
   title: string;
@@ -144,6 +145,8 @@ const mokData: { music: Record[] } = {
 
 const RecordPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isDropDown, setIsDropDown] = useState<boolean>(false)
+  const navigate = useNavigate()
 
   // 모달 열기 함수
   const openModal = () => {
@@ -154,6 +157,12 @@ const RecordPage = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+
+  // 드랍다운 닫기
+  const closeDropDown = () => {
+    setIsDropDown(false)
+  }
   interface DropDownItems {
     iconImage: ReactNode;
     text: string;
@@ -187,7 +196,7 @@ const RecordPage = () => {
         {mokData.music.map((item, index) => (
           <div key={index} css={s_div_item}>
             {/* 이미지와 제목 */}
-            <div css={s_div_titie_img}>
+            <div css={s_div_titie_img} onClick={() => navigate('/music/1')}>
               <div css={s_div_img}>
                 <img src={lala} alt="라라" css={s_img} />
               </div>

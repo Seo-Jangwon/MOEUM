@@ -33,16 +33,17 @@ export const s_div_item = css`
   border-bottom: 1px solid white;
   align-items: center;
   padding: 10px 0;
-  :hover > div > div > img {
-    filter: brightness(50%);
-    transition: 0.3s;
-  }
+  
 `;
 
 export const s_div_titie_img = css`
   display: flex;
   align-items: center;
   width: 40%;
+  :hover > div > img {
+    filter: brightness(50%);
+    transition: 0.3s;
+  }
 `;
 
 export const s_div_img = css`
@@ -59,9 +60,9 @@ export const s_img = css`
   border-radius: 8px;
 `;
 
-export const s_h4 = css`
+export const s_h4 = (theme: Theme) => css`
   font-size: 24px;
-  color: white;
+  color: ${theme.colors.white};
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;

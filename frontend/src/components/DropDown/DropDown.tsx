@@ -1,3 +1,4 @@
+// DropDown.tsx
 import { css } from '@emotion/react';
 import { ReactNode } from 'react';
 import { s_li } from './style';
@@ -8,16 +9,23 @@ interface DropDownItems {
   clickHandler: () => void;
 }
 
-interface DotDotDotProps {
+interface DropDownProps {
   data: DropDownItems[];
+  closeDropdown: () => void;
 }
 
-const DropDown: React.FC<DotDotDotProps> = ({ data }) => {
-  console.log(data[0].iconImage);
+const DropDown: React.FC<DropDownProps> = ({ data, closeDropdown }) => {
   return (
     <>
       {data.map((item, index) => (
-        <li key={index} onClick={item.clickHandler} css={s_li}>
+        <li
+          key={index}
+          onClick={() => {
+            item.clickHandler();
+            closeDropdown();
+          }}
+          css={s_li}
+        >
           <div>{item.iconImage}</div>
           <span
             css={css`

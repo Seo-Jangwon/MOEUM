@@ -1,3 +1,4 @@
+import { Theme, css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 export const Container = styled.aside`
@@ -35,3 +36,38 @@ export const CloseButton = styled.button`
   background: none;
   color: ${({ theme }) => theme.colors.white};
 `;
+
+export const s_sidebar_items = css`
+  margin-top: 60px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+  gap: 40px;
+
+`;
+
+export const s_item = css`
+  display: flex;
+  font-weight: 700;
+  font-size: 36px;
+  gap: 20px;
+  align-items: center;
+`;
+
+export const s_link_color = (theme: Theme) => css`
+  color: ${theme.colors.white};
+  :hover {
+    color: ${theme.colors.gray};
+    transition: 0.3s;
+  }
+`;
+
+export const s_link_color2 = (theme: Theme) => css`
+  color: ${theme.colors.lightgray};
+  :hover{
+    color: ${theme.colors.gray};
+    transition: 0.3s;
+  }
+`
