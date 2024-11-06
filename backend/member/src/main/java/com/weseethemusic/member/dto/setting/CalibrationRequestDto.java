@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
-public class PalateResponseDto {
+@Getter
+public class CalibrationRequestDto {
 
   private String[] q = new String[8];
 
