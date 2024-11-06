@@ -1,8 +1,16 @@
+// SideBarContent.tsx
 import LightModeToggle from '@/components/Toggle/LightModeToggle/LightModeToggle';
 import useAuthStore from '@/stores/authStore';
-import { FiX } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
+import { FiEye, FiX } from 'react-icons/fi';
+import { IoMdSettings } from 'react-icons/io';
+import { IoFileTrayStackedOutline } from 'react-icons/io5';
+
+import { css } from '@emotion/react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import * as S from './SideBarContent.style';
+import { s_item } from './SideBarContent.style';
+
 interface SideBarContentProps {
   isOpen: boolean;
   closeHandler: () => void;
@@ -10,23 +18,113 @@ interface SideBarContentProps {
 
 const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
   const { isLoggedIn } = useAuthStore();
-  const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
   return (
     <S.Container className={isOpen ? 'open' : ''}>
       <S.Header>
         <S.CloseButton onClick={closeHandler}>
           <FiX size={32} />
         </S.CloseButton>
-        <div>
-          <button onClick={() => navigate('/record')}>내가 본 음악</button>
-          <button onClick={() => navigate('/myStorage')}>내 보관함</button>
-          <button onClick={() => navigate('/settings')}>설정</button>
-          <button onClick={() => navigate('/faq')}>FAQ</button>
-          <button onClick={() => navigate('/support')}>1:1 문의</button>
-          {isLoggedIn ? <button>로그아웃</button> : <button>로그인</button>}
-        </div>
         <LightModeToggle />
       </S.Header>
+      <div css={S.s_sidebar_items}>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+          `}
+        >
+          <Link to={'/record'} css={S.s_link_color}>
+            <p css={s_item}>
+              <FiEye color={'#F7309D'} />
+              내가 본 음악
+            </p>
+          </Link>
+          <Link to={'/myStorage'} css={S.s_link_color}>
+            <p css={s_item}>
+              <IoFileTrayStackedOutline color={'#30DDF7'} />내 보관함
+            </p>
+          </Link>
+        </div>
+        <div
+          css={css`
+            margin-top: -100px;
+          `}
+        >
+          <Link to={'/settings'} css={S.s_link_color}>
+            <p css={s_item}>
+              <IoMdSettings color={'#30F751'} />
+              설정
+            </p>
+          </Link>
+        </div>
+
+        <div>
+          <Link to={'/faq'} css={S.s_link_color2}>
+            <p>FAQ</p>
+          </Link>
+          <Link to="#" css={S.s_link_color2} onClick={() => setModalOpen(true)}>
+            <p>1:1 문의</p>
+          </Link>
+          {isLoggedIn ? (
+            <Link to={'/signout'} css={S.s_link_color2}>
+              <p>로그아웃</p>
+            </Link>
+          ) : (
+            <Link to={'/signin'} css={S.s_link_color2}>
+              <p>로그인</p>
+            </Link>
+          )}
+        </div>
+      </div>
+      {modalOpen && (
+        <div
+          css={css`
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* 투명도 50% */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+          `}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setModalOpen(false);
+            }
+          }}
+        >
+          <div
+            css={css`
+              background-color: white;
+              padding: 20px;
+              border-radius: 8px;
+              max-width: 500px;
+              width: 90%;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            `}
+            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 전파 중지
+          >
+            <p>리액트로 모달 구현하기</p>
+            <button
+              css={css`
+                margin-top: 20px;
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+              `}
+              onClick={() => setModalOpen(false)}
+            >
+              모달 닫기
+            </button>
+          </div>
+        </div>
+      )}
     </S.Container>
   );
 };

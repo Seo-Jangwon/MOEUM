@@ -16,7 +16,7 @@ export const s_div_title = (theme: Theme) => css`
 
 export const s_div_item_container = css`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
 `;
 
@@ -29,6 +29,9 @@ export const s_div_item_box = css`
     transition: 0.3s;
     filter: brightness(50%);
   }
+  :hover > h5 {
+    opacity: 1;
+  }
 `;
 
 export const s_img = css`
@@ -37,11 +40,8 @@ export const s_img = css`
 `;
 
 export const s_h5 = (theme: Theme) => css`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  font-size: 300%;
+  text-align: center;
+  font-size: 16px;
   font-weight: 800;
-  transform: translate(-50%, -50%);
   color: ${theme.colors.primary};
 `;
