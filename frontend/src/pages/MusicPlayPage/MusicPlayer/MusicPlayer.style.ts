@@ -8,13 +8,12 @@ export const s_container = css`
 `;
 
 export const s_videoContainer = css`
+  align-items: center;
+  justify-content: center;
+  display: flex;
   @media (max-width: 768px) {
     width: 90%;
-
     flex-direction: column;
-    align-items: center;
-    display: flex;
-    aspect-ratio: 16/9;
   }
   @media (min-width: 768px) {
     width: 100%;
@@ -42,14 +41,13 @@ export const s_canvas = css`
 
 export const s_playerBar = css`
   position: absolute;
-  height: 5%;
   justify-content: space-between;
   align-items: center;
   bottom: 0;
   left: 0;
   width: 100%;
   & > * {
-    height: 100%;
+    font-size: 24px;
     color: blue;
   }
 `;

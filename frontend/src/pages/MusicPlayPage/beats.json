@@ -152,13 +152,7 @@
               "fillStyle": "#ffffff",
               "strokeStyle": "NONE"
             }
-          }
-        ]
-      },
-      {
-        "direction": "HOR",
-        "meter": 4,
-        "lines": [
+          },
           {
             "time": 7.32915,
             "transform": {
@@ -1093,13 +1087,7 @@
               "fillStyle": "#ffffff",
               "strokeStyle": "NONE"
             }
-          }
-        ]
-      },
-      {
-        "direction": "VER",
-        "meter": 5,
-        "lines": [
+          },
           {
             "time": 53.8408,
             "transform": {
@@ -1913,13 +1901,7 @@
               "fillStyle": "#ffffff",
               "strokeStyle": "NONE"
             }
-          }
-        ]
-      },
-      {
-        "direction": "VER",
-        "meter": 4,
-        "lines": [
+          },
           {
             "time": 86.34328,
             "transform": {

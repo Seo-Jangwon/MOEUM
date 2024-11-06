@@ -22,70 +22,170 @@ const MusicPlayer = () => {
   const rangeRef = useRef<HTMLInputElement | null>(null);
   const playerBarRef = useRef<HTMLDivElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const prevTimeRef = useRef<number>(0);
 
   const engineRef = useRef<Engine | null>(null);
   const renderRef = useRef<Render | null>(null);
   const runnerRef = useRef<Runner | null>(null);
-  const pausedTimeRef = useRef<number>(0);
-  const elapsedTimeRef = useRef<number>(0);
 
   const animationRef = useRef<number>();
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
   const timeIdx = useRef<number>(0);
-  const startTime = useRef<number>(0);
-  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(true);
   const data = useRef(beatData.data.beats[0].lines);
+
   function changeVideoState() {
-    setIsPaused((prev) => !prev);
-    if (isPaused) audioRef.current?.pause();
-    else audioRef.current?.play();
-    handlePlayMusic();
-  }
-
-  const handlePlayMusic = () => {
-    console.log(isPaused);
-    if (isPaused && intervalRef.current) {
-      clearInterval(intervalRef.current);
-    } else if (isPaused) {
-    } else {
-      intervalRef.current = setInterval(() => {
-        if (!isPaused) {
-          if (data.current && timeIdx.current < data.current.length) {
-            if (
-              audioRef.current?.currentTime >= data.current[timeIdx.current].time &&
-              engineRef.current !== null
-            ) {
-              const circle = Bodies.circle(500, 300, 20, { restitution: 0.5, friction: 0.01 });
-              World.add(engineRef.current.world, circle);
-              timeIdx.current += 1;
-            }
-
-            /**
-             * 화면 밖으로 나간 물체 삭제
-             */
-            if (engineRef.current !== null) {
-              engineRef.current.world.bodies.forEach((body) => {
-                if (
-                  body.position.y > window.innerHeight ||
-                  body.position.x < 0 ||
-                  body.position.x > window.innerWidth
-                ) {
-                  World.remove(engineRef.current.world, body);
-                }
-              });
-            }
-          }
-        }
-      }, 16);
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+      setIsPaused(audioRef.current.paused);
     }
-  };
+  }
 
   const navigate = useNavigate();
   const location = useLocation();
   const [playerBarVisible, setPlayerBarVisible] = useState<boolean>(false);
   const timeoutId = useRef<NodeJS.Timeout>();
+
+  function onVisibiliyChanged() {
+    if (document.visibilityState === 'visible') {
+      if (data.current && audioRef.current) {
+        deleteAllShape();
+      }
+    }
+  }
+
+  /** 애니메이션 실행 함수
+   */
+  function createObjectsAtTimes() {
+    if (audioRef.current === null) return;
+    if (Math.abs(audioRef.current.currentTime - prevTimeRef.current) > 1) {
+      audioTimeChanged();
+      return;
+    }
+    if (data.current && timeIdx.current < data.current.length) {
+      if (
+        audioRef.current?.currentTime >= data.current[timeIdx.current].time &&
+        engineRef.current !== null
+      ) {
+        console.log(data.current[timeIdx.current].time);
+        prevTimeRef.current = audioRef.current.currentTime;
+        const circle = Bodies.circle(500, 300, 20, { restitution: 0.5, friction: 0.01 });
+        const obj = Bodies.polygon(500, 100, 3, 30);
+        circle.render.fillStyle = '#FFFFFF';
+
+        World.add(engineRef.current.world, circle);
+        World.add(engineRef.current.world, obj);
+        timeIdx.current += 1;
+      }
+
+      /**
+       * 화면 밖으로 나간 물체 삭제
+       */
+      if (engineRef.current !== null) {
+        engineRef.current.world.bodies.forEach((body) => {
+          if (
+            body.position.y > window.innerHeight ||
+            body.position.x < 0 ||
+            body.position.x > window.innerWidth
+          ) {
+            World.remove(engineRef.current.world, body);
+          }
+        });
+      }
+
+      // 다음 호출 설정
+      if (!isPaused) {
+        animationRef.current = requestAnimationFrame(createObjectsAtTimes);
+      } else if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    }
+  }
+
+  /**
+   * 물체 전체 삭제
+   */
+  function deleteAllShape() {
+    if (engineRef.current !== null) {
+      engineRef.current.world.bodies.forEach((body) => {
+        World.remove(engineRef.current.world, body);
+      });
+    }
+  }
+
+  /**
+   * 전체화면이 된 element가 없을 경우 전체화면으로 변환해줌.
+   * 전체화면이 된 element가 있을 경우 전체화면 상태 해제.
+   */
+  function handleFullScreen() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      divRef.current?.requestFullscreen({ navigationUI: 'show' });
+    }
+  }
+
+  /** 오디오의 현재 재생 시간을 사용자가 조정 했을 경우 */
+  function audioTimeChanged() {
+    if (data.current && audioRef.current) {
+      deleteAllShape();
+      prevTimeRef.current = audioRef.current.currentTime;
+      if (audioRef.current.currentTime > data.current[timeIdx.current].time) {
+        // 앞으로 이동했을 때
+
+        while (
+          timeIdx.current < data.current.length - 1 &&
+          data.current[timeIdx.current].time < audioRef.current.currentTime
+        ) {
+          timeIdx.current++;
+        }
+        timeIdx.current--;
+      } else {
+        // 뒤로 이동했을 때
+        while (
+          timeIdx.current > 0 &&
+          data.current[timeIdx.current].time > audioRef.current.currentTime
+        ) {
+          timeIdx.current--;
+        }
+      }
+      if (!isPaused) {
+        requestAnimationFrame(createObjectsAtTimes);
+      }
+    }
+  }
+
+  /** 키보드로 재생 컨트롤 할 수 있는 함수 */
+  function MusicPlayPageKeyboardEvent(e: KeyboardEvent) {
+    if (document.activeElement?.tagName === 'INPUT') {
+      return;
+    } else {
+      if (e.key === ' ') {
+        changeVideoState();
+      } else if (e.key === 'm') {
+        if (audioRef.current && audioRef.current.muted) {
+          audioRef.current.muted = !audioRef.current.muted;
+        }
+      } else if (e.key === 'f') {
+        handleFullScreen();
+      } else if (audioRef.current) {
+        if (e.key === 'ArrowDown') {
+          audioRef.current.volume -= 0.05;
+        } else if (e.key === 'ArrowUp') {
+          audioRef.current.volume += 0.05;
+        } else if (e.key === 'ArrowLeft') {
+          console.log(audioRef.current.currentTime);
+          audioRef.current.currentTime -= 10;
+        } else if (e.key == 'ArrowRight') {
+          console.log(audioRef.current.currentTime);
+          audioRef.current.currentTime += 100;
+        }
+      }
+    }
+  }
+  /** 애니메이션 캔버스,애니메이션 렌더, 오디오 등 기초 설정 */
   useEffect(() => {
     /**
      * 비디오 내에서 마우스가 3초동안 멈춰있을 경우 재생바를 멈추는 함수
@@ -100,11 +200,13 @@ const MusicPlayer = () => {
     };
 
     if (audioRef.current) {
-      audioRef.current.src = lalaSong;
       audioRef.current.addEventListener('ended', () => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
+        if (animationRef.current) cancelAnimationFrame(animationRef.current);
+        timeIdx.current = 0;
       });
+      audioRef.current.src = lalaSong;
     }
+
     const canvas = canvasRef.current;
 
     if (!canvas) return;
@@ -121,7 +223,7 @@ const MusicPlayer = () => {
 
     const resize = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.height = (window.innerWidth / 16) * 9;
     };
 
     window.addEventListener('resize', resize);
@@ -135,7 +237,7 @@ const MusicPlayer = () => {
 
       options: {
         wireframes: false,
-        background: '#FFFF00',
+        background: '#ffffc0',
       },
     });
 
@@ -145,10 +247,12 @@ const MusicPlayer = () => {
     Render.run(renderRef.current);
     runnerRef.current = Runner.create();
     Runner.run(Runner.create(), engineRef.current);
-    pausedTimeRef.current = startTime.current = performance.now() / 1000;
+
+    document.addEventListener('visibilitychange', onVisibiliyChanged);
+    document.addEventListener('keydown', MusicPlayPageKeyboardEvent);
 
     return () => {
-      canvasRef.current?.removeEventListener('mousemove', handleMouseMove);
+      if (canvasRef.current) canvasRef.current.removeEventListener('mousemove', handleMouseMove);
       clearTimeout(timeoutId.current);
       window.removeEventListener('resize', resize);
       if (renderRef.current !== null) {
@@ -160,57 +264,27 @@ const MusicPlayer = () => {
         World.clear(engineRef.current.world, false);
         Engine.clear(engineRef.current);
       }
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      document.removeEventListener('visibilitychange', onVisibiliyChanged);
+      document.removeEventListener('keydown', MusicPlayPageKeyboardEvent);
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (engineRef.current === null || renderRef.current === null) {
-  //     return;
-  //   }
+  /** 영상의 재생 상태 변경 시 호출됨. 애니메이션 멈추거나 시작 */
+  useEffect(() => {
+    if (engineRef.current === null || renderRef.current === null) {
+      return;
+    }
 
-  //   //영상이 재생되는 상태일 경우
-  //   if (!isPaused) {
-  //   }
-  //   function createObjectsAtTimes() {
-  //     if (data.current && timeIdx.current < data.current.length) {
-  //       if (
-  //         audioRef.current?.currentTime >= data.current[timeIdx.current].time &&
-  //         engineRef.current !== null
-  //       ) {
-  //         const circle = Bodies.circle(500, 300, 20, { restitution: 0.5, friction: 0.01 });
-  //         World.add(engineRef.current.world, circle);
-  //         timeIdx.current += 1;
-  //       }
+    //영상이 재생되는 상태일 경우
+    if (!isPaused) requestAnimationFrame(createObjectsAtTimes);
 
-  //       /**
-  //        * 화면 밖으로 나간 물체 삭제
-  //        */
-  //       if (engineRef.current !== null) {
-  //         engineRef.current.world.bodies.forEach((body) => {
-  //           if (
-  //             body.position.y > window.innerHeight ||
-  //             body.position.x < 0 ||
-  //             body.position.x > window.innerWidth
-  //           ) {
-  //             World.remove(engineRef.current.world, body);
-  //           }
-  //         });
-  //       }
-
-  //       // 다음 호출 설정
-  //       if (isPaused) animationRef.current = requestAnimationFrame(createObjectsAtTimes);
-  //       else if (animationRef.current) cancelAnimationFrame(animationRef.current);
-  //     }
-  //   }
-  //   createObjectsAtTimes();
-  //   return () => {
-  //     if (animationRef.current && !isPaused) {
-  //       cancelAnimationFrame(animationRef.current);
-  //     }
-  //     // if (intervalRef.current) clearInterval(intervalRef.current);
-  //   };
-  // }, [isPaused]);
+    return () => {
+      if (animationRef.current && !isPaused) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      // if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isPaused]);
 
   /** pip 버그 픽스 필요 */
   const handlePip = () => {
@@ -219,20 +293,9 @@ const MusicPlayer = () => {
       video.play();
       video.addEventListener('leavepictureinpicture', onExitPip, false);
       video.requestPictureInPicture();
+      video.style.display = 'none';
     }
   };
-
-  /**
-   * 전체화면이 된 element가 없을 경우 전체화면으로 변환해줌.
-   * 전체화면이 된 element가 있을 경우 전체화면 상태 해제.
-   */
-  function handleFullScreen() {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      divRef.current?.requestFullscreen({ navigationUI: 'show' });
-    }
-  }
 
   function onExitPip() {
     console.log('asdf');
@@ -246,7 +309,7 @@ const MusicPlayer = () => {
       <div css={s_container}>
         <audio ref={audioRef} />
         <div css={s_videoContainer} ref={divRef}>
-          <canvas css={s_canvas} ref={canvasRef} />
+          <canvas css={s_canvas} ref={canvasRef} onClick={changeVideoState} />
           <div
             ref={playerBarRef}
             css={css`
@@ -256,9 +319,9 @@ const MusicPlayer = () => {
           >
             <FaStepBackward />
             {!isPaused ? (
-              <FaPlay onClick={changeVideoState} />
-            ) : (
               <FaPause onClick={changeVideoState} />
+            ) : (
+              <FaPlay onClick={changeVideoState} />
             )}
             <FaStepForward />
             <input type="range" ref={rangeRef} />
