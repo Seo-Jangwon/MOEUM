@@ -165,7 +165,9 @@ const MusicPlayer = () => {
       if (e.key === ' ') {
         changeVideoState();
       } else if (e.key === 'm') {
-        if (audioRef.current && audioRef.current.muted) {
+        console.log('qt');
+        if (audioRef.current) {
+          console.log('qt');
           audioRef.current.muted = !audioRef.current.muted;
         }
       } else if (e.key === 'f') {
