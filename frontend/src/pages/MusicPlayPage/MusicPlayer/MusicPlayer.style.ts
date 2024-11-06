@@ -41,13 +41,26 @@ export const s_canvas = css`
 
 export const s_playerBar = css`
   position: absolute;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   bottom: 0;
   left: 0;
   width: 100%;
-  & > * {
-    font-size: 24px;
-    color: blue;
+  > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 95%;
   }
+`;
+
+export const s_playerBarRange = css``;
+export const s_playerBarTimeLineRange = css`
+  width: 100%;
+`;
+export const s_playerBarController = css`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 `;

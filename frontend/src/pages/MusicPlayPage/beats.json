@@ -2517,13 +2517,7 @@
               "fillStyle": "#ffffff",
               "strokeStyle": "NONE"
             }
-          }
-        ]
-      },
-      {
-        "direction": "VER",
-        "meter": 4,
-        "lines": [
+          },
           {
             "time": 108.31291,
             "transform": {

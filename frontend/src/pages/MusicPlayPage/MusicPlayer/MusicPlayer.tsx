@@ -1,9 +1,10 @@
+import lylicsVisualizationButton from '@/assets/lylicsVisualizationButton.svg';
 import { css } from '@emotion/react';
 import { Bodies, Engine, Render, Runner, World } from 'matter-js';
 import { useEffect, useRef, useState } from 'react';
 import { BsPip } from 'react-icons/bs';
 import { FaStepBackward, FaStepForward } from 'react-icons/fa';
-import { FaExpand, FaPause, FaPlay } from 'react-icons/fa6';
+import { FaCirclePlay, FaExpand, FaPause } from 'react-icons/fa6';
 import { useLocation, useNavigate } from 'react-router-dom';
 import beatData from '../beats.json';
 import lalaSong from '../lalaSong.m4a';
@@ -12,6 +13,8 @@ import {
   s_container,
   s_infoContainer,
   s_playerBar,
+  s_playerBarController,
+  s_playerBarTimeLineRange,
   s_videoContainer,
 } from './MusicPlayer.style';
 
@@ -19,9 +22,9 @@ const MusicPlayer = () => {
   const divRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const rangeRef = useRef<HTMLInputElement | null>(null);
+  const audioVolumeRef = useRef<HTMLInputElement | null>(null);
   const playerBarRef = useRef<HTMLDivElement | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioSrcRef = useRef<HTMLAudioElement | null>(null);
   const prevTimeRef = useRef<number>(0);
 
   const engineRef = useRef<Engine | null>(null);
@@ -32,16 +35,17 @@ const MusicPlayer = () => {
 
   const timeIdx = useRef<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(true);
+  const [playTime, setPlayTime] = useState<number>(0);
   const data = useRef(beatData.data.beats[0].lines);
 
   function changeVideoState() {
-    if (audioRef.current) {
-      if (audioRef.current.paused) {
-        audioRef.current.play();
+    if (audioSrcRef.current) {
+      if (audioSrcRef.current.paused) {
+        audioSrcRef.current.play();
       } else {
-        audioRef.current.pause();
+        audioSrcRef.current.pause();
       }
-      setIsPaused(audioRef.current.paused);
+      setIsPaused(audioSrcRef.current.paused);
     }
   }
 
@@ -52,7 +56,7 @@ const MusicPlayer = () => {
 
   function onVisibiliyChanged() {
     if (document.visibilityState === 'visible') {
-      if (data.current && audioRef.current) {
+      if (data.current && audioSrcRef.current) {
         deleteAllShape();
       }
     }
@@ -61,18 +65,19 @@ const MusicPlayer = () => {
   /** 애니메이션 실행 함수
    */
   function createObjectsAtTimes() {
-    if (audioRef.current === null) return;
-    if (Math.abs(audioRef.current.currentTime - prevTimeRef.current) > 1) {
+    if (audioSrcRef.current === null) return;
+    if (Math.abs(audioSrcRef.current.currentTime - prevTimeRef.current) > 1) {
       audioTimeChanged();
       return;
     }
     if (data.current && timeIdx.current < data.current.length) {
       if (
-        audioRef.current?.currentTime >= data.current[timeIdx.current].time &&
+        audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
         engineRef.current !== null
       ) {
+        setPlayTime(audioSrcRef.current.currentTime);
         console.log(data.current[timeIdx.current].time);
-        prevTimeRef.current = audioRef.current.currentTime;
+        prevTimeRef.current = audioSrcRef.current.currentTime;
         const circle = Bodies.circle(500, 300, 20, { restitution: 0.5, friction: 0.01 });
         const obj = Bodies.polygon(500, 100, 3, 30);
         circle.render.fillStyle = '#FFFFFF';
@@ -129,15 +134,15 @@ const MusicPlayer = () => {
 
   /** 오디오의 현재 재생 시간을 사용자가 조정 했을 경우 */
   function audioTimeChanged() {
-    if (data.current && audioRef.current) {
+    if (data.current && audioSrcRef.current) {
       deleteAllShape();
-      prevTimeRef.current = audioRef.current.currentTime;
-      if (audioRef.current.currentTime > data.current[timeIdx.current].time) {
+      prevTimeRef.current = audioSrcRef.current.currentTime;
+      if (audioSrcRef.current.currentTime > data.current[timeIdx.current].time) {
         // 앞으로 이동했을 때
 
         while (
           timeIdx.current < data.current.length - 1 &&
-          data.current[timeIdx.current].time < audioRef.current.currentTime
+          data.current[timeIdx.current].time < audioSrcRef.current.currentTime
         ) {
           timeIdx.current++;
         }
@@ -146,7 +151,7 @@ const MusicPlayer = () => {
         // 뒤로 이동했을 때
         while (
           timeIdx.current > 0 &&
-          data.current[timeIdx.current].time > audioRef.current.currentTime
+          data.current[timeIdx.current].time > audioSrcRef.current.currentTime
         ) {
           timeIdx.current--;
         }
@@ -166,23 +171,23 @@ const MusicPlayer = () => {
         changeVideoState();
       } else if (e.key === 'm') {
         console.log('qt');
-        if (audioRef.current) {
+        if (audioSrcRef.current) {
           console.log('qt');
-          audioRef.current.muted = !audioRef.current.muted;
+          audioSrcRef.current.muted = !audioSrcRef.current.muted;
         }
       } else if (e.key === 'f') {
         handleFullScreen();
-      } else if (audioRef.current) {
+      } else if (audioSrcRef.current) {
         if (e.key === 'ArrowDown') {
-          audioRef.current.volume -= 0.05;
+          audioSrcRef.current.volume -= 0.05;
         } else if (e.key === 'ArrowUp') {
-          audioRef.current.volume += 0.05;
+          audioSrcRef.current.volume += 0.05;
         } else if (e.key === 'ArrowLeft') {
-          console.log(audioRef.current.currentTime);
-          audioRef.current.currentTime -= 10;
+          console.log(audioSrcRef.current.currentTime);
+          audioSrcRef.current.currentTime -= 10;
         } else if (e.key == 'ArrowRight') {
-          console.log(audioRef.current.currentTime);
-          audioRef.current.currentTime += 100;
+          console.log(audioSrcRef.current.currentTime);
+          audioSrcRef.current.currentTime += 10;
         }
       }
     }
@@ -201,12 +206,13 @@ const MusicPlayer = () => {
       }, 3000); // 3초 후 playerBar 숨김
     };
 
-    if (audioRef.current) {
-      audioRef.current.addEventListener('ended', () => {
+    if (audioSrcRef.current) {
+      audioSrcRef.current.addEventListener('ended', () => {
         if (animationRef.current) cancelAnimationFrame(animationRef.current);
         timeIdx.current = 0;
+        setIsPaused(true);
       });
-      audioRef.current.src = lalaSong;
+      audioSrcRef.current.src = lalaSong;
     }
 
     const canvas = canvasRef.current;
@@ -309,27 +315,58 @@ const MusicPlayer = () => {
   return (
     <>
       <div css={s_container}>
-        <audio ref={audioRef} />
+        <audio ref={audioSrcRef} />
         <div css={s_videoContainer} ref={divRef}>
           <canvas css={s_canvas} ref={canvasRef} onClick={changeVideoState} />
           <div
             ref={playerBarRef}
             css={css`
-              display: ${playerBarVisible ? 'flex' : 'none'};
+              /* display: ${playerBarVisible ? 'flex' : 'none'}; */
               ${s_playerBar}
             `}
           >
-            <FaStepBackward />
-            {!isPaused ? (
-              <FaPause onClick={changeVideoState} />
-            ) : (
-              <FaPlay onClick={changeVideoState} />
-            )}
-            <FaStepForward />
-            <input type="range" ref={rangeRef} />
-            <button>가사시각화</button>
-            <BsPip onClick={handlePip} />
-            <FaExpand onClick={handleFullScreen} />
+            <div>
+              <input
+                css={s_playerBarTimeLineRange}
+                type="range"
+                max={audioSrcRef.current ? audioSrcRef.current?.duration : 1}
+                value={playTime}
+                step={0.01}
+                onChange={(e) => {
+                  if (audioSrcRef.current)
+                    audioSrcRef.current.currentTime = parseFloat(e.target.value);
+                  console.log(e.target.value);
+                }}
+              />
+            </div>
+            <div css={s_playerBarController}>
+              <div>하트</div>
+              <div>
+                <FaStepBackward />
+                {!isPaused ? (
+                  <FaPause onClick={changeVideoState} />
+                ) : (
+                  <FaCirclePlay onClick={changeVideoState} />
+                )}
+                <FaStepForward />
+              </div>
+              <div>
+                <input
+                  type="range"
+                  max={1}
+                  ref={audioVolumeRef}
+                  step={0.01}
+                  onChange={(e) => {
+                    if (audioSrcRef.current)
+                      audioSrcRef.current.volume = parseFloat(e.target.value);
+                    console.log(e.target.value);
+                  }}
+                />
+                <img src={lylicsVisualizationButton} style={{ width: '15px' }} alt="" />
+                <BsPip onClick={handlePip} />
+                <FaExpand onClick={handleFullScreen} />
+              </div>
+            </div>
           </div>
         </div>
         <div css={s_infoContainer}>
