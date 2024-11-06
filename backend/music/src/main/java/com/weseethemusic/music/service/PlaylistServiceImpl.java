@@ -80,6 +80,26 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void deleteAllPlaylistsByMemberId(Long memberId) {
+        log.info("회원 {}의 탈퇴 진행 중 - 플레이리스트의 음악 삭제", memberId);
+
+        try {
+            List<Playlist> playlist = playlistRepository.findByMemberId(memberId);
+
+            for (Playlist playlistItem : playlist) {
+                // 플레이리스트 음악 삭제
+                playlistMusicRepository.deleteByPlaylistId(playlistItem.getId());
+                // 플레이리스트 삭제
+                playlistRepository.delete(playlistItem);
+            }
+        } catch (Exception e) {
+            log.error("플레이리스트 삭제 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 삭제에 실패했습니다.");
+        }
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deletePlaylist(Long memberId, Long playlistId) {
         Playlist playlist = playlistRepository.findById(playlistId)
             .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
