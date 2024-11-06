@@ -5,6 +5,8 @@ import { FaArrowLeft, FaArrowRight, FaPlay } from 'react-icons/fa';
 import { FiClock } from 'react-icons/fi';
 import playMusic from '../image/playMusic.json';
 
+import Button from '@/components/Button/Button';
+import { useNavigate } from 'react-router-dom';
 import {
   s_button,
   s_div_button,
@@ -18,7 +20,6 @@ import {
   s_p,
   s_play_button,
 } from './style';
-import { useNavigate } from 'react-router-dom';
 
 interface Music {
   title: string;
@@ -51,7 +52,7 @@ const NewList = () => {
   const listRef = useRef<HTMLDivElement>(null);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const updateItemsPerPage = () => {
     if (window.innerWidth <= 900) {
@@ -97,7 +98,7 @@ const NewList = () => {
 
   const handlePlayClick = (index: number) => {
     setPlayingIndex((prevIndex) => (prevIndex === index ? null : index));
-    navigate(`music/${index}`)
+    navigate(`music/${index}`);
   };
 
   return (
@@ -108,7 +109,7 @@ const NewList = () => {
           <h3>최신 발매곡</h3>
         </div>
         <div css={s_div_button}>
-          <button onClick={() => navigate(`list/newList`)}>모두보기</button>
+          <Button variant="outline" children="더 보기" onClick={() => navigate('list/newList')}></Button>
           <button css={s_button} onClick={handlePrev}>
             <FaArrowLeft />
           </button>

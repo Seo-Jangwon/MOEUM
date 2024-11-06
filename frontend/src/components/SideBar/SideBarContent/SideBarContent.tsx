@@ -61,7 +61,11 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
           </Link>
         </div>
 
-        <div>
+        <div css={css`
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        `} >
           <Link to={'/faq'} css={S.s_link_color2}>
             <p>FAQ</p>
           </Link>
@@ -87,7 +91,7 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* 투명도 50% */
+            background-color: rgba(0, 0, 0, 0.5); 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -108,7 +112,7 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
               width: 90%;
               box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             `}
-            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 전파 중지
+            onClick={(e) => e.stopPropagation()}
           >
             <p>리액트로 모달 구현하기</p>
             <button

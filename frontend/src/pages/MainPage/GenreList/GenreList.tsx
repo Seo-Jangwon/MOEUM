@@ -3,6 +3,7 @@ import { FiThumbsUp } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { s_div_header } from '../NewList/style';
 import { s_div_item_box, s_div_item_container, s_div_title, s_h5, s_img } from './style';
+import Button from '@/components/Button/Button';
 
 interface Music {
   title: string;
@@ -52,7 +53,7 @@ const GenreList = () => {
           <FiThumbsUp />
           <h3>오늘의 장르</h3>
         </div>
-        <button onClick={() => handlePage('/list/genre')}>모두보기</button>
+        <Button variant='outline' children='더 보기' onClick={() => handlePage('list/genre')}></Button>
       </div>
       <div css={s_div_item_container}>
         {mokData.music.map((item, index) => (
