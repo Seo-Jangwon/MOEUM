@@ -129,7 +129,6 @@ const ListPage = () => {
             <div css={s_div_h3}>
               <h3>인기차트</h3>
             </div>
-            <button>모두보기</button>
           </div>
           <div css={s_popular_container}>
             {mokData.music.map((item, index) => (

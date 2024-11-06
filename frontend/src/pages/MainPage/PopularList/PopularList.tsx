@@ -1,4 +1,5 @@
 import lala from '@/assets/lalaticon/lala4.png';
+import Button from '@/components/Button/Button';
 import { css } from '@emotion/react';
 import { FiActivity } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -48,7 +49,7 @@ const mokData: { music: Music[] } = {
 
 const PopularList = () => {
   const navigate = useNavigate();
-  const clickHandler = (index :number )=> {
+  const clickHandler = (index: number) => {
     navigate(`music/${index}`);
   };
   return (
@@ -58,7 +59,11 @@ const PopularList = () => {
           <FiActivity />
           <h3>지금 가장 HOT한 30</h3>
         </div>
-        <button onClick={() => navigate('list/popular')}>모두보기</button>
+        <Button
+          variant="outline"
+          children="더 보기"
+          onClick={() => navigate('list/popular')}
+        ></Button>
       </div>
       <div css={s_popular_container}>
         {mokData.music.map((item, index) => (
