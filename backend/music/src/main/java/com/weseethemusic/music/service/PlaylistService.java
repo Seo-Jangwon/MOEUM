@@ -23,4 +23,5 @@ public interface PlaylistService {
 
     void disLikePlaylist(Long playlistId, Long memberId);
 
+    void deleteAllPlaylistsByMemberId(Long memberId);
 }
