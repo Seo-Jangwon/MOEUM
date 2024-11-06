@@ -26,7 +26,7 @@ public class DeleteController {
 
         log.info("회원 탈퇴 요청: memberId: {}", memberId);
         try {
-            deleteService.requestDeleteUser(memberId);
+            deleteService.requestDeleteMember(memberId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);

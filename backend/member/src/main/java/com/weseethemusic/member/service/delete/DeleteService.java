@@ -1,12 +1,15 @@
 package com.weseethemusic.member.service.delete;
 
+
 import com.weseethemusic.member.common.entity.Member;
 
 public interface DeleteService {
 
-    void requestDeleteUser(Long memberId);
+    void requestDeleteMember(Long memberId);
 
-    void processDeletedUsers();
+    void processDeletedMembers();
 
-    void processDeletedMember(Member member);
+    void startDeleteMember(Member member);
+
+    void handleDeleteMemberFailed(Long sagaId, Long memberId);
 }
