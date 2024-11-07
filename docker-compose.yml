@@ -150,10 +150,14 @@ services:
       - moeum
   
   volumes:
-    - "mysql_member"
-    - "mysql_music"
-    - "mysql_rec"
-    - "mongo_music"
+    mysql_member:
+      driver: local
+    mysql_music:
+      driver: local
+    mysql_rec:
+      driver: local
+    mongo_music:
+      driver: local
 
   network:
     moeum:
