@@ -1,35 +1,49 @@
-services:
+services:  
   mysql_member:
     container_name: mysql_member
     restart: always
-    image: mysql:8.0.39
+    image: mysql:8.0.40
     volumes:
-      - 'mysql_member:/var/lib/mysql'
+      - mysql_member:/var/lib/mysql
     environment:
       TZ: Asia/Seoul
       LANG: C.UTF-8
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB}
-      MYSQL_TCP_PORT: 3310
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: member
     expose:
-      - "3310"
+      - "3306"
     networks:
       - moeum
 
   mysql_music:
     container_name: mysql_music
     restart: always
-    image: mysql:8.0.39
+    image: mysql:8.0.40
     volumes:
-      - 'mysql_music:/var/lib/mysql'
+      - mysql_music:/var/lib/mysql
     environment:
       TZ: Asia/Seoul
       LANG: C.UTF-8
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB}
-      MYSQL_TCP_PORT: 3311
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: music
     expose:
-      - "3311"
+      - "3306"
+    networks:
+      - moeum
+
+  mysql_rec:
+    container_name: mysql_rec
+    restart: always
+    image: mysql:8.0.40
+    volumes:
+      - mysql_rec:/var/lib/mysql
+    environment:
+      TZ: Asia/Seoul
+      LANG: C.UTF-8
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: rec
+    expose:
+      - "3306"
     networks:
       - moeum
 
@@ -38,29 +52,61 @@ services:
     restart: always
     image: mongodb/mongodb-community-server:7.0-ubi8
     volumes:
-      - 'mongo_music:/data/db'
+      - mongo_music:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     expose:
       - "27017"
     networks:
       - moeum
 
-  mysql_rec:
-    container_name: mysql_rec
+  redis_gateway:
+    container_name: redis_gateway
     restart: always
-    image: mysql:8.0.39
-    volumes:
-      - 'mysql_rec:/var/lib/mysql'
-    environment:
-      TZ: Asia/Seoul
-      LANG: C.UTF-8
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB}
-      MYSQL_TCP_PORT: 3313
+    image: redis:7.4.1-alpine
     expose:
-      - "3313"
+      - "6379"
+    command: ["redis-server"]
+    networks:
+      - moeum
+
+  redis_member:
+    container_name: redis_member
+    restart: always
+    image: redis:7.4.1-alpine
+    expose:
+      - "6379"
+    command: ["redis-server"]
+    networks:
+      - moeum
+      
+  redis_music:
+    container_name: redis_music
+    restart: always
+    image: redis:7.4.1-alpine
+    expose:
+      - "6379"
+    command: ["redis-server"]
+    networks:
+      - moeum
+
+  redis_rec:
+    container_name: redis_rec
+    restart: always
+    image: redis:7.4.1-alpine
+    expose:
+      - "6379"
+    command: ["redis-server"]
+    networks:
+      - moeum
+  
+  rabbitmq:
+    container_name: moeum_rabbitmq
+    restart: always
+    image: 4.0.3-management-alpine
+    expose:
+      - "5672"
     networks:
       - moeum
 
@@ -85,12 +131,12 @@ services:
     networks:
       - moeum
 
-  rec:
-    container_name: moeum_rec
-    restart: always
-    build: ./backend/rec
-    networks:
-      - moeum
+  # rec:
+  #   container_name: moeum_rec
+  #   restart: always
+  #   build: ./backend/rec
+  #   networks:
+  #     - moeum
 
   client:
     container_name: moeum_client

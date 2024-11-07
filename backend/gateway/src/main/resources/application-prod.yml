@@ -3,51 +3,32 @@ spring:
     gateway:
       routes:
         - id: member-service
-          uri: k11d203.p.ssafy.io:8081
+          uri: moeum_member:8081
           predicates:
             - Path=/members/**
-          metadata:
-            health-check-url: /actuator/health
-
-        - id: settings-service
-          uri: k11d203.p.ssafy.io:8082
-          predicates:
-            - Path=/musics/**
+            - Path=/settings/**
+            - Method=POST,GET,PUT,DELETE
           metadata:
             health-check-url: /actuator/health
 
         - id: music-service
-          uri: k11d203.p.ssafy.io:8084
+          uri: moeum_music:8082
           predicates:
             - Path=/musics/**
+            - Method=POST,GET,PUT,DELETE
           metadata:
             health-check-url: /actuator/health
 
-        - id: player-service
-          uri: k11d203.p.ssafy.io:8085
+        - id: recommendation-service
+          uri: moeum_rec:8083
           predicates:
-            - Path=/player/**
+            - Path=/recommend/**
+            - Method=POST,GET,PUT,DELETE
           metadata:
             health-check-url: /actuator/health
 
-        - id: history-service
-          uri: k11d203.p.ssafy.io:8085
-          predicates:
-            - Path=/history/**
-          metadata:
-            health-check-url: /actuator/health
-
-        - id: recommendations-service
-          uri: k11d203.p.ssafy.io:8086
-          predicates:
-            - Path=/recommendations/**
-          metadata:
-            health-check-url: /actuator/health
 service:
   url:
-    member: http://52.78.65.114:8081
-    music: http://52.78.65.114:8084
-    player: http://52.78.65.114:8085
-    history: http://52.78.65.114:8085
-    settings: http://52.78.65.114:8081
-    recommendations: http://52.78.65.114:8086
+    member: http://moeum_member:8081
+    music: http://moeum_music:8082
+    recommendations: http://moeum_rec:8083

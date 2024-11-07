@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignReques
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class S3Service {
 
     // S3 클라이언트
@@ -27,12 +30,6 @@ public class S3Service {
     // S3 버킷 이름
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
-
-    // S3 클라이언트 주입
-    public S3Service(S3Client s3Client, S3Presigner s3Presigner) {
-        this.s3Client = s3Client;
-        this.s3Presigner = s3Presigner;
-    }
 
     /**
      * S3 버킷에서 파일을 삭제
