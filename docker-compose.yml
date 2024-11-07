@@ -151,13 +151,9 @@ services:
 
 volumes:
   mysql_member:
-    driver: local
   mysql_music:
-    driver: local
   mysql_rec:
-    driver: local
   mongo_music:
-    driver: local
 
 networks:
   moeum:
