@@ -48,19 +48,59 @@ export const s_playerBar = css`
   left: 0;
   width: 100%;
   > div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 95%;
+    margin: 0 2.5%;
   }
 `;
 
-export const s_playerBarRange = css``;
+export const s_playerBarRange = (progress: number) => css`
+  width: 100%;
+  height: 6px;
+  background: #ddd;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  appearance: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    opacity: 0;
+  }
+  &::-webkit-slider-runnable-track {
+    height: 6px;
+    width: 100%;
+    border-radius: 10px;
+    background: linear-gradient(
+      to right,
+      #f7f7f7 0%,
+      #f7f7f7 calc(${progress}%),
+      #444 calc(${progress}%),
+      #444 100%
+    );
+    opacity: 1;
+  }
+`;
 export const s_playerBarTimeLineRange = css`
   width: 100%;
 `;
 export const s_playerBarController = css`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  > div {
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+  > div:nth-of-type(2) {
+    justify-content: center;
+  }
+  > div:nth-of-type(3) {
+    justify-content: flex-end;
+  }
+`;
+
+export const s_iconButton = css`
+  width: 25px;
+  height: 25px;
+  font-size: 25px;
 `;

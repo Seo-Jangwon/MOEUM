@@ -3,26 +3,37 @@ import { css } from '@emotion/react';
 import { Bodies, Engine, Render, Runner, World } from 'matter-js';
 import { useEffect, useRef, useState } from 'react';
 import { BsPip } from 'react-icons/bs';
-import { FaStepBackward, FaStepForward } from 'react-icons/fa';
 import { FaCirclePlay, FaExpand, FaPause } from 'react-icons/fa6';
+import { LiaBackwardSolid, LiaForwardSolid } from 'react-icons/lia';
+import { MdOutlineSync } from 'react-icons/md';
+import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
+import { TbPlaylistAdd } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
-import beatData from '../beats.json';
+import testData from '../data.json';
 import lalaSong from '../lalaSong.m4a';
 import {
   s_canvas,
   s_container,
+  s_iconButton,
   s_infoContainer,
   s_playerBar,
   s_playerBarController,
+  s_playerBarRange,
   s_playerBarTimeLineRange,
   s_videoContainer,
 } from './MusicPlayer.style';
+import MyHeart from './MyHeart';
 
-const MusicPlayer = () => {
+const MusicPlayer = ({
+  currentMusicId,
+  nextMusicId,
+}: {
+  currentMusicId: number;
+  nextMusicId: number;
+}) => {
   const divRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const audioVolumeRef = useRef<HTMLInputElement | null>(null);
   const playerBarRef = useRef<HTMLDivElement | null>(null);
   const audioSrcRef = useRef<HTMLAudioElement | null>(null);
   const prevTimeRef = useRef<number>(0);
@@ -36,7 +47,8 @@ const MusicPlayer = () => {
   const timeIdx = useRef<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(true);
   const [playTime, setPlayTime] = useState<number>(0);
-  const data = useRef(beatData.data.beats[0].lines);
+  const [audioVolume, setAudioVolume] = useState<number>(0);
+  const data = useRef(testData.data.notes);
 
   function changeVideoState() {
     if (audioSrcRef.current) {
@@ -57,6 +69,7 @@ const MusicPlayer = () => {
   function onVisibiliyChanged() {
     if (document.visibilityState === 'visible') {
       if (data.current && audioSrcRef.current) {
+        console.log('deleteallshape');
         deleteAllShape();
       }
     }
@@ -73,16 +86,19 @@ const MusicPlayer = () => {
     if (data.current && timeIdx.current < data.current.length) {
       if (
         audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
-        engineRef.current !== null
+        engineRef.current !== null &&
+        divRef.current
       ) {
         setPlayTime(audioSrcRef.current.currentTime);
-        console.log(data.current[timeIdx.current].time);
         prevTimeRef.current = audioSrcRef.current.currentTime;
-        const circle = Bodies.circle(500, 300, 20, { restitution: 0.5, friction: 0.01 });
-        const obj = Bodies.polygon(500, 100, 3, 30);
-        circle.render.fillStyle = '#FFFFFF';
+        const obj = Bodies.polygon(
+          divRef.current.offsetWidth - data.current[timeIdx.current].width - 100,
+          ((100 - data.current[timeIdx.current].y) * divRef.current.offsetHeight) / 100,
+          data.current[timeIdx.current].sides,
+          data.current[timeIdx.current].width,
+          { angle: data.current[timeIdx.current].angle },
+        );
 
-        World.add(engineRef.current.world, circle);
         World.add(engineRef.current.world, obj);
         timeIdx.current += 1;
       }
@@ -93,10 +109,14 @@ const MusicPlayer = () => {
       if (engineRef.current !== null) {
         engineRef.current.world.bodies.forEach((body) => {
           if (
-            body.position.y > window.innerHeight ||
-            body.position.x < 0 ||
-            body.position.x > window.innerWidth
+            divRef.current &&
+            (body.position.y > divRef.current.offsetHeight + body.circleRadius ||
+              body.position.y < -body.circleRadius ||
+              body.position.x < -body.circleRadius ||
+              body.position.x > divRef.current.offsetWidth - body.circleRadius)
           ) {
+            console.log(body);
+            console.log(engineRef.current?.world.bodies.length);
             World.remove(engineRef.current.world, body);
           }
         });
@@ -132,6 +152,14 @@ const MusicPlayer = () => {
     }
   }
 
+  function muteUnMute() {
+    if (audioSrcRef.current) {
+      audioSrcRef.current.muted = !audioSrcRef.current.muted;
+      if (audioSrcRef.current.muted) setAudioVolume(0);
+      else setAudioVolume(audioSrcRef.current.volume);
+    }
+  }
+
   /** 오디오의 현재 재생 시간을 사용자가 조정 했을 경우 */
   function audioTimeChanged() {
     if (data.current && audioSrcRef.current) {
@@ -164,29 +192,37 @@ const MusicPlayer = () => {
 
   /** 키보드로 재생 컨트롤 할 수 있는 함수 */
   function MusicPlayPageKeyboardEvent(e: KeyboardEvent) {
-    if (document.activeElement?.tagName === 'INPUT') {
+    if (
+      document.activeElement?.tagName === 'INPUT' &&
+      !(document.activeElement.getAttribute('type') === 'range')
+    ) {
       return;
     } else {
       if (e.key === ' ') {
+        e.preventDefault();
         changeVideoState();
       } else if (e.key === 'm') {
-        console.log('qt');
-        if (audioSrcRef.current) {
-          console.log('qt');
-          audioSrcRef.current.muted = !audioSrcRef.current.muted;
-        }
+        e.preventDefault();
+        muteUnMute();
       } else if (e.key === 'f') {
+        e.preventDefault();
         handleFullScreen();
       } else if (audioSrcRef.current) {
         if (e.key === 'ArrowDown') {
-          audioSrcRef.current.volume -= 0.05;
+          e.preventDefault();
+          audioSrcRef.current.volume =
+            audioSrcRef.current.volume >= 0.05 ? audioSrcRef.current.volume - 0.05 : 0;
+          setAudioVolume(audioSrcRef.current.volume);
         } else if (e.key === 'ArrowUp') {
-          audioSrcRef.current.volume += 0.05;
+          e.preventDefault();
+          audioSrcRef.current.volume =
+            audioSrcRef.current.volume <= 0.95 ? audioSrcRef.current.volume + 0.05 : 1;
+          setAudioVolume(audioSrcRef.current.volume);
         } else if (e.key === 'ArrowLeft') {
-          console.log(audioSrcRef.current.currentTime);
+          e.preventDefault();
           audioSrcRef.current.currentTime -= 10;
         } else if (e.key == 'ArrowRight') {
-          console.log(audioSrcRef.current.currentTime);
+          e.preventDefault();
           audioSrcRef.current.currentTime += 10;
         }
       }
@@ -213,6 +249,7 @@ const MusicPlayer = () => {
         setIsPaused(true);
       });
       audioSrcRef.current.src = lalaSong;
+      setAudioVolume(audioSrcRef.current.volume);
     }
 
     const canvas = canvasRef.current;
@@ -245,11 +282,11 @@ const MusicPlayer = () => {
 
       options: {
         wireframes: false,
-        background: '#ffffc0',
+        background: '#FF00FF44',
       },
     });
 
-    engineRef.current.gravity.x = -0.5;
+    engineRef.current.gravity.x = -1;
     engineRef.current.gravity.y = 0;
 
     Render.run(renderRef.current);
@@ -327,44 +364,69 @@ const MusicPlayer = () => {
           >
             <div>
               <input
-                css={s_playerBarTimeLineRange}
+                css={css`
+                  ${s_playerBarTimeLineRange}
+                  ${s_playerBarRange(
+                    audioSrcRef.current
+                      ? (audioSrcRef.current.currentTime / audioSrcRef.current.duration) * 100
+                      : 0,
+                  )}
+                `}
                 type="range"
-                max={audioSrcRef.current ? audioSrcRef.current?.duration : 1}
+                max={audioSrcRef.current?.duration || 1}
                 value={playTime}
                 step={0.01}
                 onChange={(e) => {
-                  if (audioSrcRef.current)
+                  if (audioSrcRef.current) {
+                    setPlayTime(parseFloat(e.target.value));
                     audioSrcRef.current.currentTime = parseFloat(e.target.value);
+                  }
                   console.log(e.target.value);
                 }}
               />
             </div>
             <div css={s_playerBarController}>
-              <div>하트</div>
               <div>
-                <FaStepBackward />
+                <MyHeart isLike={true} category={'music'} id={currentMusicId} size={24} />
+                <TbPlaylistAdd />
+              </div>
+              <div>
+                <RxShuffle />
+                <LiaBackwardSolid
+                  onClick={() => {
+                    if (audioSrcRef.current) audioSrcRef.current.currentTime = 0;
+                  }}
+                />
                 {!isPaused ? (
                   <FaPause onClick={changeVideoState} />
                 ) : (
                   <FaCirclePlay onClick={changeVideoState} />
                 )}
-                <FaStepForward />
+                <LiaForwardSolid onClick={() => navigate(`/music/${nextMusicId}`)} />
+                <MdOutlineSync />
               </div>
               <div>
+                <RxSpeakerLoud onClick={muteUnMute} />
                 <input
+                  css={s_playerBarRange(audioVolume * 100)}
                   type="range"
                   max={1}
-                  ref={audioVolumeRef}
+                  value={audioVolume}
                   step={0.01}
                   onChange={(e) => {
-                    if (audioSrcRef.current)
-                      audioSrcRef.current.volume = parseFloat(e.target.value);
-                    console.log(e.target.value);
+                    if (audioSrcRef.current) {
+                      console.log(audioSrcRef.current.muted);
+                      console.log(e.target.value);
+                      if (parseFloat(e.target.value) > 0) audioSrcRef.current.muted = false;
+                      else audioSrcRef.current.muted = true;
+                      setAudioVolume(parseFloat(e.target.value));
+                      audioSrcRef.current.volume = audioVolume;
+                    }
                   }}
                 />
-                <img src={lylicsVisualizationButton} style={{ width: '15px' }} alt="" />
-                <BsPip onClick={handlePip} />
-                <FaExpand onClick={handleFullScreen} />
+                <img src={lylicsVisualizationButton} alt="" css={s_iconButton} />
+                <BsPip onClick={handlePip} css={s_iconButton} height={'25px'} width={'25px'} />
+                <FaExpand onClick={handleFullScreen} css={s_iconButton} />
               </div>
             </div>
           </div>

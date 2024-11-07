@@ -12,7 +12,10 @@ const MusicPlayPage: React.FC = () => {
     <>
       <div css={s_container}>
         <div></div>
-        <MusicPlayer />
+        <MusicPlayer
+          currentMusicId={testData.data.musics[0].id}
+          nextMusicId={testData.data.musics[1].id}
+        />
         <PlayList musicData={testData.data.musics} />
       </div>
     </>
