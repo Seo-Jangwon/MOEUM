@@ -1,7 +1,6 @@
 FROM gradle:8.10-jdk17-alpine AS builder
 WORKDIR /app
 COPY . .
-COPY ../../jenkins_data/application-secret.yml ./src/main/resources/
 RUN gradle --no-daemon -x test build
 
 FROM eclipse-temurin:17-jre-alpine
