@@ -105,7 +105,7 @@ services:
   rabbitmq:
     container_name: moeum_rabbitmq
     restart: always
-    image: 4.0.3-management-alpine
+    image: rabbitmq:4.0.3-management-alpine
     expose:
       - "5672"
     networks:
@@ -148,17 +148,17 @@ services:
       - "443:443"
     networks:
       - moeum
-  
-  volumes:
-    mysql_member:
-      driver: local
-    mysql_music:
-      driver: local
-    mysql_rec:
-      driver: local
-    mongo_music:
-      driver: local
 
-  networks:
-    moeum:
-      driver: bridge
+volumes:
+  mysql_member:
+    driver: local
+  mysql_music:
+    driver: local
+  mysql_rec:
+    driver: local
+  mongo_music:
+    driver: local
+
+networks:
+moeum:
+  driver: bridge
