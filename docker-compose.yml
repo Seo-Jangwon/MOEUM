@@ -115,6 +115,8 @@ services:
     container_name: moeum_gateway
     restart: always
     build: ./backend/gateway
+    expose:
+      - "8080"
     networks:
       - moeum
 
@@ -122,6 +124,8 @@ services:
     container_name: moeum_member
     restart: always
     build: ./backend/member
+    expose:
+      - "8081"
     networks:
       - moeum
 
@@ -129,6 +133,8 @@ services:
     container_name: moeum_music
     restart: always
     build: ./backend/music
+    expose:
+      - "8082"
     networks:
       - moeum
 
