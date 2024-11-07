@@ -2,14 +2,14 @@ services:
   mysql_member:
     container_name: mysql_member
     restart: always
-    image: mysql:8.0.39
+    image: mysql:8.0.40
     volumes:
       - 'mysql_member:/var/lib/mysql'
     environment:
       TZ: Asia/Seoul
       LANG: C.UTF-8
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: member
       MYSQL_TCP_PORT: 3310
     expose:
       - "3310"
@@ -19,14 +19,14 @@ services:
   mysql_music:
     container_name: mysql_music
     restart: always
-    image: mysql:8.0.39
+    image: mysql:8.0.40
     volumes:
       - 'mysql_music:/var/lib/mysql'
     environment:
       TZ: Asia/Seoul
       LANG: C.UTF-8
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: music
       MYSQL_TCP_PORT: 3311
     expose:
       - "3311"
@@ -41,7 +41,7 @@ services:
       - 'mongo_music:/data/db'
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     expose:
       - "27017"
     networks:
@@ -50,14 +50,14 @@ services:
   mysql_rec:
     container_name: mysql_rec
     restart: always
-    image: mysql:8.0.39
+    image: mysql:8.0.40
     volumes:
       - 'mysql_rec:/var/lib/mysql'
     environment:
       TZ: Asia/Seoul
       LANG: C.UTF-8
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: rec
       MYSQL_TCP_PORT: 3313
     expose:
       - "3313"
