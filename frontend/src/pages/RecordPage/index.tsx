@@ -2,6 +2,7 @@ import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { ReactNode, useState } from 'react';
 import { FaRegTrashCan } from 'react-icons/fa6';
 import { RiMenuAddLine } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom';
 import lala from '../../assets/lalaticon/lala.jpg';
 import Heart from '../DetailPage/DetailCover/DetailCoverHeart';
 import Modal from './Modal/Modal';
@@ -16,9 +17,10 @@ import {
   s_img,
   s_p,
 } from './style';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
 interface Record {
+  id: number
   title: string;
   image: string;
   artist: string;
@@ -29,6 +31,7 @@ interface Record {
 const mokData: { music: Record[] } = {
   music: [
     {
+      id: 1,
       title: 'fkfㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ',
       image: 'lala.jpg',
       artist: 'LALA',
@@ -36,117 +39,21 @@ const mokData: { music: Record[] } = {
       heart: true,
     },
     {
+      id: 2,
       title: '라라',
       image: 'lala.jpg',
       artist: 'LALA',
       time: '4:10',
       heart: false,
     },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
+
   ],
 };
 
 const RecordPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isDropDown, setIsDropDown] = useState<boolean>(false)
-  const navigate = useNavigate()
+  const [isDropDown, setIsDropDown] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   // 모달 열기 함수
   const openModal = () => {
@@ -158,11 +65,10 @@ const RecordPage = () => {
     setIsModalOpen(false);
   };
 
-
   // 드랍다운 닫기
   const closeDropDown = () => {
-    setIsDropDown(false)
-  }
+    setIsDropDown(false);
+  };
   interface DropDownItems {
     iconImage: ReactNode;
     text: string;
@@ -194,26 +100,29 @@ const RecordPage = () => {
       {/* 최근 음악 데이터 */}
       <div css={s_div_container}>
         {mokData.music.map((item, index) => (
-          <div key={index} css={s_div_item}>
-            {/* 이미지와 제목 */}
-            <div css={s_div_titie_img} onClick={() => navigate('/music/1')}>
-              <div css={s_div_img}>
-                <img src={lala} alt="라라" css={s_img} />
+          <>
+            {' '}
+            <div key={index} css={s_div_item}>
+              {/* 이미지와 제목 */}
+              <div css={s_div_titie_img} onClick={() => navigate('/music/1')}>
+                <div css={s_div_img}>
+                  <img src={lala} alt="라라" css={s_img} />
+                </div>
+                <h4 css={s_h4}>{item.title}</h4>
               </div>
-              <h4 css={s_h4}>{item.title}</h4>
+              {/* 아티스트 */}
+              <p css={s_p}>{item.artist}</p>
+              {/* 하트 아이콘 */}
+              <Heart isLike={item.heart} />
+              {/* 드롭다운 */}
+              <DotDotDot data={items} />
+              {/* 시간 */}
+              <p css={s_p}>{item.time}</p>
             </div>
-            {/* 아티스트 */}
-            <p css={s_p}>{item.artist}</p>
-            {/* 하트 아이콘 */}
-            <Heart isLike={item.heart} />
-            {/* 드롭다운 */}
-            <DotDotDot data={items} />
-            {/* 시간 */}
-            <p css={s_p}>{item.time}</p>
-          </div>
+            {/* 모달 컴포넌트 */}
+            <Modal isOpen={isModalOpen} onClose={closeModal} id={item.id}/>
+          </>
         ))}
-        {/* 모달 컴포넌트 */}
-        <Modal isOpen={isModalOpen} onClose={closeModal} />
       </div>
     </div>
   );
