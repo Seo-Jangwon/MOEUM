@@ -1,13 +1,15 @@
-// SideBarContent.tsx
 import LightModeToggle from '@/components/Toggle/LightModeToggle/LightModeToggle';
 import useAuthStore from '@/stores/authStore';
 import { FiEye, FiX } from 'react-icons/fi';
 import { IoMdSettings } from 'react-icons/io';
 import { IoFileTrayStackedOutline } from 'react-icons/io5';
 
+import apiClient from '@/api/apiClient';
+import Modal from '@/components/Modal/RequestModal/RequestModal'
+
 import { css } from '@emotion/react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as S from './SideBarContent.style';
 import { s_item } from './SideBarContent.style';
 
@@ -19,7 +21,73 @@ interface SideBarContentProps {
 const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
   const { isLoggedIn } = useAuthStore();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>('');
+  const [content, setContent] = useState<string>('');
+  const navigate = useNavigate();
 
+  const sendRequest = () => {
+    apiClient({
+      method: 'POST',
+      url: 'members/faq',
+      data: {
+        title: title,
+        content: content,
+      },
+    })
+      .then((res) => {
+        if (res.data.code === 200) {
+          alert('전송되었습니다.');
+          closeModal(); // 모달 닫기
+          navigate('/');
+        } else {
+          alert('오류가 발생하였습니다.');
+        }
+      })
+      .catch((err) => {
+        alert('오류가 발생하였습니다. 다시 시도해 주십시오');
+        console.log(err);
+      });
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setTitle(''); // 제목 초기화
+    setContent(''); // 내용 초기화
+  };
+
+  const editModal = {
+    title: '1:1 문의',
+    modalBody: (
+      <>
+        <input
+          type="text"
+          placeholder='제목을 적어주세요'
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          css={css`
+            width: 250%;
+            padding: 8px;
+            margin-bottom: 16px;
+            border-radius: 6px;
+          `}
+        />
+          <textarea
+            value={content}
+            placeholder='내용을 적어주세요'
+            
+            onChange={(e) => setContent(e.target.value)}
+            css={css`
+              width: 250%;
+              padding: 8px;
+              border-radius: 6px;
+
+            `}
+          />
+      </>
+    ),
+    positiveButtonClickListener: sendRequest,
+    negativeButtonClickListener: closeModal,
+  };
   return (
     <S.Container className={isOpen ? 'open' : ''}>
       <S.Header>
@@ -61,11 +129,13 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
           </Link>
         </div>
 
-        <div css={css`
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
-        `} >
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+          `}
+        >
           <Link to={'/faq'} css={S.s_link_color2}>
             <p>FAQ</p>
           </Link>
@@ -83,52 +153,7 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
           )}
         </div>
       </div>
-      {modalOpen && (
-        <div
-          css={css`
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-          `}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setModalOpen(false);
-            }
-          }}
-        >
-          <div
-            css={css`
-              background-color: white;
-              padding: 20px;
-              border-radius: 8px;
-              max-width: 500px;
-              width: 90%;
-              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            `}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <p>리액트로 모달 구현하기</p>
-            <button
-              css={css`
-                margin-top: 20px;
-                padding: 10px 20px;
-                font-size: 16px;
-                cursor: pointer;
-              `}
-              onClick={() => setModalOpen(false)}
-            >
-              모달 닫기
-            </button>
-          </div>
-        </div>
-      )}
+      {modalOpen ? <Modal {...editModal} /> : null}
     </S.Container>
   );
 };
