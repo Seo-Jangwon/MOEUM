@@ -68,7 +68,7 @@ public class JwtAuthenticationFilter extends
                     log.info("gateway - 유저: {}에 대한 토큰 검증 완료", userId);
                     return chain.filter(exchange.mutate()
                         .request(exchange.getRequest().mutate()
-                            .header("X-Member-Id", userId)
+                            .header("X-User-Id", userId)
                             .header("X-Role", role)
                             .build())
                         .build());
