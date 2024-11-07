@@ -56,8 +56,6 @@ export const s_playerBar = css`
 export const s_playerBarRange = (progress: number) => css`
   width: 100%;
   height: 6px;
-  background: #ddd;
-  opacity: 0.7;
   transition: opacity 0.2s;
   appearance: none;
   border-radius: 10px;
@@ -77,7 +75,7 @@ export const s_playerBarRange = (progress: number) => css`
       #444 calc(${progress}%),
       #444 100%
     );
-    opacity: 1;
+    opacity: 0.7;
   }
 `;
 export const s_playerBarTimeLineRange = css`
@@ -85,11 +83,15 @@ export const s_playerBarTimeLineRange = css`
 `;
 export const s_playerBarController = css`
   display: grid;
+  row-gap: 5px;
   grid-template-columns: repeat(3, 1fr);
   > div {
     display: flex;
     width: 100%;
     align-items: center;
+    > * {
+      cursor: pointer;
+    }
   }
   > div:nth-of-type(2) {
     justify-content: center;

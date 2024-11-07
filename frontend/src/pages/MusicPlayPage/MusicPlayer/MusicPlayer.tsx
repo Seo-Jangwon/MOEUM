@@ -1,6 +1,6 @@
 import lylicsVisualizationButton from '@/assets/lylicsVisualizationButton.svg';
 import { css } from '@emotion/react';
-import { Bodies, Engine, Render, Runner, World } from 'matter-js';
+import { Bodies, Engine, Events, Render, Runner, Vector, World } from 'matter-js';
 import { useEffect, useRef, useState } from 'react';
 import { BsPip } from 'react-icons/bs';
 import { FaCirclePlay, FaExpand, FaPause } from 'react-icons/fa6';
@@ -48,6 +48,16 @@ const MusicPlayer = ({
   const [isPaused, setIsPaused] = useState<boolean>(true);
   const [playTime, setPlayTime] = useState<number>(0);
   const [audioVolume, setAudioVolume] = useState<number>(0);
+  const endEventIdx = useRef<number>(0);
+
+  /** 재생중인 노래가 끝났을 때 어떻게 할지 설정하는 함수
+   * idx -> 0 그냥 끝남
+   * idx -> 1 반복 재생
+   * idx -> 2 다음 곡 재생
+   */
+  function changeEndEventIdx(idx: number) {
+    endEventIdx.current = idx;
+  }
   const data = useRef(testData.data.notes);
 
   function changeVideoState() {
@@ -69,7 +79,6 @@ const MusicPlayer = ({
   function onVisibiliyChanged() {
     if (document.visibilityState === 'visible') {
       if (data.current && audioSrcRef.current) {
-        console.log('deleteallshape');
         deleteAllShape();
       }
     }
@@ -91,35 +100,19 @@ const MusicPlayer = ({
       ) {
         setPlayTime(audioSrcRef.current.currentTime);
         prevTimeRef.current = audioSrcRef.current.currentTime;
-        const obj = Bodies.polygon(
+        const force = Vector.create(-1.5, 0);
+        const polygon = Bodies.polygon(
           divRef.current.offsetWidth - data.current[timeIdx.current].width - 100,
           ((100 - data.current[timeIdx.current].y) * divRef.current.offsetHeight) / 100,
           data.current[timeIdx.current].sides,
           data.current[timeIdx.current].width,
-          { angle: data.current[timeIdx.current].angle },
+          { angle: data.current[timeIdx.current].angle, mass: 100, force, frictionAir: 0 },
         );
 
-        World.add(engineRef.current.world, obj);
-        timeIdx.current += 1;
-      }
+        console.log(polygon);
 
-      /**
-       * 화면 밖으로 나간 물체 삭제
-       */
-      if (engineRef.current !== null) {
-        engineRef.current.world.bodies.forEach((body) => {
-          if (
-            divRef.current &&
-            (body.position.y > divRef.current.offsetHeight + body.circleRadius ||
-              body.position.y < -body.circleRadius ||
-              body.position.x < -body.circleRadius ||
-              body.position.x > divRef.current.offsetWidth - body.circleRadius)
-          ) {
-            console.log(body);
-            console.log(engineRef.current?.world.bodies.length);
-            World.remove(engineRef.current.world, body);
-          }
-        });
+        World.add(engineRef.current.world, polygon);
+        timeIdx.current += 1;
       }
 
       // 다음 호출 설정
@@ -135,7 +128,7 @@ const MusicPlayer = ({
   function deleteAllShape() {
     if (engineRef.current !== null) {
       engineRef.current.world.bodies.forEach((body) => {
-        World.remove(engineRef.current.world, body);
+        if (body.label !== 'wall') World.remove(engineRef.current.world, body);
       });
     }
   }
@@ -244,9 +237,19 @@ const MusicPlayer = ({
 
     if (audioSrcRef.current) {
       audioSrcRef.current.addEventListener('ended', () => {
-        if (animationRef.current) cancelAnimationFrame(animationRef.current);
-        timeIdx.current = 0;
-        setIsPaused(true);
+        if (endEventIdx.current === 0) {
+          if (animationRef.current) cancelAnimationFrame(animationRef.current);
+          timeIdx.current = 0;
+          setIsPaused(true);
+        } else if (endEventIdx.current === 1) {
+          if (audioSrcRef.current) {
+            timeIdx.current = 0;
+            audioSrcRef.current.currentTime = 0;
+            audioSrcRef.current?.play();
+          }
+        } else if (endEventIdx.current === 2) {
+          navigate(`/music/${nextMusicId}`);
+        }
       });
       audioSrcRef.current.src = lalaSong;
       setAudioVolume(audioSrcRef.current.volume);
@@ -286,12 +289,33 @@ const MusicPlayer = ({
       },
     });
 
-    engineRef.current.gravity.x = -1;
+    engineRef.current.gravity.x = 0;
     engineRef.current.gravity.y = 0;
 
     Render.run(renderRef.current);
     runnerRef.current = Runner.create();
     Runner.run(Runner.create(), engineRef.current);
+
+    const wall = Bodies.rectangle(100, window.innerHeight / 2, 20, window.innerHeight * 10, {
+      isStatic: true,
+      label: 'wall',
+    });
+    World.add(engineRef.current.world, wall);
+
+    /**왼쪽의 벽과 충돌 시 사라지게 하는 이벤트 함수 */
+    Events.on(engineRef.current, 'collisionStart', (event) => {
+      event.pairs.forEach((pair) => {
+        const { bodyA, bodyB } = pair;
+        console.log(pair);
+        if (bodyA === wall && bodyB !== wall) {
+          World.remove(engineRef.current?.world, bodyB);
+          console.log(engineRef.current?.world.bodies.length);
+        } else if (bodyB === wall && bodyA !== wall) {
+          World.remove(engineRef.current?.world, bodyA);
+          console.log(engineRef.current?.world.bodies.length);
+        }
+      });
+    });
 
     document.addEventListener('visibilitychange', onVisibiliyChanged);
     document.addEventListener('keydown', MusicPlayPageKeyboardEvent);
@@ -391,10 +415,13 @@ const MusicPlayer = ({
                 <TbPlaylistAdd />
               </div>
               <div>
-                <RxShuffle />
+                <RxShuffle onClick={() => changeEndEventIdx(2)} />
                 <LiaBackwardSolid
                   onClick={() => {
-                    if (audioSrcRef.current) audioSrcRef.current.currentTime = 0;
+                    if (audioSrcRef.current) {
+                      timeIdx.current = 0;
+                      audioSrcRef.current.currentTime = 0;
+                    }
                   }}
                 />
                 {!isPaused ? (
@@ -403,7 +430,7 @@ const MusicPlayer = ({
                   <FaCirclePlay onClick={changeVideoState} />
                 )}
                 <LiaForwardSolid onClick={() => navigate(`/music/${nextMusicId}`)} />
-                <MdOutlineSync />
+                <MdOutlineSync onClick={() => changeEndEventIdx(1)} />
               </div>
               <div>
                 <RxSpeakerLoud onClick={muteUnMute} />
@@ -420,7 +447,7 @@ const MusicPlayer = ({
                       if (parseFloat(e.target.value) > 0) audioSrcRef.current.muted = false;
                       else audioSrcRef.current.muted = true;
                       setAudioVolume(parseFloat(e.target.value));
-                      audioSrcRef.current.volume = audioVolume;
+                      audioSrcRef.current.volume = parseFloat(e.target.value);
                     }
                   }}
                 />
