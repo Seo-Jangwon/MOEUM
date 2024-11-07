@@ -3,32 +3,57 @@ spring:
     gateway:
       routes:
         - id: member-service
-          uri: moeum_gateway:8081
+          uri: http://localhost:8081
           predicates:
             - Path=/members/**
-            - Path=/settings/**
             - Method=POST,GET,PUT,DELETE
           metadata:
             health-check-url: /actuator/health
 
-        - id: music-service
-          uri: moeum_gateway:8082
+        - id: settings-service
+          uri: http://localhost:8081
           predicates:
             - Path=/musics/**
             - Method=POST,GET,PUT,DELETE
           metadata:
             health-check-url: /actuator/health
 
-        - id: recommendation-service
-          uri: moeum_gateway:8083
+        - id: music-service
+          uri: http://localhost:8084
           predicates:
-            - Path=/recommend/**
+            - Path=/settings/**
             - Method=POST,GET,PUT,DELETE
           metadata:
             health-check-url: /actuator/health
 
+        - id: player-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/player/**
+            - Method=POST,GET,PUT,DELETE
+          metadata:
+            health-check-url: /actuator/health
+
+        - id: history-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/history/**
+            - Method=POST,GET,PUT,DELETE
+          metadata:
+            health-check-url: /actuator/health
+
+        - id: recommendations-service
+          uri: http://localhost:8086
+          predicates:
+            - Path=/recommendations/**
+            - Method=POST,GET,PUT,DELETE
+          metadata:
+            health-check-url: /actuator/health
 service:
   url:
     member: http://localhost:8081
-    music: http://localhost:8082
-    recommendations: http://localhost:8083
+    music: http://localhost:8084
+    player: http://localhost:8085
+    history: http://localhost:8085
+    settings: http://localhost:8082
+    recommendations: http://localhost:8086
