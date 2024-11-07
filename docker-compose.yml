@@ -160,5 +160,5 @@ volumes:
     driver: local
 
 networks:
-moeum:
-  driver: bridge
+  moeum:
+    driver: bridge
