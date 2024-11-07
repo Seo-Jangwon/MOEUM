@@ -103,9 +103,9 @@ class RegisterServiceMemberTest {
         assertFalse(savedSetting.isVibration());
         assertFalse(savedSetting.isVisualization());
         assertEquals(0, savedSetting.getBlindness());
-        assertEquals(0, savedSetting.getEq_low());
-        assertEquals(0, savedSetting.getEq_mid());
-        assertEquals(0, savedSetting.getEq_high());
+        assertEquals(0, savedSetting.getEqLow());
+        assertEquals(0, savedSetting.getEqMid());
+        assertEquals(0, savedSetting.getEqHigh());
 
         // Calibration 검증
         verify(calibrationRepository).save(calibrationCaptor.capture());

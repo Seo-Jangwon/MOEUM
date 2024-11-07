@@ -56,8 +56,8 @@ public class InputValidateUtil {
         }
 
         // 비밀번호 복잡성 검증
-        if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,72}$")) {
-            throw new IllegalArgumentException("비밀번호는 8-72자이며, 영문자, 숫자, 특수문자를 포함해야 합니다.");
+        if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$")) {
+            throw new IllegalArgumentException("비밀번호는 8-20자이며, 영문자, 숫자, 특수문자를 포함해야 합니다.");
         }
     }
 }
