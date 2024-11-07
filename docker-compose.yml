@@ -159,6 +159,6 @@ services:
     mongo_music:
       driver: local
 
-  network:
+  networks:
     moeum:
       driver: bridge
