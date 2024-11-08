@@ -1,11 +1,14 @@
 import lala from '@/assets/lalaticon/lala2.png';
 import Lottie from 'lottie-react';
 import { useEffect, useRef, useState } from 'react';
-import { FaArrowLeft, FaArrowRight, FaPlay } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaPlay, FaRegHeart } from 'react-icons/fa';
 import { FiClock } from 'react-icons/fi';
 import playMusic from '../image/playMusic.json';
 
+import apiClient from '@/api/apiClient';
 import Button from '@/components/Button/Button';
+import DotDotDot from '@/components/DotDotDot/DotDotDot';
+import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 import {
   s_button,
@@ -22,6 +25,7 @@ import {
 } from './style';
 
 interface Music {
+  id: number;
   title: string;
   img: string;
   artist: string;
@@ -29,22 +33,15 @@ interface Music {
 
 const mokData: { music: Music[] } = {
   music: [
-    { title: 'apt' },
-    { title: 'abt' },
-    { title: 'apt' },
-    { title: 'apt' },
-    { title: 'abt' },
-    { title: 'apt' },
-    { title: 'apt' },
-    { title: 'abt' },
-    { title: 'apt' },
-    { title: 'apt' },
-    { title: 'abt' },
-    { title: 'apt' },
-    { title: 'apt' },
-    { title: 'abt' },
-    { title: 'apt' },
-    { title: 'apt' },
+    { id: 1, title: 'apt' },
+    { id: 1, title: 'apt' },
+    { id: 1, title: 'apt' },
+    { id: 1, title: 'apt' },
+    { id: 1, title: 'apt' },
+    { id: 1, title: 'apt' },
+    { id: 1, title: 'apt' },
+    { id: 1, title: 'apt' },
+    { id: 1, title: 'apt' },
   ],
 };
 
@@ -100,6 +97,19 @@ const NewList = () => {
     setPlayingIndex((prevIndex) => (prevIndex === index ? null : index));
     navigate(`music/${index}`);
   };
+  const handleLike = (id: number) => {
+    apiClient({
+      method: 'POST',
+      url: '/musics/music/like',
+      data: { id },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <>
@@ -109,7 +119,11 @@ const NewList = () => {
           <h3>최신 발매곡</h3>
         </div>
         <div css={s_div_button}>
-          <Button variant="outline" children="더 보기" onClick={() => navigate('list/newList')}></Button>
+          <Button
+            variant="outline"
+            children="더 보기"
+            onClick={() => navigate('list/newList')}
+          ></Button>
           <button css={s_button} onClick={handlePrev}>
             <FaArrowLeft />
           </button>
@@ -121,6 +135,26 @@ const NewList = () => {
       <div css={s_div_list} ref={listRef}>
         {mokData.music.map((item, index) => (
           <div key={index} css={s_div_img}>
+            <div
+              css={css`
+                position: absolute;
+                z-index: 1;
+                right: 10px;
+                bottom: 40px;
+                :hover{
+                  background-color: #888;
+                  border-radius: 100%;
+                }
+              `}
+            >
+              <DotDotDot
+                data={[{
+                  iconImage: <FaRegHeart />,
+                  text: '좋아요',
+                  clickHandler: () => handleLike(item.id),
+                }]}
+              />
+            </div>
             <button css={s_play_button} onClick={() => handlePlayClick(index)}>
               <img src={lala} alt="라라" css={s_img} />
               {playingIndex === index ? (

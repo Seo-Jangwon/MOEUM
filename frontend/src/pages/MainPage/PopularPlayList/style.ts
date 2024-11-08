@@ -22,16 +22,13 @@ export const s_div_item_container = css`
 
 export const s_div_item_box = (lala: string) => css`
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
   height: 100px;
-  background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url(${lala});
-  border: 0;
-  border-radius: 20px;
-  :hover {
-    transition: 0.3s;
-    filter: brightness(50%);
-  }
+  /* background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url(${lala}); */
+
+
 `;
 
 export const s_h5 = (theme: Theme) => css`

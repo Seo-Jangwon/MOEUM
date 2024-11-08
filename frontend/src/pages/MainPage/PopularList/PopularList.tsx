@@ -1,6 +1,9 @@
+import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala4.png';
 import Button from '@/components/Button/Button';
+import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
+import { FaRegHeart } from 'react-icons/fa6';
 import { FiActivity } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { s_div_header } from '../NewList/style';
@@ -14,6 +17,7 @@ import {
 } from './style';
 
 interface Music {
+  id: number;
   title: string;
   artist: string;
 }
@@ -21,26 +25,32 @@ interface Music {
 const mokData: { music: Music[] } = {
   music: [
     {
+      id: 1,
       title: 'EscapeSSAFY',
       artist: 'MSR',
     },
     {
+      id: 1,
       title: 'EscapeSSAFY',
       artist: 'MSR',
     },
     {
+      id: 1,
       title: 'EscapeSSAFY',
       artist: 'MSR',
     },
     {
+      id: 1,
       title: 'EscapeSSAFY',
       artist: 'MSR',
     },
     {
+      id: 1,
       title: 'EscapeSSAFY',
       artist: 'MSR',
     },
     {
+      id: 1,
       title: 'EscapeSSAFY',
       artist: 'MSR',
     },
@@ -51,6 +61,20 @@ const PopularList = () => {
   const navigate = useNavigate();
   const clickHandler = (index: number) => {
     navigate(`music/${index}`);
+  };
+
+  const handleLike = (id: number) => {
+    apiClient({
+      method: 'POST',
+      url: '/musics/music/like',
+      data: { id },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   return (
     <>
@@ -75,6 +99,10 @@ const PopularList = () => {
                 margin: 2%;
                 height: 73.5%;
                 aspect-ratio: 1 / 1;
+                :hover > img {
+                  filter: brightness(50%);
+                  transition: 0.3s;
+                }
               `}
             >
               <img
@@ -90,6 +118,29 @@ const PopularList = () => {
             <div css={s_div_data}>
               <h5 css={s_h5_title}>{item.title}</h5>
               <p css={s_p_artist}>{item.artist}</p>
+            </div>
+            <div
+              css={css`
+                position: absolute;
+                top: 10px;
+                right: 0;
+                z-index: 10;
+                :hover {
+                  background-color: #888;
+                  border-radius: 100%;
+                }
+              `}
+              onClick={(e) => e.stopPropagation()} // 추가된 부분
+            >
+              <DotDotDot
+                data={[
+                  {
+                    iconImage: <FaRegHeart />,
+                    text: '좋아요',
+                    clickHandler: () => handleLike(item.id),
+                  },
+                ]}
+              />
             </div>
           </div>
         ))}
