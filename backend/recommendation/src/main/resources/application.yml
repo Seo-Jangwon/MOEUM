@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: recommendation
+    name: rec-service
   profiles:
     active: local
   config:
@@ -31,11 +31,11 @@ rabbitmq:
   exchange:
     name: moeum.exchange
   queue:
-    member-delete: moeum.queue.member.delete
-    member-delete-result: moeum.queue.member.delete.result
+    music-sync: moeum.queue.music.sync
+    genre-sync: moeum.queue.genre.sync
   routing:
-    member-delete: moeum.routing.member.delete
-    member-delete-result: moeum.routing.member.delete.result
+    music-sync: moeum.routing.music.sync
+    genre-sync: moeum.routing.genre.sync
 
   resilience4j:
     circuitbreaker:
