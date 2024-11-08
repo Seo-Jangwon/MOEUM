@@ -1,5 +1,5 @@
-services:  
-  mysql_member:
+services:
+  mysql_member: &mysql_template
     container_name: mysql_member
     restart: always
     image: mysql:8.0.40
@@ -16,36 +16,20 @@ services:
       - moeum
 
   mysql_music:
+    <<: *mysql_template
     container_name: mysql_music
-    restart: always
-    image: mysql:8.0.40
     volumes:
       - mysql_music:/var/lib/mysql
     environment:
-      TZ: Asia/Seoul
-      LANG: C.UTF-8
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: music
-    expose:
-      - "3306"
-    networks:
-      - moeum
 
   mysql_rec:
+    <<: *mysql_template
     container_name: mysql_rec
-    restart: always
-    image: mysql:8.0.40
     volumes:
       - mysql_rec:/var/lib/mysql
     environment:
-      TZ: Asia/Seoul
-      LANG: C.UTF-8
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: rec
-    expose:
-      - "3306"
-    networks:
-      - moeum
 
   mongo_music:
     container_name: mongo_music
@@ -62,46 +46,28 @@ services:
     networks:
       - moeum
 
-  redis_gateway:
+  redis_gateway: &redis_template
     container_name: redis_gateway
     restart: always
     image: redis:7.4.1-alpine
     expose:
       - "6379"
-    command: ["redis-server"]
+    command: [ "redis-server" ]
     networks:
       - moeum
 
   redis_member:
+    <<: *redis_template
     container_name: redis_member
-    restart: always
-    image: redis:7.4.1-alpine
-    expose:
-      - "6379"
-    command: ["redis-server"]
-    networks:
-      - moeum
-      
+
   redis_music:
+    <<: *redis_template
     container_name: redis_music
-    restart: always
-    image: redis:7.4.1-alpine
-    expose:
-      - "6379"
-    command: ["redis-server"]
-    networks:
-      - moeum
 
   redis_rec:
+    <<: *redis_template
     container_name: redis_rec
-    restart: always
-    image: redis:7.4.1-alpine
-    expose:
-      - "6379"
-    command: ["redis-server"]
-    networks:
-      - moeum
-  
+
   rabbitmq:
     container_name: moeum_rabbitmq
     restart: always
@@ -111,33 +77,31 @@ services:
     networks:
       - moeum
 
-  gateway:
+  gateway: &spring_template
     container_name: moeum_gateway
     restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 2s
     build: ./backend/gateway
     networks:
       - moeum
 
   member:
+    <<: *spring_template
     container_name: moeum_member
-    restart: always
     build: ./backend/member
-    networks:
-      - moeum
 
   music:
+    <<: *spring_template
     container_name: moeum_music
-    restart: always
     build: ./backend/music
-    networks:
-      - moeum
 
-  # rec:
-  #   container_name: moeum_rec
-  #   restart: always
-  #   build: ./backend/rec
-  #   networks:
-  #     - moeum
+  rec:
+    <<: *spring_template
+    container_name: moeum_recommendation
+    build: ./backend/recommendation
 
   client:
     container_name: moeum_client
@@ -154,6 +118,7 @@ volumes:
   mysql_music:
   mysql_rec:
   mongo_music:
+
 
 networks:
   moeum:
