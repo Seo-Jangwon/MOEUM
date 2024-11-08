@@ -4,7 +4,18 @@ import Button from '@/components/Button/Button';
 import { css } from '@emotion/react';
 import { HttpStatusCode } from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import { s_modal_box, s_modal_container } from './style';
+import {
+  s_button,
+  s_button_input,
+  s_button_position,
+  s_div_img,
+  s_div_playlist_item_container,
+  s_img,
+  s_modal_box,
+  s_modal_container,
+  s_playlist_data,
+  s_plus_button,
+} from './style';
 
 interface ModalProps {
   id: number;
@@ -41,6 +52,7 @@ const mokData = {
   },
 };
 
+
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
   const isPlayList = useRef<boolean>(true);
   const [isAdding, setIsAdding] = useState<boolean>(false);
@@ -52,6 +64,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
       url: '/musics/playlist',
     })
       .then((res) => {
+        console.log(res);
         if (res.status === HttpStatusCode.Ok) {
           console.log(res);
         } else if (res.data.code === 500) {
@@ -95,6 +108,25 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
     }
   };
 
+  const handleAddPlayList = (id: number) => {
+    apiClient({
+      method: 'GET',
+      url: `/musics/playlist/detail/${id}`,
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.status === HttpStatusCode.Ok) {
+          console.log(res);
+        } else {
+          alert('테스트 중입니다.');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        alert('테스트 중입니다.');
+      });
+  };
+
   const handleCancel = () => {
     setIsAdding(false);
     setPlaylistTitle('');
@@ -129,39 +161,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
                 {mokData.data.playlists.map((item, index) => (
                   <div
                     key={index}
-                    css={css`
-                      display: flex;
-                      justify-content: space-between;
-                      align-items: center;
-                      :hover > div > img {
-                        filter: brightness(50%);
-                        transition: 0.3s;
-                      }
-                    `}
+                    css={s_div_playlist_item_container}
+                    onClick={() => {
+                      handleAddPlayList(item.id);
+                    }}
                   >
-                    <div
-                      css={css`
-                        width: 50px;
-                        overflow: hidden;
-                      `}
-                    >
-                      <img
-                        src={lala}
-                        alt="라라"
-                        css={css`
-                          width: 100%;
-                          border-radius: 10px;
-                        `}
-                      />
+                    <div css={s_div_img}>
+                      <img src={lala} alt="라라" css={s_img} />
                     </div>
-                    <div
-                      css={css`
-                        display: flex;
-                        flex-direction: column;
-                        align-items: flex-end;
-                        font-size: 14px;
-                      `}
-                    >
+                    <div css={s_playlist_data}>
                       <h5>{item.title}</h5>
                       <p>{item.totalDuration}</p>
                       <p>{item.totalMusicCount} 곡</p>
@@ -170,34 +178,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
                 ))}
               </div>
               {isAdding ? (
-                // 입력 필드와 저장, 취소 버튼
-                <div
-                  css={css`
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                    margin-top: 20px;
-                  `}
-                >
+                <div css={s_button}>
                   <input
                     type="text"
                     placeholder="플레이리스트 제목을 입력하세요"
                     value={playlistTitle}
                     onChange={(e) => setPlaylistTitle(e.target.value)}
-                    css={css`
-                      width: 100%;
-                      padding: 8px;
-                      border: 1px solid #ccc;
-                      border-radius: 4px;
-                    `}
+                    css={s_button_input}
                   />
-                  <div
-                    css={css`
-                      display: flex;
-                      justify-content: flex-end;
-                      gap: 10px;
-                    `}
-                  >
+                  <div css={s_button_position}>
                     <Button variant="grad" onClick={handleCreatePlayList}>
                       생성
                     </Button>
@@ -207,8 +196,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
                   </div>
                 </div>
               ) : (
-                // '추가' 버튼
-                <Button variant="grad" onClick={handleAddButtonClick}>
+                <Button variant="grad" onClick={handleAddButtonClick} css={s_plus_button}>
                   추가
                 </Button>
               )}

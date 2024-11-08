@@ -24,4 +24,58 @@ export const s_modal_box = css`
   height: 50%;
   gap: 20px;
   overflow-y: scroll;
+  position: relative;
+`;
+
+export const s_div_playlist_item_container = css`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  :hover > div > img {
+    filter: brightness(50%);
+    transition: 0.3s;
+  }
+`;
+
+export const s_div_img = css`
+  width: 50px;
+  overflow: hidden;
+`;
+
+export const s_img = css`
+  width: 100%;
+  border-radius: 10px;
+`;
+
+export const s_playlist_data = css`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 14px;
+`;
+
+export const s_button = css`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+export const s_button_input = css`
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+export const s_button_position = css`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+`;
+
+export const s_plus_button = css`
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
 `;

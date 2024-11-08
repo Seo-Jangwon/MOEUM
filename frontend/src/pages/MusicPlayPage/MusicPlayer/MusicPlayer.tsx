@@ -375,6 +375,7 @@ const MusicPlayer = ({
 
     /**왼쪽의 벽과 충돌 시 사라지게 하는 이벤트 함수 */
     Events.on(engineRef.current, 'collisionStart', (event) => {
+      console.log(engineRef.current?.world.bodies);
       event.pairs.forEach((pair) => {
         const { bodyA, bodyB } = pair;
         if (bodyA.label === 'wall' && bodyB.label !== 'wall') {
