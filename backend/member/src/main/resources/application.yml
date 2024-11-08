@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: auth-service
+    name: member-service
   profiles:
     active: local
   config:

@@ -150,7 +150,7 @@ const MusicPlayer = ({
   function deleteAllShape() {
     if (engineRef.current) {
       engineRef.current.world.bodies.forEach((body) => {
-        if (body.label !== 'wall') World.remove(engineRef.current.world, body);
+        if (body.label !== 'wall') World.remove(engineRef.current!.world, body);
       });
     }
   }
@@ -236,9 +236,11 @@ const MusicPlayer = ({
         } else if (e.key === 'ArrowLeft') {
           e.preventDefault();
           audioSrcRef.current.currentTime -= 10;
+          audioTimeChanged();
         } else if (e.key == 'ArrowRight') {
           e.preventDefault();
           audioSrcRef.current.currentTime += 10;
+          audioTimeChanged();
         }
       }
     }

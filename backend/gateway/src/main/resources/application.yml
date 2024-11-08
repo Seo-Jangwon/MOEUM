@@ -4,7 +4,7 @@ spring:
   application:
     name: api-gateway
   profiles:
-    active: local
+    active: prod
   config:
     import:
       - classpath:application-secret.yml
