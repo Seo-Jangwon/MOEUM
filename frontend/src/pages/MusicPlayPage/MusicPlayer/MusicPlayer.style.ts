@@ -63,6 +63,7 @@ export const s_playerBarRange = (progress: number) => css`
 
   &::-webkit-slider-thumb {
     opacity: 0;
+    display: none;
   }
   &::-webkit-slider-runnable-track {
     height: 6px;

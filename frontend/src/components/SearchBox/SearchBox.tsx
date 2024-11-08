@@ -1,6 +1,6 @@
 import useSearchedKeywordStore from '@/stores/searchedKeywordStore';
 import useThemeStore from '@/stores/themeStore';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { RiCloseLargeFill } from 'react-icons/ri';
 import { RxCross2 } from 'react-icons/rx';
@@ -17,6 +17,7 @@ import {
 
 const SearchBox = () => {
   const navigate = useNavigate();
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const { searches, removeAllSearchKeyword, addSearchKeyword, removeSearchKeyword } =
     useSearchedKeywordStore();
   const [userInput, setUserInput] = useState<string>('');
@@ -25,7 +26,6 @@ const SearchBox = () => {
 
   function search() {
     const searchKeyword = userInput;
-    setUserInput('');
     navigate(`/search?keyword=${searchKeyword}`);
   }
   return (
@@ -38,6 +38,7 @@ const SearchBox = () => {
         <FaMagnifyingGlass size={24} />
         <input
           css={s_input}
+          ref={inputRef}
           type="text"
           placeholder="보고 싶은 노래를 찾아 보세요."
           value={userInput}
@@ -71,6 +72,8 @@ const SearchBox = () => {
                       style={{ cursor: 'pointer' }}
                       onClick={(e) => {
                         e.stopPropagation();
+                        setUserInput(item);
+                        inputRef.current!.blur();
                         navigate(`/search?keyword=${item}`);
                       }}
                     >

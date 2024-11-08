@@ -42,6 +42,10 @@ export const s_elementContainer = css`
   display: flex;
   flex-direction: column;
   align-items: center;
+  :hover {
+    filter: brightness(50%);
+    transition: filter 0.3s;
+  }
 `;
 
 export const s_elementImage = (isBorder: boolean) => css`
