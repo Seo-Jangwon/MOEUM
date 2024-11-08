@@ -3,6 +3,7 @@ package com.weseethemusic.music.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,6 +25,7 @@ import com.weseethemusic.music.repository.MusicRepository;
 import com.weseethemusic.music.repository.PlaylistMusicRepository;
 import com.weseethemusic.music.repository.PlaylistRepository;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -216,7 +218,8 @@ public class PlaylistServiceTest {
         return music;
     }
 
-    private PlaylistMusic createPlaylistMusic(Long id, Long playlistId, Long musicId, double order) {
+    private PlaylistMusic createPlaylistMusic(Long id, Long playlistId, Long musicId,
+        double order) {
         PlaylistMusic playlistMusic = new PlaylistMusic();
         playlistMusic.setId(id);
         playlistMusic.setPlaylistId(playlistId);
@@ -269,7 +272,8 @@ public class PlaylistServiceTest {
         when(presignedUrlService.getPresignedUrl(any())).thenReturn("/test.jpg");
 
         // when
-        List<PlaylistMusicResponse> response = playlistService.updatePlaylist(playlistId, newTitle, newMusicIds);
+        List<PlaylistMusicResponse> response = playlistService.updatePlaylist(playlistId, newTitle,
+            newMusicIds);
 
         // then
         assertThat(response).isNotNull();
@@ -390,5 +394,75 @@ public class PlaylistServiceTest {
         assertThat(responses).hasSize(2); // 내 플레이리스트 1개 + 좋아요한 플레이리스트 1개
         verify(playlistRepository).findByMemberId(memberId);
         verify(playlistLikeRepository).findByMemberId(memberId);
+    }
+
+    @Test
+    @DisplayName("플레이리스트에 단일 음악 추가 - 성공")
+    void updatePlaylistOne_Success() {
+        // given
+        Long playlistId = 1L;
+        Long musicId = 2L;
+
+        Playlist playlist = createPlaylist(playlistId, 1L, "테스트 플레이리스트");
+        Music music = createMusicWithAlbumAndArtists(musicId);
+
+        PlaylistMusic newPlaylistMusic = createPlaylistMusic(1L, playlistId, musicId, 1000.0);
+        List<PlaylistMusic> playlistMusics = Arrays.asList(newPlaylistMusic);
+
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
+        when(musicRepository.findById(musicId)).thenReturn(Optional.of(music));
+        when(playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(playlistId))
+            .thenReturn(Optional.of(newPlaylistMusic));
+        when(playlistMusicRepository.findByPlaylistIdOrderByOrder(playlistId))
+            .thenReturn(playlistMusics);
+
+        when(musicRepository.findAllById(Collections.singletonList(musicId)))
+            .thenReturn(Collections.singletonList(music));
+
+        when(artistMusicRepository.findAllByMusic(music)).thenReturn(createArtists());
+        when(presignedUrlService.getPresignedUrl(any())).thenReturn("/test.jpg");
+
+        // when
+        List<PlaylistMusicResponse> response = playlistService.updatePlaylistOne(playlistId, musicId);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response).hasSize(1);
+        assertThat(response.get(0).getId()).isEqualTo(musicId);
+        verify(playlistRepository).save(any(Playlist.class));
+        verify(playlistMusicRepository).save(argThat(pm ->
+            pm.getMusicId().equals(musicId) &&
+                pm.getPlaylistId().equals(playlistId)
+        ));
+    }
+
+    @Test
+    @DisplayName("플레이리스트에 단일 음악 추가 - 플레이리스트 없음")
+    void updatePlaylistOne_PlaylistNotFound() {
+        // given
+        Long playlistId = 1L;
+        Long musicId = 1L;
+
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.empty());
+
+        // then
+        assertThrows(RuntimeException.class, () ->
+            playlistService.updatePlaylistOne(playlistId, musicId));
+    }
+
+    @Test
+    @DisplayName("플레이리스트에 단일 음악 추가 - 음악 없음")
+    void updatePlaylistOne_MusicNotFound() {
+        // given
+        Long playlistId = 1L;
+        Long musicId = 1L;
+        Playlist playlist = createPlaylist(playlistId, 1L, "테스트 플레이리스트");
+
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
+        when(musicRepository.findById(musicId)).thenReturn(Optional.empty());
+
+        // then
+        assertThrows(RuntimeException.class, () ->
+            playlistService.updatePlaylistOne(playlistId, musicId));
     }
 }

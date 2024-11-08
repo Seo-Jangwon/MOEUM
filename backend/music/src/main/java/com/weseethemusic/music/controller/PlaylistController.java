@@ -145,8 +145,30 @@ public class PlaylistController {
         }
     }
 
+    @PostMapping("/{playlistId}/add/{musicId}")
+    public ResponseEntity<Map<String, Object>> addOnPlaylist(
+        @PathVariable Long playlistId, @PathVariable Long musicId) {
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<PlaylistMusicResponse> musics = playlistService.updatePlaylistOne(playlistId,
+                musicId);
+            Map<String, Object> data = new HashMap<>();
+            data.put("musics", musics);
+
+            response.put("code", 200);
+            response.put("data", data);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("code", 500);
+            response.put("message", "내부 서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
     @PostMapping("/like")
-    public ResponseEntity<Map<String, Object>> likePlaylist(@RequestBody LikeRequest likeRequest,
+    public ResponseEntity<Map<String, Object>> likePlaylist(@RequestBody LikeRequest
+        likeRequest,
         @RequestHeader("X-Member-Id") Long memberId) {
         Map<String, Object> response = new HashMap<>();
         try {

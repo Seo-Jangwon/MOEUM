@@ -9,7 +9,6 @@ import com.weseethemusic.music.common.entity.PlaylistMusic;
 import com.weseethemusic.music.common.service.PresignedUrlService;
 import com.weseethemusic.music.dto.playlist.ArtistResponse;
 import com.weseethemusic.music.dto.playlist.CreatePlaylistRequest;
-import com.weseethemusic.music.dto.playlist.LikeRequest;
 import com.weseethemusic.music.dto.playlist.PlaylistMusicResponse;
 import com.weseethemusic.music.dto.playlist.PlaylistResponse;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
@@ -340,6 +339,46 @@ public class PlaylistServiceImpl implements PlaylistService {
                 playlistMusic.setAddedAt(LocalDateTime.now());
                 playlistMusicRepository.save(playlistMusic);
             }
+
+            // 업데이트된 목록 반환
+            return getPlaylistMusics(playlistId);
+        } catch (Exception e) {
+            log.error("플레이리스트 수정 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 수정에 실패했습니다.");
+        }
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<PlaylistMusicResponse> updatePlaylistOne(Long playlistId, Long musicId) {
+        try {
+            // 플레이리스트 존재 확인
+            Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
+
+            // 제목 업데이트
+            playlist.setUpdatedAt(LocalDateTime.now());
+            playlistRepository.save(playlist);
+
+            // 음악 존재 여부 확인
+            Music music = musicRepository.findById(musicId)
+                .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
+
+            // 현재 플레이리스트의 가장 큰 order 값 조회
+            Optional<PlaylistMusic> lastMusicOptional = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
+                playlistId);
+            double maxOrder = 0.0;
+            if (lastMusicOptional.isPresent()) {
+                maxOrder = lastMusicOptional.get().getOrder();
+            }
+
+            // 새로운 음악 추가
+            PlaylistMusic playlistMusic = new PlaylistMusic();
+            playlistMusic.setPlaylistId(playlistId);
+            playlistMusic.setMusicId(music.getId());
+            playlistMusic.setOrder(maxOrder + 1000.0);
+            playlistMusic.setAddedAt(LocalDateTime.now());
+            playlistMusicRepository.save(playlistMusic);
 
             // 업데이트된 목록 반환
             return getPlaylistMusics(playlistId);
