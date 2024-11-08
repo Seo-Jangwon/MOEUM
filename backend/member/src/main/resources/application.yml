@@ -5,7 +5,8 @@ spring:
   application:
     name: auth-service
   profiles:
-    active: local,secret
+    active: local
+    include: secret
 
   mail:
     host: smtp.gmail.com

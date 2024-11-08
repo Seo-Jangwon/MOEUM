@@ -4,7 +4,8 @@ spring:
   application:
     name: api-gateway
   profiles:
-    active: local, secret # 기본값은 local로 설정
+    active: local
+    include: secret
   config:
     import:
       - optional:file:./application-secret.yml
