@@ -1,6 +1,6 @@
-services:  
-  mysql_member:
-    container_name: mysql_member
+services:
+  mysql_member: &mysql_template
+    container_name: mysql-member
     restart: always
     image: mysql:8.0.40
     volumes:
@@ -16,39 +16,23 @@ services:
       - moeum
 
   mysql_music:
-    container_name: mysql_music
-    restart: always
-    image: mysql:8.0.40
+    <<: *mysql_template
+    container_name: mysql-music
     volumes:
       - mysql_music:/var/lib/mysql
     environment:
-      TZ: Asia/Seoul
-      LANG: C.UTF-8
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: music
-    expose:
-      - "3306"
-    networks:
-      - moeum
 
   mysql_rec:
-    container_name: mysql_rec
-    restart: always
-    image: mysql:8.0.40
+    <<: *mysql_template
+    container_name: mysql-rec
     volumes:
       - mysql_rec:/var/lib/mysql
     environment:
-      TZ: Asia/Seoul
-      LANG: C.UTF-8
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: rec
-    expose:
-      - "3306"
-    networks:
-      - moeum
 
   mongo_music:
-    container_name: mongo_music
+    container_name: mongo-music
     restart: always
     image: mongodb/mongodb-community-server:7.0-ubi8
     volumes:
@@ -62,46 +46,28 @@ services:
     networks:
       - moeum
 
-  redis_gateway:
-    container_name: redis_gateway
+  redis_gateway: &redis_template
+    container_name: redis-gateway
     restart: always
     image: redis:7.4.1-alpine
     expose:
       - "6379"
-    command: ["redis-server"]
+    command: [ "redis-server" ]
     networks:
       - moeum
 
   redis_member:
-    container_name: redis_member
-    restart: always
-    image: redis:7.4.1-alpine
-    expose:
-      - "6379"
-    command: ["redis-server"]
-    networks:
-      - moeum
-      
+    <<: *redis_template
+    container_name: redis-member
+
   redis_music:
-    container_name: redis_music
-    restart: always
-    image: redis:7.4.1-alpine
-    expose:
-      - "6379"
-    command: ["redis-server"]
-    networks:
-      - moeum
+    <<: *redis_template
+    container_name: redis-music
 
   redis_rec:
-    container_name: redis_rec
-    restart: always
-    image: redis:7.4.1-alpine
-    expose:
-      - "6379"
-    command: ["redis-server"]
-    networks:
-      - moeum
-  
+    <<: *redis_template
+    container_name: redis-rec
+
   rabbitmq:
     container_name: moeum_rabbitmq
     restart: always
@@ -111,36 +77,42 @@ services:
     networks:
       - moeum
 
-  gateway:
-    container_name: moeum_gateway
+  gateway: &spring_template
+    container_name: moeum-gateway
     restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 2s
     build: ./backend/gateway
+    expose:
+      - 8080
     networks:
       - moeum
 
   member:
-    container_name: moeum_member
-    restart: always
+    <<: *spring_template
+    container_name: moeum-member
     build: ./backend/member
-    networks:
-      - moeum
+    expose:
+      - 8081
 
   music:
-    container_name: moeum_music
-    restart: always
+    <<: *spring_template
+    container_name: moeum-music
     build: ./backend/music
-    networks:
-      - moeum
+    expose:
+      - 8082
 
-  # rec:
-  #   container_name: moeum_rec
-  #   restart: always
-  #   build: ./backend/rec
-  #   networks:
-  #     - moeum
+  rec:
+    <<: *spring_template
+    container_name: moeum-recommendation
+    build: ./backend/recommendation
+    expose:
+      - 8083
 
   client:
-    container_name: moeum_client
+    container_name: moeum-client
     restart: always
     build: ./frontend
     ports:
@@ -154,6 +126,7 @@ volumes:
   mysql_music:
   mysql_rec:
   mongo_music:
+
 
 networks:
   moeum:

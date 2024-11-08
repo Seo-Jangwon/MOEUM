@@ -2,8 +2,8 @@ spring:
   config:
     import: classpath:application-secret.yml
   datasource:
-    url: jdbc:mysql://localhost:3306/member?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/moeum_music?serverTimezone=Asia/Seoul&useUnicode=true&characterEncoding=utf8
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
@@ -20,7 +20,6 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
-
   data:
     redis:
       host: localhost
@@ -30,3 +29,10 @@ spring:
           max-active: 10
           max-idle: 8
           min-idle: 2
+    mongodb:
+      uri: mongodb+srv://${spring.data.mongodb.username}:${spring.data.mongodb.password}@ssafy.ngivl.mongodb.net/S11P31D203?authSource=admin
+      database: S11P31D203
+      port: 27017
+      authentication-database: admin
+      auto-index-creation: true
+      write-concern: NORMAL
