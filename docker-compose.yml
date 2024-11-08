@@ -89,17 +89,17 @@ services:
       - moeum
 
   member:
-    <<: &spring_template 
+    <<: *spring_template
     container_name: moeum_member
     build: ./backend/member
 
   music:
-    <<: &spring_template 
+    <<: *spring_template
     container_name: moeum_music
     build: ./backend/music
 
   rec:
-    <<: &spring_template 
+    <<: *spring_template
     container_name: moeum_recommendation
     build: ./backend/recommendation
 
