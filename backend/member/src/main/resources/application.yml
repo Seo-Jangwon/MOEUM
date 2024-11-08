@@ -6,9 +6,6 @@ spring:
     name: auth-service
   profiles:
     active: local,secret
-  config:
-    import:
-      - optional:file:./application-secret.yml
 
   mail:
     host: smtp.gmail.com

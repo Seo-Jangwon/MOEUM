@@ -6,8 +6,6 @@ spring:
     name: Moeum Music
   profiles:
     active: local, secret
-  config:
-    import: optional:classpath:application-secret.yml
 
   management:
     endpoint:

@@ -22,15 +22,6 @@ public class RouteConfig {
     @Value("${service.url.music}")
     private String musicServiceUrl;
 
-    @Value("${service.url.player}")
-    private String playerServiceUrl;
-
-    @Value("${service.url.history}")
-    private String historyServiceUrl;
-
-    @Value("${service.url.settings}")
-    private String settingsServiceUrl;
-
     @Value("${service.url.recommendations}")
     private String recommendationsServiceUrl;
 
