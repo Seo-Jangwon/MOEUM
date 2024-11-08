@@ -4,6 +4,8 @@ import com.weseethemusic.music.dto.playlist.CreatePlaylistRequest;
 import com.weseethemusic.music.dto.playlist.PlaylistMusicResponse;
 import com.weseethemusic.music.dto.playlist.PlaylistResponse;
 import java.util.List;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface PlaylistService {
 
@@ -18,6 +20,9 @@ public interface PlaylistService {
     List<PlaylistResponse> getMyPlaylistsAll(Long memberId);
 
     List<PlaylistMusicResponse> updatePlaylist(Long playlistId, String title, List<Long> musicIds);
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    List<PlaylistMusicResponse> updatePlaylistOne(Long playlistId, Long musicId);
 
     void likePlaylist(Long playlistId, Long memberId);
 

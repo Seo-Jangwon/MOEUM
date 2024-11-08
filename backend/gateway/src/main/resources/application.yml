@@ -5,10 +5,9 @@ spring:
     name: api-gateway
   profiles:
     active: local
-    include: secret
   config:
     import:
-      - optional:file:./application-secret.yml
+      - classpath:application-secret.yml
   cloud:
     gateway:
       default-filters:
