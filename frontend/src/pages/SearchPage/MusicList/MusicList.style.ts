@@ -36,6 +36,10 @@ export const s_firstElement = css`
   flex-direction: column;
   aspect-ratio: 1/1;
   margin: 5px 0;
+  :hover {
+    filter: brightness(50%);
+    transition: filter 0.3s;
+  }
   @media (max-width: 768px) {
     width: 90%;
     justify-content: center;
@@ -79,6 +83,10 @@ export const s_otherElement = css`
   justify-content: space-between;
   display: flex;
   cursor: pointer;
+  :hover {
+    filter: brightness(50%);
+    transition: filter 0.3s;
+  }
 `;
 
 export const s_otherElementLeftChild = css`

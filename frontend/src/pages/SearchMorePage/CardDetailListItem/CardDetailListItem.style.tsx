@@ -15,6 +15,10 @@ export const s_container = (theme: Theme) => css`
     height: 8vh;
     border-radius: 20px;
   }
+  :hover {
+    background-color: ${theme.colors.lightgray};
+    transition: background-color 0ms.5;
+  }
 `;
 export const s_imageContainer = css`
   height: 100%;
