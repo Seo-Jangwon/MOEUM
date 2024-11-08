@@ -85,6 +85,8 @@ services:
         condition: on-failure
         delay: 2s
     build: ./backend/gateway
+    expose:
+      - 8080
     networks:
       - moeum
 
@@ -92,16 +94,22 @@ services:
     <<: *spring_template
     container_name: moeum-member
     build: ./backend/member
+    expose:
+      - 8081
 
   music:
     <<: *spring_template
     container_name: moeum-music
     build: ./backend/music
+    expose:
+      - 8082
 
   rec:
     <<: *spring_template
     container_name: moeum-recommendation
     build: ./backend/recommendation
+    expose:
+      - 8083
 
   client:
     container_name: moeum-client
