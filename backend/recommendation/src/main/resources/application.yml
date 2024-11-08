@@ -1,9 +1,9 @@
 server:
-  port: 8082
+  port: 8083
 
 spring:
   application:
-    name: Moeum Music
+    name: recommendation
   profiles:
     active: local
     include: secret
