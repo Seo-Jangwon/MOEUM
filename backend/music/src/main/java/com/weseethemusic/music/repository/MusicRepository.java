@@ -16,4 +16,7 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
     @Query("select distinct a from Music a join LikeMusic b on a.id = b.music.id join ArtistMusic c on a.id = c.music.id where c.artist.id = :artistId group by a.id order by count(*) desc, a.id asc")
     List<Music> getPopularByArtist(@Param("artistId") Long artistId, Pageable pageable);
 
+    @Query("select m from Music m join Album a on m.album.id = a.id order by a.releaseDate desc limit 10")
+    List<Music> getLatestMusics();
+
 }

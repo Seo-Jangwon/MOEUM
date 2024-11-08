@@ -1,10 +1,12 @@
 package com.weseethemusic.music.service;
 
-import com.weseethemusic.music.dto.general.GeneralPopularMusicDto;
+import com.weseethemusic.music.dto.general.GeneralMusicDto;
 import java.util.List;
 
 public interface MusicService {
 
-    List<GeneralPopularMusicDto> getPopularMusics();
-    
+    List<GeneralMusicDto> getPopularMusics();
+
+    List<GeneralMusicDto> getLatestMusics();
+
 }

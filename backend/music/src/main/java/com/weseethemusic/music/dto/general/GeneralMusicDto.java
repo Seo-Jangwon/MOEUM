@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-public class GeneralPopularMusicDto {
+public class GeneralMusicDto {
 
     private long id;
     private String name;
