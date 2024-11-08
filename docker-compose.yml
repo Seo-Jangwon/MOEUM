@@ -1,6 +1,6 @@
 services:
   mysql_member: &mysql_template
-    container_name: mysql_member
+    container_name: mysql-member
     restart: always
     image: mysql:8.0.40
     volumes:
@@ -17,7 +17,7 @@ services:
 
   mysql_music:
     <<: *mysql_template
-    container_name: mysql_music
+    container_name: mysql-music
     volumes:
       - mysql_music:/var/lib/mysql
     environment:
@@ -25,14 +25,14 @@ services:
 
   mysql_rec:
     <<: *mysql_template
-    container_name: mysql_rec
+    container_name: mysql-rec
     volumes:
       - mysql_rec:/var/lib/mysql
     environment:
       MYSQL_DATABASE: rec
 
   mongo_music:
-    container_name: mongo_music
+    container_name: mongo-music
     restart: always
     image: mongodb/mongodb-community-server:7.0-ubi8
     volumes:
@@ -47,7 +47,7 @@ services:
       - moeum
 
   redis_gateway: &redis_template
-    container_name: redis_gateway
+    container_name: redis-gateway
     restart: always
     image: redis:7.4.1-alpine
     expose:
@@ -58,15 +58,15 @@ services:
 
   redis_member:
     <<: *redis_template
-    container_name: redis_member
+    container_name: redis-member
 
   redis_music:
     <<: *redis_template
-    container_name: redis_music
+    container_name: redis-music
 
   redis_rec:
     <<: *redis_template
-    container_name: redis_rec
+    container_name: redis-rec
 
   rabbitmq:
     container_name: moeum_rabbitmq
@@ -78,7 +78,7 @@ services:
       - moeum
 
   gateway: &spring_template
-    container_name: moeum_gateway
+    container_name: moeum-gateway
     restart: always
     deploy:
       restart_policy:
@@ -90,21 +90,21 @@ services:
 
   member:
     <<: *spring_template
-    container_name: moeum_member
+    container_name: moeum-member
     build: ./backend/member
 
   music:
     <<: *spring_template
-    container_name: moeum_music
+    container_name: moeum-music
     build: ./backend/music
 
   rec:
     <<: *spring_template
-    container_name: moeum_recommendation
+    container_name: moeum-recommendation
     build: ./backend/recommendation
 
   client:
-    container_name: moeum_client
+    container_name: moeum-client
     restart: always
     build: ./frontend
     ports:
