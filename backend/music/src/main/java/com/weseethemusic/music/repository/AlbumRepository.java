@@ -12,4 +12,7 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
     @Query("select a from Album a where a.id in (select distinct b.album.id from Music b where b.id in (select c.music.id from ArtistMusic c where c.artist.id = :artistId))")
     List<Album> getDiscographyByArtist(Long artistId);
 
+    @Query("select a.imageName from Album a where a.id = :albumId")
+    String getAlbumImage(Long albumId);
+
 }

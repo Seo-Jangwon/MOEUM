@@ -1,4 +1,6 @@
 import lylicsVisualizationButton from '@/assets/lylicsVisualizationButton.svg';
+import Modal from '@/pages/RecordPage/Modal/Modal';
+import useSettingStore from '@/stores/settingStore';
 import { css } from '@emotion/react';
 import { Bodies, Engine, Events, Render, Runner, Vector, World } from 'matter-js';
 import { useEffect, useRef, useState } from 'react';
@@ -45,10 +47,14 @@ const MusicPlayer = ({
   const animationRef = useRef<number>();
 
   const timeIdx = useRef<number>(0);
+  const endEventIdx = useRef<number>(0);
+
+  const { visualization, toggleVisualization } = useSettingStore();
+
   const [isPaused, setIsPaused] = useState<boolean>(true);
   const [playTime, setPlayTime] = useState<number>(0);
   const [audioVolume, setAudioVolume] = useState<number>(0);
-  const endEventIdx = useRef<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   /** 재생중인 노래가 끝났을 때 어떻게 할지 설정하는 함수
    * idx -> 0 그냥 끝남
@@ -60,6 +66,7 @@ const MusicPlayer = ({
   }
   const data = useRef(testData.data.notes);
 
+  /** 영상의 재생 상태 변경하는 함수 */
   function changeVideoState() {
     if (audioSrcRef.current) {
       if (audioSrcRef.current.paused) {
@@ -76,6 +83,7 @@ const MusicPlayer = ({
   const [playerBarVisible, setPlayerBarVisible] = useState<boolean>(false);
   const timeoutId = useRef<NodeJS.Timeout>();
 
+  /** 백그라운드로 이동했다가 돌아왔을 떄 실행하는 함수. 딜레이로 인해 갑자기 생성되는 물체들 지움 */
   function onVisibiliyChanged() {
     if (document.visibilityState === 'visible') {
       if (data.current && audioSrcRef.current) {
@@ -93,26 +101,40 @@ const MusicPlayer = ({
       return;
     }
     if (data.current && timeIdx.current < data.current.length) {
-      if (
-        audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
-        engineRef.current !== null &&
-        divRef.current
-      ) {
-        setPlayTime(audioSrcRef.current.currentTime);
+      if (audioSrcRef.current) {
         prevTimeRef.current = audioSrcRef.current.currentTime;
-        const force = Vector.create(-1.5, 0);
-        const polygon = Bodies.polygon(
-          divRef.current.offsetWidth - data.current[timeIdx.current].width - 100,
-          ((100 - data.current[timeIdx.current].y) * divRef.current.offsetHeight) / 100,
-          data.current[timeIdx.current].sides,
-          data.current[timeIdx.current].width,
-          { angle: data.current[timeIdx.current].angle, mass: 100, force, frictionAir: 0 },
-        );
+        setPlayTime(audioSrcRef.current.currentTime);
+        if (
+          audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
+          engineRef.current !== null &&
+          divRef.current
+        ) {
+          const x =
+            (divRef.current.clientWidth + document.body.clientWidth * 0.05) *
+            (document.fullscreenElement ? 1 : 1.4);
+          const y =
+            data.current[timeIdx.current].y === 100
+              ? 0
+              : ((100 - data.current[timeIdx.current].y) * divRef.current.clientHeight) /
+                (document.fullscreenElement ? 100 : 50);
+          const polygon = Bodies.polygon(
+            x,
+            y,
+            data.current[timeIdx.current].sides,
+            data.current[timeIdx.current].width,
+            {
+              angle: data.current[timeIdx.current].angle,
+              mass: 100,
+              force: Vector.create(-divRef.current.clientWidth / 500, 0),
+              frictionAir: 0,
+              collisionFilter: { group: -1 },
+              position: { x, y },
+            },
+          );
 
-        console.log(polygon);
-
-        World.add(engineRef.current.world, polygon);
-        timeIdx.current += 1;
+          World.add(engineRef.current.world, polygon);
+          timeIdx.current += 1;
+        }
       }
 
       // 다음 호출 설정
@@ -126,7 +148,7 @@ const MusicPlayer = ({
    * 물체 전체 삭제
    */
   function deleteAllShape() {
-    if (engineRef.current !== null) {
+    if (engineRef.current) {
       engineRef.current.world.bodies.forEach((body) => {
         if (body.label !== 'wall') World.remove(engineRef.current.world, body);
       });
@@ -285,7 +307,7 @@ const MusicPlayer = ({
 
       options: {
         wireframes: false,
-        background: '#FF00FF44',
+        background: '#ffadff',
       },
     });
 
@@ -296,23 +318,67 @@ const MusicPlayer = ({
     runnerRef.current = Runner.create();
     Runner.run(Runner.create(), engineRef.current);
 
-    const wall = Bodies.rectangle(100, window.innerHeight / 2, 20, window.innerHeight * 10, {
-      isStatic: true,
+    if (divRef.current === null) return;
+
+    const windowWidth = window.screen.width;
+    const windowHeight = window.screen.height;
+
+    const wallLeft = Bodies.rectangle(-250, windowHeight / 2, 5, windowHeight + 1000, {
       label: 'wall',
+      isStatic: true,
+      render: {
+        fillStyle: '#121212',
+      },
     });
-    World.add(engineRef.current.world, wall);
+
+    const wallRight = Bodies.rectangle(
+      windowWidth + 250,
+      windowHeight / 2,
+      5,
+      windowHeight + 1000,
+      {
+        label: 'wall',
+        isStatic: true,
+        render: {
+          fillStyle: '#121212',
+        },
+      },
+    );
+
+    const wallTop = Bodies.rectangle(windowWidth / 2, -250, windowWidth + 1000, 5, {
+      label: 'wall',
+      isStatic: true,
+      render: {
+        fillStyle: '#121212',
+      },
+    });
+
+    const wallBottom = Bodies.rectangle(
+      windowWidth / 2,
+      windowHeight + 250,
+      windowWidth + 1000,
+      10,
+      {
+        label: 'wall',
+        isStatic: true,
+        render: {
+          fillStyle: '#121212',
+        },
+      },
+    );
+    World.add(engineRef.current.world, wallLeft);
+    World.add(engineRef.current.world, wallRight);
+    World.add(engineRef.current.world, wallTop);
+    World.add(engineRef.current.world, wallBottom);
 
     /**왼쪽의 벽과 충돌 시 사라지게 하는 이벤트 함수 */
     Events.on(engineRef.current, 'collisionStart', (event) => {
       event.pairs.forEach((pair) => {
         const { bodyA, bodyB } = pair;
-        console.log(pair);
-        if (bodyA === wall && bodyB !== wall) {
-          World.remove(engineRef.current?.world, bodyB);
-          console.log(engineRef.current?.world.bodies.length);
-        } else if (bodyB === wall && bodyA !== wall) {
-          World.remove(engineRef.current?.world, bodyA);
-          console.log(engineRef.current?.world.bodies.length);
+        if (bodyA.label === 'wall' && bodyB.label !== 'wall') {
+          if (engineRef.current) World.remove(engineRef.current?.world, bodyB);
+        } else if (bodyB.label === 'wall' && bodyA.label !== 'wall') {
+          if (engineRef.current) World.remove(engineRef.current?.world, bodyA);
         }
       });
     });
@@ -340,9 +406,7 @@ const MusicPlayer = ({
 
   /** 영상의 재생 상태 변경 시 호출됨. 애니메이션 멈추거나 시작 */
   useEffect(() => {
-    if (engineRef.current === null || renderRef.current === null) {
-      return;
-    }
+    if (engineRef.current === null || renderRef.current === null) return;
 
     //영상이 재생되는 상태일 경우
     if (!isPaused) requestAnimationFrame(createObjectsAtTimes);
@@ -351,7 +415,6 @@ const MusicPlayer = ({
       if (animationRef.current && !isPaused) {
         cancelAnimationFrame(animationRef.current);
       }
-      // if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [isPaused]);
 
@@ -367,7 +430,6 @@ const MusicPlayer = ({
   };
 
   function onExitPip() {
-    console.log('asdf');
     console.log(location.pathname);
     if (videoRef.current) videoRef.current.removeEventListener('enterpictureinpicture', onExitPip);
     navigate(location.pathname);
@@ -376,6 +438,13 @@ const MusicPlayer = ({
   return (
     <>
       <div css={s_container}>
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+          }}
+          id={currentMusicId}
+        />
         <audio ref={audioSrcRef} />
         <div css={s_videoContainer} ref={divRef}>
           <canvas css={s_canvas} ref={canvasRef} onClick={changeVideoState} />
@@ -405,14 +474,13 @@ const MusicPlayer = ({
                     setPlayTime(parseFloat(e.target.value));
                     audioSrcRef.current.currentTime = parseFloat(e.target.value);
                   }
-                  console.log(e.target.value);
                 }}
               />
             </div>
             <div css={s_playerBarController}>
               <div>
                 <MyHeart isLike={true} category={'music'} id={currentMusicId} size={24} />
-                <TbPlaylistAdd />
+                <TbPlaylistAdd onClick={() => setIsModalOpen(true)} />
               </div>
               <div>
                 <RxShuffle onClick={() => changeEndEventIdx(2)} />
@@ -442,8 +510,6 @@ const MusicPlayer = ({
                   step={0.01}
                   onChange={(e) => {
                     if (audioSrcRef.current) {
-                      console.log(audioSrcRef.current.muted);
-                      console.log(e.target.value);
                       if (parseFloat(e.target.value) > 0) audioSrcRef.current.muted = false;
                       else audioSrcRef.current.muted = true;
                       setAudioVolume(parseFloat(e.target.value));
@@ -451,7 +517,12 @@ const MusicPlayer = ({
                     }
                   }}
                 />
-                <img src={lylicsVisualizationButton} alt="" css={s_iconButton} />
+                <img
+                  src={lylicsVisualizationButton}
+                  alt="가사 시각화 버튼"
+                  css={s_iconButton}
+                  onClick={toggleVisualization}
+                />
                 <BsPip onClick={handlePip} css={s_iconButton} height={'25px'} width={'25px'} />
                 <FaExpand onClick={handleFullScreen} css={s_iconButton} />
               </div>
