@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MusicSyncEvent {
+
     private EventType eventType;
     private MusicDto music;
+    private String sagaId;
 
     public enum EventType {
-        CREATED, UPDATED, DELETED
+        STARTED, COMPLETED, FAILED
     }
 }

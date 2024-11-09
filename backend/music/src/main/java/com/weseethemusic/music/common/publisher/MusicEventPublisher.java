@@ -1,4 +1,4 @@
-package com.weseethemusic.music.common.service;
+package com.weseethemusic.music.common.publisher;
 
 import com.weseethemusic.common.event.GenreSyncEvent;
 import com.weseethemusic.common.event.MusicSyncEvent;

@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GenreSyncEvent {
+
     private EventType eventType;
     private GenreDto genre;
+    private String sagaId;
 
     public enum EventType {
-        CREATED, UPDATED, DELETED
+        STARTED, COMPLETED, FAILED
     }
 }
