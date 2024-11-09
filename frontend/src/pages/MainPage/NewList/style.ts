@@ -64,6 +64,7 @@ export const s_div_list = css`
 `;
 
 export const s_div_img = css`
+  position: relative;
   display: flex;
   flex-direction: column;
   flex: 0 0 calc((100% - (4 * 40px)) / 5);

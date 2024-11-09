@@ -68,7 +68,6 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
             width: 250%;
             padding: 8px;
             margin-bottom: 16px;
-            border-radius: 6px;
           `}
         />
           <textarea
@@ -80,6 +79,7 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
               width: 250%;
               padding: 8px;
               border-radius: 6px;
+              resize: none;
 
             `}
           />

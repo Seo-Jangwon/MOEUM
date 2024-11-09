@@ -69,7 +69,7 @@ services:
     container_name: redis-rec
 
   rabbitmq:
-    container_name: moeum_rabbitmq
+    container_name: moeum-rabbitmq
     restart: always
     image: rabbitmq:4.0.3-management-alpine
     expose:

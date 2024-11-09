@@ -25,16 +25,14 @@ export const s_popular_container = css`
 `;
 
 export const s_popular_box = (theme: Theme) => css`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: ${theme.colors.gray};
   border-radius: 20px;
   height: 120px;
-  :hover > div > img{
-    filter: brightness(50%);
-    transition: 0.3s;
-  }
+  
 `;
 
 export const s_div_data = css`

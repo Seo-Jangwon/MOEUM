@@ -1,4 +1,3 @@
-// DropDown.tsx
 import { css } from '@emotion/react';
 import { ReactNode } from 'react';
 import { s_li } from './style';
