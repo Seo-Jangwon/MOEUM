@@ -21,7 +21,6 @@ import lombok.Setter;
 public class Music {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)

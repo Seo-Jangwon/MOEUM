@@ -1,7 +1,9 @@
 package com.weseethemusic.music.common.entity;
 
+import com.weseethemusic.music.common.listner.GenreEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,6 +17,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(GenreEntityListener.class)
 public class Genre {
 
     @Id

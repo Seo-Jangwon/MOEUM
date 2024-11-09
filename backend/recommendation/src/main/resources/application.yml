@@ -31,11 +31,19 @@ rabbitmq:
   exchange:
     name: moeum.exchange
   queue:
-    music-sync: moeum.queue.music.sync
     genre-sync: moeum.queue.genre.sync
+    genre-sync-result: moeum.queue.genre.sync.result
+    music-sync: moeum.queue.music.sync
+    music-sync-result: moeum.queue.music.sync.result
+    member-delete: moeum.queue.member.delete
+    member-delete-result: moeum.queue.member.delete.result
   routing:
-    music-sync: moeum.routing.music.sync
     genre-sync: moeum.routing.genre.sync
+    genre-sync-result: moeum.routing.genre.sync.result
+    music-sync: moeum.routing.music.sync
+    music-sync-result: moeum.routing.music.sync.result
+    member-delete: moeum.routing.member.delete
+    member-delete-result: moeum.routing.member.delete.result
 
   resilience4j:
     circuitbreaker:

@@ -1,6 +1,6 @@
-package com.weseethemusic.music.common.service;
+package com.weseethemusic.music.common.consumer;
 
-import com.weseethemusic.common.dto.DeleteMemberEvent;
+import com.weseethemusic.common.event.DeleteMemberEvent;
 import com.weseethemusic.music.service.PlaylistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MusicEventConsumer {
+public class MemberEventConsumer {
 
     private final PlaylistService playlistService;
     private final RabbitTemplate rabbitTemplate;
