@@ -1,4 +1,4 @@
-package com.weseethemusic.common.dto;
+package com.weseethemusic.common.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

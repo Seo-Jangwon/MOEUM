@@ -1,6 +1,5 @@
 package com.weseethemusic.common.dto;
 
-import com.weseethemusic.recommendation.common.entity.Music;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

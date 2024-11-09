@@ -121,4 +121,132 @@ public class RabbitMQConfig {
         });
         return template;
     }
+
+    // 음악 관련
+    @Value("${rabbitmq.queue.genre-sync}")
+    private String genreSyncQueue;
+
+    @Value("${rabbitmq.routing.genre-sync}")
+    private String genreSyncRoutingKey;
+
+    @Value("${rabbitmq.queue.genre-sync-result}")
+    private String genreSyncResultQueue;
+
+    @Value("${rabbitmq.routing.genre-sync-result}")
+    private String genreSyncResultRoutingKey;
+
+    @Value("${rabbitmq.queue.music-sync}")
+    private String musicSyncQueue;
+
+    @Value("${rabbitmq.routing.music-sync}")
+    private String musicSyncRoutingKey;
+
+    @Value("${rabbitmq.queue.music-sync-result}")
+    private String musicSyncResultQueue;
+
+    @Value("${rabbitmq.routing.music-sync-result}")
+    private String musicSyncResultRoutingKey;
+
+    @Bean
+    public Queue genreSyncQueue() {
+        return QueueBuilder
+            .durable(genreSyncQueue)
+            .withArgument("x-dead-letter-exchange", exchangeName + ".dlx")
+            .withArgument("x-dead-letter-routing-key", "dead.genre.sync")
+            .withArgument("x-message-ttl", 30000)
+            .build();
+    }
+
+    @Bean
+    public Queue genreSyncResultQueue() {
+        return QueueBuilder
+            .durable(genreSyncResultQueue)
+            .withArgument("x-dead-letter-exchange", exchangeName + ".dlx")
+            .withArgument("x-dead-letter-routing-key", "dead.genre.sync.result")
+            .withArgument("x-message-ttl", 30000)
+            .build();
+    }
+
+    @Bean
+    public Queue musicSyncQueue() {
+        return QueueBuilder
+            .durable(musicSyncQueue)
+            .withArgument("x-dead-letter-exchange", exchangeName + ".dlx")
+            .withArgument("x-dead-letter-routing-key", "dead.music.sync")
+            .withArgument("x-message-ttl", 30000)
+            .build();
+    }
+
+    @Bean
+    public Queue musicSyncResultQueue() {
+        return QueueBuilder
+            .durable(musicSyncResultQueue)
+            .withArgument("x-dead-letter-exchange", exchangeName + ".dlx")
+            .withArgument("x-dead-letter-routing-key", "dead.music.sync.result")
+            .withArgument("x-message-ttl", 30000)
+            .build();
+    }
+
+    @Bean
+    public Binding genreSyncBinding() {
+        return BindingBuilder
+            .bind(genreSyncQueue())
+            .to(moeumExchange())
+            .with(genreSyncRoutingKey);
+    }
+
+    @Bean
+    public Binding genreSyncResultBinding() {
+        return BindingBuilder
+            .bind(genreSyncResultQueue())
+            .to(moeumExchange())
+            .with(genreSyncResultRoutingKey);
+    }
+
+    @Bean
+    public Binding musicSyncBinding() {
+        return BindingBuilder
+            .bind(musicSyncQueue())
+            .to(moeumExchange())
+            .with(musicSyncRoutingKey);
+    }
+
+    @Bean
+    public Binding musicSyncResultBinding() {
+        return BindingBuilder
+            .bind(musicSyncResultQueue())
+            .to(moeumExchange())
+            .with(musicSyncResultRoutingKey);
+    }
+
+    @Bean
+    public Queue genreSyncDeadLetterQueue() {
+        return QueueBuilder
+            .durable(genreSyncQueue + ".dlq")
+            .build();
+    }
+
+    @Bean
+    public Queue musicSyncDeadLetterQueue() {
+        return QueueBuilder
+            .durable(musicSyncQueue + ".dlq")
+            .build();
+    }
+
+    @Bean
+    public Binding genreSyncDeadLetterBinding() {
+        return BindingBuilder
+            .bind(genreSyncDeadLetterQueue())
+            .to(deadLetterExchange())
+            .with("dead.genre.sync");
+    }
+
+    @Bean
+    public Binding musicSyncDeadLetterBinding() {
+        return BindingBuilder
+            .bind(musicSyncDeadLetterQueue())
+            .to(deadLetterExchange())
+            .with("dead.music.sync");
+    }
+
 }
