@@ -7,6 +7,7 @@ import com.weseethemusic.music.dto.search.AlbumDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.dto.search.MusicDto;
 import com.weseethemusic.music.dto.search.PlaylistDto;
+import com.weseethemusic.music.dto.search.SearchDto;
 import com.weseethemusic.music.service.MusicSearchServiceImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class MusicSearchController {
 
     private final MusicSearchServiceImpl musicSearchService;
+
+    // 음악 검색
+    @GetMapping
+    public ResponseDto<SearchDto> searchMusic(@RequestParam("keyword") String keyword) {
+        SearchDto result;
+
+        try {
+            result = musicSearchService.searchMusic(keyword);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+        return ResponseDto.res(200, result);
+    }
 
     // 음악 모두 보기 검색
     @GetMapping("/music")
