@@ -5,12 +5,14 @@ import com.weseethemusic.music.common.exception.ErrorCode;
 import com.weseethemusic.music.dto.ResponseDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
+import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.service.MusicServiceImpl;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +22,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class MusicController {
 
     private final MusicServiceImpl musicService;
+
+    // 좋아요 한 아티스트 목록 조회
+    @GetMapping("/artist/like")
+    public ResponseDto<List<ArtistImageDto>> getArtistLikes(
+        @RequestHeader("X-Member-Id") long memberId) {
+        List<ArtistImageDto> result;
+
+        try {
+            result = musicService.getArtistLikes(memberId);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200, result);
+    }
 
     // 인기 30곡 조회
     @GetMapping("/popular")

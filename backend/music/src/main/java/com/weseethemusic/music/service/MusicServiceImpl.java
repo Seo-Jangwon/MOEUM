@@ -2,13 +2,16 @@ package com.weseethemusic.music.service;
 
 import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
+import com.weseethemusic.music.common.entity.LikeArtist;
 import com.weseethemusic.music.common.entity.Music;
 import com.weseethemusic.music.dto.detail.ArtistDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
+import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
 import com.weseethemusic.music.repository.ArtistRepository;
+import com.weseethemusic.music.repository.LikeArtistRepository;
 import com.weseethemusic.music.repository.LikeMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
 import java.util.ArrayList;
@@ -25,6 +28,21 @@ public class MusicServiceImpl implements MusicService {
     private final AlbumRepository albumRepository;
     private final MusicRepository musicRepository;
     private final ArtistRepository artistRepository;
+    private final LikeArtistRepository likeArtistRepository;
+
+    // 좋아요 한 아티스트 목록 조회
+    @Override
+    public List<ArtistImageDto> getArtistLikes(long memberId) {
+        List<ArtistImageDto> result = new ArrayList<>();
+        List<Artist> artists = likeArtistRepository.findAllByMemberId(memberId);
+
+        for (Artist artist : artists) {
+            result.add(ArtistImageDto.builder().id(artist.getId()).name(artist.getName())
+                .image(artist.getImageName()).build());
+        }
+
+        return result;
+    }
 
     // 인기 30곡 조회
     @Override
