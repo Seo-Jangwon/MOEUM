@@ -1,5 +1,6 @@
 package com.weseethemusic.music.service;
 
+import com.weseethemusic.music.dto.general.GeneralAlbumDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
@@ -15,4 +16,6 @@ public interface MusicService {
 
     List<ArtistImageDto> getArtistLikes(long memberId);
 
+    List<GeneralAlbumDto> getAlbumLikes(long memberId);
+    
 }

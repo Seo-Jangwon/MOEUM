@@ -2,15 +2,16 @@ package com.weseethemusic.music.service;
 
 import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
-import com.weseethemusic.music.common.entity.LikeArtist;
 import com.weseethemusic.music.common.entity.Music;
 import com.weseethemusic.music.dto.detail.ArtistDto;
+import com.weseethemusic.music.dto.general.GeneralAlbumDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
 import com.weseethemusic.music.repository.ArtistRepository;
+import com.weseethemusic.music.repository.LikeAlbumRepository;
 import com.weseethemusic.music.repository.LikeArtistRepository;
 import com.weseethemusic.music.repository.LikeMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
@@ -29,6 +30,7 @@ public class MusicServiceImpl implements MusicService {
     private final MusicRepository musicRepository;
     private final ArtistRepository artistRepository;
     private final LikeArtistRepository likeArtistRepository;
+    private final LikeAlbumRepository likeAlbumRepository;
 
     // 좋아요 한 아티스트 목록 조회
     @Override
@@ -39,6 +41,29 @@ public class MusicServiceImpl implements MusicService {
         for (Artist artist : artists) {
             result.add(ArtistImageDto.builder().id(artist.getId()).name(artist.getName())
                 .image(artist.getImageName()).build());
+        }
+
+        return result;
+    }
+
+    // 좋아요 한 앨범 목록 조회
+    @Override
+    public List<GeneralAlbumDto> getAlbumLikes(long memberId) {
+        List<GeneralAlbumDto> result = new ArrayList<>();
+        List<Album> albums = likeAlbumRepository.findAllByMemberId(memberId);
+
+        for (Album album : albums) {
+            List<com.weseethemusic.music.dto.search.ArtistDto> artistDtos = new ArrayList<>();
+            List<Artist> artists = albumRepository.getAlbumArtists(album);
+
+            for (Artist artist : artists) {
+                artistDtos.add(
+                    com.weseethemusic.music.dto.search.ArtistDto.builder().id(artist.getId())
+                        .name(artist.getName()).build());
+            }
+
+            result.add(GeneralAlbumDto.builder().id(album.getId()).name(album.getName())
+                .image(album.getImageName()).artists(artistDtos).build());
         }
 
         return result;
