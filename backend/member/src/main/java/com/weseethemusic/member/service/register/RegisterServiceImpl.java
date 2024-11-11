@@ -76,14 +76,14 @@ public class RegisterServiceImpl implements RegisterService {
             // Calibration 생성
             Calibration calibration = new Calibration();
             calibration.setMember(saveMember);
-            calibration.setQ1("#000000");
-            calibration.setQ2("#000000");
-            calibration.setQ3("#000000");
-            calibration.setQ4("#000000");
-            calibration.setQ5("#000000");
-            calibration.setQ6("#000000");
-            calibration.setQ7("#000000");
-            calibration.setQ8("#000000");
+            calibration.setQ1("000000");
+            calibration.setQ2("000000");
+            calibration.setQ3("000000");
+            calibration.setQ4("000000");
+            calibration.setQ5("000000");
+            calibration.setQ6("000000");
+            calibration.setQ7("000000");
+            calibration.setQ8("000000");
             calibrationRepository.save(calibration);
 
             // 인증 완료 상태 삭제
