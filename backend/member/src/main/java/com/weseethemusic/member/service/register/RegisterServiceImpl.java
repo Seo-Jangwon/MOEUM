@@ -41,19 +41,13 @@ public class RegisterServiceImpl implements RegisterService {
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    /**
-     * 회원가입
-     *
-     * @param registerDto 사용자 등록 정보
-     * @return 등록된 사용자 엔티티
-     */
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Member registerUser(RegisterDto registerDto) {
         log.info("member - 사용자 등록 시작: 이메일 {}", registerDto.getEmail());
 
         try {
-            // 입력값 유효성 및 보안 검사
+            // 입력값 유효성 검사
             validateRegisterInput(registerDto);
 
             // 이메일 인증 완료 여부 확인
@@ -117,15 +111,25 @@ public class RegisterServiceImpl implements RegisterService {
 
         String email = registerDto.getEmail();
         String nickname = registerDto.getNickname();
+        String password = registerDto.getPassword();
 
-        // 기본 유효성 검사
-        InputValidateUtil.validateEmail(email);
-        InputValidateUtil.validateNickname(nickname);
-        InputValidateUtil.validatePassword(registerDto.getPassword());
+        // 이메일 유효성 검사
+        if (!SecurityUtil.isValidEmail(email)) {
+            throw new IllegalArgumentException("유효하지 않은 이메일 형식입니다.");
+        }
 
-        // XSS 및 HTML 인젝션 검사
-        if (SecurityUtil.containsXSSPayload(email) || SecurityUtil.containsXSSPayload(nickname) ||
-            SecurityUtil.containsHtmlTags(email) || SecurityUtil.containsHtmlTags(nickname)) {
+        // 닉네임 유효성 검사
+        if (!SecurityUtil.isValidNickname(nickname)) {
+            throw new IllegalArgumentException("닉네임은 2-20자의 한글, 영문, 숫자만 허용됩니다.");
+        }
+
+        // 비밀번호 유효성 검사
+        if (!SecurityUtil.isValidPassword(password)) {
+            throw new IllegalArgumentException("비밀번호는 8-20자이며, 영문자, 숫자, 특수문자를 포함해야 합니다.");
+        }
+
+        // XSS 위험 검사
+        if (SecurityUtil.hasXSSRisk(email) || SecurityUtil.hasXSSRisk(nickname)) {
             throw new IllegalArgumentException("유효하지 않은 문자가 포함되어 있습니다.");
         }
     }
@@ -146,28 +150,20 @@ public class RegisterServiceImpl implements RegisterService {
     }
 
     private String generateToken() {
-        return Integer.toString((int) (Math.random() * 899999) + 100000);
+        return String.format("%06d", (int) (Math.random() * 1000000));
     }
 
     private String getRedisKey(String email) {
         return EMAIL_TOKEN_PREFIX + email;
     }
 
-    /**
-     * 이메일 인증용 토큰을 생성하고 이메일로 전송
-     *
-     * @param email 사용자 이메일
-     * @return 토큰 전송 결과 메시지
-     */
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public String sendEmailToken(String email) {
         log.info("이메일 인증 토큰 전송 시작: {}", email);
 
-        // 이메일 형식 검증
-        try {
-            InputValidateUtil.validateEmail(email);
-        } catch (IllegalArgumentException e) {
+        // 이메일 유효성 검사
+        if (!SecurityUtil.isValidEmail(email)) {
             throw new IllegalArgumentException("이메일 형식이 유효하지 않습니다.");
         }
 
@@ -204,13 +200,6 @@ public class RegisterServiceImpl implements RegisterService {
         }
     }
 
-    /**
-     * 인증번호 전송
-     *
-     * @param to      수신자 이메일
-     * @param subject 메일 제목
-     * @param text    메일 내용
-     */
     @Override
     public void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -220,19 +209,12 @@ public class RegisterServiceImpl implements RegisterService {
         emailSender.send(message);
     }
 
-    /**
-     * 이메일 확인 토큰 유효성 검증
-     *
-     * @param email 사용자 이메일
-     * @param token 검증할 토큰
-     * @return 토큰 유효성 여부
-     */
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean validateEmailToken(String email, String token) {
+        log.info("{}의 입력 인증번호: {}", email, token);
         String redisKey = getRedisKey(email);
         Object storedToken = redisTemplate.opsForValue().get(redisKey);
-
         if (storedToken != null && token.equals(storedToken.toString())) {
             // 유효성 검증 성공 시 토큰 삭제
             redisTemplate.delete(redisKey);
@@ -248,6 +230,4 @@ public class RegisterServiceImpl implements RegisterService {
         }
         return false;
     }
-
-
 }

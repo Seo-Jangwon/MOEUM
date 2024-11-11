@@ -192,7 +192,7 @@ class EditServiceImplTest {
         // when & then
         assertThatThrownBy(() -> editService.updateNickname(USER_ID, maliciousNickname))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("유효하지 않은");
+            .hasMessageContaining("2-20자의 한글, 영문, 숫자만 허용");
     }
 
     @Test
@@ -204,7 +204,7 @@ class EditServiceImplTest {
         // when & then
         assertThatThrownBy(() -> editService.updateNickname(USER_ID, maliciousNickname))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("유효하지 않은");
+            .hasMessageContaining("2-20자의 한글, 영문, 숫자만 허용");
     }
 
     @Test
@@ -216,7 +216,7 @@ class EditServiceImplTest {
         // when & then
         assertThatThrownBy(() -> editService.updateNickname(USER_ID, maliciousNickname))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("2-20자의 한글, 영문, 숫자만 허용");  // 실제 메시지로 수정
+            .hasMessageContaining("2-20자의 한글, 영문, 숫자만 허용");
     }
 
     @Test
@@ -271,7 +271,7 @@ class EditServiceImplTest {
         // when & then
         assertThatThrownBy(() -> editService.updateProfileImage(USER_ID, file))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("유효하지 않은");
+            .hasMessageContaining("지원하지 않는 파일 형식");
     }
 
     @Test
@@ -289,7 +289,7 @@ class EditServiceImplTest {
         // when & then
         assertThatThrownBy(() -> editService.updateProfileImage(USER_ID, file))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("유효하지 않은");
+            .hasMessageContaining("지원하지 않는 파일 형식");
     }
 
     @Test
