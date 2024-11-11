@@ -19,4 +19,7 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
     @Query("select m from Music m join Album a on m.album.id = a.id order by a.releaseDate desc limit 10")
     List<Music> getLatestMusics();
 
+    @Query("SELECT m FROM Music m WHERE m.name LIKE CONCAT('%', :keyword, '%')")
+    List<Music> findAllByName(String keyword, Pageable pageable);
+
 }
