@@ -19,6 +19,8 @@ export const s_content = css`
   text-align: center;
 `;
 
+export const s_button = css({ fontSize: 'x-large', marginTop: '24px', padding: '10px 20px' });
+
 export const s_titlebox = (theme: Theme) => css`
   display: flex;
   flex-direction: column;
