@@ -10,6 +10,7 @@ import com.weseethemusic.music.dto.search.ArtistDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.dto.search.MusicDto;
 import com.weseethemusic.music.dto.search.PlaylistDto;
+import com.weseethemusic.music.dto.search.SearchDto;
 import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
 import com.weseethemusic.music.repository.ArtistRepository;
@@ -35,15 +36,23 @@ public class MusicSearchServiceImpl implements MusicSearchService {
     private final PlaylistMusicRepository playlistMusicRepository;
     private final ArtistRepository artistRepository;
 
+    // 음악 검색
+    @Override
+    public SearchDto searchMusic(String keyword) {
+        List<MusicDto> musics = searchAllMusics(keyword, Pageable.ofSize(5));
+        List<AlbumDto> albums = searchAllAlbums(keyword, Pageable.ofSize(5));
+        List<ArtistImageDto> artists = searchAllArtists(keyword, Pageable.ofSize(5));
+        List<PlaylistDto> playlists = searchAllPlaylists(keyword, Pageable.ofSize(5));
+
+        return SearchDto.builder().musics(musics).albums(albums).artists(artists)
+            .playlists(playlists).build();
+    }
+
     // 음악 모두 보기 검색
     @Override
     public List<MusicDto> searchAllMusics(String keyword, Pageable pageable) {
         List<MusicDto> result = new ArrayList<>();
-        log.info("keyword, pageable: {}, {}", keyword, pageable);
-
         List<Music> musics = musicRepository.findAllByName(keyword, pageable);
-
-        log.info("musics: {}", musics);
 
         for (Music music : musics) {
             List<ArtistDto> artistDtos = new ArrayList<>();
@@ -70,7 +79,12 @@ public class MusicSearchServiceImpl implements MusicSearchService {
 
         for (Playlist playlist : playlists) {
             PlaylistMusic playlistMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
-                playlist.getId()).orElseThrow();
+                playlist.getId()).orElse(null);
+
+            if (playlistMusic == null) {
+                continue;
+            }
+
             Music music = musicRepository.findById(playlistMusic.getMusicId()).orElseThrow();
 
             result.add(PlaylistDto.builder().id(playlist.getId()).name(playlist.getName())
