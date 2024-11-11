@@ -25,7 +25,7 @@ public class SecurityUtil {
             return false;
         }
         // 8-20자, 최소 하나의 문자, 숫자, 특수문자 포함
-        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,20}$");
+        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+=])[A-Za-z\\d@$!%*#?&]{8,20}$");
     }
 
     /**
