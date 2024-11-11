@@ -9,12 +9,13 @@ import { s_div_signUpBox, s_from } from './styles';
 
 const SignUpPage = () => {
   // 각 필드에 대한 상태 관리
-  const [nickname, setNickname] = useState('');
-  const [email, setEmail] = useState('');
-  const [certificationNumber, setCertificationNumber] = useState('');
-  const [isShow, setIsShow] = useState(false);
-  const [password, setPassword] = useState('');
-  const [checkPassword, setCheckPassword] = useState('');
+  const [nickname, setNickname] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [certificationNumber, setCertificationNumber] = useState<string>('');
+  const [isValid, setIsValid] = useState<boolean>(false)
+  const [isShow, setIsShow] = useState<boolean>(false);
+  const [password, setPassword] = useState<string>('');
+  const [checkPassword, setCheckPassword] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -67,7 +68,7 @@ const SignUpPage = () => {
     console.log('비밀번호:', password);
     console.log('비밀번호 확인:', checkPassword);
 
-    const data = apiClient
+    apiClient
       .post('/members/register', {
         email,
         nickname,
@@ -75,19 +76,22 @@ const SignUpPage = () => {
       })
       .then((res) => {
         console.log(res);
+        if (isValid) {
+          navigate('/signin');
+        }
       })
       .catch((err) => {
         console.log(err);
+        alert('죄송합니다. 서비스를 이용하실 수 없습니다.')
       });
 
-    navigate('/signin');
   };
 
   // 인증번호 전송 함수
   const handleShowCertificationField = () => {
     setIsShow(true);
     // console.log('인증번호 발송');
-    const data = apiClient
+    apiClient
       .post('/members/register/token', {
         email,
       })
@@ -103,12 +107,14 @@ const SignUpPage = () => {
   // 인증번호 확인 함수
   const handleCertificationCode = () => {
     console.log('인증번호 확인');
-    const data = apiClient
+    apiClient
       .post('/members/register/check/token', {
+        email: email,
         token: certificationNumber,
       })
       .then((res) => {
         console.log(res);
+        setIsValid(true)
       })
       .catch((err) => {
         console.log(err);
