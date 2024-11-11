@@ -5,7 +5,7 @@ import { IoMdSettings } from 'react-icons/io';
 import { IoFileTrayStackedOutline } from 'react-icons/io5';
 
 import apiClient from '@/api/apiClient';
-import Modal from '@/components/Modal/RequestModal/RequestModal'
+import Modal from '@/components/Modal/RequestModal/RequestModal';
 
 import { css } from '@emotion/react';
 import { useState } from 'react';
@@ -19,7 +19,7 @@ interface SideBarContentProps {
 }
 
 const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, signOut } = useAuthStore();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
@@ -61,7 +61,7 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
       <>
         <input
           type="text"
-          placeholder='제목을 적어주세요'
+          placeholder="제목을 적어주세요"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           css={css`
@@ -70,19 +70,17 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
             margin-bottom: 16px;
           `}
         />
-          <textarea
-            value={content}
-            placeholder='내용을 적어주세요'
-            
-            onChange={(e) => setContent(e.target.value)}
-            css={css`
-              width: 250%;
-              padding: 8px;
-              border-radius: 6px;
-              resize: none;
-
-            `}
-          />
+        <textarea
+          value={content}
+          placeholder="내용을 적어주세요"
+          onChange={(e) => setContent(e.target.value)}
+          css={css`
+            width: 250%;
+            padding: 8px;
+            border-radius: 6px;
+            resize: none;
+          `}
+        />
       </>
     ),
     positiveButtonClickListener: sendRequest,
@@ -143,11 +141,11 @@ const SideBarContent = ({ isOpen, closeHandler }: SideBarContentProps) => {
             <p>1:1 문의</p>
           </Link>
           {isLoggedIn ? (
-            <Link to={'/signout'} css={S.s_link_color2}>
+            <a onClick={signOut} css={S.s_link_color2} style={{ cursor: 'pointer' }}>
               <p>로그아웃</p>
-            </Link>
+            </a>
           ) : (
-            <Link to={'/signin'} css={S.s_link_color2}>
+            <Link to="/signin" css={S.s_link_color2}>
               <p>로그인</p>
             </Link>
           )}
