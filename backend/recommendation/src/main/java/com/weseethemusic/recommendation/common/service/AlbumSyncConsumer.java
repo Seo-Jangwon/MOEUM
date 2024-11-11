@@ -54,7 +54,7 @@ public class AlbumSyncConsumer {
             rabbitTemplate.convertAndSend(exchangeName, albumSyncResultRoutingKey, resultEvent);
 
         } catch (RuntimeException e) {
-            log.error("앨범 이미 존재. 앨범 동기화 불필요: {}", e.getMessage());
+            log.info("앨범 이미 존재. 앨범 동기화 불필요: {}", e.getMessage());
 
             // 성공 이벤트 발행
             AlbumSyncEvent resultEvent = new AlbumSyncEvent(

@@ -26,6 +26,12 @@ public class MusicServiceImpl implements MusicService {
     private final ArtistRepository artistRepository;
 
     @Override
+    @Transactional(readOnly = true)
+    public boolean existsById(Long musicId) {
+        return musicRepository.findById(musicId).isPresent();
+    }
+
+    @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void createMusic(MusicDto musicDto) {
 

@@ -1,5 +1,6 @@
 package com.weseethemusic.recommendation.common.service;
 
+import com.weseethemusic.common.event.AlbumSyncEvent;
 import com.weseethemusic.common.event.MusicSyncEvent;
 import com.weseethemusic.common.event.MusicSyncEvent.EventType;
 import com.weseethemusic.recommendation.service.album.AlbumService;
@@ -38,6 +39,15 @@ public class MusicSyncConsumer {
         log.info("음악 동기화 이벤트 수신: {}, sagaId: {}", event, event.getSagaId());
 
         try {
+            // 음악 존재여부 확인
+            if (musicService.existsById(event.getMusic().getId())) {
+                throw new RuntimeException(
+                    String.format("음악 존재. albumId: %d, sagaId: %s",
+                        event.getMusic().getId(),
+                        event.getSagaId())
+                );
+            }
+
             // 장르 존재 여부 확인
             if (!genreService.existsById(event.getMusic().getGenreId())) {
                 sendFailureEvent(
@@ -73,6 +83,11 @@ public class MusicSyncConsumer {
             musicService.createMusic(event.getMusic());
 
             // 성공 이벤트
+            sendSuccessEvent(event);
+
+        } catch (RuntimeException e) {
+            log.info("앨범 이미 존재. 앨범 동기화 불필요: {}", e.getMessage());
+
             sendSuccessEvent(event);
 
         } catch (Exception e) {

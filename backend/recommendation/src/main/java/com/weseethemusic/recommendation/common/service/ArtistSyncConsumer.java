@@ -54,7 +54,7 @@ public class ArtistSyncConsumer {
             rabbitTemplate.convertAndSend(exchangeName, artistSyncResultRoutingKey, resultEvent);
 
         } catch (RuntimeException e) {
-            log.error("아티스트 이미 존재. 아티스트 동기화 불필요: {}", e.getMessage());
+            log.info("아티스트 이미 존재. 아티스트 동기화 불필요: {}", e.getMessage());
 
             // 성공 이벤트 발행
             ArtistSyncEvent resultEvent = new ArtistSyncEvent(

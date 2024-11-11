@@ -54,7 +54,7 @@ public class GenreSyncConsumer {
             rabbitTemplate.convertAndSend(exchangeName, genreSyncResultRoutingKey, resultEvent);
 
         } catch (RuntimeException e) {
-            log.error("아티스트 이미 존재. 아티스트 동기화 불필요: {}", e.getMessage());
+            log.info("장르 이미 존재. 장르 동기화 불필요: {}", e.getMessage());
 
             // 성공 이벤트 발행
             GenreSyncEvent resultEvent = new GenreSyncEvent(
