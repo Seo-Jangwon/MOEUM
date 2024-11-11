@@ -12,21 +12,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@IdClass(ArtistMusicId.class)
+@IdClass(LikeArtistId.class)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArtistMusic {
+public class LikeArtist {
+
+    @Id
+    private long memberId;
 
     @Id
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
-
-    @Id
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "music_id", nullable = false)
-    private Music music;
 
 }
