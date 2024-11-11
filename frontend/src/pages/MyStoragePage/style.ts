@@ -17,7 +17,7 @@ export const s_h3 = (theme: Theme) => css`
 
 export const s_div_toggle = css`
   display: flex;
-  gap: 5px;
+  justify-content: space-between;
 `;
 
 export const activeButtonStyle = (theme: Theme) => css`

@@ -3,7 +3,8 @@ import lala from '@/assets/lalaticon/lala4.png';
 import Button from '@/components/Button/Button';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
-import { FaRegHeart } from 'react-icons/fa6';
+import { useEffect } from 'react';
+import { FaPlay, FaRegHeart } from 'react-icons/fa6';
 import { FiActivity } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { s_div_header } from '../NewList/style';
@@ -63,6 +64,21 @@ const PopularList = () => {
     navigate(`music/${index}`);
   };
 
+  // 인기곡 30가지
+  const popularMusic = useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/popular',
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  // 좋아요 설정
   const handleLike = (id: number) => {
     apiClient({
       method: 'POST',
@@ -90,30 +106,46 @@ const PopularList = () => {
         ></Button>
       </div>
       <div css={s_popular_container}>
-        {mokData.music.map((item, index) => (
+        {mokData.music.slice(0, 4).map((item, index) => (
           <div key={index} css={s_popular_box} onClick={() => clickHandler(index)}>
             <div
               css={css`
-                border-radius: 100%;
-                overflow: hidden;
                 margin: 2%;
-                height: 73.5%;
+                height: 70%;
                 aspect-ratio: 1 / 1;
-                :hover > img {
-                  filter: brightness(50%);
-                  transition: 0.3s;
-                }
               `}
             >
-              <img
-                src={lala}
-                alt="라라"
+              <div
                 css={css`
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
+                  position: relative;
                 `}
-              />
+              >
+                <img
+                  src={lala}
+                  alt="라라"
+                  css={css`
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 100%;
+                  `}
+                />
+                <FaPlay
+                  className="icon"
+                  css={css`
+                    position: absolute;
+                    color: white;
+                    transform: translate(-50%, -50%);
+                    opacity: 0;
+                    left: 50%;
+                    top: 50%;
+                    :hover {
+                      scale: 1.1;
+                      transition: 0.3s;
+                    }
+                  `}
+                />
+              </div>
             </div>
             <div css={s_div_data}>
               <h5 css={s_h5_title}>{item.title}</h5>
@@ -121,16 +153,16 @@ const PopularList = () => {
             </div>
             <div
               css={css`
-                position: absolute;
-                top: 10px;
-                right: 0;
                 z-index: 10;
+                display: flex;
+                justify-content: center;
+                width: 10%;
                 :hover {
                   background-color: #888;
-                  border-radius: 100%;
+                  border-radius: 100px;
                 }
               `}
-              onClick={(e) => e.stopPropagation()} // 추가된 부분
+              onClick={(e) => e.stopPropagation()}
             >
               <DotDotDot
                 data={[
@@ -138,6 +170,7 @@ const PopularList = () => {
                     iconImage: <FaRegHeart />,
                     text: '좋아요',
                     clickHandler: () => handleLike(item.id),
+                    size: 20,
                   },
                 ]}
               />

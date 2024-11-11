@@ -34,17 +34,13 @@ public class EditController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            EditResponseDto data = editService.updateNickname(memberId, editRequestDto.getNickname());
+            EditResponseDto data = editService.updateNickname(memberId,
+                editRequestDto.getNickname());
 
             response.put("code", 200);
             response.put("data", data);
 
             return ResponseEntity.ok(response);
-
-        } catch (EntityNotFoundException e) {
-            response.put("code", 401);
-            response.put("message", "유효하지 않은 JWT 토큰입니다.");
-            return ResponseEntity.status(401).body(response);
 
         } catch (Exception e) {
             response.put("code", 500);

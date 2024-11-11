@@ -90,7 +90,7 @@ const GenreList = () => {
         {mokData.music.map((item, index) => (
           <div css={css`
             position: relative;
-          `}>
+          `} key={index}>
             <button key={index} css={s_div_item_box} onClick={() => handleMusicPage('music/12')}>
               <img src={lala} alt="라라" css={s_img} />
               <h5 css={s_h5}>{item.title}</h5>
@@ -113,6 +113,7 @@ const GenreList = () => {
                     iconImage: <FaRegHeart />,
                     text: '좋아요',
                     clickHandler: () => handleLike(item.id),
+                    size: 20
                   },
                 ]}
               />

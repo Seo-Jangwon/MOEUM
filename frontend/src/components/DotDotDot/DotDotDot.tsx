@@ -9,6 +9,7 @@ interface DropDownItems {
   iconImage: ReactNode;
   text: string;
   clickHandler: () => void;
+  size: number;
 }
 
 interface DotDotDotProps {
@@ -40,7 +41,7 @@ const DotDotDot: React.FC<DotDotDotProps> = ({ data }) => {
 
   return (
     <div ref={dropdownRef}>
-      <AiOutlineMore css={s_icon} onClick={handleDropDown} />
+      <AiOutlineMore css={s_icon} onClick={handleDropDown} size={data[0].size}/>
       {isDropDown && (
         <ul
           css={css`

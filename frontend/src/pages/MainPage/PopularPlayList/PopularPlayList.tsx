@@ -74,7 +74,7 @@ const PopularPlayList = () => {
       </div>
       <div css={s_div_item_container}>
         {mokData.data.map((item, index) => (
-          <div css={s_div_item_box(lala)}>
+          <div css={s_div_item_box(lala)} key={index}>
             <div
               css={css`
                 position: absolute;
@@ -93,6 +93,7 @@ const PopularPlayList = () => {
                     iconImage: <FaRegHeart />,
                     text: '좋아요',
                     clickHandler: () => handleLike(item.id),
+                    size: 20,
                   },
                 ]}
               />
@@ -111,6 +112,9 @@ const PopularPlayList = () => {
                 border-radius: 20px;
                 background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)),
                   url(${lala});
+                @media (max-width: 768px) {
+                  border-radius: 10px;
+                }
               `}
               onClick={() => handleMusicPage('music/1')}
             >
