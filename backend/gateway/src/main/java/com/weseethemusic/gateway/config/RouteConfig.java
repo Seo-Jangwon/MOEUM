@@ -45,19 +45,29 @@ public class RouteConfig {
             .addExcludedPath("/members/register/token")
             .addExcludedPath("/members/register/check/token")
             .addExcludedPath("/members/register")
-            .addExcludedPath("/members/login");
+            .addExcludedPath("/members/login")
+            .addExcludedPath("/musics/search")
+            .addExcludedPath("/musics/detail/music/*")
+            .addExcludedPath("/musics/artist/*/discography")
+            .addExcludedPath("/musics/recommend")
+            .addExcludedPath("/musics/popular")
+            .addExcludedPath("/musics/latest")
+            .addExcludedPath("/musics/detail/album/*")
+            .addExcludedPath("/musics/detail/artist/*");
 
         return builder.routes()
-            // Member Service Routes
+            // 멤버 서비스 공개 경로
             .route("member-service-public", r -> r
                 .path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login")
                 .filters(f -> f.filter(requestLoggingFilter.apply(new Object())))
                 .uri(memberServiceUrl))
 
+            // 멤버 서비스 인증 경로
             .route("member-token-refresh", r -> r
                 .path("/members/token")
                 .filters(f -> f
+                    .filter(requestLoggingFilter.apply(new Object()))
                     .modifyRequestBody(String.class, String.class,
                         (exchange, body) -> {
                             ServerHttpRequest request = exchange.getRequest();
@@ -72,7 +82,8 @@ public class RouteConfig {
                                     .build();
                             }
                             return Mono.just(body);
-                        }).filter(jwtAuthenticationFilter.apply(authConfig)))
+                        })
+                    .filter(jwtAuthenticationFilter.apply(authConfig)))
                 .uri(memberServiceUrl))
 
             .route("member-service-protected", r -> r
@@ -80,24 +91,49 @@ public class RouteConfig {
                 .and()
                 .not(p -> p.path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login"))
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig))
+                .filters(f -> f
+                    .filter(requestLoggingFilter.apply(new Object()))
                     .filter(jwtAuthenticationFilter.apply(authConfig)))
                 .uri(memberServiceUrl))
 
-            // Music Service Routes
-            .route("music-service", r -> r
-                .path("/musics/**")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig))
+            // 뮤직 서비스 공개 경로
+            .route("music-service-public", r -> r
+                .path("/musics/search/**", "/musics/detail/music/*",
+                    "/musics/artist/*/discography",
+                    "/musics/popular", "/musics/recommend", "/musics/latest",
+                    "/musics/detail/album/*",
+                    "/musics/detail/artist/*")
+                .filters(f -> f
+                    .filter(requestLoggingFilter.apply(new Object()))
                     .circuitBreaker(config -> config
                         .setName("music-service")
                         .setFallbackUri("/fallback/music"))
-                    .retry(3).filter(jwtAuthenticationFilter.apply(authConfig)))
+                    .retry(3))
                 .uri(musicServiceUrl))
 
-            // Recommendations Service Routes
+            // 뮤직 서비스 인증 경로
+            .route("music-service-protected", r -> r
+                .path("/musics/**", "/player/**")
+                .and()
+                .not(p -> p.path("/musics/search/**", "/musics/detail/music/*",
+                    "/musics/artist/*/discography",
+                    "/musics/popular", "/musics/recommend", "/musics/latest",
+                    "/musics/detail/album/*",
+                    "/musics/detail/artist/*"))
+                .filters(f -> f
+                    .filter(requestLoggingFilter.apply(new Object()))
+                    .filter(jwtAuthenticationFilter.apply(authConfig))
+                    .circuitBreaker(config -> config
+                        .setName("music-service")
+                        .setFallbackUri("/fallback/music"))
+                    .retry(3))
+                .uri(musicServiceUrl))
+
+            // 추천 서비스 경로(인증 필요)
             .route("recommendations-service", r -> r
-                .path("/recommend/**")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig))
+                .path("/recommendations/**")
+                .filters(f -> f
+                    .filter(requestLoggingFilter.apply(new Object()))
                     .filter(jwtAuthenticationFilter.apply(authConfig)))
                 .uri(recommendationsServiceUrl))
 
