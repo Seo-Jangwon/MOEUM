@@ -28,3 +28,7 @@ spring:
           max-active: 20
           max-idle: 16
           min-idle: 4
+
+server:
+  servlet:
+    context-path: /api/v1
