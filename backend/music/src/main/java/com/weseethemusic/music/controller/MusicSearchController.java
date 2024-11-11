@@ -4,6 +4,7 @@ import com.weseethemusic.music.common.exception.CustomException;
 import com.weseethemusic.music.common.exception.ErrorCode;
 import com.weseethemusic.music.dto.ResponseDto;
 import com.weseethemusic.music.dto.search.MusicDto;
+import com.weseethemusic.music.dto.search.PlaylistDto;
 import com.weseethemusic.music.service.MusicSearchServiceImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,21 @@ public class MusicSearchController {
 
         try {
             result = musicSearchService.searchAllMusics(keyword, pageable);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200, result);
+    }
+
+    // 플레이리스트 모두 보기 검색
+    @GetMapping("/playlist")
+    public ResponseDto<List<PlaylistDto>> searchAllPlaylists(
+        @RequestParam("keyword") String keyword, Pageable pageable) {
+        List<PlaylistDto> result;
+
+        try {
+            result = musicSearchService.searchAllPlaylists(keyword, pageable);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
