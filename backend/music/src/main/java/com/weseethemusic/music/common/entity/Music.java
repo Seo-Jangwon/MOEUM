@@ -1,13 +1,19 @@
 package com.weseethemusic.music.common.entity;
 
+import com.weseethemusic.music.common.listner.MusicEntityListener;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +25,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(MusicEntityListener.class)
 public class Music {
 
     @Id
@@ -38,6 +45,18 @@ public class Music {
 
     @Column(nullable = false)
     private int duration;
+
+    @OneToMany(mappedBy = "music", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ArtistMusic> artistMusics = new HashSet<>();
+
+    public void addArtist(Artist artist) {
+        ArtistMusic artistMusic = new ArtistMusic(artist, this);
+        artistMusics.add(artistMusic);
+    }
+
+    public void removeArtist(Artist artist) {
+        artistMusics.removeIf(am -> am.getArtist().equals(artist));
+    }
 
     private double danceability;
     private double loudness;

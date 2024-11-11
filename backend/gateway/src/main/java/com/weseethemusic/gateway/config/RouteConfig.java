@@ -2,6 +2,7 @@ package com.weseethemusic.gateway.config;
 
 import com.weseethemusic.gateway.constants.SecurityConstants;
 import com.weseethemusic.gateway.filter.JwtAuthenticationFilter;
+import com.weseethemusic.gateway.filter.RequestLoggingFilter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -26,9 +27,12 @@ public class RouteConfig {
     private String recommendationsServiceUrl;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RequestLoggingFilter requestLoggingFilter;
 
-    public RouteConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public RouteConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+        RequestLoggingFilter requestLoggingFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.requestLoggingFilter = requestLoggingFilter;
     }
 
     /**
@@ -48,6 +52,7 @@ public class RouteConfig {
             .route("member-service-public", r -> r
                 .path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login")
+                .filters(f -> f.filter(requestLoggingFilter.apply(new Object())))
                 .uri(memberServiceUrl))
 
             .route("member-token-refresh", r -> r
@@ -67,7 +72,7 @@ public class RouteConfig {
                                     .build();
                             }
                             return Mono.just(body);
-                        }))
+                        }).filter(jwtAuthenticationFilter.apply(authConfig)))
                 .uri(memberServiceUrl))
 
             .route("member-service-protected", r -> r
@@ -75,7 +80,8 @@ public class RouteConfig {
                 .and()
                 .not(p -> p.path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login"))
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
+                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig))
+                    .filter(jwtAuthenticationFilter.apply(authConfig)))
                 .uri(memberServiceUrl))
 
             // Music Service Routes
@@ -85,13 +91,14 @@ public class RouteConfig {
                     .circuitBreaker(config -> config
                         .setName("music-service")
                         .setFallbackUri("/fallback/music"))
-                    .retry(3))
+                    .retry(3).filter(jwtAuthenticationFilter.apply(authConfig)))
                 .uri(musicServiceUrl))
 
             // Recommendations Service Routes
             .route("recommendations-service", r -> r
                 .path("/recommend/**")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
+                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig))
+                    .filter(jwtAuthenticationFilter.apply(authConfig)))
                 .uri(recommendationsServiceUrl))
 
             .build();
