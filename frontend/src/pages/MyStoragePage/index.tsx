@@ -1,6 +1,7 @@
+import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala2.png';
 import { css } from '@emotion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { s_div_item_box, s_div_item_container, s_h5, s_img } from '../MainPage/GenreList/style';
 import {
   s_div_data,
@@ -100,36 +101,122 @@ const MyStoragePage = () => {
     setSelectedCategory(category);
   };
 
+  // 좋아요한 음악
+  const music = useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/playlist/like',
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },[]);
+
+  // 좋아요한 플레이리스트
+  const playlist = useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/playlist/like',
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },[]);
+
+  // 좋아요한 아티스트
+  const artist = useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/artist/like',
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },[]);
+
+  // 좋아요한 앨범
+  const album = useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/album/like',
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },[]);
+
+  // 내 플레이리스트
+  const myPlayList = useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/playlist',
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },[]);
+
+
   return (
     <div css={s_container}>
       {/* 타이틀 */}
       <h3 css={s_h3}>내 보관함</h3>
       {/* 버튼 토글 위치 */}
       <div css={s_div_toggle}>
-        <button
-          onClick={() => handleCategoryChange('music')}
-          css={selectedCategory === 'music' ? activeButtonStyle : inactiveButtonStyle}
+        <div
+          css={css`
+            display: flex;
+            gap: 5px;
+          `}
         >
-          음악
-        </button>
-        <button
-          onClick={() => handleCategoryChange('playlist')}
-          css={selectedCategory === 'playlist' ? activeButtonStyle : inactiveButtonStyle}
-        >
-          플레이리스트
-        </button>
-        <button
-          onClick={() => handleCategoryChange('artist')}
-          css={selectedCategory === 'artist' ? activeButtonStyle : inactiveButtonStyle}
-        >
-          아티스트
-        </button>
-        <button
-          onClick={() => handleCategoryChange('album')}
-          css={selectedCategory === 'album' ? activeButtonStyle : inactiveButtonStyle}
-        >
-          앨범
-        </button>
+          <button
+            onClick={() => handleCategoryChange('music')}
+            css={selectedCategory === 'music' ? activeButtonStyle : inactiveButtonStyle}
+          >
+            음악
+          </button>
+          <button
+            onClick={() => handleCategoryChange('playlist')}
+            css={selectedCategory === 'playlist' ? activeButtonStyle : inactiveButtonStyle}
+          >
+            플레이리스트
+          </button>
+          <button
+            onClick={() => handleCategoryChange('artist')}
+            css={selectedCategory === 'artist' ? activeButtonStyle : inactiveButtonStyle}
+          >
+            아티스트
+          </button>
+          <button
+            onClick={() => handleCategoryChange('album')}
+            css={selectedCategory === 'album' ? activeButtonStyle : inactiveButtonStyle}
+          >
+            앨범
+          </button>
+        </div>
+        <div>
+          <button
+            onClick={() => handleCategoryChange('myPlayList')}
+            css={selectedCategory === 'myPlayList' ? activeButtonStyle : inactiveButtonStyle}
+          >
+            내 플레이리스트
+          </button>
+        </div>
       </div>
       {/* 리스트들 나오는 곳 */}
       <div>
@@ -176,9 +263,11 @@ const MyStoragePage = () => {
           >
             {ArtistList.artist.map((item, index) => (
               <>
-                <div css={css`
-                  position: relative;
-                `}>
+                <div
+                  css={css`
+                    position: relative;
+                  `}
+                >
                   <button
                     key={index}
                     css={css`
@@ -188,7 +277,7 @@ const MyStoragePage = () => {
                       border: none;
                       background: transparent;
                       border-radius: 20px;
-                      :hover{
+                      :hover {
                         filter: brightness(50%);
                         transition: 0.3s;
                       }
@@ -199,7 +288,6 @@ const MyStoragePage = () => {
                       alt="lala"
                       css={css`
                         width: 100%;
-                       
                       `}
                     />
                   </button>
@@ -226,6 +314,21 @@ const MyStoragePage = () => {
         )}
         {/* 앨범 리스트 */}
         {selectedCategory === 'album' && (
+          <div css={s_div_item_container}>
+            {playList.playList.map((item, index) => (
+              <>
+                <div>
+                  <button key={index} css={s_div_item_box}>
+                    <img src={lala} alt="라라" css={s_img} />
+                  </button>
+                  <h5 css={s_h5}>{item.title}</h5>
+                </div>
+              </>
+            ))}
+          </div>
+        )}
+        {/* 마이 플레이리스트 */}
+        {selectedCategory === 'myPlayList' && (
           <div css={s_div_item_container}>
             {playList.playList.map((item, index) => (
               <>

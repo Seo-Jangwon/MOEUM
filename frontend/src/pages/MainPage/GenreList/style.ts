@@ -8,9 +8,11 @@ export const s_div_title = (theme: Theme) => css`
   gap: 18px;
   @media (max-width: 1024px) {
     font-size: 30px;
+    gap: 12px;
   }
   @media (max-width: 767px) {
     font-size: 24px;
+    gap: 6px;
   }
 `;
 
@@ -18,6 +20,10 @@ export const s_div_item_container = css`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
+  @media(max-width: 768px) {
+    grid-template-columns: repeat(3, minmax(30px, 1fr));
+    gap: 6px;
+  } 
 `;
 
 export const s_div_item_box = css`

@@ -1,5 +1,5 @@
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { FaRegTrashCan } from 'react-icons/fa6';
 import { RiMenuAddLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +18,7 @@ import {
   s_p,
 } from './style';
 import React from 'react';
+import apiClient from '@/api/apiClient';
 
 interface Record {
   id: number
@@ -54,6 +55,17 @@ const RecordPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isDropDown, setIsDropDown] = useState<boolean>(false);
   const navigate = useNavigate();
+  // 음악 재생 기록 조회
+  const record = useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: 'recommendations/history'
+    }).then((res) => {
+      console.log(res);
+    }).catch((err) => {
+      console.log(err);
+    })
+  })
 
   // 모달 열기 함수
   const openModal = () => {

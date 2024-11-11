@@ -33,4 +33,5 @@ export const buttonStyle = (theme: Theme, variant: ButtonVariants) => css`
 
   border-radius: 10px;
   ${ButtonStyles(theme)[variant]};
+
 `;
