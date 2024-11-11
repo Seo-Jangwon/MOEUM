@@ -1,9 +1,11 @@
 package com.weseethemusic.music.service;
 
+import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
 import com.weseethemusic.music.common.entity.Music;
 import com.weseethemusic.music.common.entity.Playlist;
 import com.weseethemusic.music.common.entity.PlaylistMusic;
+import com.weseethemusic.music.dto.search.AlbumDto;
 import com.weseethemusic.music.dto.search.ArtistDto;
 import com.weseethemusic.music.dto.search.MusicDto;
 import com.weseethemusic.music.dto.search.PlaylistDto;
@@ -70,6 +72,20 @@ public class MusicSearchServiceImpl implements MusicSearchService {
 
             result.add(PlaylistDto.builder().id(playlist.getId()).name(playlist.getName())
                 .image(albumRepository.getAlbumImage(music.getAlbum().getId())).build());
+        }
+
+        return result;
+    }
+
+    // 앨범 모두 보기 검색
+    @Override
+    public List<AlbumDto> searchAllAlbums(String keyword, Pageable pageable) {
+        List<AlbumDto> result = new ArrayList<>();
+        List<Album> albums = albumRepository.findAllByName(keyword, pageable);
+
+        for (Album album : albums) {
+            result.add(AlbumDto.builder().id(album.getId()).name(album.getName())
+                .image(album.getImageName()).build());
         }
 
         return result;
