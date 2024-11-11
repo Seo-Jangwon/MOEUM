@@ -38,11 +38,3 @@ spring:
       authentication-database: admin
       auto-index-creation: true
       write-concern: NORMAL
-
-    elasticsearch:
-      repositories:
-        enabled: true
-
-  elasticsearch:
-    uris: http://localhost:9200
-    password: Ddih9*53ZjA4Wy2InHOT
