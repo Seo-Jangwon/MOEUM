@@ -1,3 +1,4 @@
+
 spring:
   cloud:
     gateway:
@@ -32,3 +33,7 @@ service:
     member: http://moeum-member:8081
     music: http://moeum-music:8082
     recommendations: http://moeum-rec:8083
+
+server:
+  servlet:
+    context-path: /api/v1
