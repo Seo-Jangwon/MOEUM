@@ -1,6 +1,7 @@
 package com.weseethemusic.gateway.config;
 
 
+import com.weseethemusic.gateway.constants.SecurityConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -25,7 +26,7 @@ public class SecurityConfig {
                 config.setAllowCredentials(true);
                 config.addAllowedMethod("*");
                 config.addAllowedHeader("*");
-                config.addExposedHeader("*");
+                config.addExposedHeader(SecurityConstants.JWT_HEADER);
 
                 source.registerCorsConfiguration("/**", config);
 
