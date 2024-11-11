@@ -32,7 +32,6 @@ public class SecurityUtil {
             "1=1",          // 항상 참인 조건
             "\\bWAITFOR\\b", // 시간 기반 공격
             "\\bEXEC\\b",    // 저장 프로시저 실행
-            "@@",           // 시스템 변수
             "0x",           // 16진수 인코딩
             "\\bCHAR\\b",    // CHAR 함수
             "\\bNULL\\b",    // NULL 값

@@ -8,5 +8,5 @@ public class RegisterDto {
     String email;
     String password;
     String nickname;
-    int token;
+    String token;
 }
