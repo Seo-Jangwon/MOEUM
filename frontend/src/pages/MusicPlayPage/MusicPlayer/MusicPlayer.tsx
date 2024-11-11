@@ -264,10 +264,14 @@ const MusicPlayer = ({
           setAudioVolume(audioSrcRef.current.volume);
         } else if (e.key === 'ArrowLeft') {
           e.preventDefault();
+          setPlayTime((prev) => (prev >= 10 ? prev - 10 : 0));
           audioSrcRef.current.currentTime -= 10;
           audioTimeChanged();
         } else if (e.key == 'ArrowRight') {
           e.preventDefault();
+          setPlayTime((prev) =>
+            prev <= audioSrcRef.current!.duration - 10 ? prev + 10 : audioSrcRef.current!.duration,
+          );
           audioSrcRef.current.currentTime += 10;
           audioTimeChanged();
         }
@@ -467,6 +471,15 @@ const MusicPlayer = ({
     navigate(location.pathname);
   }
 
+  function onTimeLineInputRangeChanged(e: React.ChangeEvent<HTMLInputElement>) {
+    console.log('ch');
+    setPlayTime(Number(e.target.value));
+  }
+  function onTimeLineInputRangeChanged2(e: React.MouseEvent<HTMLInputElement>) {
+    console.log((e.target as HTMLInputElement).value);
+    setPlayTime(Number(e.currentTarget.value));
+  }
+
   return (
     <>
       <div css={s_container}>
@@ -499,13 +512,12 @@ const MusicPlayer = ({
                 `}
                 type="range"
                 max={audioSrcRef.current?.duration || 1}
-                value={playTime}
-                step={0.01}
+                min={0}
+                step={1}
                 onChange={(e) => {
-                  if (audioSrcRef.current) {
-                    setPlayTime(parseFloat(e.target.value));
-                    audioSrcRef.current.currentTime = parseFloat(e.target.value);
-                  }
+                  console.log(e);
+                  const newValue = parseInt(e.target.value);
+                  console.log(newValue);
                 }}
               />
             </div>
@@ -541,11 +553,12 @@ const MusicPlayer = ({
                   value={audioVolume}
                   step={0.01}
                   onChange={(e) => {
+                    console.log(e.target.value);
                     if (audioSrcRef.current) {
                       if (parseFloat(e.target.value) > 0) audioSrcRef.current.muted = false;
                       else audioSrcRef.current.muted = true;
-                      setAudioVolume(parseFloat(e.target.value));
                       audioSrcRef.current.volume = parseFloat(e.target.value);
+                      setAudioVolume(parseFloat(e.target.value));
                     }
                   }}
                 />
