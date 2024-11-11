@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import com.weseethemusic.common.dto.GenreDto;
 import com.weseethemusic.recommendation.common.entity.Genre;
 import com.weseethemusic.recommendation.repository.GenreRepository;
+import com.weseethemusic.recommendation.service.genre.GenreServiceImpl;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

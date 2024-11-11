@@ -3,7 +3,7 @@ package com.weseethemusic.member.service.delete;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.weseethemusic.common.dto.DeleteMemberEvent;
+import com.weseethemusic.common.event.DeleteMemberEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.weseethemusic.member.common.entity.Calibration;

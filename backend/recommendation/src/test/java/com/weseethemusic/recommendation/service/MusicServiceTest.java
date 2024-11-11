@@ -13,6 +13,7 @@ import com.weseethemusic.recommendation.common.entity.Genre;
 import com.weseethemusic.recommendation.common.entity.Music;
 import com.weseethemusic.recommendation.repository.GenreRepository;
 import com.weseethemusic.recommendation.repository.MusicRepository;
+import com.weseethemusic.recommendation.service.music.MusicServiceImpl;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

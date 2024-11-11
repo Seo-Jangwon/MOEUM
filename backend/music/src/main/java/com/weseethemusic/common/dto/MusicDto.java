@@ -1,6 +1,9 @@
 package com.weseethemusic.common.dto;
 
+import com.weseethemusic.music.common.entity.ArtistMusic;
 import com.weseethemusic.music.common.entity.Music;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +20,7 @@ public class MusicDto {
     private long albumId;
     private int genreId;
     private int duration;
+    private List<Long> artistIds;
 
     private double danceability;
     private double loudness;
@@ -28,12 +32,18 @@ public class MusicDto {
     private double energy;
 
     public static MusicDto fromEntity(Music music) {
+        List<Long> artistIds = new ArrayList<>();
+        for (ArtistMusic artistMusic : music.getArtistMusics()) {
+            artistIds.add(artistMusic.getArtist().getId());
+        }
+
         return MusicDto.builder()
             .id(music.getId())
             .name(music.getName())
             .albumId(music.getAlbum().getId())
             .genreId(music.getGenre().getId())
             .duration(music.getDuration())
+            .artistIds(artistIds)
             .danceability(music.getDanceability())
             .loudness(music.getLoudness())
             .mode(music.isMode())

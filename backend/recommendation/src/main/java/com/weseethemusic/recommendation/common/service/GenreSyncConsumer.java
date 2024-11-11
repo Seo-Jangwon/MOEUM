@@ -1,8 +1,9 @@
 package com.weseethemusic.recommendation.common.service;
 
+import com.weseethemusic.common.event.ArtistSyncEvent;
 import com.weseethemusic.common.event.GenreSyncEvent;
 import com.weseethemusic.common.event.GenreSyncEvent.EventType;
-import com.weseethemusic.recommendation.service.GenreService;
+import com.weseethemusic.recommendation.service.genre.GenreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -33,11 +34,31 @@ public class GenreSyncConsumer {
 
         try {
 
+            // 장르 존재여부 확인
+            if (genreService.existsById(event.getGenre().getId())) {
+                throw new RuntimeException(
+                    String.format("장르 존재. 장르Id: %d, sagaId: %s",
+                        event.getGenre().getId(),
+                        event.getSagaId())
+                );
+            }
+
             genreService.createGenre(event.getGenre());
 
             // 성공 이벤트 발행
             GenreSyncEvent resultEvent = new GenreSyncEvent(
                 EventType.COMPLETED,
+                event.getGenre(),
+                event.getSagaId()
+            );
+            rabbitTemplate.convertAndSend(exchangeName, genreSyncResultRoutingKey, resultEvent);
+
+        } catch (RuntimeException e) {
+            log.error("아티스트 이미 존재. 아티스트 동기화 불필요: {}", e.getMessage());
+
+            // 성공 이벤트 발행
+            GenreSyncEvent resultEvent = new GenreSyncEvent(
+                GenreSyncEvent.EventType.COMPLETED,
                 event.getGenre(),
                 event.getSagaId()
             );

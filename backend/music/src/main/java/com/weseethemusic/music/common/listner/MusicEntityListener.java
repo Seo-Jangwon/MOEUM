@@ -12,6 +12,8 @@ import jakarta.persistence.PostRemove;
 import jakarta.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
@@ -26,14 +28,15 @@ public class MusicEntityListener {
         MusicEntityListener.syncSagaService = syncSagaService;
     }
 
-    @PostPersist
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onPostPersist(Music music) {
         SyncSagaForRecommendation saga = syncSagaService.startMusicSync(music.getId(),
             OperationType.CREATE);
         eventPublisher.publishMusicEvent(new MusicSyncEvent(
             MusicSyncEvent.EventType.STARTED,
             MusicDto.fromEntity(music),
-            saga.getSagaId()
+            saga.getSagaId(),
+            null
         ));
         syncSagaService.setSagaSent(saga.getSagaId());
     }
@@ -45,7 +48,8 @@ public class MusicEntityListener {
         eventPublisher.publishMusicEvent(new MusicSyncEvent(
             MusicSyncEvent.EventType.STARTED,
             MusicDto.fromEntity(music),
-            saga.getSagaId()
+            saga.getSagaId(),
+            null
         ));
         syncSagaService.setSagaSent(saga.getSagaId());
     }
@@ -57,7 +61,8 @@ public class MusicEntityListener {
         eventPublisher.publishMusicEvent(new MusicSyncEvent(
             MusicSyncEvent.EventType.STARTED,
             MusicDto.fromEntity(music),
-            saga.getSagaId()
+            saga.getSagaId(),
+            null
         ));
         syncSagaService.setSagaSent(saga.getSagaId());
     }
