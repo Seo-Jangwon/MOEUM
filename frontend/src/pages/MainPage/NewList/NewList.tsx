@@ -51,6 +51,19 @@ const NewList = () => {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const navigate = useNavigate();
 
+  const data = useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/popular',
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+
   const updateItemsPerPage = () => {
     if (window.innerWidth <= 900) {
       setItemsPerPage(3);
@@ -74,7 +87,7 @@ const NewList = () => {
       const item = listRef.current.querySelector('div');
       if (item) {
         const itemWidth = item.clientWidth;
-        const gap = 40; // 아이템 간의 간격
+        const gap = 20; // 아이템 간의 간격
         const scrollAmount = (itemWidth + gap) * itemsPerPage;
         listRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
       }
@@ -86,7 +99,7 @@ const NewList = () => {
       const item = listRef.current.querySelector('div');
       if (item) {
         const itemWidth = item.clientWidth;
-        const gap = 40; // 아이템 간의 간격
+        const gap = 20; // 아이템 간의 간격
         const scrollAmount = (itemWidth + gap) * itemsPerPage;
         listRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
       }
@@ -141,18 +154,25 @@ const NewList = () => {
                 z-index: 1;
                 right: 10px;
                 bottom: 40px;
-                :hover{
+                :hover {
                   background-color: #888;
                   border-radius: 100%;
+                }
+                @media (max-width: 768px) {
+                  right: 5px;
+                  bottom: 20px;
                 }
               `}
             >
               <DotDotDot
-                data={[{
-                  iconImage: <FaRegHeart />,
-                  text: '좋아요',
-                  clickHandler: () => handleLike(item.id),
-                }]}
+                data={[
+                  {
+                    iconImage: <FaRegHeart />,
+                    text: '좋아요',
+                    clickHandler: () => handleLike(item.id),
+                    size: 20
+                  },
+                ]}
               />
             </div>
             <button css={s_play_button} onClick={() => handlePlayClick(index)}>
@@ -160,7 +180,7 @@ const NewList = () => {
               {playingIndex === index ? (
                 <Lottie animationData={playMusic} loop={true} css={s_lottie} />
               ) : (
-                <FaPlay css={s_icon} className="icon" />
+                <FaPlay css={s_icon} className="icon" size={20}/>
               )}
             </button>
             <div>

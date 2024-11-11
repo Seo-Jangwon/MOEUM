@@ -8,9 +8,11 @@ export const s_div_h3 = css`
   font-weight: 800;
   @media (max-width: 1024px) {
     font-size: 30px;
+    gap: 12px;
   }
   @media (max-width: 767px) {
     font-size: 24px;
+    gap: 6px;
   }
 `;
 
@@ -18,7 +20,11 @@ export const s_div_item_container = css`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
+  @media (max-width: 767px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
+
 
 export const s_div_item_box = (lala: string) => css`
   display: flex;
@@ -26,9 +32,10 @@ export const s_div_item_box = (lala: string) => css`
   justify-content: center;
   align-items: center;
   height: 100px;
+  @media(max-width:768px) {
+    height: 40px;
+  }
   /* background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url(${lala}); */
-
-
 `;
 
 export const s_h5 = (theme: Theme) => css`
@@ -39,6 +46,6 @@ export const s_h5 = (theme: Theme) => css`
     font-size: 14px;
   }
   @media (max-width: 767px) {
-    font-size: 10px;
+    font-size: 8px;
   }
 `;
