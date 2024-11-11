@@ -4,6 +4,7 @@ import com.weseethemusic.music.common.exception.CustomException;
 import com.weseethemusic.music.common.exception.ErrorCode;
 import com.weseethemusic.music.dto.ResponseDto;
 import com.weseethemusic.music.dto.search.AlbumDto;
+import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.dto.search.MusicDto;
 import com.weseethemusic.music.dto.search.PlaylistDto;
 import com.weseethemusic.music.service.MusicSearchServiceImpl;
@@ -60,6 +61,21 @@ public class MusicSearchController {
 
         try {
             result = musicSearchService.searchAllAlbums(keyword, pageable);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200, result);
+    }
+
+    // 아티스트 모두 보기 검색
+    @GetMapping("/artist")
+    public ResponseDto<List<ArtistImageDto>> searchAllArtists(
+        @RequestParam("keyword") String keyword, Pageable pageable) {
+        List<ArtistImageDto> result;
+
+        try {
+            result = musicSearchService.searchAllArtists(keyword, pageable);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
