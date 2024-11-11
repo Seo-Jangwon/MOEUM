@@ -515,9 +515,10 @@ const MusicPlayer = ({
                 min={0}
                 step={1}
                 onChange={(e) => {
-                  console.log(e);
-                  const newValue = parseInt(e.target.value);
-                  console.log(newValue);
+                  if (audioSrcRef.current) {
+                    setPlayTime(parseFloat(e.target.value));
+                    audioSrcRef.current.currentTime = parseFloat(e.target.value);
+                  }
                 }}
               />
             </div>
@@ -553,7 +554,6 @@ const MusicPlayer = ({
                   value={audioVolume}
                   step={0.01}
                   onChange={(e) => {
-                    console.log(e.target.value);
                     if (audioSrcRef.current) {
                       if (parseFloat(e.target.value) > 0) audioSrcRef.current.muted = false;
                       else audioSrcRef.current.muted = true;
