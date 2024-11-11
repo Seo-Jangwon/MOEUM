@@ -147,6 +147,30 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.routing.music-sync-result}")
     private String musicSyncResultRoutingKey;
 
+    @Value("${rabbitmq.queue.album-sync}")
+    private String albumSyncQueue;
+
+    @Value("${rabbitmq.queue.album-sync-result}")
+    private String albumSyncResultQueue;
+
+    @Value("${rabbitmq.routing.album-sync}")
+    private String albumSyncRoutingKey;
+
+    @Value("${rabbitmq.routing.album-sync-result}")
+    private String albumSyncResultRoutingKey;
+
+    @Value("${rabbitmq.queue.artist-sync}")
+    private String artistSyncQueue;
+
+    @Value("${rabbitmq.queue.artist-sync-result}")
+    private String artistSyncResultQueue;
+
+    @Value("${rabbitmq.routing.artist-sync}")
+    private String artistSyncRoutingKey;
+
+    @Value("${rabbitmq.routing.artist-sync-result}")
+    private String artistSyncResultRoutingKey;
+
     @Bean
     public Queue genreSyncQueue() {
         return QueueBuilder
@@ -247,6 +271,78 @@ public class RabbitMQConfig {
             .bind(musicSyncDeadLetterQueue())
             .to(deadLetterExchange())
             .with("dead.music.sync");
+    }
+
+    @Bean
+    public Queue albumSyncQueue() {
+        return QueueBuilder
+            .durable(albumSyncQueue)
+            .withArgument("x-dead-letter-exchange", exchangeName + ".dlx")
+            .withArgument("x-dead-letter-routing-key", "dead.album.sync")
+            .withArgument("x-message-ttl", 30000)
+            .build();
+    }
+
+    @Bean
+    public Queue albumSyncResultQueue() {
+        return QueueBuilder
+            .durable(albumSyncResultQueue)
+            .withArgument("x-dead-letter-exchange", exchangeName + ".dlx")
+            .withArgument("x-dead-letter-routing-key", "dead.album.sync.result")
+            .withArgument("x-message-ttl", 30000)
+            .build();
+    }
+
+    @Bean
+    public Binding albumSyncBinding() {
+        return BindingBuilder
+            .bind(albumSyncQueue())
+            .to(moeumExchange())
+            .with(albumSyncRoutingKey);
+    }
+
+    @Bean
+    public Binding albumSyncResultBinding() {
+        return BindingBuilder
+            .bind(albumSyncResultQueue())
+            .to(moeumExchange())
+            .with(albumSyncResultRoutingKey);
+    }
+
+    @Bean
+    public Queue artistSyncQueue() {
+        return QueueBuilder
+            .durable(artistSyncQueue)
+            .withArgument("x-dead-letter-exchange", exchangeName + ".dlx")
+            .withArgument("x-dead-letter-routing-key", "dead.artist.sync")
+            .withArgument("x-message-ttl", 30000)
+            .build();
+    }
+
+    @Bean
+    public Queue artistSyncResultQueue() {
+        return QueueBuilder
+            .durable(artistSyncResultQueue)
+            .withArgument("x-dead-letter-exchange", exchangeName + ".dlx")
+            .withArgument("x-dead-letter-routing-key", "dead.artist.sync.result")
+            .withArgument("x-message-ttl", 30000)
+            .build();
+    }
+
+    @Bean
+    public Binding artistSyncBinding() {
+        return BindingBuilder
+            .bind(artistSyncQueue())
+            .to(moeumExchange())
+            .with(artistSyncRoutingKey);
+    }
+
+    @Bean
+    public Binding artistSyncResultBinding() {
+        return BindingBuilder
+            .bind(artistSyncResultQueue())
+            .to(moeumExchange())
+            .with(artistSyncResultRoutingKey);
     }
 
 }

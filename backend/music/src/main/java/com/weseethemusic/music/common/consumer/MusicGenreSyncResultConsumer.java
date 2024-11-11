@@ -38,9 +38,26 @@ public class MusicGenreSyncResultConsumer {
 
         switch (event.getEventType()) {
             case COMPLETED -> sagaService.completeSaga(event.getSagaId());
-            case FAILED -> sagaService.failSaga(
+            case FAILED_GENRE_NOT_FOUND -> sagaService.handleGenreNotFound(
                 event.getSagaId(),
-                String.format("음악 동기화 실패 - musicId: %d", event.getMusic().getId())
+                event.getMusic().getGenreId(),
+                event.getErrMessage()
+            );
+            case FAILED_ALBUM_NOT_FOUND -> sagaService.handleAlbumNotFound(
+                event.getSagaId(),
+                event.getMusic().getAlbumId(),
+                event.getErrMessage()
+            );
+            case FAILED_ARTIST_NOT_FOUND -> sagaService.handleArtistNotFound(
+                event.getSagaId(),
+                event.getMusic().getArtistIds(),
+                event.getErrMessage()
+            );
+            case FAILED -> sagaService.handleError(
+                event.getSagaId(),
+                String.format("음악 동기화 중 알 수 없는 에러 발생 - musicId: %d, error: %s",
+                    event.getMusic().getId(),
+                    event.getErrMessage())
             );
         }
     }

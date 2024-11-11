@@ -1,4 +1,4 @@
-package com.weseethemusic.recommendation.service;
+package com.weseethemusic.recommendation.service.music;
 
 import com.weseethemusic.common.dto.MusicDto;
 

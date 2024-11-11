@@ -2,8 +2,10 @@ package com.weseethemusic.recommendation.common.service;
 
 import com.weseethemusic.common.event.MusicSyncEvent;
 import com.weseethemusic.common.event.MusicSyncEvent.EventType;
-import com.weseethemusic.recommendation.service.GenreService;
-import com.weseethemusic.recommendation.service.MusicService;
+import com.weseethemusic.recommendation.service.album.AlbumService;
+import com.weseethemusic.recommendation.service.artist.ArtistService;
+import com.weseethemusic.recommendation.service.genre.GenreService;
+import com.weseethemusic.recommendation.service.music.MusicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -19,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MusicSyncConsumer {
 
     private final MusicService musicService;
-    private final GenreService genreService; // 추가
+    private final GenreService genreService;
+    private final AlbumService albumService;
+    private final ArtistService artistService;
     private final RabbitTemplate rabbitTemplate;
 
     @Value("${rabbitmq.exchange.name}")
@@ -27,7 +31,6 @@ public class MusicSyncConsumer {
 
     @Value("${rabbitmq.routing.music-sync-result}")
     private String musicSyncResultRoutingKey;
-
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @RabbitListener(queues = "${rabbitmq.queue.music-sync}")
@@ -37,46 +40,72 @@ public class MusicSyncConsumer {
         try {
             // 장르 존재 여부 확인
             if (!genreService.existsById(event.getMusic().getGenreId())) {
-                throw new RuntimeException(
-                    String.format("장르 찾을 수 없음. genreId: %d, musicId: %d, sagaId: %s",
-                        event.getMusic().getGenreId(),
-                        event.getMusic().getId(),
-                        event.getSagaId())
+                sendFailureEvent(
+                    event,
+                    EventType.FAILED_GENRE_NOT_FOUND,
+                    String.format("장르를 찾을 수 없음. genreId: %d", event.getMusic().getGenreId())
                 );
+                return;
+            }
+
+            // 앨범 존재 여부 확인
+            if (!albumService.existsById(event.getMusic().getAlbumId())) {
+                sendFailureEvent(
+                    event,
+                    EventType.FAILED_ALBUM_NOT_FOUND,
+                    String.format("앨범을 찾을 수 없음. albumId: %d", event.getMusic().getAlbumId())
+                );
+                return;
+            }
+
+            // 아티스트 존재 여부 확인
+            for (Long artistId : event.getMusic().getArtistIds()) {
+                if (!artistService.existsById(artistId)) {
+                    sendFailureEvent(
+                        event,
+                        EventType.FAILED_ARTIST_NOT_FOUND,
+                        String.format("아티스트를 찾을 수 없음. artistId: %d", artistId)
+                    );
+                    return;
+                }
             }
 
             musicService.createMusic(event.getMusic());
 
-            // 성공 이벤트 발행
-            MusicSyncEvent resultEvent = new MusicSyncEvent(
-                EventType.COMPLETED,
-                event.getMusic(),
-                event.getSagaId()
-            );
-            rabbitTemplate.convertAndSend(exchangeName, musicSyncResultRoutingKey, resultEvent);
-
-        } catch (RuntimeException e) {
-            log.error("장르가 존재하지 않아 음악 동기화 실패: {}", e.getMessage());
-
-            // 실패 이벤트 발행 (장르 없음)
-            MusicSyncEvent resultEvent = new MusicSyncEvent(
-                EventType.FAILED,
-                event.getMusic(),
-                event.getSagaId()
-            );
-            rabbitTemplate.convertAndSend(exchangeName, musicSyncResultRoutingKey, resultEvent);
+            // 성공 이벤트
+            sendSuccessEvent(event);
 
         } catch (Exception e) {
             log.error("음악 동기화 실패: {}", event, e);
-
-            // 기타 오류 실패 이벤트 발행
-            MusicSyncEvent resultEvent = new MusicSyncEvent(
+            sendFailureEvent(
+                event,
                 EventType.FAILED,
-                event.getMusic(),
-                event.getSagaId()
+                String.format("음악 동기화 에러 발생: %s", e.getMessage())
             );
-            rabbitTemplate.convertAndSend(exchangeName, musicSyncResultRoutingKey, resultEvent);
         }
+
     }
 
+    private void sendFailureEvent(MusicSyncEvent originalEvent, EventType failureType,
+        String errorMessage) {
+        MusicSyncEvent resultEvent = new MusicSyncEvent(
+            failureType,
+            originalEvent.getMusic(),
+            originalEvent.getSagaId(),
+            errorMessage
+        );
+        rabbitTemplate.convertAndSend(exchangeName, musicSyncResultRoutingKey, resultEvent);
+        log.error("음악 동기화 실패: {}", errorMessage);
+    }
+
+    private void sendSuccessEvent(MusicSyncEvent originalEvent) {
+        MusicSyncEvent resultEvent = new MusicSyncEvent(
+            EventType.COMPLETED,
+            originalEvent.getMusic(),
+            originalEvent.getSagaId(),
+            null
+        );
+        rabbitTemplate.convertAndSend(exchangeName, musicSyncResultRoutingKey, resultEvent);
+        log.info("음악 동기화 성공: musicId={}", originalEvent.getMusic().getId());
+    }
 }

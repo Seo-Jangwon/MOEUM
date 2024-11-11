@@ -1,8 +1,12 @@
-package com.weseethemusic.recommendation.service;
+package com.weseethemusic.recommendation.service.music;
 
 import com.weseethemusic.common.dto.MusicDto;
+import com.weseethemusic.recommendation.common.entity.Album;
+import com.weseethemusic.recommendation.common.entity.Artist;
 import com.weseethemusic.recommendation.common.entity.Genre;
 import com.weseethemusic.recommendation.common.entity.Music;
+import com.weseethemusic.recommendation.repository.AlbumRepository;
+import com.weseethemusic.recommendation.repository.ArtistRepository;
 import com.weseethemusic.recommendation.repository.GenreRepository;
 import com.weseethemusic.recommendation.repository.MusicRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +22,13 @@ public class MusicServiceImpl implements MusicService {
 
     private final MusicRepository musicRepository;
     private final GenreRepository genreRepository;
+    private final AlbumRepository albumRepository;
+    private final ArtistRepository artistRepository;
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void createMusic(MusicDto musicDto) {
+
         // 이미 존재하는 음악인지
         if (musicRepository.findById(musicDto.getId()).isPresent()) {
             log.info("음악이 이미 존재함. id: {}", musicDto.getId());
@@ -34,11 +41,17 @@ public class MusicServiceImpl implements MusicService {
                 String.format("장르가 존재하지 않음. id: %d", musicDto.getGenreId())
             ));
 
+        Album album = albumRepository.findById(musicDto.getAlbumId())
+            .orElseThrow(() -> new RuntimeException(
+                String.format("앨범이 존재하지 않음. id: %d", musicDto.getAlbumId())
+            ));
+
         // 음악 엔티티 생성 및 저장
         Music music = new Music();
         music.setId(musicDto.getId());
         music.setName(musicDto.getName());
         music.setGenre(genre);
+        music.setAlbum(album);
         music.setDuration(musicDto.getDuration());
         music.setDanceability(musicDto.getDanceability());
         music.setLoudness(musicDto.getLoudness());
@@ -49,7 +62,17 @@ public class MusicServiceImpl implements MusicService {
         music.setTempo(musicDto.getTempo());
         music.setEnergy(musicDto.getEnergy());
 
+        // 아티스트 연결
+        for (Long artistId : musicDto.getArtistIds()) {
+            Artist artist = artistRepository.findById(artistId)
+                .orElseThrow(() -> new RuntimeException(
+                    String.format("아티스트가 존재하지 않음. id: %d", artistId)
+                ));
+            music.addArtist(artist);
+        }
+
         musicRepository.save(music);
         log.info("음악 저장 성공: {}", music.getId());
+
     }
 }
