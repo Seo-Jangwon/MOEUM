@@ -1,11 +1,14 @@
 package com.weseethemusic.music.service;
 
+import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
 import com.weseethemusic.music.common.entity.Music;
 import com.weseethemusic.music.dto.detail.ArtistDto;
+import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
 import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
+import com.weseethemusic.music.repository.ArtistRepository;
 import com.weseethemusic.music.repository.LikeMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ public class MusicServiceImpl implements MusicService {
     private final ArtistMusicRepository artistMusicRepository;
     private final AlbumRepository albumRepository;
     private final MusicRepository musicRepository;
+    private final ArtistRepository artistRepository;
 
     // 인기 30곡 조회
     @Override
@@ -32,6 +36,23 @@ public class MusicServiceImpl implements MusicService {
     @Override
     public List<GeneralMusicDto> getLatestMusics() {
         return toMusicDto(musicRepository.getLatestMusics());
+    }
+
+    // 아티스트 전체 디스코그래피 조회
+    @Override
+    public List<GeneralDiscographyDto> getAllDiscography(long artistId) {
+        artistRepository.findById(artistId).orElseThrow();
+
+        List<GeneralDiscographyDto> result = new ArrayList<>();
+        List<Album> albums = albumRepository.getDiscographyByArtist(artistId);
+
+        for (Album album : albums) {
+            result.add(GeneralDiscographyDto.builder().id(album.getId()).name(album.getName())
+                .releaseDate(album.getReleaseDate().toString()).image(album.getImageName())
+                .build());
+        }
+
+        return result;
     }
 
     private List<GeneralMusicDto> toMusicDto(List<Music> musics) {
