@@ -1,4 +1,4 @@
-package com.weseethemusic.recommendation.service;
+package com.weseethemusic.recommendation.service.genre;
 
 import com.weseethemusic.common.dto.GenreDto;
 import com.weseethemusic.recommendation.common.entity.Genre;

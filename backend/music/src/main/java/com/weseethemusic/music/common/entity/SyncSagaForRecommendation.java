@@ -54,7 +54,7 @@ public class SyncSagaForRecommendation {
     private String errorMessage;
 
     public enum SagaType {
-        GENRE_SYNC, MUSIC_SYNC
+        GENRE_SYNC, MUSIC_SYNC, Album_SYNC, ARTIST_SYNC
     }
 
     public enum SagaState {
@@ -71,6 +71,7 @@ public class SyncSagaForRecommendation {
     // Genre Sync Saga 시작
     public static SyncSagaForRecommendation startGenreSync(Long genreId, OperationType operation) {
         SyncSagaForRecommendation saga = new SyncSagaForRecommendation();
+        saga.setSagaId("genre " + genreId.toString());
         saga.setType(SagaType.GENRE_SYNC);
         saga.setTargetId(genreId);
         saga.setState(SagaState.STARTED);
@@ -82,8 +83,34 @@ public class SyncSagaForRecommendation {
     // Music Sync Saga 시작
     public static SyncSagaForRecommendation startMusicSync(Long musicId, OperationType operation) {
         SyncSagaForRecommendation saga = new SyncSagaForRecommendation();
+        saga.setSagaId("music " + musicId.toString());
         saga.setType(SagaType.MUSIC_SYNC);
         saga.setTargetId(musicId);
+        saga.setState(SagaState.STARTED);
+        saga.setOperation(operation);
+        saga.setCreatedAt(LocalDateTime.now());
+        return saga;
+    }
+
+    // Album Sync Saga 시작
+    public static SyncSagaForRecommendation startAlbumSync(Long albumId, OperationType operation) {
+        SyncSagaForRecommendation saga = new SyncSagaForRecommendation();
+        saga.setSagaId("album " + albumId.toString());
+        saga.setType(SagaType.Album_SYNC);
+        saga.setTargetId(albumId);
+        saga.setState(SagaState.STARTED);
+        saga.setOperation(operation);
+        saga.setCreatedAt(LocalDateTime.now());
+        return saga;
+    }
+
+    // Artist Sync Saga 시작
+    public static SyncSagaForRecommendation startArtistSync(Long artistId,
+        OperationType operation) {
+        SyncSagaForRecommendation saga = new SyncSagaForRecommendation();
+        saga.setSagaId("artist " + artistId.toString());
+        saga.setType(SagaType.ARTIST_SYNC);
+        saga.setTargetId(artistId);
         saga.setState(SagaState.STARTED);
         saga.setOperation(operation);
         saga.setCreatedAt(LocalDateTime.now());

@@ -1,5 +1,6 @@
 package com.weseethemusic.common.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class MusicDto {
     private long albumId;
     private int genreId;
     private int duration;
+    private List<Long> artistIds;
 
     private double danceability;
     private double loudness;

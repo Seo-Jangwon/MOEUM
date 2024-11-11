@@ -1,11 +1,15 @@
 package com.weseethemusic.recommendation.common.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +39,9 @@ public class Music {
     @Column(nullable = false)
     private int duration;
 
+    @OneToMany(mappedBy = "music", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ArtistMusic> artistMusics = new HashSet<>();
+
     private double danceability;
     private double loudness;
     private boolean mode;
@@ -43,5 +50,10 @@ public class Music {
     private double valence;
     private double tempo;
     private double energy;
+
+    public void addArtist(Artist artist) {
+        ArtistMusic artistMusic = new ArtistMusic(artist, this);
+        artistMusics.add(artistMusic);
+    }
 
 }
