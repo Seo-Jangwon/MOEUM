@@ -1,5 +1,10 @@
 package com.weseethemusic.gateway.filter;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weseethemusic.gateway.constants.SecurityConstants;
@@ -19,8 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
 @Component
 @Slf4j
@@ -63,15 +66,30 @@ public class JwtAuthenticationFilter extends
 
             switch (status) {
                 case VALID:
-                    String userId = jwtUtil.getUserIdFromToken(extractedToken);
+                    Integer userId = jwtUtil.getUserIdFromToken(extractedToken);
                     String role = jwtUtil.getRoleFromToken(extractedToken);
                     log.info("gateway - 유저: {}에 대한 토큰 검증 완료", userId);
-                    return chain.filter(exchange.mutate()
-                        .request(exchange.getRequest().mutate()
-                            .header("X-Member-Id", userId)
-                            .header("X-Role", role)
-                            .build())
-                        .build());
+
+                    ServerHttpRequest request = exchange.getRequest();
+
+                    // ServerHttpRequestDecorator 사용하여 헤더 수정
+                    ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(request) {
+                        @Override
+                        public HttpHeaders getHeaders() {
+                            HttpHeaders headers = new HttpHeaders();
+                            headers.putAll(super.getHeaders());
+                            headers.add("X-Member-Id", userId.toString());
+                            headers.add("X-Role", role);
+                            return headers;
+                        }
+                    };
+
+                    // 수정된 요청으로 새로운 exchange 생성
+                    ServerWebExchange modifiedExchange = exchange.mutate()
+                        .request(modifiedRequest)
+                        .build();
+
+                    return chain.filter(modifiedExchange);
 
                 case EXPIRED:
                     if (refreshToken != null) {

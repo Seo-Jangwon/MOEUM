@@ -39,26 +39,7 @@ public class SecurityConfig {
             .securityContextRepository(
                 NoOpServerSecurityContextRepository.getInstance()) // 서버 세션 비활성화
             .authorizeExchange(exchanges -> exchanges
-                // 공개 경로
-                .pathMatchers(
-                    "/members/register/token",
-                    "/members/register/check/token",
-                    "/members/register",
-                    "/members/login",
-                    "/musics/search/**",
-                    "/musics/detail/music/*",
-                    "/musics/artist/*/discography",
-                    "/musics/recommend",
-                    "/musics/popular",
-                    "/musics/latest",
-                    "/musics/detail/album/*",
-                    "/musics/detail/artist/*",
-                    "/actuator/health",
-                    "/actuator/metrics/**",
-                    "/actuator/prometheus/**"
-                ).permitAll()
-                // 나머지 요청 인증 필요
-                .anyExchange().authenticated()
+                .anyExchange().permitAll()
             )
             .build();
     }
