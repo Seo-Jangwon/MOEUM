@@ -5,6 +5,7 @@ import static com.weseethemusic.member.common.entity.Member.Role.USER;
 import com.weseethemusic.member.common.entity.Calibration;
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.common.entity.Setting;
+import com.weseethemusic.member.common.service.EmailService;
 import com.weseethemusic.member.common.util.InputValidateUtil;
 import com.weseethemusic.member.common.util.SecurityUtil;
 import com.weseethemusic.member.dto.member.RegisterDto;
@@ -13,6 +14,7 @@ import com.weseethemusic.member.repository.setting.CalibrationRepository;
 import com.weseethemusic.member.repository.setting.SettingRespository;
 import java.time.Duration;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RegisterServiceImpl implements RegisterService {
 
     private static final Duration TOKEN_VALIDITY_DURATION = Duration.ofMinutes(5);
@@ -36,10 +38,10 @@ public class RegisterServiceImpl implements RegisterService {
 
     private final SettingRespository settingRespository;
     private final CalibrationRepository calibrationRepository;
-    private final JavaMailSender emailSender;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final EmailService emailService;
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -183,7 +185,7 @@ public class RegisterServiceImpl implements RegisterService {
                     TOKEN_VALIDITY_DURATION
                 );
 
-                sendSimpleMessage(email, "모두의 음악 회원가입 인증번호",
+                emailService.sendSimpleMessage(email, "모두의 음악 회원가입 인증번호",
                     "회원가입 인증번호 : " + token + "\n이 인증번호는 5분 동안 유효합니다.");
 
                 log.info("이메일 인증 토큰 전송 완료: {}", email);
@@ -198,15 +200,6 @@ public class RegisterServiceImpl implements RegisterService {
         } else {
             return "가입할 수 없습니다.";
         }
-    }
-
-    @Override
-    public void sendSimpleMessage(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        emailSender.send(message);
     }
 
     @Override
