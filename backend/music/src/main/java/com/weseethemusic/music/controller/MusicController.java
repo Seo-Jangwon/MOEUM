@@ -3,6 +3,7 @@ package com.weseethemusic.music.controller;
 import com.weseethemusic.music.common.exception.CustomException;
 import com.weseethemusic.music.common.exception.ErrorCode;
 import com.weseethemusic.music.dto.ResponseDto;
+import com.weseethemusic.music.dto.general.GeneralAlbumDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
@@ -31,6 +32,21 @@ public class MusicController {
 
         try {
             result = musicService.getArtistLikes(memberId);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200, result);
+    }
+
+    // 좋아요 한 앨범 목록 조회
+    @GetMapping("/album/like")
+    public ResponseDto<List<GeneralAlbumDto>> getAlbumLikes(
+        @RequestHeader("X-Member-Id") long memberId) {
+        List<GeneralAlbumDto> result;
+
+        try {
+            result = musicService.getAlbumLikes(memberId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
