@@ -1,6 +1,5 @@
-package com.weseethemusic.recommendation.common.service;
+package com.weseethemusic.recommendation.common.service.consumer;
 
-import com.weseethemusic.common.event.ArtistSyncEvent;
 import com.weseethemusic.common.event.GenreSyncEvent;
 import com.weseethemusic.common.event.GenreSyncEvent.EventType;
 import com.weseethemusic.recommendation.service.genre.GenreService;
