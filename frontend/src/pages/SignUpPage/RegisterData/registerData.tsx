@@ -13,6 +13,7 @@ interface LoginDataProps {
   passwordValue?: string;
   certification?: boolean;
   isNickname?: boolean;
+  disabled?: boolean
 }
 
 const RegisterData = ({
@@ -26,6 +27,8 @@ const RegisterData = ({
   passwordValue = '',
   certification = false,
   isNickname = false,
+  disabled,
+  
 }: LoginDataProps) => {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(placeholder);
   const [email] = useState(isEmail);
@@ -87,14 +90,26 @@ const RegisterData = ({
 
     if (isPassword) {
       const isValid = validatePassword(password);
-      setIsValidPassword(isValid);
-      setIsValidInput(isValid);
+      if (password.length > 0) {
+        setIsValidPassword(isValid);
+        setIsValidInput(isValid);
+      }
+      else {
+        setIsValidInput(true)
+      }
+      
     }
-
+    
     if (checkPassword) {
       const isMatch = password === passwordValue;
-      setIsPasswordMatch(isMatch);
-      setIsValidInput(isMatch);
+      if (password.length > 0) {
+        setIsPasswordMatch(isMatch);
+        setIsValidInput(isMatch);
+      } 
+      else {
+        setIsValidInput(true)
+      }
+
     }
   };
 
@@ -114,7 +129,7 @@ const RegisterData = ({
       {/* 이메일 버튼 토글 */}
       <div css={s_button_send}>
         {email && showIcon && (
-          <Button variant="grad" onClick={onSend} type="button">
+          <Button variant="grad" onClick={onSend} type="button" disabled={disabled}>
             전송
           </Button>
         )}

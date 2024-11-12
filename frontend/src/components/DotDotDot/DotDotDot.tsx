@@ -1,4 +1,3 @@
-// DotDotDot.tsx
 import { css } from '@emotion/react';
 import { ReactNode, useState, useRef, useEffect } from 'react';
 import { AiOutlineMore } from 'react-icons/ai';

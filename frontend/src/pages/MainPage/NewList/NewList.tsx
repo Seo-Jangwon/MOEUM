@@ -51,7 +51,7 @@ const NewList = () => {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const navigate = useNavigate();
 
-  const data = useEffect(() => {
+  useEffect(() => {
     apiClient({
       method: 'GET',
       url: '/musics/popular',
@@ -170,7 +170,7 @@ const NewList = () => {
                     iconImage: <FaRegHeart />,
                     text: '좋아요',
                     clickHandler: () => handleLike(item.id),
-                    size: 20
+                    size: 20,
                   },
                 ]}
               />
@@ -180,7 +180,7 @@ const NewList = () => {
               {playingIndex === index ? (
                 <Lottie animationData={playMusic} loop={true} css={s_lottie} />
               ) : (
-                <FaPlay css={s_icon} className="icon" size={20}/>
+                <FaPlay css={s_icon} className="icon" size={20} />
               )}
             </button>
             <div>
