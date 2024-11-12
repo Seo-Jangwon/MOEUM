@@ -1,10 +1,9 @@
-package com.weseethemusic.recommendation.common.service;
+package com.weseethemusic.recommendation.common.service.consumer;
 
 
 import com.weseethemusic.common.event.AlbumSyncEvent;
 import com.weseethemusic.common.event.AlbumSyncEvent.EventType;
 import com.weseethemusic.recommendation.service.album.AlbumService;
-import com.weseethemusic.recommendation.service.artist.ArtistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

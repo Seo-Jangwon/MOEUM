@@ -13,6 +13,8 @@ interface LoginDataProps {
   passwordValue?: string;
   certification?: boolean;
   isNickname?: boolean;
+  disabled?: boolean;
+  onBlur?: () => void
 }
 
 const RegisterData = ({
@@ -26,6 +28,8 @@ const RegisterData = ({
   passwordValue = '',
   certification = false,
   isNickname = false,
+  disabled,
+  onBlur,
 }: LoginDataProps) => {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(placeholder);
   const [email] = useState(isEmail);
@@ -46,8 +50,13 @@ const RegisterData = ({
     const nickname = e.target.value;
 
     if (isNickname) {
-      const result = validateNickname(nickname);
-      setIsValidInput(result);
+      if (nickname.length > 0) {
+        const result = validateNickname(nickname);
+        setIsValidInput(result);
+      }
+      else {
+        setIsValidInput(true)
+      }
     }
   };
 
@@ -65,8 +74,12 @@ const RegisterData = ({
 
     if (isEmail) {
       const result = validateEmail(email);
-      setShowIcon(result);
-      setIsValidInput(result);
+      if (email.length > 0) {
+        setShowIcon(result);
+        setIsValidInput(result);
+      } else {
+        setIsValidInput(true);
+      }
     }
   };
 
@@ -87,14 +100,22 @@ const RegisterData = ({
 
     if (isPassword) {
       const isValid = validatePassword(password);
-      setIsValidPassword(isValid);
-      setIsValidInput(isValid);
+      if (password.length > 0) {
+        setIsValidPassword(isValid);
+        setIsValidInput(isValid);
+      } else {
+        setIsValidInput(true);
+      }
     }
 
     if (checkPassword) {
       const isMatch = password === passwordValue;
-      setIsPasswordMatch(isMatch);
-      setIsValidInput(isMatch);
+      if (password.length > 0) {
+        setIsPasswordMatch(isMatch);
+        setIsValidInput(isMatch);
+      } else {
+        setIsValidInput(true);
+      }
     }
   };
 
@@ -108,13 +129,20 @@ const RegisterData = ({
           isEmail ? handleEmailChange : isNickname ? handleNicknameChange : handlePasswordChange
         }
         onFocus={() => setCurrentPlaceholder('')}
-        onBlur={() => setCurrentPlaceholder(placeholder)}
+        onBlur={() => {
+          setCurrentPlaceholder(placeholder);
+          if (onBlur) {
+            onBlur()
+          }
+
+          
+        }}
         css={(theme) => s_input(theme, isValidInput)}
       />
       {/* 이메일 버튼 토글 */}
       <div css={s_button_send}>
         {email && showIcon && (
-          <Button variant="grad" onClick={onSend} type="button">
+          <Button variant="grad" onClick={onSend} type="button" disabled={disabled}>
             전송
           </Button>
         )}

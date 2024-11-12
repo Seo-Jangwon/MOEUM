@@ -1,4 +1,4 @@
-package com.weseethemusic.recommendation.common.service;
+package com.weseethemusic.recommendation.common.service.consumer;
 
 //import com.weseethemusic.common.event.DeleteMemberEvent;
 //import lombok.RequiredArgsConstructor;

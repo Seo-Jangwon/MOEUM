@@ -1,4 +1,3 @@
-// DotDotDot.tsx
 import { css } from '@emotion/react';
 import { ReactNode, useState, useRef, useEffect } from 'react';
 import { AiOutlineMore } from 'react-icons/ai';
@@ -25,7 +24,6 @@ const DotDotDot: React.FC<DotDotDotProps> = ({ data }) => {
   };
 
   useEffect(() => {
-    // 전역 클릭 이벤트 핸들러
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropDown(false);
