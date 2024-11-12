@@ -38,9 +38,8 @@ const SignInPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<null | string>(null);
   const navigate = useNavigate();
-  const setAccessToken = useAuthStore((state) => state.setAccessToken);
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const setAccessToken = useAuthStore((state) => state.setAccesstoken);
+  const handleLogin = () => {
     if (!(isValidEmail(email) && isValidPassword(password))) {
       setError('잘못된 ID 또는 비밀번호입니다.');
       return;
@@ -68,7 +67,7 @@ const SignInPage = () => {
           <p css={(theme) => ({ color: theme.colors.lightgray })}>모음에 오신 걸 환영해요!</p>
           <p>당신이 어떤 사람인지 알고 싶어요.</p>
         </article>
-        <form css={s_form} onSubmit={handleSubmit}>
+        <form css={s_form}>
           <Input
             type="email"
             value={email}
@@ -81,7 +80,7 @@ const SignInPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="비밀번호"
           />
-          <Button type="submit" css={s_button} variant="grad">
+          <Button css={s_button} variant="grad" onClick={handleLogin}>
             로그인
           </Button>
         </form>

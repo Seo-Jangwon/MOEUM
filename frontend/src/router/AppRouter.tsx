@@ -18,7 +18,6 @@ const ListPage = lazy(() => import('@/pages/ListPage'));
 const SearchMorePage = lazy(() => import('@/pages/SearchMorePage'));
 const MyStoragePage = lazy(() => import('@/pages/MyStoragePage'));
 const SupportPage = lazy(() => import('@/pages/SupportPage'));
-const DetailPlayList = lazy(() => import('@/pages/DetailPlayListpage'))
 
 const router = createBrowserRouter([
   {
@@ -106,10 +105,6 @@ const router = createBrowserRouter([
         path: 'list/:id',
         element: <ListPage />,
       },
-      {
-        path: 'playlist/:id',
-        element: <DetailPlayList />
-      }
     ],
   },
 ]);

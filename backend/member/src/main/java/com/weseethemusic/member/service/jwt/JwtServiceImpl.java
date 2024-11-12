@@ -30,69 +30,53 @@ public class JwtServiceImpl implements JwtService {
                 throw new JwtException("토큰이 존재하지 않습니다.");
             }
 
-            // Access Token에서 이메일 추출
+            // Access Token 검증
             String token = jwtUtil.extractToken(accessToken);
-            String originalEmail;
             try {
-                Claims expiredClaims = jwtUtil.validateToken(token);
+                Claims claims = jwtUtil.validateToken(token);
                 throw new JwtException("액세스 토큰이 아직 유효합니다.");
             } catch (ExpiredJwtException e) {
-                originalEmail = e.getClaims().get("email", String.class);
-                log.debug("만료된 액세스 토큰에서 이메일 추출: {}", originalEmail);
-            }
-
-            // RefreshToken 검증 및 이메일 추출
-            String refreshEmail;
-            Claims refreshClaims;
-            try {
-                log.debug("리프레시 토큰 검증 시작");
-                refreshClaims = jwtUtil.validateToken(refreshToken);
-                refreshEmail = refreshClaims.get("email", String.class);
-                log.debug("리프레시 토큰 검증 성공. 이메일: {}", refreshEmail);
-
-                // Redis에 저장된 RefreshToken과 비교
-                if (!jwtUtil.validateRefreshToken(refreshToken, refreshEmail)) {
-                    throw new JwtException("Redis에 저장된 리프레시 토큰과 일치하지 않습니다.");
-                }
-                log.debug("Redis의 리프레시 토큰 검증 성공");
-
-            } catch (ExpiredJwtException e) {
-                log.error("리프레시 토큰 만료됨");
-                throw new JwtException("리프레시 토큰이 만료되었습니다.");
+                log.debug("만료된 액세스 토큰 확인");
             } catch (JwtException e) {
-                log.error("리프레시 토큰 검증 실패: {}", e.getMessage());
                 throw e;
             }
 
-            // 이메일 일치 여부 확인
-            if (!refreshEmail.equals(originalEmail)) {
-                throw new JwtException("토큰 사용자 정보가 일치하지 않습니다.");
-            }
-
-            // 사용자 조회
-            Optional<Member> member = memberRepository.findByEmail(refreshEmail);
-            if (member.isEmpty()) {
-                throw new JwtException("사용자를 찾을 수 없습니다.");
-            }
-
-            // 새로운 AccessToken 발급
-            boolean isOAuth;
+            // RefreshToken 검증 및 이메일 추출
             try {
-                Claims expiredClaims = jwtUtil.validateToken(token);
-                isOAuth = expiredClaims.get("isOAuth", Boolean.class);
+                Claims claims = jwtUtil.validateToken(refreshToken);
+                String email = claims.get("email", String.class);
+
+                // Redis에 저장된 RefreshToken과 비교
+                if (!jwtUtil.validateRefreshToken(refreshToken, email)) {
+                    throw new JwtException("유효하지 않은 리프레시 토큰입니다.");
+                }
+
+                // 원본 액세스 토큰의 이메일과 리프레시 토큰의 이메일이 일치하는지 확인
+                String originalEmail = jwtUtil.getEmailFromExpiredToken(token);
+                if (!email.equals(originalEmail)) {
+                    throw new JwtException("토큰 사용자 정보가 일치하지 않습니다.");
+                }
+
+                // 사용자 조회
+                Optional<Member> member = memberRepository.findByEmail(email);
+                if (member.isEmpty()) {
+                    throw new JwtException("사용자를 찾을 수 없습니다.");
+                }
+
+                // 새로운 AccessToken 발급
+                String newAccessToken = jwtUtil.generateAccessToken(
+                    email,
+                    member.get().getRole(),
+                    member.get().getId(),
+                    jwtUtil.checkOAuthToken(token)
+                );
+
+                log.info("액세스 토큰 재발급 성공");
+                return newAccessToken;
+
             } catch (ExpiredJwtException e) {
-                isOAuth = e.getClaims().get("isOAuth", Boolean.class);
+                throw new JwtException("리프레시 토큰이 만료되었습니다.");
             }
-
-            String newAccessToken = jwtUtil.generateAccessToken(
-                refreshEmail,
-                member.get().getRole(),
-                member.get().getId(),
-                isOAuth
-            );
-
-            log.info("액세스 토큰 재발급 성공");
-            return newAccessToken;
 
         } catch (JwtException e) {
             log.error("토큰 재발급 실패 - {}", e.getMessage());

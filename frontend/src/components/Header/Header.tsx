@@ -14,9 +14,6 @@ interface HeaderProps {
 const Header = ({ search }: HeaderProps) => {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuthStore();
-  console.log(isLoggedIn);
-
-  
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
   return (
