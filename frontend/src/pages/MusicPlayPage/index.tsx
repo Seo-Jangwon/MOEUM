@@ -1,6 +1,7 @@
 import apiClient from '@/api/apiClient';
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import testData from './data.json';
 import MusicPlayer from './MusicPlayer/MusicPlayer';
 import PlayList from './PlayList/PlayList';
 import { s_container } from './style';
@@ -64,7 +65,7 @@ const MusicPlayPage: React.FC = () => {
   const [musicDetailInfo, setMusicDetailInfo] = useState<musicDetailInfoI>();
   const [musicListDetailInfo, setMusicListDetailInfo] = useState<MusicI[]>();
   const [searchParams] = useSearchParams();
-  const [musicAnalyzedData, setMusicAnalyzedData] = useState<Data>();
+  const [musicAnalyzedData, setMusicAnalyzedData] = useState<Data>(testData.data);
   const location = useLocation();
 
   const navigate = useNavigate();
@@ -128,66 +129,57 @@ const MusicPlayPage: React.FC = () => {
       //처음 렌더링 되었을 경우 패스
       return;
     }
-    console.log('second effect');
-    const currentId = Number(searchParams.get('id'));
-    const currentListId = Number(searchParams.get('list'));
-    const currentlistIdx = Number(searchParams.get('idx'));
-    if (musicId !== currentId) {
-      // 뮤직 아이디가 바뀌었을 경우
-      apiClient({ method: 'GET', url: `/musics/detail/music/${musicId}` })
-        .then((response) => {
-          if (response.data.code === 200) {
-            setMusicDetailInfo(response.data.data);
+    setIsLoading(true);
+
+    const getMusicData_R = async () => {
+      console.log('second effect');
+      try {
+        const currentId = Number(searchParams.get('id'));
+        const currentListId = Number(searchParams.get('list'));
+        const currentlistIdx = Number(searchParams.get('idx'));
+
+        const [musicDetailDataResponse, musicListDetailDataResponse, musicAnalyzedDataResponse] =
+          await Promise.all([
+            musicId !== currentId
+              ? apiClient({ method: 'GET', url: `/musics/detail/music/${currentId}` })
+              : null,
+            currentId
+              ? apiClient({ method: 'GET', url: `/recommendations?musicId=${currentId}` })
+              : listId !== currentListId
+                ? apiClient({ method: 'GET', url: `/musics/detail/playlist/${currentListId}` })
+                : null,
+            musicId !== currentId
+              ? apiClient({ method: 'GET', url: `/musics&id=${currentId}` })
+              : null,
+          ]);
+        if (musicDetailDataResponse) {
+          if (musicDetailDataResponse.data.code === 200) {
+            setMusicDetailInfo(musicDetailDataResponse.data.data);
             setMusicId(currentId);
           } else {
             console.log('오류남 ㅅㄱ');
           }
-        })
-        .catch((err) => console.log(err));
-      apiClient({ method: 'GET', url: `/musics&id=${musicId}` })
-        .then((response) => {
-          if (response.data.code === 200) {
-            setMusicAnalyzedData(response.data.data);
+        }
+        if (musicListDetailDataResponse) {
+          if (musicListDetailDataResponse.data.code === 200) {
+            setMusicListDetailInfo(musicListDetailDataResponse.data.data);
+            setListId(currentListId);
+            setListIdx(currentlistIdx);
+          } else {
+            console.log('망함 ㅅㄱ!');
+          }
+        }
+        if (musicAnalyzedDataResponse) {
+          if (musicAnalyzedDataResponse.data.code === 200) {
+            setMusicAnalyzedData(musicAnalyzedDataResponse.data.data);
           } else {
             console.log('망함 ㅅㄱ');
           }
-        })
-        .catch((err) => {
-          console.log(err);
-          console.log('망함 ㅅㄱ1');
-        });
-    }
-    if (currentListId) {
-      //재생 목록이 있을 경우
-      if (listId !== currentListId) {
-        //재생 목록이 바뀌었을 경우 재생 목록을 새로 가져와야 함.
-        apiClient({ method: 'GET', url: `/musics/detail/playlist/${listId}` })
-          .then((response) => {
-            if (response.data.code === 200) {
-              setMusicListDetailInfo(response.data.data);
-              setListId(currentListId);
-              setListIdx(currentlistIdx);
-            } else {
-              console.log('망함 ㅅㄱ!');
-            }
-          })
-          .catch((err) => console.log(err));
-      } else {
-        //인덱스만 바뀌었을 경우
-        setListIdx(currentlistIdx);
-      }
-    } else {
-      //재생목록이 없을 경우 추천곡을 새로 가져와야 함.
-      apiClient({ method: 'GET', url: `/recommendations?musicId=${musicId}` })
-        .then((response) => {
-          if (response.data.code === 200) {
-            setMusicListDetailInfo(response.data.data);
-          } else {
-            console.log('망함 ㅅㄱ');
-          }
-        })
-        .catch((err) => console.log(err));
-    }
+        }
+        setIsLoading(false);
+      } catch {}
+    };
+    getMusicData_R();
   }, [location.search]);
   return (
     <div css={s_container}>

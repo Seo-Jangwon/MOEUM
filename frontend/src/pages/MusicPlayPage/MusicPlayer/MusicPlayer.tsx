@@ -13,7 +13,6 @@ import { TbPlaylistAdd } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Data, musicDetailInfoI } from '..';
 import lalaSong from '../All I Want for Christmas Is You-2-M....mp3';
-import testData from '../data.json';
 import {
   s_canvas,
   s_container,
@@ -69,7 +68,7 @@ const MusicPlayer = ({
   function changeEndEventIdx(idx: number) {
     endEventIdx.current = idx;
   }
-  const data = useRef(testData.data.notes);
+  const data = useRef(musicAnalyzedData.notes);
 
   /** 영상의 재생 상태 변경하는 함수 */
   function changeVideoState() {

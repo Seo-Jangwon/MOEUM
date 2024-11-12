@@ -1,5 +1,6 @@
 import AppLayout from '@/layouts/AppLayout';
 import MusicPlayPage from '@/pages/MusicPlayPage';
+import SparkleEffect from '@/pages/test/test';
 import { lazy } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 const DetailPage = lazy(() => import('@/pages/DetailPage'));
@@ -18,7 +19,7 @@ const ListPage = lazy(() => import('@/pages/ListPage'));
 const SearchMorePage = lazy(() => import('@/pages/SearchMorePage'));
 const MyStoragePage = lazy(() => import('@/pages/MyStoragePage'));
 const SupportPage = lazy(() => import('@/pages/SupportPage'));
-const DetailPlayList = lazy(() => import('@/pages/DetailPlayListpage'))
+const DetailPlayList = lazy(() => import('@/pages/DetailPlayListpage'));
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
         path: 'welcome',
         element: <WelcomePage />,
       },
+      { path: 'test', element: <SparkleEffect /> },
       {
         path: 'calibration',
         element: <CalibrationPage />,
@@ -108,8 +110,8 @@ const router = createBrowserRouter([
       },
       {
         path: 'playlist/:id',
-        element: <DetailPlayList />
-      }
+        element: <DetailPlayList />,
+      },
     ],
   },
 ]);
