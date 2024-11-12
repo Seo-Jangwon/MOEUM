@@ -7,24 +7,23 @@
 /*!40101 SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES = @@SQL_NOTES, SQL_NOTES = 0 */;
 
--- 1. 데이터 삭제
-DELETE
-FROM playlist_like;
-DELETE
-FROM like_music;
-DELETE
-FROM artist_music;
-DELETE
-FROM music;
-DELETE
-FROM artist;
-DELETE
-FROM album;
-DELETE
-FROM genre;
+CREATE DATABASE IF NOT EXISTS `moeum_music` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION = 'N' */;
+USE `moeum_music`;
 
--- 2. 데이터 삽입
-INSERT INTO genre (id, name)
+-- 1. genre 테이블
+CREATE TABLE IF NOT EXISTS `genre`
+(
+    `id`   int                                    NOT NULL AUTO_INCREMENT,
+    `name` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 8
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
+
+DELETE
+FROM `genre`;
+INSERT INTO `genre` (`id`, `name`)
 VALUES (1, 'Pop'),
        (2, 'Disco'),
        (3, 'Hiphop'),
@@ -33,7 +32,22 @@ VALUES (1, 'Pop'),
        (6, 'Holiday'),
        (7, 'Opera');
 
-INSERT INTO album (id, image_name, name, release_date)
+-- 2. album 테이블
+CREATE TABLE IF NOT EXISTS `album`
+(
+    `id`           bigint                                  NOT NULL AUTO_INCREMENT,
+    `image_name`   varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+    `name`         varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+    `release_date` date DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 51
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
+
+DELETE
+FROM `album`;
+INSERT INTO `album` (`id`, `image_name`, `name`, `release_date`)
 VALUES (1, 'http://dummyimage.com/600x600.png/cc0000/ffffff', 'hardware', '2006-08-02'),
        (2, 'http://dummyimage.com/600x600.png/dddddd/000000', 'Virtual', '2017-02-13'),
        (3, 'http://dummyimage.com/600x600.png/cc0000/ffffff', '24/7', '2018-08-29'),
@@ -50,7 +64,21 @@ VALUES (1, 'http://dummyimage.com/600x600.png/cc0000/ffffff', 'hardware', '2006-
        (14, 'http://dummyimage.com/600x600.png/dddddd/000000', 'didactic', '2007-09-09'),
        (15, 'http://dummyimage.com/600x600.png/5fa2dd/ffffff', 'Centralized', '2008-01-30');
 
-INSERT INTO artist (id, image_name, name)
+-- 3. artist 테이블
+CREATE TABLE IF NOT EXISTS `artist`
+(
+    `id`         bigint                                  NOT NULL AUTO_INCREMENT,
+    `image_name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `name`       varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 351
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
+
+DELETE
+FROM `artist`;
+INSERT INTO `artist` (`id`, `image_name`, `name`)
 VALUES (1, 'http://dummyimage.com/713x643.png/ff4444/ffffff', 'Jolynn Horsefield'),
        (2, 'http://dummyimage.com/717x719.png/cc0000/ffffff', 'Polly Dufore'),
        (3, 'http://dummyimage.com/709x646.png/5fa2dd/ffffff', 'Cassius Savatier'),
@@ -62,8 +90,36 @@ VALUES (1, 'http://dummyimage.com/713x643.png/ff4444/ffffff', 'Jolynn Horsefield
        (9, 'http://dummyimage.com/750x678.png/dddddd/000000', 'Salome Cavalier'),
        (10, 'http://dummyimage.com/609x687.png/5fa2dd/ffffff', 'Flore McColley');
 
-INSERT INTO music (id, acousticness, danceability, duration, energy, loudness, mode, name,
-                   speechiness, tempo, valence, album_id, genre_id)
+-- 4. music 테이블
+CREATE TABLE IF NOT EXISTS `music`
+(
+    `id`           bigint                                  NOT NULL AUTO_INCREMENT,
+    `acousticness` double                                  NOT NULL,
+    `danceability` double                                  NOT NULL,
+    `duration`     int                                     NOT NULL,
+    `energy`       double                                  NOT NULL,
+    `loudness`     double                                  NOT NULL,
+    `mode`         bit(1)                                  NOT NULL,
+    `name`         varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+    `speechiness`  double                                  NOT NULL,
+    `tempo`        double                                  NOT NULL,
+    `valence`      double                                  NOT NULL,
+    `album_id`     bigint                                  NOT NULL,
+    `genre_id`     int                                     NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK1gpg5o9xo7gkxeietx17guu2g` (`album_id`),
+    KEY `FKkhjs54wn6980x5rmrqr273376` (`genre_id`),
+    CONSTRAINT `FK1gpg5o9xo7gkxeietx17guu2g` FOREIGN KEY (`album_id`) REFERENCES `album` (`id`),
+    CONSTRAINT `FKkhjs54wn6980x5rmrqr273376` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 66
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
+
+DELETE
+FROM `music`;
+INSERT INTO `music` (`id`, `acousticness`, `danceability`, `duration`, `energy`, `loudness`, `mode`,
+                     `name`, `speechiness`, `tempo`, `valence`, `album_id`, `genre_id`)
 VALUES (1, 0.62, 0.75, 210, 0.78, -5.3, b'1', 'Beautiful Sky', 0.06, 120.5, 0.76, 1, 1),
        (2, 0.35, 0.89, 190, 0.85, -4.1, b'0', 'Vanilla', 0.09, 128.2, 0.82, 1, 2),
        (3, 0.58, 0.81, 225, 0.74, -6.1, b'1', 'Crimson Horizon', 0.07, 118.7, 0.73, 1, 1),
@@ -75,7 +131,22 @@ VALUES (1, 0.62, 0.75, 210, 0.78, -5.3, b'1', 'Beautiful Sky', 0.06, 120.5, 0.76
        (9, 0.37, 0.53, 218, 0.64, -7.5, b'0', 'Lost Paradise', 0.05, 112.5, 0.65, 3, 1),
        (10, 0.55, 0.76, 205, 0.82, -4.9, b'1', 'Serenity', 0.07, 127.8, 0.78, 4, 4);
 
-INSERT INTO artist_music (artist_id, music_id)
+-- 5. artist_music 테이블
+CREATE TABLE IF NOT EXISTS `artist_music`
+(
+    `artist_id` bigint NOT NULL,
+    `music_id`  bigint NOT NULL,
+    PRIMARY KEY (`artist_id`, `music_id`),
+    KEY `FK9spwv12fhowtlqetheo4d14c5` (`music_id`),
+    CONSTRAINT `FK9spwv12fhowtlqetheo4d14c5` FOREIGN KEY (`music_id`) REFERENCES `music` (`id`),
+    CONSTRAINT `FKjd69cs7qqxs7srsa0nh8chps6` FOREIGN KEY (`artist_id`) REFERENCES `artist` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
+
+DELETE
+FROM `artist_music`;
+INSERT INTO `artist_music` (`artist_id`, `music_id`)
 VALUES (1, 1),
        (1, 2),
        (1, 3),
@@ -87,7 +158,53 @@ VALUES (1, 1),
        (3, 9),
        (4, 10);
 
-INSERT INTO playlist (id, created_at, description, is_public, member_id, name, updated_at)
+-- 6. like_music 테이블
+CREATE TABLE IF NOT EXISTS `like_music`
+(
+    `member_id` bigint NOT NULL,
+    `music_id`  bigint NOT NULL,
+    PRIMARY KEY (`member_id`, `music_id`),
+    KEY `FK4chch48xnhlh2n5hrhk56b8y3` (`music_id`),
+    CONSTRAINT `FK4chch48xnhlh2n5hrhk56b8y3` FOREIGN KEY (`music_id`) REFERENCES `music` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
+
+DELETE
+FROM `like_music`;
+INSERT INTO `like_music` (`member_id`, `music_id`)
+VALUES (3, 1),
+       (7, 2),
+       (1, 3),
+       (14, 3),
+       (8, 4),
+       (10, 5),
+       (6, 6),
+       (2, 7),
+       (12, 8),
+       (3, 9),
+       (4, 10);
+
+-- 7. playlist 테이블
+CREATE TABLE IF NOT EXISTS `playlist`
+(
+    `id`          bigint                                  NOT NULL AUTO_INCREMENT,
+    `created_at`  datetime(6)                             NOT NULL,
+    `description` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+    `is_public`   bit(1)                                  NOT NULL,
+    `member_id`   bigint                                  NOT NULL,
+    `name`        varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+    `updated_at`  datetime(6)                             NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 21
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
+
+DELETE
+FROM `playlist`;
+INSERT INTO `playlist` (`id`, `created_at`, `description`, `is_public`, `member_id`, `name`,
+                        `updated_at`)
 VALUES (1, '2024-10-29 00:00:00.000000', 'Quisque ut erat. Curabitur gravida nisi at nibh.', b'1',
         16, 'Persistent', '2024-07-19 00:00:00.000000'),
        (2, '2024-06-15 00:00:00.000000', 'Morbi a ipsum. Integer a nibh.', b'1', 4,
@@ -102,20 +219,25 @@ VALUES (1, '2024-10-29 00:00:00.000000', 'Quisque ut erat. Curabitur gravida nis
         'Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.', b'1', 12, 'Reactive',
         '2024-07-28 00:00:00.000000');
 
-INSERT INTO like_music (member_id, music_id)
-VALUES (3, 1),
-       (7, 2),
-       (1, 3),
-       (14, 3),
-       (8, 4),
-       (10, 5),
-       (6, 6),
-       (2, 7),
-       (12, 8),
-       (3, 9),
-       (4, 10);
+-- 8. playlist_like 테이블
+CREATE TABLE IF NOT EXISTS `playlist_like`
+(
+    `id`          bigint      NOT NULL AUTO_INCREMENT,
+    `created_at`  datetime(6) NOT NULL,
+    `member_id`   bigint      NOT NULL,
+    `playlist_id` bigint      NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `UK8j21tn0eph4qspo4qmoyye55j` (`member_id`, `playlist_id`),
+    KEY `FKn427vl9prkjs4n599yu56qogb` (`playlist_id`),
+    CONSTRAINT `FKn427vl9prkjs4n599yu56qogb` FOREIGN KEY (`playlist_id`) REFERENCES `playlist` (`id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 52
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
-INSERT INTO playlist_like (id, created_at, member_id, playlist_id)
+DELETE
+FROM `playlist_like`;
+INSERT INTO `playlist_like` (`id`, `created_at`, `member_id`, `playlist_id`)
 VALUES (1, '2024-11-02 00:00:00.000000', 15, 1),
        (2, '2023-12-14 00:00:00.000000', 21, 2),
        (3, '2024-10-21 00:00:00.000000', 1, 3),

@@ -43,7 +43,7 @@ public class LoginController {
                 .secure(true)
                 .path("/")
                 .maxAge(Duration.ofDays(7))
-                .sameSite("None")
+                .sameSite("Strict")
                 .build();
             response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 

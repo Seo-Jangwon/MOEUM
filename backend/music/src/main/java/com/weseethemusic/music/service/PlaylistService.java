@@ -3,7 +3,6 @@ package com.weseethemusic.music.service;
 import com.weseethemusic.music.dto.playlist.CreatePlaylistRequest;
 import com.weseethemusic.music.dto.playlist.PlaylistMusicResponse;
 import com.weseethemusic.music.dto.playlist.PlaylistResponse;
-import com.weseethemusic.music.dto.playlist.TodayGenreDto;
 import java.util.List;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +29,4 @@ public interface PlaylistService {
     void disLikePlaylist(Long playlistId, Long memberId);
 
     void deleteAllPlaylistsByMemberId(Long memberId);
-
-    TodayGenreDto getTodayGenre(int genreId);
-
 }

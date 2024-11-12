@@ -1,4 +1,3 @@
-import apiClient from '@/api/apiClient';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { ReactNode, useEffect, useState } from 'react';
 import { FaRegTrashCan } from 'react-icons/fa6';
@@ -18,9 +17,11 @@ import {
   s_img,
   s_p,
 } from './style';
+import React from 'react';
+import apiClient from '@/api/apiClient';
 
 interface Record {
-  id: number;
+  id: number
   title: string;
   image: string;
   artist: string;
@@ -46,6 +47,7 @@ const mokData: { music: Record[] } = {
       time: '4:10',
       heart: false,
     },
+
   ],
 };
 
@@ -57,15 +59,13 @@ const RecordPage = () => {
   const record = useEffect(() => {
     apiClient({
       method: 'GET',
-      url: 'recommendations/history',
+      url: 'recommendations/history'
+    }).then((res) => {
+      console.log(res);
+    }).catch((err) => {
+      console.log(err);
     })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  });
+  })
 
   // 모달 열기 함수
   const openModal = () => {
@@ -92,7 +92,6 @@ const RecordPage = () => {
       iconImage: <RiMenuAddLine />,
       text: '플레이리스트 추가',
       clickHandler: openModal,
-      size: 18
     },
     {
       iconImage: <FaRegTrashCan />,
@@ -100,7 +99,6 @@ const RecordPage = () => {
       clickHandler: () => {
         console.log('기록에서 삭제');
       },
-      size: 18
     },
   ];
 
@@ -115,6 +113,7 @@ const RecordPage = () => {
       <div css={s_div_container}>
         {mokData.music.map((item, index) => (
           <>
+            {' '}
             <div key={index} css={s_div_item}>
               {/* 이미지와 제목 */}
               <div css={s_div_titie_img} onClick={() => navigate('/music/1')}>
@@ -126,14 +125,14 @@ const RecordPage = () => {
               {/* 아티스트 */}
               <p css={s_p}>{item.artist}</p>
               {/* 하트 아이콘 */}
-              <Heart isLike={item.heart} size={24} />
+              <Heart isLike={item.heart} />
               {/* 드롭다운 */}
               <DotDotDot data={items} />
               {/* 시간 */}
               <p css={s_p}>{item.time}</p>
             </div>
             {/* 모달 컴포넌트 */}
-            <Modal isOpen={isModalOpen} onClose={closeModal} id={item.id} />
+            <Modal isOpen={isModalOpen} onClose={closeModal} id={item.id}/>
           </>
         ))}
       </div>

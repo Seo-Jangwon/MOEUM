@@ -1,18 +1,6 @@
-SET FOREIGN_KEY_CHECKS = 0;
-
--- 기존 데이터 삭제
-DELETE
-FROM artist_music;
-DELETE
-FROM music;
-DELETE
-FROM artist;
-DELETE
-FROM album;
+-- genre 테이블 데이터
 DELETE
 FROM genre;
-
--- Genre 데이터 삽입
 INSERT INTO genre (id, name)
 VALUES (1, 'Pop'),
        (2, 'Disco'),
@@ -22,7 +10,9 @@ VALUES (1, 'Pop'),
        (6, 'Holiday'),
        (7, 'Opera');
 
--- Album 데이터 삽입
+-- album 테이블 데이터
+DELETE
+FROM album;
 INSERT INTO album (id, image_name, name, release_date)
 VALUES (1, 'http://dummyimage.com/600x600.png/cc0000/ffffff', 'hardware', '2006-08-02'),
        (2, 'http://dummyimage.com/600x600.png/dddddd/000000', 'Virtual', '2017-02-13'),
@@ -33,17 +23,31 @@ VALUES (1, 'http://dummyimage.com/600x600.png/cc0000/ffffff', 'hardware', '2006-
        (7, 'http://dummyimage.com/600x600.png/5fa2dd/ffffff', 'hardware', '2019-10-19'),
        (8, 'http://dummyimage.com/600x600.png/dddddd/000000', 'demand-driven', '2002-06-04'),
        (9, 'http://dummyimage.com/600x600.png/cc0000/ffffff', 'Object-based', '2003-06-14'),
-       (10, 'http://dummyimage.com/600x600.png/5fa2dd/ffffff', 'functionalities', '2022-07-21');
+       (10, 'http://dummyimage.com/600x600.png/5fa2dd/ffffff', 'functionalities', '2022-07-21'),
+       (11, 'http://dummyimage.com/600x600.png/5fa2dd/ffffff', 'mobile', '2018-06-23'),
+       (12, 'http://dummyimage.com/600x600.png/ff4444/ffffff', 'Expanded', '2009-07-24'),
+       (13, 'http://dummyimage.com/600x600.png/5fa2dd/ffffff', 'systemic', '2020-04-02'),
+       (14, 'http://dummyimage.com/600x600.png/dddddd/000000', 'didactic', '2007-09-09'),
+       (15, 'http://dummyimage.com/600x600.png/5fa2dd/ffffff', 'Centralized', '2008-01-30');
 
--- Artist 데이터 삽입
-INSERT INTO artist (id, name, image_name)
-VALUES (1, 'Jolynn Horsefield', 'http://dummyimage.com/713x643.png/ff4444/ffffff'),
-       (2, 'Polly Dufore', 'http://dummyimage.com/717x719.png/cc0000/ffffff'),
-       (3, 'Cassius Savatier', 'http://dummyimage.com/709x646.png/5fa2dd/ffffff'),
-       (4, 'Dyann Count', 'http://dummyimage.com/651x760.png/5fa2dd/ffffff'),
-       (5, 'Vera Wilmington', 'http://dummyimage.com/693x698.png/5fa2dd/ffffff');
+-- artist 테이블 데이터
+DELETE
+FROM artist;
+INSERT INTO artist (id, image_name, name)
+VALUES (1, 'http://dummyimage.com/713x643.png/ff4444/ffffff', 'Jolynn Horsefield'),
+       (2, 'http://dummyimage.com/717x719.png/cc0000/ffffff', 'Polly Dufore'),
+       (3, 'http://dummyimage.com/709x646.png/5fa2dd/ffffff', 'Cassius Savatier'),
+       (4, 'http://dummyimage.com/651x760.png/5fa2dd/ffffff', 'Dyann Count'),
+       (5, 'http://dummyimage.com/693x698.png/5fa2dd/ffffff', 'Vera Wilmington'),
+       (6, 'http://dummyimage.com/654x624.png/ff4444/ffffff', 'Olga Chessill'),
+       (7, 'http://dummyimage.com/616x695.png/dddddd/000000', 'Sylvan Loveridge'),
+       (8, 'http://dummyimage.com/637x625.png/ff4444/ffffff', 'Berte Denton'),
+       (9, 'http://dummyimage.com/750x678.png/dddddd/000000', 'Salome Cavalier'),
+       (10, 'http://dummyimage.com/609x687.png/5fa2dd/ffffff', 'Flore McColley');
 
--- Music 데이터 삽입
+-- music 테이블 데이터
+DELETE
+FROM music;
 INSERT INTO music (id, name, album_id, genre_id, duration, danceability, loudness, mode,
                    speechiness, acousticness, valence, tempo, energy)
 VALUES (1, 'Beautiful Sky', 1, 1, 210, 0.75, -5.3, true, 0.06, 0.62, 0.76, 120.5, 0.78),
@@ -57,7 +61,9 @@ VALUES (1, 'Beautiful Sky', 1, 1, 210, 0.75, -5.3, true, 0.06, 0.62, 0.76, 120.5
        (9, 'Lost Paradise', 3, 1, 218, 0.53, -7.5, false, 0.05, 0.37, 0.65, 112.5, 0.64),
        (10, 'Serenity', 4, 4, 205, 0.76, -4.9, true, 0.07, 0.55, 0.78, 127.8, 0.82);
 
--- Artist_Music 데이터 삽입
+-- artist_music 테이블 데이터
+DELETE
+FROM artist_music;
 INSERT INTO artist_music (artist_id, music_id)
 VALUES (1, 1),
        (1, 2),
@@ -69,5 +75,3 @@ VALUES (1, 1),
        (3, 8),
        (3, 9),
        (4, 10);
-
-SET FOREIGN_KEY_CHECKS = 1;

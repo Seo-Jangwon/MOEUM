@@ -6,7 +6,6 @@ interface DropDownItems {
   iconImage: ReactNode;
   text: string;
   clickHandler: () => void;
-  size: number
 }
 
 interface DropDownProps {
