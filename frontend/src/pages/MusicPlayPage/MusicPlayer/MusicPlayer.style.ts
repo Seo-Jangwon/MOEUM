@@ -77,6 +77,22 @@ export const s_playerBarRange = (progress: number) => css`
     );
     opacity: 0.7;
   }
+  &::-moz-range-thumb {
+    opacity: 0;
+  }
+  &::-moz-range-track {
+    height: 6px;
+    width: 100%;
+    border-radius: 10px;
+    background: linear-gradient(
+      to right,
+      #f7f7f7 0%,
+      #f7f7f7 calc(${progress}%),
+      #444 calc(${progress}%),
+      #444 100%
+    );
+    opacity: 0.7;
+  }
 `;
 export const s_playerBarTimeLineRange = css`
   width: 100%;

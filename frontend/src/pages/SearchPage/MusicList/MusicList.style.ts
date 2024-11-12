@@ -16,6 +16,7 @@ export const s_titleContainer = css`
   display: flex;
   justify-content: space-between;
   font-size: 20px;
+  margin-bottom: 20px;
   text-align: center;
   @media (max-width: 768px) {
     padding: 0 10%;

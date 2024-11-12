@@ -33,7 +33,7 @@ const MusicList = ({
           style={{ cursor: 'pointer' }}
           onClick={() => navigate(`/search/${category}?keyword=${keyword}`)}
         >
-          더 보기
+          {musicList.length > 0 ? '더 보기' : ''}
         </div>
       </div>
       <div css={s_elementsContainer}>

@@ -53,3 +53,14 @@ export const s_elementImage = (isBorder: boolean) => css`
   aspect-ratio: 1/1;
   border-radius: ${isBorder ? '100%' : '10px'};
 `;
+
+export const s_textContainer = css`
+  display: flex;
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+  @media (min-width: 768px) {
+    justify-content: flex-start;
+    width: 90%;
+  }
+`;
