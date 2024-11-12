@@ -37,9 +37,6 @@ export const s_liTitle = css`
   display: flex;
   font-size: 18px;
   font-weight: 600;
-  :hover {
-    filter: brightness(0.5);
-  }
 `;
 
 export const s_liTime = css`

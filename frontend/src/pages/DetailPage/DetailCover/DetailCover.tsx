@@ -1,5 +1,3 @@
-import DetailCardList from '../DetailCardList/DetailCardList';
-import DetailList from '../DetailList/DetailList';
 import { s_article, s_container, s_title } from './DetailCover.style';
 import DetailCoverHeart from './DetailCoverHeart';
 
@@ -13,7 +11,7 @@ const DetailCover = ({ title, background }: DetailCoverProps) => {
     <section css={s_container(background)}>
       <article css={s_article}>
         <h1 css={s_title}>{title}</h1>
-        <DetailCoverHeart isLike={true} size={48} />
+        <DetailCoverHeart isLike={true} />
       </article>
     </section>
   );

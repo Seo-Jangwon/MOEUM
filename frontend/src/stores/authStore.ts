@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 interface AuthStore {
   isLoggedIn: boolean;
   accessToken: string;
-  setAccessToken: (token: string) => void;
+  setAccesstoken: (token: string) => void;
   signOut: () => void;
 }
 
@@ -13,7 +13,7 @@ const useAuthStore = create<AuthStore>()(
     (set) => ({
       isLoggedIn: false,
       accessToken: '',
-      setAccessToken: (token) => {
+      setAccesstoken: (token) => {
         set({ accessToken: token, isLoggedIn: true });
       },
       signOut: () => {

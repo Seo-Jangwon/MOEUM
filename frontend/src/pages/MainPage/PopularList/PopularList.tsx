@@ -8,7 +8,14 @@ import { FaPlay, FaRegHeart } from 'react-icons/fa6';
 import { FiActivity } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { s_div_header } from '../NewList/style';
-import { s_div_data, s_div_h3, s_h5_title, s_p_artist, s_popular_box, s_popular_container } from './style';
+import {
+  s_div_data,
+  s_div_h3,
+  s_h5_title,
+  s_p_artist,
+  s_popular_box,
+  s_popular_container,
+} from './style';
 
 interface Music {
   id: number;
@@ -58,7 +65,7 @@ const PopularList = () => {
   };
 
   // 인기곡 30가지
-  useEffect(() => {
+  const popularMusic = useEffect(() => {
     apiClient({
       method: 'GET',
       url: '/musics/popular',
@@ -152,7 +159,7 @@ const PopularList = () => {
                 width: 10%;
                 :hover {
                   background-color: #888;
-                  border-radius: 100%;
+                  border-radius: 100px;
                 }
               `}
               onClick={(e) => e.stopPropagation()}

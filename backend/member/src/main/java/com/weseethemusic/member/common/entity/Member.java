@@ -41,9 +41,6 @@ public class Member {
     @Column(nullable = false)
     private Date createdAt = new Date();
 
-    @Column
-    private Date lastLoginAt = new Date();
-
     @Column(nullable = false)
     @ColumnDefault("false")
     private boolean bIsDeleted = false;

@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlaylistMusicResponse {
-
     private Long id;
     private String title;
     private String albumImage;
     private String duration;
     private List<ArtistResponse> artists;
-    
 }

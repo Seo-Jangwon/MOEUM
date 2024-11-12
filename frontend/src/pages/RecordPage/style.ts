@@ -16,7 +16,7 @@ export const s_div_title = (theme: Theme) => css`
 
 export const s_p = (theme: Theme) => css`
   color: ${theme.colors.lightgray};
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -47,8 +47,8 @@ export const s_div_titie_img = css`
 `;
 
 export const s_div_img = css`
-  width: 40px;
-  height: 40px;
+  width: 80px;
+  height: 80px;
   margin-right: 20px;
   flex-shrink: 0;
 `;
@@ -61,7 +61,7 @@ export const s_img = css`
 `;
 
 export const s_h4 = (theme: Theme) => css`
-  font-size: 16px;
+  font-size: 24px;
   color: ${theme.colors.white};
   font-weight: 700;
   text-overflow: ellipsis;

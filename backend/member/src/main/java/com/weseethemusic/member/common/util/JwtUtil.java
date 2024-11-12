@@ -117,17 +117,11 @@ public class JwtUtil {
     // 토큰 검증
     public Claims validateToken(String token) {
         try {
-            log.debug("토큰 검증 시작: {}", token.substring(0, Math.min(token.length(), 20)) + "...");
-            Claims claims = Jwts.parser()
+            return Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-            log.debug("토큰 검증 성공");
-            return claims;
-        } catch (ExpiredJwtException e) {
-            log.debug("토큰 만료됨. 만료시간: {}", e.getClaims().getExpiration());
-            throw e;
         } catch (JwtException e) {
             log.error("토큰 검증 실패: {}", e.getMessage());
             throw e;

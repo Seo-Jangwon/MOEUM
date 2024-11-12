@@ -114,7 +114,7 @@ public class MusicDetailServiceImpl implements MusicDetailService {
             .discography(discography).popular(popular).build();
     }
 
-    public int[] calculateDuration(int duration) {
+    private int[] calculateDuration(int duration) {
         return new int[]{duration / 3600, duration % 3600 / 60, duration % 3600 % 60};
     }
 
