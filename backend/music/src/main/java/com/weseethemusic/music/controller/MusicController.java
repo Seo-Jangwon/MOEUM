@@ -6,6 +6,7 @@ import com.weseethemusic.music.dto.ResponseDto;
 import com.weseethemusic.music.dto.general.GeneralAlbumDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
+import com.weseethemusic.music.dto.general.GeneralPlaylistDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.service.MusicServiceImpl;
 import java.util.List;
@@ -80,6 +81,20 @@ public class MusicController {
         }
 
         return ResponseDto.res(200, latestMusicDtos);
+    }
+
+    // 인기 플레이리스트 조회
+    @GetMapping("/popular/playlist")
+    public ResponseDto<List<GeneralPlaylistDto>> getPopularPlaylists() {
+        List<GeneralPlaylistDto> popularPlaylistDtos;
+
+        try {
+            popularPlaylistDtos = musicService.getPopularPlaylists();
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200, popularPlaylistDtos);
     }
 
     // 아티스트 전체 디스코그래피 조회
