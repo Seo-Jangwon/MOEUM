@@ -40,6 +40,46 @@ const SignUpPage = () => {
     return reg.test(password);
   };
 
+  const handleNicknameBlur = () => {
+    if (!validateNickname(nickname)) {
+      setError('닉네임은 2~16자의 한글, 영문, 숫자로 입력해주세요.');
+    } else {
+      setError('');
+    }
+  };
+
+  const handleEmailBlur = () => {
+    if (!validateEmail(email)) {
+      setError('유효한 이메일 형식을 입력해주세요.');
+    } else {
+      setError('');
+    }
+  };
+
+  const handlePasswordBlur = () => {
+    if (!validatePassword(password)) {
+      setError('비밀번호는 8~15자, 영문, 숫자, 특수문자를 포함해야 합니다.');
+    } else {
+      setError('');
+    }
+  };
+
+  const handleCheckPasswordBlur = () => {
+    if (password !== checkPassword) {
+      setError('비밀번호가 일치하지 않습니다.');
+    } else {
+      setError('');
+    }
+  };
+
+  const handleCertificationNumberBlur = () => {
+    if (certificationNumber.length === 0) {
+      setError('인증번호를 입력해주세요.');
+    } else {
+      setError('');
+    }
+  };
+
   // 로그인 함수
   const login = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -83,12 +123,13 @@ const SignUpPage = () => {
       .then((res) => {
         console.log(res);
         if (isValid) {
+          alert('모음의 회원이 되신 것을 축하드립니다.')
           navigate('/signin');
         }
       })
       .catch((err) => {
         console.log(err);
-        alert('죄송합니다. 서비스를 이용하실 수 없습니다.');
+        setError('이메일 인증을 진행해 주십시오')
       });
   };
 
@@ -143,6 +184,7 @@ const SignUpPage = () => {
       .catch((err) => {
         console.log(err);
         setError('인증에 실패했습니다.');
+        
       });
   };
 
@@ -179,6 +221,8 @@ const SignUpPage = () => {
             placeholder={'닉네임'}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNickname(e.target.value)}
             isNickname={true}
+            onBlur = {handleNicknameBlur}
+            
           />
           <RegisterData
             value={'email'}
@@ -187,6 +231,7 @@ const SignUpPage = () => {
             isEmail={true}
             onSend={handleShowCertificationField}
             disabled={isBtnDisabled}
+            onBlur = {handleEmailBlur}
           />
           {isShow && (
             <RegisterData
@@ -197,6 +242,7 @@ const SignUpPage = () => {
               }
               certification={isValidCertification}
               onSend={handleCertificationCode}
+              onBlur = {handleCertificationCode}
             />
           )}
           <RegisterData
@@ -204,6 +250,7 @@ const SignUpPage = () => {
             placeholder={'비밀번호 (8~15자, 특수문자 포함)'}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             isPassword={true}
+            onBlur = {handlePasswordBlur}
           />
           <RegisterData
             value={'password'}
@@ -211,6 +258,7 @@ const SignUpPage = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCheckPassword(e.target.value)}
             checkPassword={true}
             passwordValue={password}
+            onBlur = {handleCheckPasswordBlur}
           />
           <Button
             variant="grad"
