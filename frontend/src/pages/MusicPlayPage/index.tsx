@@ -1,24 +1,224 @@
-import React, { useEffect } from 'react';
-import { testData } from '../SearchMorePage';
+import apiClient from '@/api/apiClient';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import MusicPlayer from './MusicPlayer/MusicPlayer';
 import PlayList from './PlayList/PlayList';
 import { s_container } from './style';
 
+export interface musicDetailInfoI {
+  musicId: number;
+  musicTitle: string;
+  albumId: number;
+  albumTitle: string;
+  albumImage: string;
+  albumIndex: number;
+  genre: string[];
+  duration: string;
+  releaseData: string;
+  artists: { id: number; name: string }[];
+}
+export interface MusicI {
+  id: number;
+  title: string;
+  albumImage: string;
+  duration: number;
+  artists: { id: number; name: string }[];
+}
+
+export interface Data {
+  categories: Category[];
+  vibrations: any[];
+  notes: Note[];
+}
+
+export interface Note {
+  section: number;
+  time: number;
+  y: number;
+  height: number;
+  width: number;
+  effect: string[];
+  direction: number[];
+  sides: number;
+  angle: number;
+}
+
+export interface Category {
+  defaultCategory?: number;
+  category1?: number;
+  category2?: number;
+  category3?: number;
+  category4?: number;
+  category5?: number;
+  category6?: number;
+  category7?: number;
+  category8?: number;
+  category9?: number;
+  category10?: number;
+}
+
 const MusicPlayPage: React.FC = () => {
   // 노래 시각화 데이터 불러오기 및 연관 플레이리스트 데이터 불러오기
   // 노래 상세 정보 불러오기
-  useEffect(() => {}, []);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [musicDetailInfo, setMusicDetailInfo] = useState<musicDetailInfoI>();
+  const [musicListDetailInfo, setMusicListDetailInfo] = useState<MusicI[]>();
+  const [searchParams] = useSearchParams();
+  const [musicAnalyzedData, setMusicAnalyzedData] = useState<Data>();
+  const location = useLocation();
+
+  const navigate = useNavigate();
+
+  const [musicId, setMusicId] = useState<number>();
+  const [listId, setListId] = useState<number>();
+  const [listIdx, setListIdx] = useState<number>();
+
+  const isFirstRendered = useRef<boolean>(true);
+
+  //처음 재생 페이지로 왔을 경우
+  useEffect(() => {
+    if (!isFirstRendered.current)
+      //처음 렌더링 된 게 아닐 경우
+      return;
+    console.log('first effect');
+
+    setMusicId(Number(searchParams.get('id')));
+    setListId(Number(searchParams.get('list')));
+    setListIdx(Number(searchParams.get('idx')));
+    const getMusicDetailData = async () => {
+      try {
+        const [musicDetailDataResponse, musicListDetailDataResponse, musicAnalyzedDataResponse] =
+          await Promise.all([
+            apiClient({ method: 'GET', url: `/musics/detail/music/${musicId}` }),
+            listId
+              ? apiClient({ method: 'GET', url: `/musics/detail/playlist/${listId}` })
+              : apiClient({ method: 'GET', url: `/recommendations?musicId=${musicId}` }),
+            apiClient({ method: 'GET', url: `/musics&id=${musicId}` }),
+          ]);
+
+        isFirstRendered.current = false;
+        if (musicDetailDataResponse.data.code === 200) {
+          setMusicDetailInfo(musicDetailDataResponse.data.data);
+        } else {
+          console.log('망함 ㅅㄱ');
+        }
+        if (musicListDetailDataResponse.data.code === 200) {
+          setMusicListDetailInfo(musicListDetailDataResponse.data.data);
+        } else {
+          console.log('망함 ㅅㄱ');
+        }
+        if (musicAnalyzedDataResponse.data.code === 200) {
+          setMusicAnalyzedData(musicAnalyzedDataResponse.data.data);
+        } else {
+          console.log('망함 ㅅㄱ!');
+        }
+        setIsLoading(false);
+      } catch (error) {
+        isFirstRendered.current = false;
+        console.log(error);
+        console.log('망함 ㅅㄱ!');
+      }
+    };
+    getMusicDetailData();
+  }, []);
+
+  //location.search 추적으로 url이 바뀌었을 경우
+  useEffect(() => {
+    if (isFirstRendered.current) {
+      //처음 렌더링 되었을 경우 패스
+      return;
+    }
+    console.log('second effect');
+    const currentId = Number(searchParams.get('id'));
+    const currentListId = Number(searchParams.get('list'));
+    const currentlistIdx = Number(searchParams.get('idx'));
+    if (musicId !== currentId) {
+      // 뮤직 아이디가 바뀌었을 경우
+      apiClient({ method: 'GET', url: `/musics/detail/music/${musicId}` })
+        .then((response) => {
+          if (response.data.code === 200) {
+            setMusicDetailInfo(response.data.data);
+            setMusicId(currentId);
+          } else {
+            console.log('오류남 ㅅㄱ');
+          }
+        })
+        .catch((err) => console.log(err));
+      apiClient({ method: 'GET', url: `/musics&id=${musicId}` })
+        .then((response) => {
+          if (response.data.code === 200) {
+            setMusicAnalyzedData(response.data.data);
+          } else {
+            console.log('망함 ㅅㄱ');
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          console.log('망함 ㅅㄱ1');
+        });
+    }
+    if (currentListId) {
+      //재생 목록이 있을 경우
+      if (listId !== currentListId) {
+        //재생 목록이 바뀌었을 경우 재생 목록을 새로 가져와야 함.
+        apiClient({ method: 'GET', url: `/musics/detail/playlist/${listId}` })
+          .then((response) => {
+            if (response.data.code === 200) {
+              setMusicListDetailInfo(response.data.data);
+              setListId(currentListId);
+              setListIdx(currentlistIdx);
+            } else {
+              console.log('망함 ㅅㄱ!');
+            }
+          })
+          .catch((err) => console.log(err));
+      } else {
+        //인덱스만 바뀌었을 경우
+        setListIdx(currentlistIdx);
+      }
+    } else {
+      //재생목록이 없을 경우 추천곡을 새로 가져와야 함.
+      apiClient({ method: 'GET', url: `/recommendations?musicId=${musicId}` })
+        .then((response) => {
+          if (response.data.code === 200) {
+            setMusicListDetailInfo(response.data.data);
+          } else {
+            console.log('망함 ㅅㄱ');
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [location.search]);
   return (
-    <>
-      <div css={s_container}>
-        <div></div>
-        <MusicPlayer
-          currentMusicId={testData.data.musics[0].id}
-          nextMusicId={testData.data.musics[1].id}
-        />
-        <PlayList musicData={testData.data.musics} />
+    <div css={s_container}>
+      <div>
+        <button
+          onClick={() => {
+            const params = new URLSearchParams(location.search);
+            params.set('id', Math.floor(Math.random() * 10).toString());
+            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+          }}
+        >
+          asdf
+        </button>
       </div>
-    </>
+      {isLoading ? null : (
+        <>
+          <MusicPlayer
+            musicAnalyzedData={musicAnalyzedData}
+            musicDetailInfo={musicDetailInfo!}
+            currentMusicId={musicId!}
+            nextMusicId={musicListDetailInfo![0].id}
+          />
+          <PlayList
+            musicData={musicListDetailInfo!}
+            variant={listId ? 'playlist' : 'music'}
+            listId={listId ? listId : undefined}
+            listIdx={listIdx ? listIdx : undefined}
+          />
+        </>
+      )}
+    </div>
   );
 };
 
