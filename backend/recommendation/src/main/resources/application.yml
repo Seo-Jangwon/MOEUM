@@ -9,11 +9,6 @@ spring:
   config:
     import:
       - classpath:application-secret.yml
-  jpa:
-    defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always
 
   management:
     endpoint:
@@ -34,29 +29,29 @@ spring:
 
 rabbitmq:
   exchange:
-    name: moeum.exchange
+    name: moeum.exchange.test
   queue:
-    genre-sync: moeum.queue.genre.sync
-    genre-sync-result: moeum.queue.genre.sync.result
-    music-sync: moeum.queue.music.sync
-    music-sync-result: moeum.queue.music.sync.result
-    artist-sync: moeum.queue.artist.sync
-    artist-sync-result: moeum.queue.artist.sync.result
-    album-sync: moeum.queue.album.sync
-    album-sync-result: moeum.queue.album.sync.result
-    member-delete: moeum.queue.member.delete
-    member-delete-result: moeum.queue.member.delete.result
+    genre-sync: moeum.queue.genre.sync.test
+    genre-sync-result: moeum.queue.genre.sync.result.test
+    music-sync: moeum.queue.music.sync.test
+    music-sync-result: moeum.queue.music.sync.result.test
+    artist-sync: moeum.queue.artist.sync.test
+    artist-sync-result: moeum.queue.artist.sync.result.test
+    album-sync: moeum.queue.album.sync.test
+    album-sync-result: moeum.queue.album.sync.result.test
+    member-delete: moeum.queue.member.delete.test
+    member-delete-result: moeum.queue.member.delete.result.test
   routing:
-    genre-sync: moeum.routing.genre.sync
-    genre-sync-result: moeum.routing.genre.sync.result
-    music-sync: moeum.routing.music.sync
-    music-sync-result: moeum.routing.music.sync.result
-    artist-sync: moeum.routing.artist.sync
-    artist-sync-result: moeum.routing.artist.sync.result
-    album-sync: moeum.routing.album.sync
-    album-sync-result: moeum.routing.album.sync.result
-    member-delete: moeum.routing.member.delete
-    member-delete-result: moeum.routing.member.delete.result
+    genre-sync: moeum.routing.genre.sync.test
+    genre-sync-result: moeum.routing.genre.sync.result.test
+    music-sync: moeum.routing.music.sync.test
+    music-sync-result: moeum.routing.music.sync.result.test
+    artist-sync: moeum.routing.artist.sync.test
+    artist-sync-result: moeum.routing.artist.sync.result.test
+    album-sync: moeum.routing.album.sync.test
+    album-sync-result: moeum.routing.album.sync.result.test
+    member-delete: moeum.routing.member.delete.test
+    member-delete-result: moeum.routing.member.delete.result.test
 
   resilience4j:
     circuitbreaker:

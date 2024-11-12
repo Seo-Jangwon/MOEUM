@@ -15,5 +15,4 @@ public interface ArtistMusicRepository extends JpaRepository<ArtistMusic, Artist
     @Query("select a.artist from ArtistMusic a where a.music = :music")
     List<Artist> findAllByMusic(Music music);
 
-    List<ArtistMusic> findAllByArtist(Artist artist);
 }
