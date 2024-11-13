@@ -6,12 +6,12 @@ import { FiClock } from 'react-icons/fi';
 import playMusic from '../image/playMusic.json';
 
 import apiClient from '@/api/apiClient';
-import Button from '@/components/Button/Button';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 import {
   s_button,
+  s_button_all,
   s_div_button,
   s_div_h3,
   s_div_header,
@@ -132,11 +132,10 @@ const NewList = () => {
           <h3>최신 발매곡</h3>
         </div>
         <div css={s_div_button}>
-          <Button
-            variant="outline"
-            children="더 보기"
-            onClick={() => navigate('list/newList')}
-          ></Button>
+          <button css={s_button_all} onClick={() => navigate('list/newList')}>
+            더 보기
+          </button>
+
           <button css={s_button} onClick={handlePrev}>
             <FaArrowLeft />
           </button>

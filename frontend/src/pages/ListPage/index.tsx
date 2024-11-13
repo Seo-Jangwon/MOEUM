@@ -1,5 +1,6 @@
 import lala from '@/assets/lalaticon/lala4.png';
 import { css } from '@emotion/react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { s_div_header } from '../MainPage/NewList/style';
 import {
@@ -38,8 +39,22 @@ const mokData: { music: Music[] } = {
 
 const ListPage = () => {
   const { id } = useParams();
+  const [title, setTitle] = useState<string>('');
+  useEffect(() => {
+    if (id === 'Genre') {
+      setTitle('장르');
+    } else if (id === 'newList') {
+      setTitle('최신곡');
+    } else if (id === 'Popular') {
+      setTitle('인기곡');
+    } else if (id === 'playList') {
+      setTitle('플레이리스트');
+    } else {
+      setTitle('');
+    }
+  }, [id]);
 
-  if (id === 'genre' || id == 'newList') {
+  if (id === 'Genre' || id == 'newList') {
     // 장르, 새로운 곡 리스트 페이지 /////////////////////////////////////////
     return (
       <div css={s_container}>
@@ -52,9 +67,12 @@ const ListPage = () => {
               font-weight: 700;
               color: white;
               padding: 16px;
+              @media (max-width: 768px) {
+                font-size: 24px;
+              }
             `}
           >
-            <h3>{id} 전체 보기</h3>
+            <h3>{title} 전체 보기</h3>
           </div>
           {/* 음악 데이터 박스*/}
           <div
@@ -65,62 +83,58 @@ const ListPage = () => {
             `}
           >
             {mokData.music.map((item, index) => (
-              <button
-                key={index}
-                css={css`
-                  background: transparent;
-                  border: 0;
-                  position: relative;
-                  overflow: hidden;
-                  :hover::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background-color: rgba(0, 0, 0, 0.5);
-                    border-radius: 20px;
-                  }
-
-                  :hover > p {
-                    opacity: 1;
-                    transition: opacity 0.3s;
-                  }
-                `}
-              >
-                <img
-                  src={lala}
-                  alt="라라"
+              <div>
+                <button
+                  key={index}
                   css={css`
-                    width: 100%;
-                    border-radius: 20px;
-                    display: block;
+                    background: transparent;
+                    border: 0;
+                    position: relative;
+                    overflow: hidden;
+                    :hover::before {
+                      content: '';
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 100%;
+                      background-color: rgba(0, 0, 0, 0.5);
+                      border-radius: 20px;
+                    }
+
+                    :hover > p {
+                      opacity: 1;
+                      transition: opacity 0.3s;
+                    }
                   `}
-                />
+                >
+                  <img
+                    src={lala}
+                    alt="라라"
+                    css={css`
+                      width: 100%;
+                      border-radius: 20px;
+                      display: block;
+                    `}
+                  />
+                </button>
                 <p
                   css={css`
                     font-size: 24px;
                     font-weight: 700;
                     color: white;
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    opacity: 0;
-                    z-index: 1;
-                    transition: opacity 0.3s;
+                    text-align: center;
                   `}
                 >
                   {item.title}
                 </p>
-              </button>
+              </div>
             ))}
           </div>
         </div>
       </div>
     );
-  } else if (id === 'popular') {
+  } else if (id === 'Popular') {
     // 인기차트 리스트 페이지 //////////////////////////////////////////////
     return (
       <div css={s_container}>
@@ -153,7 +167,7 @@ const ListPage = () => {
                   />
                 </div>
                 <div css={s_div_data}>
-                  <h5 css={s_h5_title}>{item.title}</h5>
+                  <h5 css={s_h5_title}>{item.title} </h5>
                 </div>
               </div>
             ))}
@@ -174,7 +188,7 @@ const ListPage = () => {
               padding: 16px;
             `}
           >
-            <h3>{id} 전체 보기</h3>
+            <h3>{title} 전체 보기</h3>
           </div>
           <div css={s_div_item_container}>
             {mokData.music.map((item, index) => (

@@ -1,14 +1,20 @@
 import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala4.png';
-import Button from '@/components/Button/Button';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
 import { useEffect } from 'react';
 import { FaPlay, FaRegHeart } from 'react-icons/fa6';
 import { FiActivity } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { s_div_header } from '../NewList/style';
-import { s_div_data, s_div_h3, s_h5_title, s_p_artist, s_popular_box, s_popular_container } from './style';
+import { s_button_all, s_div_header } from '../NewList/style';
+import {
+  s_div_data,
+  s_div_h3,
+  s_h5_title,
+  s_p_artist,
+  s_popular_box,
+  s_popular_container,
+} from './style';
 
 interface Music {
   id: number;
@@ -92,11 +98,9 @@ const PopularList = () => {
           <FiActivity />
           <h3>지금 가장 HOT한 30</h3>
         </div>
-        <Button
-          variant="outline"
-          children="더 보기"
-          onClick={() => navigate('list/popular')}
-        ></Button>
+        <button css={s_button_all} onClick={() => navigate('list/Popular')}>
+          더 보기
+        </button>
       </div>
       <div css={s_popular_container}>
         {mokData.music.slice(0, 4).map((item, index) => (

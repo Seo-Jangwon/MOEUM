@@ -30,5 +30,6 @@ export const s_button = css`
   @media (max-width: 767px) {
     width: 85px;
     height: 85px;
+    border-radius: 10px;
   }
 `;

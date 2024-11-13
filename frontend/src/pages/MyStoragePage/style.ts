@@ -27,6 +27,10 @@ export const activeButtonStyle = (theme: Theme) => css`
   border-radius: 7px;
   padding: 7px 14px;
   font-weight: 700;
+  @media (max-width: 768px) {
+    font-size: 6px;
+    padding: 2px 5px;
+  }
 `;
 
 export const inactiveButtonStyle = (theme: Theme) => css`
@@ -36,6 +40,10 @@ export const inactiveButtonStyle = (theme: Theme) => css`
   border-radius: 7px;
   padding: 7px 14px;
   font-weight: 700;
+  @media (max-width: 768px) {
+    font-size: 6px;
+    padding: 2px 5px;
+  }
 `;
 
 export const s_artist_button = css`
@@ -44,7 +52,7 @@ export const s_artist_button = css`
   background: transparent;
   overflow: hidden;
   width: 100%;
-  :hover{
+  :hover {
     filter: brightness(50%);
     transition: 0.3s;
   }
@@ -67,4 +75,3 @@ export const s_playlist_p = (theme: Theme) => css`
   font-weight: 700;
   color: ${theme.colors.primary};
 `;
-

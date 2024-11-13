@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 export const s_container = css`
-  margin-top: 100000px;
+  /* margin-top: 100000px; */
   display: flex;
   width: 75%;
   flex-direction: column;

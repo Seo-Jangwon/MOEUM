@@ -15,6 +15,10 @@ export const s_div_h3 = (theme: Theme) => css`
     font-size: 24px;
     gap: 6px;
   }
+  @media (max-width: 500px) {
+    font-size: 18px;
+    gap: 6px;
+  }
 `;
 
 export const s_popular_container = css`
@@ -27,7 +31,6 @@ export const s_popular_container = css`
 `;
 
 export const s_popular_box = (theme: Theme) => css`
-  /* position: relative; */
   display: flex;
   align-items: center;
   justify-content: space-between;
