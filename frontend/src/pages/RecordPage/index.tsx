@@ -85,6 +85,7 @@ const RecordPage = () => {
     iconImage: ReactNode;
     text: string;
     clickHandler: () => void;
+    size: number;
   }
 
   const items: DropDownItems[] = [

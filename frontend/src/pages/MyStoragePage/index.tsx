@@ -102,7 +102,7 @@ const MyStoragePage = () => {
   };
 
   // 좋아요한 음악
-  const music = useEffect(() => {
+  useEffect(() => {
     apiClient({
       method: 'GET',
       url: '/musics/playlist/like',
@@ -113,10 +113,10 @@ const MyStoragePage = () => {
       .catch((err) => {
         console.log(err);
       });
-  },[]);
+  }, []);
 
   // 좋아요한 플레이리스트
-  const playlist = useEffect(() => {
+  useEffect(() => {
     apiClient({
       method: 'GET',
       url: '/musics/playlist/like',
@@ -127,10 +127,10 @@ const MyStoragePage = () => {
       .catch((err) => {
         console.log(err);
       });
-  },[]);
+  }, []);
 
   // 좋아요한 아티스트
-  const artist = useEffect(() => {
+  useEffect(() => {
     apiClient({
       method: 'GET',
       url: '/musics/artist/like',
@@ -141,10 +141,10 @@ const MyStoragePage = () => {
       .catch((err) => {
         console.log(err);
       });
-  },[]);
+  }, []);
 
   // 좋아요한 앨범
-  const album = useEffect(() => {
+  useEffect(() => {
     apiClient({
       method: 'GET',
       url: '/musics/album/like',
@@ -155,10 +155,10 @@ const MyStoragePage = () => {
       .catch((err) => {
         console.log(err);
       });
-  },[]);
+  }, []);
 
   // 내 플레이리스트
-  const myPlayList = useEffect(() => {
+  useEffect(() => {
     apiClient({
       method: 'GET',
       url: '/musics/playlist',
@@ -169,8 +169,7 @@ const MyStoragePage = () => {
       .catch((err) => {
         console.log(err);
       });
-  },[]);
-
+  }, []);
 
   return (
     <div css={s_container}>
@@ -225,24 +224,27 @@ const MyStoragePage = () => {
           <div css={s_popular_container}>
             {musicList.music.map((item, index) => (
               <div key={index} css={s_popular_box}>
-                <div
-                  css={css`
-                    border-radius: 100%;
-                    overflow: hidden;
-                    margin: 2%;
-                    height: 73.5%;
-                    aspect-ratio: 1 / 1;
-                  `}
-                >
-                  <img
-                    src={lala}
-                    alt="라라"
+                <div>
+                  <div
                     css={css`
-                      width: 100%;
-                      height: 100%;
-                      object-fit: cover;
+                      border-radius: 100%;
+                      overflow: hidden;
+                      margin: 5%;
+                      width: 50%;
+                      :hover {
+                        filter: brightness(0.5);
+                      }
                     `}
-                  />
+                  >
+                    <img
+                      src={lala}
+                      alt="라라"
+                      css={css`
+                        width: 100%;
+                        object-fit: cover;
+                      `}
+                    />
+                  </div>
                 </div>
                 <div css={s_div_data}>
                   <h5 css={s_h5_title}>{item.title}</h5>

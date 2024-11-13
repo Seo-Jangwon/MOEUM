@@ -15,7 +15,7 @@ export const s_content = css`
 `;
 
 export const s_titlebox = css`
-  margin: 70px;
+  margin: 35px;
 `;
 
 export const s_div_success = css`
