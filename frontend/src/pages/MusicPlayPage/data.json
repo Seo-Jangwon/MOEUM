@@ -1,41 +1,6 @@
 {
   "code": 200,
   "data": {
-    "categories": [
-      {
-        "defaultCategory": 1
-      },
-      {
-        "category1": 2
-      },
-      {
-        "category2": 3
-      },
-      {
-        "category3": 4
-      },
-      {
-        "category4": 5
-      },
-      {
-        "category5": 6
-      },
-      {
-        "category6": 7
-      },
-      {
-        "category7": 8
-      },
-      {
-        "category8": 9
-      },
-      {
-        "category9": 10
-      },
-      {
-        "category10": 11
-      }
-    ],
     "vibrations": [],
     "notes": [
       {

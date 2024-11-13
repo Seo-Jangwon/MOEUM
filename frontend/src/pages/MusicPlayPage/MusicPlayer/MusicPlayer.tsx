@@ -114,8 +114,7 @@ const MusicPlayer = ({
           divRef.current
         ) {
           const x =
-            (divRef.current.clientWidth + document.body.clientWidth * 0.05) *
-            (document.fullscreenElement ? 1 : 1.4);
+            (divRef.current.clientWidth + document.body.clientWidth * 0.05) * (document.fullscreenElement ? 1 : 1.4);
           const y =
             data.current[timeIdx.current].y === 100
               ? 0
@@ -196,10 +195,7 @@ const MusicPlayer = ({
         timeIdx.current--;
       } else {
         // 뒤로 이동했을 때
-        while (
-          timeIdx.current > 0 &&
-          data.current[timeIdx.current].time > audioSrcRef.current.currentTime
-        ) {
+        while (timeIdx.current > 0 && data.current[timeIdx.current].time > audioSrcRef.current.currentTime) {
           timeIdx.current--;
         }
       }
@@ -211,10 +207,7 @@ const MusicPlayer = ({
 
   /** 키보드로 재생 컨트롤 할 수 있는 함수 */
   function MusicPlayPageKeyboardEvent(e: KeyboardEvent) {
-    if (
-      document.activeElement?.tagName === 'INPUT' &&
-      !(document.activeElement.getAttribute('type') === 'range')
-    ) {
+    if (document.activeElement?.tagName === 'INPUT' && !(document.activeElement.getAttribute('type') === 'range')) {
       return;
     } else {
       if (e.key === ' ') {
@@ -229,13 +222,11 @@ const MusicPlayer = ({
       } else if (audioSrcRef.current) {
         if (e.key === 'ArrowDown') {
           e.preventDefault();
-          audioSrcRef.current.volume =
-            audioSrcRef.current.volume >= 0.05 ? audioSrcRef.current.volume - 0.05 : 0;
+          audioSrcRef.current.volume = audioSrcRef.current.volume >= 0.05 ? audioSrcRef.current.volume - 0.05 : 0;
           setAudioVolume(audioSrcRef.current.volume);
         } else if (e.key === 'ArrowUp') {
           e.preventDefault();
-          audioSrcRef.current.volume =
-            audioSrcRef.current.volume <= 0.95 ? audioSrcRef.current.volume + 0.05 : 1;
+          audioSrcRef.current.volume = audioSrcRef.current.volume <= 0.95 ? audioSrcRef.current.volume + 0.05 : 1;
           setAudioVolume(audioSrcRef.current.volume);
         } else if (e.key === 'ArrowLeft') {
           e.preventDefault();
@@ -280,7 +271,7 @@ const MusicPlayer = ({
             audioSrcRef.current?.play();
           }
         } else if (endEventIdx.current === 2) {
-          navigate(`/music/${nextMusicId}`);
+          navigate(`/music?id=${nextMusicId}`);
         }
       });
       audioSrcRef.current.src = lalaSong;
@@ -341,19 +332,13 @@ const MusicPlayer = ({
       },
     });
 
-    const wallRight = Bodies.rectangle(
-      windowWidth + 250,
-      windowHeight / 2,
-      5,
-      windowHeight + 1000,
-      {
-        label: 'wall',
-        isStatic: true,
-        render: {
-          fillStyle: '#121212',
-        },
+    const wallRight = Bodies.rectangle(windowWidth + 250, windowHeight / 2, 5, windowHeight + 1000, {
+      label: 'wall',
+      isStatic: true,
+      render: {
+        fillStyle: '#121212',
       },
-    );
+    });
 
     const wallTop = Bodies.rectangle(windowWidth / 2, -250, windowWidth + 1000, 5, {
       label: 'wall',
@@ -363,19 +348,13 @@ const MusicPlayer = ({
       },
     });
 
-    const wallBottom = Bodies.rectangle(
-      windowWidth / 2,
-      windowHeight + 250,
-      windowWidth + 1000,
-      10,
-      {
-        label: 'wall',
-        isStatic: true,
-        render: {
-          fillStyle: '#121212',
-        },
+    const wallBottom = Bodies.rectangle(windowWidth / 2, windowHeight + 250, windowWidth + 1000, 10, {
+      label: 'wall',
+      isStatic: true,
+      render: {
+        fillStyle: '#121212',
       },
-    );
+    });
     World.add(engineRef.current.world, wallLeft);
     World.add(engineRef.current.world, wallRight);
     World.add(engineRef.current.world, wallTop);
@@ -471,9 +450,7 @@ const MusicPlayer = ({
                 css={css`
                   ${s_playerBarTimeLineRange}
                   ${s_playerBarRange(
-                    audioSrcRef.current
-                      ? (audioSrcRef.current.currentTime / audioSrcRef.current.duration) * 100
-                      : 0,
+                    audioSrcRef.current ? (audioSrcRef.current.currentTime / audioSrcRef.current.duration) * 100 : 0,
                   )}
                 `}
                 type="range"
@@ -503,12 +480,8 @@ const MusicPlayer = ({
                     }
                   }}
                 />
-                {!isPaused ? (
-                  <FaPause onClick={changeVideoState} />
-                ) : (
-                  <FaCirclePlay onClick={changeVideoState} />
-                )}
-                <LiaForwardSolid onClick={() => navigate(`/music/${nextMusicId}`)} />
+                {!isPaused ? <FaPause onClick={changeVideoState} /> : <FaCirclePlay onClick={changeVideoState} />}
+                <LiaForwardSolid onClick={() => navigate(`/music?id=${nextMusicId}`)} />
                 <MdOutlineSync onClick={() => changeEndEventIdx(1)} />
               </div>
               <div>

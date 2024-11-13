@@ -27,8 +27,7 @@ export interface MusicI {
 }
 
 export interface Data {
-  categories: Category[];
-  vibrations: any[];
+  vibrations: { time: number; duration: number }[];
   notes: Note[];
 }
 
@@ -44,20 +43,6 @@ export interface Note {
   angle: number;
 }
 
-export interface Category {
-  defaultCategory?: number;
-  category1?: number;
-  category2?: number;
-  category3?: number;
-  category4?: number;
-  category5?: number;
-  category6?: number;
-  category7?: number;
-  category8?: number;
-  category9?: number;
-  category10?: number;
-}
-
 const MusicPlayPage: React.FC = () => {
   // 노래 시각화 데이터 불러오기 및 연관 플레이리스트 데이터 불러오기
   // 노래 상세 정보 불러오기
@@ -70,34 +55,39 @@ const MusicPlayPage: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const [musicId, setMusicId] = useState<number>();
-  const [listId, setListId] = useState<number>();
-  const [listIdx, setListIdx] = useState<number>();
-
-  const isFirstRendered = useRef<boolean>(true);
+  const musicId = useRef<number | null>();
+  const playListId = useRef<number | null>();
+  const playListIdx = useRef<number | null>();
 
   //처음 재생 페이지로 왔을 경우
   useEffect(() => {
-    if (!isFirstRendered.current)
-      //처음 렌더링 된 게 아닐 경우
-      return;
-    console.log('first effect');
-
-    setMusicId(Number(searchParams.get('id')));
-    setListId(Number(searchParams.get('list')));
-    setListIdx(Number(searchParams.get('idx')));
     const getMusicDetailData = async () => {
+      const queryString: (string | null)[] = [
+        searchParams.get('id'),
+        searchParams.get('list'),
+        searchParams.get('idx'),
+      ];
+      queryString.forEach((s_item) => {
+        console.log(s_item);
+      });
+      if (queryString[0]) musicId.current = parseInt(queryString[0]);
+      else {
+        navigate('/');
+        return;
+      }
+      if (queryString[1]) playListId.current = parseInt(queryString[1]);
+      else playListId.current = null;
+      if (queryString[2]) playListIdx.current = parseInt(queryString[2]);
+      else playListIdx.current = null;
       try {
-        const [musicDetailDataResponse, musicListDetailDataResponse, musicAnalyzedDataResponse] =
-          await Promise.all([
-            apiClient({ method: 'GET', url: `/musics/detail/music/${musicId}` }),
-            listId
-              ? apiClient({ method: 'GET', url: `/musics/detail/playlist/${listId}` })
-              : apiClient({ method: 'GET', url: `/recommendations?musicId=${musicId}` }),
-            apiClient({ method: 'GET', url: `/musics&id=${musicId}` }),
-          ]);
+        const [musicDetailDataResponse, musicListDetailDataResponse, musicAnalyzedDataResponse] = await Promise.all([
+          apiClient({ method: 'GET', url: `/musics/detail/music/${musicId.current}` }),
+          playListId.current
+            ? apiClient({ method: 'GET', url: `/musics/playlist/detail/${playListId.current}` })
+            : apiClient({ method: 'GET', url: `/recommendations?musicId=${musicId.current}` }),
+          apiClient({ method: 'GET', url: `/musics/visualization/${musicId.current}` }),
+        ]);
 
-        isFirstRendered.current = false;
         if (musicDetailDataResponse.data.code === 200) {
           setMusicDetailInfo(musicDetailDataResponse.data.data);
         } else {
@@ -115,72 +105,13 @@ const MusicPlayPage: React.FC = () => {
         }
         setIsLoading(false);
       } catch (error) {
-        isFirstRendered.current = false;
         console.log(error);
         console.log('망함 ㅅㄱ!');
       }
     };
     getMusicDetailData();
-  }, []);
-
-  //location.search 추적으로 url이 바뀌었을 경우
-  useEffect(() => {
-    if (isFirstRendered.current) {
-      //처음 렌더링 되었을 경우 패스
-      return;
-    }
-    setIsLoading(true);
-
-    const getMusicData_R = async () => {
-      console.log('second effect');
-      try {
-        const currentId = Number(searchParams.get('id'));
-        const currentListId = Number(searchParams.get('list'));
-        const currentlistIdx = Number(searchParams.get('idx'));
-
-        const [musicDetailDataResponse, musicListDetailDataResponse, musicAnalyzedDataResponse] =
-          await Promise.all([
-            musicId !== currentId
-              ? apiClient({ method: 'GET', url: `/musics/detail/music/${currentId}` })
-              : null,
-            currentId
-              ? apiClient({ method: 'GET', url: `/recommendations?musicId=${currentId}` })
-              : listId !== currentListId
-                ? apiClient({ method: 'GET', url: `/musics/detail/playlist/${currentListId}` })
-                : null,
-            musicId !== currentId
-              ? apiClient({ method: 'GET', url: `/musics&id=${currentId}` })
-              : null,
-          ]);
-        if (musicDetailDataResponse) {
-          if (musicDetailDataResponse.data.code === 200) {
-            setMusicDetailInfo(musicDetailDataResponse.data.data);
-            setMusicId(currentId);
-          } else {
-            console.log('오류남 ㅅㄱ');
-          }
-        }
-        if (musicListDetailDataResponse) {
-          if (musicListDetailDataResponse.data.code === 200) {
-            setMusicListDetailInfo(musicListDetailDataResponse.data.data);
-            setListId(currentListId);
-            setListIdx(currentlistIdx);
-          } else {
-            console.log('망함 ㅅㄱ!');
-          }
-        }
-        if (musicAnalyzedDataResponse) {
-          if (musicAnalyzedDataResponse.data.code === 200) {
-            setMusicAnalyzedData(musicAnalyzedDataResponse.data.data);
-          } else {
-            console.log('망함 ㅅㄱ');
-          }
-        }
-        setIsLoading(false);
-      } catch {}
-    };
-    getMusicData_R();
   }, [location.search]);
+
   return (
     <div css={s_container}>
       <div>
@@ -199,14 +130,18 @@ const MusicPlayPage: React.FC = () => {
           <MusicPlayer
             musicAnalyzedData={musicAnalyzedData}
             musicDetailInfo={musicDetailInfo!}
-            currentMusicId={musicId!}
-            nextMusicId={musicListDetailInfo![0].id}
+            currentMusicId={musicId.current!}
+            nextMusicId={
+              musicListDetailInfo!.length - 1 > playListIdx.current!
+                ? musicListDetailInfo![playListIdx.current! + 1].id
+                : musicListDetailInfo![0].id
+            }
           />
           <PlayList
             musicData={musicListDetailInfo!}
-            variant={listId ? 'playlist' : 'music'}
-            listId={listId ? listId : undefined}
-            listIdx={listIdx ? listIdx : undefined}
+            variant={playListId.current ? 'playlist' : 'music'}
+            listId={playListId.current ? playListId.current : undefined}
+            listIdx={playListIdx.current ? playListIdx.current : undefined}
           />
         </>
       )}

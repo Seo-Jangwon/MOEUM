@@ -58,7 +58,7 @@ const MusicList = ({ musicList, keyword, category }: { musicList: MusicI[]; keyw
             <div css={s_otherElementContainer}>
               {musicList.slice(1).map((item, index) => {
                 return (
-                  <div css={s_otherElement} onClick={() => navigate(`/music/${item.id}`)} key={index}>
+                  <div css={s_otherElement} onClick={() => navigate(`/music?id=${item.id}`)} key={index}>
                     <div css={s_otherElementLeftChild}>
                       <img css={s_otherElementImage} src={item.albumImage} alt="" />
                       {item.title}
