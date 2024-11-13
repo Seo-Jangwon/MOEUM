@@ -40,8 +40,14 @@ public class HistoryServiceImpl implements HistoryService {
                     ArtistDto.builder().id(artist.getId()).name(artist.getName()).build());
             }
 
+            int duration = music.getDuration();
+            int hours = duration / 3600;
+            int minutes = duration % 3600 / 60;
+            int seconds = duration % 60;
+
             result.add(MusicDto.builder().id(music.getId()).name(music.getName())
-                .albumImage(albumRepository.getAlbumImage(music.getAlbum().getId()))
+                .albumImage(albumRepository.getAlbumImage(music.getAlbum().getId())).duration(
+                    hours == 0 ? minutes + ":" + seconds : hours + ":" + minutes + ":" + seconds)
                 .artists(artistDtos).build());
         }
 
