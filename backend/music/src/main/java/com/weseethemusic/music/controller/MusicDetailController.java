@@ -5,6 +5,7 @@ import com.weseethemusic.music.common.exception.ErrorCode;
 import com.weseethemusic.music.dto.ResponseDto;
 import com.weseethemusic.music.dto.detail.AlbumDetailDto;
 import com.weseethemusic.music.dto.detail.ArtistDetailDto;
+import com.weseethemusic.music.dto.detail.MusicDetailDto;
 import com.weseethemusic.music.service.MusicDetailServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +41,20 @@ public class MusicDetailController {
 
         try {
             result = musicDetailService.getArtistDetail(artistId);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200, result);
+    }
+
+    // 음악 상세 정보 조회
+    @GetMapping("/music/{musicId}")
+    public ResponseDto<MusicDetailDto> getMusicDetail(@PathVariable("musicId") Long musicId) {
+        MusicDetailDto result;
+
+        try {
+            result = musicDetailService.getMusicDetail(musicId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
