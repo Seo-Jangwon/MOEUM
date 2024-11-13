@@ -6,6 +6,8 @@ import com.weseethemusic.member.common.service.S3Service;
 import com.weseethemusic.member.dto.member.MemberInfoDto;
 import com.weseethemusic.member.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,9 @@ public class InfoServiceImpl implements InfoService {
         } else {
             responseDto.setProfileImage(null);
         }
+
+        Date date = member.getCreatedAt();
+        responseDto.setRegisteredDate(new SimpleDateFormat("yyyy년 MM월 dd일").format(date));
 
         return responseDto;
     }
