@@ -49,4 +49,19 @@ public class MusicLikeController {
         return ResponseDto.res(200);
     }
 
+    // 앨범 좋아요 설정
+    @PostMapping("/album/like")
+    public ResponseDto<Void> likeAlbum(@RequestHeader("X-Member-Id") Long memberId,
+        @RequestBody Map<String, Long> map) {
+        try {
+            musicLikeService.likeAlbum(memberId, map.get("id"));
+        } catch (NoSuchElementException e) {
+            throw new CustomException(ErrorCode.NOT_FOUND, "앨범이 존재하지 않습니다.");
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200);
+    }
+
 }

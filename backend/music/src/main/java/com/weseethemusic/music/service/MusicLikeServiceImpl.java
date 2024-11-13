@@ -1,6 +1,9 @@
 package com.weseethemusic.music.service;
 
+import com.weseethemusic.music.common.entity.LikeAlbum;
 import com.weseethemusic.music.common.entity.LikeMusic;
+import com.weseethemusic.music.repository.AlbumRepository;
+import com.weseethemusic.music.repository.LikeAlbumRepository;
 import com.weseethemusic.music.repository.LikeMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,8 @@ public class MusicLikeServiceImpl implements MusicLikeService {
 
     private final LikeMusicRepository likeMusicRepository;
     private final MusicRepository musicRepository;
+    private final LikeAlbumRepository likeAlbumRepository;
+    private final AlbumRepository albumRepository;
 
     // 음악 좋아요 설정
     @Override
@@ -30,6 +35,14 @@ public class MusicLikeServiceImpl implements MusicLikeService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void unlikeMusic(Long memberId, Long musicId) {
         likeMusicRepository.deleteLikeMusicByMemberIdAndMusic_Id(memberId, musicId);
+    }
+
+    // 앨범 좋아요 설정
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void likeAlbum(Long memberId, Long albumId) {
+        likeAlbumRepository.save(
+            new LikeAlbum(memberId, albumRepository.findById(albumId).orElseThrow()));
     }
 
 }
