@@ -1,12 +1,14 @@
 package com.weseethemusic.recommendation.service;
 
 import com.weseethemusic.recommendation.common.entity.Artist;
+import com.weseethemusic.recommendation.common.entity.History;
 import com.weseethemusic.recommendation.common.entity.Music;
 import com.weseethemusic.recommendation.dto.history.ArtistDto;
 import com.weseethemusic.recommendation.dto.history.MusicDto;
 import com.weseethemusic.recommendation.repository.AlbumRepository;
 import com.weseethemusic.recommendation.repository.ArtistMusicRepository;
 import com.weseethemusic.recommendation.repository.HistoryRepository;
+import com.weseethemusic.recommendation.repository.MusicRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class HistoryServiceImpl implements HistoryService {
     private final HistoryRepository historyRepository;
     private final ArtistMusicRepository artistMusicRepository;
     private final AlbumRepository albumRepository;
+    private final MusicRepository musicRepository;
 
     // 음악 재생 기록 조회
     @Override
@@ -47,6 +50,13 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public void deletePlayHistory(Long memberId, Long musicId) {
         historyRepository.deleteByMemberIdAndMusic_Id(memberId, musicId);
+    }
+
+    // 재생 기록 추가
+    @Override
+    public void addPlayHistory(Long memberId, Long musicId) {
+        historyRepository.save(History.builder().memberId(memberId)
+            .music(musicRepository.findById(musicId).orElseThrow()).build());
     }
 
 }
