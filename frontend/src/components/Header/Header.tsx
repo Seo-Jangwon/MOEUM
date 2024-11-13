@@ -1,11 +1,9 @@
 import useAuthStore from '@/stores/authStore';
-import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Button from '../Button/Button';
 import SearchBox from '../SearchBox/SearchBox';
 import SideBar from '../SideBar/SideBar';
 import { s_container, s_logo } from './Header.style';
-import ProfileModal from './ProfileModal/ProfileModal';
 
 interface HeaderProps {
   search: boolean;
@@ -16,9 +14,6 @@ const Header = ({ search }: HeaderProps) => {
   const { isLoggedIn } = useAuthStore();
   console.log(isLoggedIn);
 
-  
-
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
   return (
     <nav css={s_container}>
       <div css={{ display: 'flex', gap: '8px', alignItems: 'center', zIndex: 1 }}>
@@ -31,7 +26,7 @@ const Header = ({ search }: HeaderProps) => {
       {search && (
         <div style={{ zIndex: 0 }}>
           {isLoggedIn ? (
-            <img src="/logo.svg" onClick={() => setIsProfileModalOpen(true)} />
+            <img src="/logo.svg" onClick={() => navigate('/profile')} />
           ) : (
             <Button
               variant="inverted"
@@ -43,9 +38,6 @@ const Header = ({ search }: HeaderProps) => {
           )}
         </div>
       )}
-      {isProfileModalOpen ? (
-        <ProfileModal changeModalStatus={() => setIsProfileModalOpen(false)} />
-      ) : null}
     </nav>
   );
 };
