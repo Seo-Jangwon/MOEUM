@@ -3,7 +3,7 @@ package com.weseethemusic.member.dto.member;
 import lombok.Data;
 
 @Data
-public class EditResponseDto {
+public class MemberInfoDto {
 
     String email;
     String nickname;
