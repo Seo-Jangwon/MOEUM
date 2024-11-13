@@ -1,5 +1,4 @@
 import apiClient from '@/api/apiClient';
-import lala from '@/assets/lalaticon/lala4.png';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
@@ -7,31 +6,23 @@ import { FaPlay, FaRegHeart } from 'react-icons/fa6';
 import { FiActivity } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { s_button_all, s_div_header } from '../NewList/style';
-import {
-  s_div_data,
-  s_div_h3,
-  s_h5_title,
-  s_p_artist,
-  s_popular_box,
-  s_popular_container,
-} from './style';
+import { s_div_data, s_div_h3, s_h5_title, s_p_artist, s_popular_box, s_popular_container } from './style';
 
 interface Artist {
-  id: number
-  name: string
+  id: number;
+  name: string;
 }
 
 interface Music {
   id: number;
   name: string;
   image: string;
-  artists: Artist[]
-
+  artists: Artist[];
 }
 
 const PopularList = () => {
   const navigate = useNavigate();
-  const [popularList, setPopularList] = useState<Music[]>([])
+  const [popularList, setPopularList] = useState<Music[]>([]);
   const clickHandler = (index: number) => {
     navigate(`music/${index}`);
   };
@@ -43,14 +34,11 @@ const PopularList = () => {
       url: '/musics/popular',
     })
       .then((res) => {
-<<<<<<< HEAD
-=======
         const jsonString = JSON.stringify(res.data.data);
-        console.log(jsonString)
->>>>>>> edb0fa34a7969ea9e1a6f4037605f5b68d3590f3
+        console.log(jsonString);
         console.log(res.data.data);
         if (res.data.code === 200) {
-          setPopularList(res.data.data)
+          setPopularList(res.data.data);
         }
       })
       .catch((err) => {
@@ -157,4 +145,3 @@ const PopularList = () => {
 };
 
 export default PopularList;
-
