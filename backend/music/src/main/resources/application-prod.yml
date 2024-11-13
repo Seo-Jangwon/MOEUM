@@ -28,8 +28,7 @@ spring:
           max-idle: 8
           min-idle: 2
     mongodb:
-      host: mongo-music
-      port: 27017
+      host: mongodb+srv://${spring.data.mongodb.username}:${spring.data.mongodb.password}@ssafy.ngivl.mongodb.net/S11P31D203?authSource=admin
       database: music
       authentication-database: admin
       auto-index-creation: true
