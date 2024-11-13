@@ -15,6 +15,10 @@ export const s_div_h3 = (theme: Theme) => css`
     font-size: 24px;
     gap: 6px;
   }
+  @media (max-width: 500px) {
+    font-size: 18px;
+    gap: 6px;
+  }
 `;
 
 export const s_popular_container = css`
@@ -27,17 +31,19 @@ export const s_popular_container = css`
 `;
 
 export const s_popular_box = (theme: Theme) => css`
-  /* position: relative; */
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: ${theme.colors.gray};
   border-radius: 20px;
   height: 120px;
+  transition: 0.3s;
+  :hover > div > img {
+    filter: brightness(0.5);
+  }
 
   :hover > div > div > img {
     filter: brightness(50%);
-    transition: 0.3s;
   }
   :hover > div > div > .icon {
     opacity: 1;

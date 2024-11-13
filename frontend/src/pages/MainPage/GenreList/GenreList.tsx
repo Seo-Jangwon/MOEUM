@@ -1,16 +1,15 @@
+import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala7.png';
-import Button from '@/components/Button/Button';
+import DotDotDot from '@/components/DotDotDot/DotDotDot';
+import { css } from '@emotion/react';
+import { FaRegHeart } from 'react-icons/fa6';
 import { FiThumbsUp } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { s_div_header } from '../NewList/style';
+import { s_button_all, s_div_header } from '../NewList/style';
 import { s_div_item_box, s_div_item_container, s_div_title, s_h5, s_img } from './style';
-import { css } from '@emotion/react';
-import DotDotDot from '@/components/DotDotDot/DotDotDot';
-import { FaRegHeart } from 'react-icons/fa6';
-import apiClient from '@/api/apiClient';
 
 interface Music {
-  id: number
+  id: number;
   title: string;
 }
 
@@ -80,17 +79,18 @@ const GenreList = () => {
           <FiThumbsUp />
           <h3>오늘의 장르</h3>
         </div>
-        <Button
-          variant="outline"
-          children="더 보기"
-          onClick={() => handlePage('list/genre')}
-        ></Button>
+        <button css={s_button_all} onClick={() => navigate('list/Genre')}>
+          더 보기
+        </button>
       </div>
       <div css={s_div_item_container}>
         {mokData.music.map((item, index) => (
-          <div css={css`
-            position: relative;
-          `} key={index}>
+          <div
+            css={css`
+              position: relative;
+            `}
+            key={index}
+          >
             <button key={index} css={s_div_item_box} onClick={() => handleMusicPage('music/12')}>
               <img src={lala} alt="라라" css={s_img} />
               <h5 css={s_h5}>{item.title}</h5>
@@ -113,7 +113,7 @@ const GenreList = () => {
                     iconImage: <FaRegHeart />,
                     text: '좋아요',
                     clickHandler: () => handleLike(item.id),
-                    size: 20
+                    size: 20,
                   },
                 ]}
               />

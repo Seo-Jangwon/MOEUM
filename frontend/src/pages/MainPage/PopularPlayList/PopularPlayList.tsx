@@ -1,13 +1,12 @@
 import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala8.png';
-import Button from '@/components/Button/Button';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
 import { useEffect } from 'react';
 import { FaRegHeart } from 'react-icons/fa6';
 import { FiCrosshair } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { s_div_header } from '../NewList/style';
+import { s_button_all, s_div_header } from '../NewList/style';
 import { s_div_h3, s_div_item_box, s_div_item_container, s_h5 } from './style';
 
 interface PlayList {
@@ -53,16 +52,16 @@ const handleLike = (id: number) => {
 const PopularPlayList = () => {
   const navigate = useNavigate();
 
-  const handlePage = (path: string) => {
-    return navigate(path);
-  };
+  // const handlePage = (path: string) => {
+  //   return navigate(path);
+  // };
   const handleMusicPage = (path: string) => {
     return navigate(path);
   };
   useEffect(() => {
     apiClient({
       method: 'GET',
-      url: '/musics/playlist',
+      url: '/musics/popular/playlist',
     })
       .then((res) => {
         console.log(res);
@@ -79,11 +78,9 @@ const PopularPlayList = () => {
           <FiCrosshair />
           <h3>인기 플레이리스트</h3>
         </div>
-        <Button
-          variant="outline"
-          children="더 보기"
-          onClick={() => navigate('list/playlist')}
-        ></Button>
+        <button css={s_button_all} onClick={() => navigate('list/playList')}>
+          더 보기
+        </button>
       </div>
       <div css={s_div_item_container}>
         {mokData.data.map((item, index) => (
@@ -129,7 +126,7 @@ const PopularPlayList = () => {
                   border-radius: 10px;
                 }
               `}
-              onClick={() => handleMusicPage('music/1')}
+              onClick={() => handleMusicPage(`playlist/${item.id}`)}
             >
               <h5 css={s_h5}>{item.title}</h5>
             </button>
