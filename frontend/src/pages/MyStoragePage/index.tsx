@@ -1,44 +1,12 @@
 import apiClient from '@/api/apiClient';
-import lala from '@/assets/lalaticon/lala2.png';
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { s_div_item_box, s_div_item_container, s_h5, s_img } from '../MainPage/GenreList/style';
-import {
-  s_div_data,
-  s_h5_title,
-  s_p_artist,
-  s_popular_box,
-  s_popular_container,
-} from '../MainPage/PopularList/style';
-import {
-  activeButtonStyle,
-  inactiveButtonStyle,
-  s_artist_button,
-  s_artist_p,
-  s_container,
-  s_div_toggle,
-  s_h3,
-  s_playlist_p,
-} from './style';
+import LikeAlbum from './LikeAlbum/LikeAlbum';
+import LikeArtist from './LikeArtist/LikeArtist';
 import LikeMusic from './LikeMusic/LikeMusic';
 import LikePlayList from './LikePlayList/LikePlayList';
-import LikeArtist from './LikeArtist/LikeArtist';
-import LikeAlbum from './LikeAlbum/LikeAlbum';
 import MyPlayList from './MyPlayList/MyPlayList';
-
-
-
-const playList: { playList: PlayList[] } = {
-  playList: [
-    { title: '안녕하세용' },
-    { title: '안녕하세용' },
-    { title: '안녕하세용' },
-    { title: '안녕하세용' },
-    { title: '안녕하세용' },
-    { title: '안녕하세용' },
-    { title: '안녕하세용' },
-  ],
-};
+import { activeButtonStyle, inactiveButtonStyle, s_container, s_div_toggle, s_h3 } from './style';
 
 
 const MyStoragePage = () => {
@@ -47,8 +15,6 @@ const MyStoragePage = () => {
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
   };
-
- 
 
   // 내 플레이리스트
   useEffect(() => {
@@ -113,25 +79,15 @@ const MyStoragePage = () => {
       {/* 리스트들 나오는 곳 */}
       <div>
         {/* 음악 리스트 */}
-        {selectedCategory === 'music' && (
-         <LikeMusic />
-        )}
+        {selectedCategory === 'music' && <LikeMusic />}
         {/* 플레이리스트 */}
-        {selectedCategory === 'playlist' && (
-         <LikePlayList />
-        )}
+        {selectedCategory === 'playlist' && <LikePlayList />}
         {/* 아티스트 리스트 */}
-        {selectedCategory === 'artist' && (
-          <LikeArtist />
-        )}
+        {selectedCategory === 'artist' && <LikeArtist />}
         {/* 앨범 리스트 */}
-        {selectedCategory === 'album' && (
-         <LikeAlbum />
-        )}
+        {selectedCategory === 'album' && <LikeAlbum />}
         {/* 마이 플레이리스트 */}
-        {selectedCategory === 'myPlayList' && (
-          <MyPlayList />
-        )}
+        {selectedCategory === 'myPlayList' && <MyPlayList />}
       </div>
     </div>
   );
