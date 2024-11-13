@@ -9,5 +9,7 @@ public interface MusicLikeService {
     void likeAlbum(Long memberId, Long albumId);
 
     void unlikeAlbum(Long memberId, Long albumId);
+
+    void likeArtist(Long memberId, Long artistId);
     
 }

@@ -77,4 +77,19 @@ public class MusicLikeController {
         return ResponseDto.res(200);
     }
 
+    // 아티스트 좋아요 설정
+    @PostMapping("/artist/like")
+    public ResponseDto<Void> likeArtist(@RequestHeader("X-Member-Id") Long memberId,
+        @RequestBody Map<String, Long> map) {
+        try {
+            musicLikeService.likeArtist(memberId, map.get("id"));
+        } catch (NoSuchElementException e) {
+            throw new CustomException(ErrorCode.NOT_FOUND, "아티스트가 존재하지 않습니다.");
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200);
+    }
+
 }
