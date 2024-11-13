@@ -1,6 +1,5 @@
 FROM node:20.18.0-alpine AS builder
 WORKDIR /app
-# 의존성 캐싱을 위해 패키지 설치 이후 소스 복사
 COPY package*.json .
 RUN npm install
 COPY . .
@@ -14,3 +13,5 @@ COPY ./nginx_conf /etc/nginx/conf.d/
 COPY ./letsencrypt /etc/letsencrypt
 EXPOSE 80 443
 CMD ["nginx", "-g", "daemon off;"]
+
+

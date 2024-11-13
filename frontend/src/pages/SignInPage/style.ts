@@ -19,6 +19,20 @@ export const s_content = css`
   text-align: center;
 `;
 
+export const s_error_box = css`
+  align-items: center;
+  background: #ff0000;
+  color: #fff;
+  border-radius: 4px;
+  display: flex;
+  font-size: 18px;
+  padding: 4px;
+  padding-left: 16px;
+  gap: 8px;
+`;
+
+export const s_button = css({ fontSize: 'x-large', marginTop: '24px', padding: '10px 20px' });
+
 export const s_titlebox = (theme: Theme) => css`
   display: flex;
   flex-direction: column;

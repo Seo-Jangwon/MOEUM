@@ -3,12 +3,12 @@ server:
 
 spring:
   application:
-    name: auth-service
+    name: member-service
   profiles:
-    active: local,secret
+    active: local
   config:
     import:
-      - optional:file:./application-secret.yml
+      - classpath:application-secret.yml
 
   mail:
     host: smtp.gmail.com
@@ -20,14 +20,15 @@ spring:
           starttls:
             enable: true
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.MySQLDialect
+rabbitmq:
+  exchange:
+    name: moeum.exchange
+  queue:
+    member-delete: moeum.queue.member.delete
+    member-delete-result: moeum.queue.member.delete.result
+  routing:
+    member-delete: moeum.routing.member.delete
+    member-delete-result: moeum.routing.member.delete.result
 
 management:
   endpoint:

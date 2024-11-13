@@ -42,10 +42,25 @@ export const s_elementContainer = css`
   display: flex;
   flex-direction: column;
   align-items: center;
+  :hover {
+    filter: brightness(50%);
+    transition: filter 0.3s;
+  }
 `;
 
 export const s_elementImage = (isBorder: boolean) => css`
   width: 80%;
   aspect-ratio: 1/1;
   border-radius: ${isBorder ? '100%' : '10px'};
+`;
+
+export const s_textContainer = css`
+  display: flex;
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+  @media (min-width: 768px) {
+    justify-content: flex-start;
+    width: 90%;
+  }
 `;

@@ -12,10 +12,11 @@ const useSearchedKeywordStore = create<SearchedKeywordStore>()(
   persist(
     (set) => ({
       searches: [],
-      addSearchKeyword: (searchKeyword) =>
+      addSearchKeyword: (searchKeyword) => {
         set((state) => ({
-          searches: [...state.searches, searchKeyword],
-        })),
+          searches: [searchKeyword, ...state.searches.filter((item) => item !== searchKeyword)],
+        }));
+      },
       removeSearchKeyword: (idx) => {
         set((state) => ({
           searches: state.searches.filter((_, i) => i !== idx),

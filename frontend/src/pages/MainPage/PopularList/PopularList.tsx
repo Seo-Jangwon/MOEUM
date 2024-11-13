@@ -1,7 +1,12 @@
+import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala4.png';
+import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
+import { useEffect, useState } from 'react';
+import { FaPlay, FaRegHeart } from 'react-icons/fa6';
 import { FiActivity } from 'react-icons/fi';
-import { s_div_header } from '../NewList/style';
+import { useNavigate } from 'react-router-dom';
+import { s_button_all, s_div_header } from '../NewList/style';
 import {
   s_div_data,
   s_div_h3,
@@ -11,41 +16,62 @@ import {
   s_popular_container,
 } from './style';
 
-interface Music {
-  title: string;
-  artist: string;
+interface Artist {
+  id: number
+  name: string
 }
 
-const mokData: { music: Music[] } = {
-  music: [
-    {
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-    {
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-    {
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-    {
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-    {
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-    {
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-  ],
-};
+interface Music {
+  id: number;
+  name: string;
+  image: string;
+  artists: Artist[]
+
+}
 
 const PopularList = () => {
+  const navigate = useNavigate();
+  const [popularList, setPopularList] = useState<Music[]>([])
+  const clickHandler = (index: number) => {
+    navigate(`music/${index}`);
+  };
+
+  // 인기곡 30가지
+  useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/popular',
+    })
+      .then((res) => {
+<<<<<<< HEAD
+=======
+        const jsonString = JSON.stringify(res.data.data);
+        console.log(jsonString)
+>>>>>>> edb0fa34a7969ea9e1a6f4037605f5b68d3590f3
+        console.log(res.data.data);
+        if (res.data.code === 200) {
+          setPopularList(res.data.data)
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  // 좋아요 설정
+  const handleLike = (id: number) => {
+    apiClient({
+      method: 'POST',
+      url: '/musics/music/like',
+      data: { id },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <>
       <div css={s_div_header}>
@@ -53,33 +79,75 @@ const PopularList = () => {
           <FiActivity />
           <h3>지금 가장 HOT한 30</h3>
         </div>
-        <button>모두보기</button>
+        <button css={s_button_all} onClick={() => navigate('list/Popular')}>
+          더 보기
+        </button>
       </div>
       <div css={s_popular_container}>
-        {mokData.music.map((item, index) => (
-          <div key={index} css={s_popular_box}>
+        {popularList.slice(0, 6).map((item, index) => (
+          <div key={index} css={s_popular_box} onClick={() => clickHandler(index)}>
             <div
               css={css`
-                border-radius: 100%;
-                overflow: hidden;
                 margin: 2%;
-                height: 73.5%;
+                height: 70%;
                 aspect-ratio: 1 / 1;
               `}
             >
-              <img
-                src={lala}
-                alt="라라"
-                css={css`
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                `}
-              />
+              <div style={{ position: 'relative' }}>
+                <img
+                  src={item.image}
+                  alt="라라"
+                  css={css`
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 100%;
+                  `}
+                />
+                <FaPlay
+                  className="icon"
+                  css={css`
+                    position: absolute;
+                    color: white;
+                    transform: translate(-50%, -50%);
+                    opacity: 0;
+                    left: 50%;
+                    top: 50%;
+                    :hover {
+                      scale: 1.1;
+                      transition: 0.3s;
+                    }
+                  `}
+                />
+              </div>
             </div>
             <div css={s_div_data}>
-              <h5 css={s_h5_title}>{item.title}</h5>
-              <p css={s_p_artist}>{item.artist}</p>
+              <h5 css={s_h5_title}>{item.name}</h5>
+              <p css={s_p_artist}>{item.artists[0].name}</p>
+            </div>
+            <div
+              css={css`
+                z-index: 10;
+                display: flex;
+                justify-content: center;
+                width: 10%;
+                :hover {
+                  background-color: #888;
+                  border-radius: 100%;
+                }
+              `}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <DotDotDot
+                data={[
+                  {
+                    iconImage: <FaRegHeart />,
+                    text: '좋아요',
+                    clickHandler: () => handleLike(item.id),
+                    size: 20,
+                  },
+                ]}
+              />
             </div>
           </div>
         ))}
@@ -89,3 +157,4 @@ const PopularList = () => {
 };
 
 export default PopularList;
+

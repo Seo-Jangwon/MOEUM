@@ -9,9 +9,15 @@ export const s_div_h3 = (theme: Theme) => css`
   font-weight: 800;
   @media (max-width: 1024px) {
     font-size: 30px;
+    gap: 12px;
   }
   @media (max-width: 767px) {
     font-size: 24px;
+    gap: 6px;
+  }
+  @media (max-width: 500px) {
+    font-size: 18px;
+    gap: 6px;
   }
 `;
 
@@ -31,6 +37,21 @@ export const s_popular_box = (theme: Theme) => css`
   background-color: ${theme.colors.gray};
   border-radius: 20px;
   height: 120px;
+  transition: 0.3s;
+  :hover > div > img {
+    filter: brightness(0.5);
+  }
+
+  :hover > div > div > img {
+    filter: brightness(50%);
+  }
+  :hover > div > div > .icon {
+    opacity: 1;
+  }
+  @media (max-width: 767px) {
+    border-radius: 10px;
+    height: 60px;
+  }
 `;
 
 export const s_div_data = css`
@@ -39,6 +60,7 @@ export const s_div_data = css`
   margin: 2%;
   text-align: right;
   gap: 2px;
+  width: 60%;
 `;
 
 export const s_h5_title = (theme: Theme) => css`

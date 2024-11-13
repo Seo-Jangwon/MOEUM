@@ -8,9 +8,15 @@ export const s_div_h3 = css`
   font-weight: 800;
   @media (max-width: 1024px) {
     font-size: 30px;
+    gap: 12px;
   }
   @media (max-width: 767px) {
     font-size: 24px;
+    gap: 6px;
+  }
+  @media (max-width: 500px) {
+    font-size: 18px;
+    gap: 6px;
   }
 `;
 
@@ -18,20 +24,23 @@ export const s_div_item_container = css`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
+  @media (max-width: 767px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
 `;
 
 export const s_div_item_box = (lala: string) => css`
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
   height: 100px;
-  background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url(${lala});
-  border: 0;
-  border-radius: 20px;
-  :hover {
-    transition: 0.3s;
-    filter: brightness(50%);
+  border-radius: 10px;
+  @media (max-width: 768px) {
+    height: 45px;
   }
+  /* background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url(${lala}); */
 `;
 
 export const s_h5 = (theme: Theme) => css`
@@ -42,6 +51,6 @@ export const s_h5 = (theme: Theme) => css`
     font-size: 14px;
   }
   @media (max-width: 767px) {
-    font-size: 10px;
+    font-size: 8px;
   }
 `;

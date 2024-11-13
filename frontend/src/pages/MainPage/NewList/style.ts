@@ -15,9 +15,15 @@ export const s_div_h3 = (theme: Theme) => css`
   font-weight: 800;
   @media (max-width: 1024px) {
     font-size: 30px;
+    gap: 12px;
   }
   @media (max-width: 767px) {
     font-size: 24px;
+    gap: 6px;
+  }
+  @media (max-width: 500px) {
+    font-size: 18px;
+    gap: 6px;
   }
 `;
 
@@ -32,6 +38,13 @@ export const s_button = (theme: Theme) => css`
   &:disabled {
     color: ${theme.colors.gray};
     cursor: not-allowed;
+  }
+  @media (max-width: 1024px) {
+    font-size: 18px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 12px;
   }
 `;
 
@@ -50,28 +63,34 @@ export const s_play_button = css`
   }
 `;
 
+export const s_div_button = css`
+  display: flex;
+  align-items: center;
+`;
+
 export const s_div_list = css`
   display: flex;
   overflow-x: auto;
-  gap: 40px;
+  gap: 20px;
   scroll-behavior: smooth;
   padding-bottom: 10px;
 `;
 
 export const s_div_img = css`
+  position: relative;
   display: flex;
   flex-direction: column;
-  flex: 0 0 calc((100% - (4 * 40px)) / 5);
+  flex: 0 0 calc((100% - (4 * 20px)) / 5);
 
   flex-shrink: 0;
   /* text-align: center; */
 
   @media (max-width: 1200px) {
-    flex: 0 0 calc((100% - (3 * 40px)) / 4);
+    flex: 0 0 calc((100% - (3 * 20px)) / 4);
   }
 
   @media (max-width: 900px) {
-    flex: 0 0 calc((100% - (2 * 40px)) / 3);
+    flex: 0 0 calc((100% - (2 * 20px)) / 3);
   }
 `;
 
@@ -84,7 +103,10 @@ export const s_p = (theme: Theme) => css`
   color: ${theme.colors.white};
   font-weight: 600;
   font-size: 18px;
-  padding-bottom: 5px;
+  padding-left: 5px;
+  @media (max-width: 1024px) {
+    font-size: 12px;
+  }
 `;
 
 export const s_icon = css`
@@ -108,4 +130,12 @@ export const s_lottie = css`
   width: 50%;
   height: 50%;
   transform: translate(-50%, -50%);
+`;
+
+export const s_button_all = (theme: Theme) => css`
+  border: none;
+  border-radius: 5px;
+  padding: 2px 4px;
+  color: ${theme.colors.lightgray};
+  background: transparent;
 `;

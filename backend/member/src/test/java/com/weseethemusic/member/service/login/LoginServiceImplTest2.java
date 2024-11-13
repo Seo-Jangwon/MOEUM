@@ -29,91 +29,91 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ExtendWith(MockitoExtension.class)
 class LoginServiceImplTest2 {
 
-    @Mock
-    private JwtUtil jwtUtil;
-    @Mock
-    private MemberRepository memberRepository;
-    @Mock
-    private PasswordEncoder passwordEncoder;
+  @Mock
+  private JwtUtil jwtUtil;
+  @Mock
+  private MemberRepository memberRepository;
+  @Mock
+  private PasswordEncoder passwordEncoder;
 
-    @InjectMocks
-    private LoginServiceImpl loginService;
+  @InjectMocks
+  private LoginServiceImpl loginService;
 
-    private Member testMember;
-    private LoginRequestDto loginRequest;
+  private Member testMember;
+  private LoginRequestDto loginRequest;
 
-    @BeforeEach
-    void setUp() {
-        // 테스트용 멤버 생성
-        testMember = new Member();
-        testMember.setId(1L);
-        testMember.setEmail("test@example.com");
-        testMember.setPassword("hashedPassword123!");
-        testMember.setNickname("테스트유저");
-        testMember.setRole(Member.Role.USER);
-        testMember.setBIsDeleted(false);
-        testMember.setDeletedAt(null);
+  @BeforeEach
+  void setUp() {
+    // 테스트용 멤버 생성
+    testMember = new Member();
+    testMember.setId(1L);
+    testMember.setEmail("test@example.com");
+    testMember.setPassword("hashedPassword123!");
+    testMember.setNickname("테스트유저");
+    testMember.setRole(Member.Role.USER);
+    testMember.setBIsDeleted(false);
+    testMember.setDeletedAt(null);
 
-        // 로그인 요청 DTO 생성
-        loginRequest = new LoginRequestDto();
-        loginRequest.setEmail("test@example.com");
-        loginRequest.setPassword("Test123!@#");
-    }
+    // 로그인 요청 DTO 생성
+    loginRequest = new LoginRequestDto();
+    loginRequest.setEmail("test@example.com");
+    loginRequest.setPassword("Test123!@#");
+  }
 
-    @Test
-    @DisplayName("정상 로그인 성공")
-    void loginSuccess() {
-        // given
-        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(testMember));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(jwtUtil.generateAccessToken(anyString(), anyString(), anyLong(), anyBoolean()))
-            .thenReturn("access.token");
-        when(jwtUtil.generateRefreshToken(anyString())).thenReturn("refresh.token");
+  @Test
+  @DisplayName("정상 로그인 성공")
+  void loginSuccess() {
+    // given
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(testMember));
+    when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+    when(jwtUtil.generateAccessToken(anyString(), anyString(), anyLong(), anyBoolean()))
+        .thenReturn("access.token");
+    when(jwtUtil.generateRefreshToken(anyString())).thenReturn("refresh.token");
 
-        // when
-        LoginResponseDto response = loginService.login(loginRequest);
+    // when
+    LoginResponseDto response = loginService.login(loginRequest);
 
-        // then
-        assertNotNull(response);
-        assertEquals("access.token", response.getAccessToken());
-        assertEquals("refresh.token", response.getRefreshToken());
+    // then
+    assertNotNull(response);
+    assertEquals("access.token", response.getAccessToken());
+    assertEquals("refresh.token", response.getRefreshToken());
 
-        // verify
-        verify(memberRepository).findByEmail(loginRequest.getEmail());
-        verify(passwordEncoder).matches(loginRequest.getPassword(), testMember.getPassword());
-        verify(jwtUtil).generateAccessToken(testMember.getEmail(), testMember.getRole(),
-            testMember.getId(), false);
-        verify(jwtUtil).generateRefreshToken(testMember.getEmail());
-    }
+    // verify
+    verify(memberRepository).findByEmail(loginRequest.getEmail());
+    verify(passwordEncoder).matches(loginRequest.getPassword(), testMember.getPassword());
+    verify(jwtUtil).generateAccessToken(testMember.getEmail(), testMember.getRole(),
+        testMember.getId(), false);
+    verify(jwtUtil).generateRefreshToken(testMember.getEmail());
+  }
 
-    @Test
-    @DisplayName("존재하지 않는 사용자 로그인 실패")
-    void loginFailUserNotFound() {
-        // given
-        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+  @Test
+  @DisplayName("존재하지 않는 사용자 로그인 실패")
+  void loginFailUserNotFound() {
+    // given
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        // when & then
-        assertThrows(BadCredentialsException.class, () -> {
-            loginService.login(loginRequest);
-        });
+    // when & then
+    assertThrows(BadCredentialsException.class, () -> {
+      loginService.login(loginRequest);
+    });
 
-        verify(memberRepository).findByEmail(loginRequest.getEmail());
-        verify(passwordEncoder, never()).matches(anyString(), anyString());
-    }
+    verify(memberRepository).findByEmail(loginRequest.getEmail());
+    verify(passwordEncoder, never()).matches(anyString(), anyString());
+  }
 
-    @Test
-    @DisplayName("비밀번호 불일치로 로그인 실패")
-    void loginFailWrongPassword() {
-        // given
-        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(testMember));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+  @Test
+  @DisplayName("비밀번호 불일치로 로그인 실패")
+  void loginFailWrongPassword() {
+    // given
+    when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(testMember));
+    when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
-        // when & then
-        assertThrows(BadCredentialsException.class, () -> {
-            loginService.login(loginRequest);
-        });
+    // when & then
+    assertThrows(BadCredentialsException.class, () -> {
+      loginService.login(loginRequest);
+    });
 
-        verify(memberRepository).findByEmail(loginRequest.getEmail());
-        verify(passwordEncoder).matches(loginRequest.getPassword(), testMember.getPassword());
-    }
+    verify(memberRepository).findByEmail(loginRequest.getEmail());
+    verify(passwordEncoder).matches(loginRequest.getPassword(), testMember.getPassword());
+  }
 }

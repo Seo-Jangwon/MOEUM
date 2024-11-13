@@ -49,7 +49,8 @@ class JwtServiceImplTest {
         when(claims.get("email", String.class)).thenReturn(email);
 
         when(jwtUtil.extractToken(validAccessToken)).thenReturn(expiredAccessToken);
-        when(jwtUtil.validateToken(expiredAccessToken)).thenThrow(new ExpiredJwtException(null, null, "만료된 토큰"));
+        when(jwtUtil.validateToken(expiredAccessToken)).thenThrow(
+            new ExpiredJwtException(null, null, "만료된 토큰"));
         when(jwtUtil.validateToken(validRefreshToken)).thenReturn(claims);
         when(jwtUtil.validateRefreshToken(validRefreshToken, email)).thenReturn(true);
         when(jwtUtil.getEmailFromExpiredToken(expiredAccessToken)).thenReturn(email);
@@ -76,7 +77,8 @@ class JwtServiceImplTest {
         when(claims.get("email", String.class)).thenReturn(email);
 
         when(jwtUtil.extractToken(validAccessToken)).thenReturn(expiredAccessToken);
-        when(jwtUtil.validateToken(expiredAccessToken)).thenThrow(new ExpiredJwtException(null, null, "만료된 토큰"));
+        when(jwtUtil.validateToken(expiredAccessToken)).thenThrow(
+            new ExpiredJwtException(null, null, "만료된 토큰"));
         when(jwtUtil.validateToken(validRefreshToken)).thenReturn(claims);
         when(jwtUtil.validateRefreshToken(validRefreshToken, email)).thenReturn(true);
         when(jwtUtil.getEmailFromExpiredToken(expiredAccessToken)).thenReturn(email);

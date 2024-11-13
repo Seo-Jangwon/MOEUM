@@ -4,14 +4,15 @@ spring:
   application:
     name: api-gateway
   profiles:
-    active: local, secret # 기본값은 local로 설정
+    active: local
   config:
     import:
-      - optional:file:./application-secret.yml
+      - classpath:application-secret.yml
   cloud:
     gateway:
       default-filters:
         - name: MetricFilter
+        - name: RequestLoggingFilter
 
 management:
   endpoint:
@@ -61,5 +62,6 @@ resilience4j:
 logging:
   level:
     com.weseethemusic.gateway: DEBUG
-    org.springframework.cloud.gateway: INFO
-    org.springframework.http.server.reactive: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.netty: INFO

@@ -2,16 +2,17 @@ package com.weseethemusic.gateway.config;
 
 import com.weseethemusic.gateway.constants.SecurityConstants;
 import com.weseethemusic.gateway.filter.JwtAuthenticationFilter;
-import java.util.List;
+import com.weseethemusic.gateway.filter.RequestLoggingFilter;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.util.MultiValueMap;
-import reactor.core.publisher.Mono;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
+import org.springframework.web.server.ServerWebExchange;
 
 @Configuration
 public class RouteConfig {
@@ -22,22 +23,16 @@ public class RouteConfig {
     @Value("${service.url.music}")
     private String musicServiceUrl;
 
-    @Value("${service.url.player}")
-    private String playerServiceUrl;
-
-    @Value("${service.url.history}")
-    private String historyServiceUrl;
-
-    @Value("${service.url.settings}")
-    private String settingsServiceUrl;
-
     @Value("${service.url.recommendations}")
     private String recommendationsServiceUrl;
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RequestLoggingFilter requestLoggingFilter;
 
-    public RouteConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public RouteConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+        RequestLoggingFilter requestLoggingFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.requestLoggingFilter = requestLoggingFilter;
     }
 
     /**
@@ -50,108 +45,133 @@ public class RouteConfig {
             .addExcludedPath("/members/register/token")
             .addExcludedPath("/members/register/check/token")
             .addExcludedPath("/members/register")
-            .addExcludedPath("/members/login");
+            .addExcludedPath("/members/login")
+            .addExcludedPath("/musics/search")
+            .addExcludedPath("/musics/detail/music/*")
+            .addExcludedPath("/musics/artist/*/discography")
+            .addExcludedPath("/musics/recommend")
+            .addExcludedPath("/musics/popular")
+            .addExcludedPath("/musics/popular/playlist")
+            .addExcludedPath("/musics/visualization/*")
+            .addExcludedPath("/musics/latest")
+            .addExcludedPath("/musics/detail/album/*")
+            .addExcludedPath("/musics/detail/artist/*")
+            .addExcludedPath("/members/token");
 
         return builder.routes()
-
+            // 멤버 서비스 공개 경로
             .route("member-service-public", r -> r
                 .path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login")
+                .filters(f -> f.filter(requestLoggingFilter.apply(new Object())))
                 .uri(memberServiceUrl))
 
-            // Member Service - Token Refresh Route
+            // 멤버 서비스 토큰 재발급 경로 (인증 없이)
             .route("member-token-refresh", r -> r
                 .path("/members/token")
                 .filters(f -> f
-                    .modifyRequestBody(String.class, String.class,
-                        (exchange, body) -> {
-                            // 쿠키에서 리프레시 토큰 추출하여 헤더로 변환
-                            ServerHttpRequest request = exchange.getRequest();
-                            MultiValueMap<String, HttpCookie> cookies = request.getCookies();
-                            List<HttpCookie> refreshTokenCookies = cookies.get(
-                                SecurityConstants.REFRESH_TOKEN_COOKIE);
+                    .filter(requestLoggingFilter.apply(new Object()))
+                    // Refresh Token을 헤더에 추가하는 커스텀 필터
+                    .filter((exchange, chain) -> {
+                        ServerHttpRequest request = exchange.getRequest();
+                        String refreshToken = getRefreshTokenFromCookies(exchange);
+                        String token = exchange.getRequest().getHeaders()
+                            .getFirst(SecurityConstants.JWT_HEADER);
 
-                            if (refreshTokenCookies != null && !refreshTokenCookies.isEmpty()) {
-                                String refreshToken = refreshTokenCookies.get(0).getValue();
-                                // 새 요청에 헤더 추가
-                                exchange.getRequest().mutate()
-                                    .header(SecurityConstants.REFRESH_TOKEN_HEADER, refreshToken)
-                                    .build();
-                            }
-                            return Mono.just(body);
-                        }))
+                        if (refreshToken != null) {
+                            // ServerHttpRequestDecorator 사용하여 헤더 수정
+                            ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(
+                                request) {
+                                @Override
+                                public HttpHeaders getHeaders() {
+                                    HttpHeaders headers = new HttpHeaders();
+                                    super.getHeaders().forEach(
+                                        (key, values) -> headers.put(key, new ArrayList<>(values)));
+                                    headers.remove(SecurityConstants.JWT_HEADER);
+                                    headers.add(SecurityConstants.REFRESH_TOKEN_HEADER,
+                                        refreshToken);
+                                    headers.add(SecurityConstants.JWT_HEADER, token);
+                                    return headers;
+                                }
+                            };
+
+                            // 수정된 요청으로 새로운 exchange 생성
+                            ServerWebExchange modifiedExchange = exchange.mutate()
+                                .request(modifiedRequest)
+                                .build();
+
+                            return chain.filter(modifiedExchange);
+
+                        }
+
+                        return chain.filter(exchange);
+                    })
+                )
+                // JWT 인증 필터는 제외됨
                 .uri(memberServiceUrl))
 
-            // Member Service - Protected Routes (인증 필요)
             .route("member-service-protected", r -> r
-                .path("/members/**")
+                .path("/members/**", "/settings/**")
                 .and()
                 .not(p -> p.path("/members/register/token", "/members/register/check/token",
                     "/members/register", "/members/login"))
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
+                .filters(f -> f
+                    .filter(requestLoggingFilter.apply(new Object()))
+                    .filter(jwtAuthenticationFilter.apply(authConfig)))
                 .uri(memberServiceUrl))
 
-            // Music Service Routes
-            .route("music-playlist", r -> r
-                .path("/musics/playlist/**")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig))
+            // 뮤직 서비스 공개 경로
+            .route("music-service-public", r -> r
+                .path("/musics/search/**", "/musics/detail/music/*",
+                    "/musics/artist/*/discography",
+                    "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
+                    "/musics/latest",
+                    "/musics/detail/album/*",
+                    "/musics/detail/artist/*", "/musics/visualization/*")
+                .filters(f -> f
+                    .filter(requestLoggingFilter.apply(new Object()))
                     .circuitBreaker(config -> config
                         .setName("music-service")
                         .setFallbackUri("/fallback/music"))
                     .retry(3))
                 .uri(musicServiceUrl))
 
-            .route("music-search", r -> r
-                .path("/musics/search")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri(musicServiceUrl))
-
-            .route("music-detail", r -> r
-                .path("/musics/detail/**")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri(musicServiceUrl))
-
-            .route("music-like", r -> r
-                .path("/musics/*/like")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri(musicServiceUrl))
-
-            .route("music-artist", r -> r
-                .path("/musics/artist/**")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri(musicServiceUrl))
-
-            .route("music-recommend", r -> r
-                .path("/musics/recommend", "/musics/popular", "/musics/latest")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri(musicServiceUrl))
-
-            // Player Service Routes
-            .route("player-service", r -> r
-                .path("/player/**")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri(playerServiceUrl))
-
-            // History Service Routes
-            .route("history-service", r -> r
-                .path("/history/**")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri(historyServiceUrl))
-
-            // Settings Service Routes
-            .route("settings-service", r -> r
-                .path("/settings/**", "/setting")
+            // 뮤직 서비스 인증 경로
+            .route("music-service-protected", r -> r
+                .path("/musics/**", "/player/**")
+                .and()
+                .not(p -> p.path("/musics/search/**", "/musics/detail/music/*",
+                    "/musics/artist/*/discography",
+                    "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
+                    "/musics/latest",
+                    "/musics/detail/album/*",
+                    "/musics/detail/artist/*", "/musics/visualization/*"))
                 .filters(f -> f
+                    .filter(requestLoggingFilter.apply(new Object()))
                     .filter(jwtAuthenticationFilter.apply(authConfig))
-                    .rewritePath("/setting", "/settings"))
-                .uri(settingsServiceUrl))
+                    .circuitBreaker(config -> config
+                        .setName("music-service")
+                        .setFallbackUri("/fallback/music"))
+                    .retry(3))
+                .uri(musicServiceUrl))
 
-            // Recommendations Service Routes
+            // 추천 서비스 경로(인증 필요)
             .route("recommendations-service", r -> r
-                .path("/recommendations")
-                .filters(f -> f.filter(jwtAuthenticationFilter.apply(authConfig)))
+                .path("/recommendations/**")
+                .filters(f -> f
+                    .filter(requestLoggingFilter.apply(new Object()))
+                    .filter(jwtAuthenticationFilter.apply(authConfig)))
                 .uri(recommendationsServiceUrl))
 
             .build();
+    }
+
+    private String getRefreshTokenFromCookies(ServerWebExchange exchange) {
+        if (exchange.getRequest().getCookies()
+            .containsKey(SecurityConstants.REFRESH_TOKEN_COOKIE)) {
+            return exchange.getRequest().getCookies()
+                .getFirst(SecurityConstants.REFRESH_TOKEN_COOKIE).getValue();
+        }
+        return null;
     }
 }

@@ -43,7 +43,6 @@ export const s_div_warning = css`
 
 export const s_main = css`
   position: relative;
-  gap: px;
 `;
 
 export const s_icon_yes = css`
