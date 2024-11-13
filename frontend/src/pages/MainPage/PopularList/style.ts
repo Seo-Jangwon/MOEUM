@@ -27,7 +27,7 @@ export const s_popular_container = css`
 `;
 
 export const s_popular_box = (theme: Theme) => css`
-  position: relative;
+  /* position: relative; */
   display: flex;
   align-items: center;
   justify-content: space-between;
