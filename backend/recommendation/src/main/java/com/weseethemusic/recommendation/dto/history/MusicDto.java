@@ -13,6 +13,7 @@ public class MusicDto {
     private long id;
     private String name;
     private String albumImage;
+    private String duration;
     private List<ArtistDto> artists;
 
 }

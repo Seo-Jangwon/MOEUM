@@ -90,6 +90,8 @@ const SettingPage = () => {
                 onChange={(e) => {
                   setEqValues([(eqValues[0] = parseInt(e.target.value)), eqValues[1], eqValues[2]]);
                   changeEq(eqValues);
+                }}
+                onMouseUp={() => {
                   settingChanged();
                 }}
                 type="range"
@@ -109,6 +111,8 @@ const SettingPage = () => {
                 onChange={(e) => {
                   setEqValues([eqValues[0], (eqValues[1] = parseInt(e.target.value)), eqValues[2]]);
                   changeEq(eqValues);
+                }}
+                onMouseUp={() => {
                   settingChanged();
                 }}
                 min={0}
@@ -125,6 +129,8 @@ const SettingPage = () => {
                 onChange={(e) => {
                   setEqValues([eqValues[0], eqValues[1], (eqValues[2] = parseInt(e.target.value))]);
                   changeEq(eqValues);
+                }}
+                onMouseUp={() => {
                   settingChanged();
                 }}
                 min={0}
