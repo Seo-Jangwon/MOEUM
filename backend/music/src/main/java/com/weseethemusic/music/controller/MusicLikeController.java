@@ -7,6 +7,7 @@ import com.weseethemusic.music.service.MusicLikeServiceImpl;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -28,6 +29,19 @@ public class MusicLikeController {
             musicLikeService.likeMusic(memberId, map.get("id"));
         } catch (NoSuchElementException e) {
             throw new CustomException(ErrorCode.NOT_FOUND, "음악이 존재하지 않습니다.");
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200);
+    }
+
+    // 음악 좋아요 해제
+    @DeleteMapping("/music/like")
+    public ResponseDto<Void> unlikeMusic(@RequestHeader("X-Member-Id") Long memberId,
+        @RequestBody Map<String, Long> map) {
+        try {
+            musicLikeService.unlikeMusic(memberId, map.get("id"));
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }

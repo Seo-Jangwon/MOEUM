@@ -4,4 +4,6 @@ public interface MusicLikeService {
 
     void likeMusic(Long memberId, Long musicId);
 
+    void unlikeMusic(Long memberId, Long musicId);
+
 }
