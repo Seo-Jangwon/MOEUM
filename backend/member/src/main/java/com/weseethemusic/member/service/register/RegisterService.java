@@ -9,12 +9,9 @@ public interface RegisterService {
 
     Member registerUser(RegisterDto registerDto);
 
-    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     int checkUser(String email);
 
     String sendEmailToken(String email);
-
-    void sendSimpleMessage(String to, String subject, String text);
 
     boolean validateEmailToken(String email, String s);
 }

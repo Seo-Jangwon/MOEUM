@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class RegisterController {
 
-    private final RegisterService memberService;
+    private final RegisterService registerService;
 
     /**
      * 회원가입을 위한 인증번호 이메일로 전송
@@ -34,7 +34,7 @@ public class RegisterController {
         log.info("회원가입 이메일 인증 요청: 이메일 {}", registerDto.getEmail());
 
         try {
-            String result = memberService.sendEmailToken(registerDto.getEmail());
+            String result = registerService.sendEmailToken(registerDto.getEmail());
 
             // 이미 존재하는 회원인 경우도 200으로 처리하고 메시지만 다르게
             if (result.equals("이미 존재하는 회원입니다.")) {
@@ -91,7 +91,7 @@ public class RegisterController {
         @RequestBody RegisterDto registerDto) {
 
         try {
-            boolean isValid = memberService.validateEmailToken(
+            boolean isValid = registerService.validateEmailToken(
                 registerDto.getEmail(),
                 String.valueOf(registerDto.getToken())
             );
@@ -129,7 +129,7 @@ public class RegisterController {
         log.info("회원 가입 요청: 이메일 {}", registerDto.getEmail());
 
         try {
-            Member savedUser = memberService.registerUser(registerDto);
+            Member savedUser = registerService.registerUser(registerDto);
             log.info("회원가입 성공");
 
             // 성공 응답

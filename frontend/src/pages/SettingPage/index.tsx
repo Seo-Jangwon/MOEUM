@@ -1,13 +1,20 @@
 import apiClient from '@/api/apiClient';
 import ToggleButton from '@/components/Toggle/ToggleButton';
 import useSettingStore from '@/stores/settingStore';
-import { ReactNode } from 'react';
+import { css } from '@emotion/react';
+import { ReactNode, useEffect, useState } from 'react';
 import { BiEqualizer } from 'react-icons/bi';
-import { IoIosArrowDown, IoIosArrowDropright } from 'react-icons/io';
+import { IoIosArrowDown, IoIosArrowDropright, IoIosArrowUp } from 'react-icons/io';
 import { PiVibrate } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import SettingComponent from './Components/SettingComponent/SettingComponent';
-import { s_componentsContainer, s_titleContainer } from './style';
+import {
+  s_componentsContainer,
+  s_inputBar,
+  s_inputContainer,
+  s_inputsContainer,
+  s_titleContainer,
+} from './style';
 
 interface settingComponentsData {
   iconImage: ReactNode;
@@ -16,10 +23,21 @@ interface settingComponentsData {
 }
 const SettingPage = () => {
   const navigate = useNavigate();
-  const { vibration, toggleVibration, visualization, toggleVisualization, blindness, eq } =
-    useSettingStore();
+  const {
+    vibration,
+    toggleVibration,
+    visualization,
+    toggleVisualization,
+    blindness,
+    eq,
+    changeEq,
+  } = useSettingStore();
+  const [isEqOpen, setIsEqOpen] = useState<boolean>(false);
+  const [eqValues, setEqValues] = useState<number[]>([0, 0, 0]);
+  function changeEqOpenState() {
+    setIsEqOpen((prev) => !prev);
+  }
   function settingChanged() {
-    console.log('asdfasdf');
     apiClient({
       method: 'PUT',
       url: '/settings',
@@ -49,7 +67,82 @@ const SettingPage = () => {
     {
       iconImage: <BiEqualizer />,
       text: '이퀄라이저',
-      rightButton: <IoIosArrowDown />,
+      rightButton: (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            {isEqOpen ? (
+              <IoIosArrowUp onClick={changeEqOpenState} />
+            ) : (
+              <IoIosArrowDown onClick={changeEqOpenState} />
+            )}
+          </div>
+          <div
+            css={css`
+              display: ${isEqOpen ? 'flex' : 'none'};
+              ${s_inputsContainer};
+            `}
+          >
+            <div css={s_inputContainer}>
+              <div>L &nbsp;</div>
+              <input
+                css={s_inputBar}
+                value={eqValues[0]}
+                onChange={(e) => {
+                  setEqValues([(eqValues[0] = parseInt(e.target.value)), eqValues[1], eqValues[2]]);
+                  changeEq(eqValues);
+                }}
+                onMouseUp={() => {
+                  settingChanged();
+                }}
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                name=""
+                id=""
+              />
+            </div>
+            <div css={s_inputContainer}>
+              <div>M</div>
+              <input
+                css={s_inputBar}
+                type="range"
+                value={eqValues[1]}
+                onChange={(e) => {
+                  setEqValues([eqValues[0], (eqValues[1] = parseInt(e.target.value)), eqValues[2]]);
+                  changeEq(eqValues);
+                }}
+                onMouseUp={() => {
+                  settingChanged();
+                }}
+                min={0}
+                max={100}
+                step={1}
+              />
+            </div>
+            <div css={s_inputContainer}>
+              <div>H</div>
+              <input
+                css={s_inputBar}
+                type="range"
+                value={eqValues[2]}
+                onChange={(e) => {
+                  setEqValues([eqValues[0], eqValues[1], (eqValues[2] = parseInt(e.target.value))]);
+                  changeEq(eqValues);
+                }}
+                onMouseUp={() => {
+                  settingChanged();
+                }}
+                min={0}
+                max={100}
+                step={1}
+                name=""
+                id=""
+              />
+            </div>
+          </div>
+        </>
+      ),
     },
     {
       iconImage: <PiVibrate />,
@@ -78,6 +171,9 @@ const SettingPage = () => {
       ),
     },
   ];
+  useEffect(() => {
+    setEqValues([eq[0], eq[1], eq[2]]);
+  }, []);
   return (
     <div>
       <div css={s_titleContainer}>

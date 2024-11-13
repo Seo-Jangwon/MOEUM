@@ -90,10 +90,10 @@ public class JwtUtil {
         return claims.getExpiration().before(new Date());
     }
 
-    public String getUserIdFromToken(String token) {
+    public Integer getUserIdFromToken(String token) {
         try {
             Claims claims = validateToken(token);
-            return claims.get("id", String.class);
+            return claims.get("id", Integer.class);
         } catch (Exception e) {
             log.error("토큰에서 userid 추출 실패", e);
             throw e;
@@ -105,8 +105,9 @@ public class JwtUtil {
             Claims claims = validateToken(token);
             return claims.get("role", String.class);
         } catch (Exception e) {
-            log.error("토큰에서 userid 추출 실패", e);
+            log.error("토큰에서 role 추출 실패", e);
             throw e;
         }
     }
+
 }

@@ -1,3 +1,4 @@
+import lala from '@/assets/lalaticon/lala.jpg';
 import { css, Theme } from '@emotion/react';
 
 export const s_container = css``;
@@ -25,4 +26,57 @@ export const s_componentsContainer = css`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+`;
+
+export const s_inputsContainer = css`
+  flex-direction: column;
+  transform: rotate(-90deg);
+  height: 125px;
+  row-gap: 20px;
+  span {
+    transform: rotate(90deg);
+  }
+`;
+
+export const s_inputContainer = css`
+  display: flex;
+  div {
+    width: 30px;
+    transform: rotate(90deg);
+  }
+`;
+
+export const s_inputBar = css`
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100px;
+  height: 8px;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+  ::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    background-image: url(${lala});
+    border-radius: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    transform: rotate(90deg);
+    cursor: pointer;
+    border: none;
+  }
+  ::-moz-range-thumb {
+    width: 30px;
+    transform: rotate(90deg);
+    height: 30px;
+    background-image: url(${lala});
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    cursor: pointer;
+    border: none;
+  }
 `;

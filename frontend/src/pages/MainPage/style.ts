@@ -6,6 +6,9 @@ export const s_container = css`
   flex-direction: column;
   margin: 0 auto;
   gap: 120px;
+  @media(max-width: 768px) {
+    gap: 60px;
+  }
 `;
 
 export const s_box = css`

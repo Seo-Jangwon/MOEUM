@@ -12,6 +12,7 @@ import { theme } from '@/styles/theme';
 import { Global, ThemeProvider } from '@emotion/react';
 import { Suspense } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import ScrollToTop from './ScrollToTop/ScrollToTop';
 import { s_container, s_content } from './style';
 
 const getHeader = (pathName: string) => {
@@ -38,6 +39,7 @@ const AppLayout = () => {
       <div css={s_container}>
         {getBackground(pathName)}
         {getHeader(pathName)}
+        <ScrollToTop />
         <div css={s_content}>
           <Suspense>
             <Outlet />

@@ -1,12 +1,18 @@
 import lala from '@/assets/lalaticon/lala2.png';
 import Lottie from 'lottie-react';
 import { useEffect, useRef, useState } from 'react';
-import { FaArrowLeft, FaArrowRight, FaPlay } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaPlay, FaRegHeart } from 'react-icons/fa';
 import { FiClock } from 'react-icons/fi';
 import playMusic from '../image/playMusic.json';
 
+import apiClient from '@/api/apiClient';
+import DotDotDot from '@/components/DotDotDot/DotDotDot';
+import { css } from '@emotion/react';
+import { useNavigate } from 'react-router-dom';
 import {
   s_button,
+  s_button_all,
+  s_div_button,
   s_div_h3,
   s_div_header,
   s_div_img,
@@ -19,36 +25,37 @@ import {
 } from './style';
 
 interface Music {
-  title: string;
-  img: string;
-  artist: string;
+  id: number;
+  name: string;
+  image: string;
+  artist: string[];
 }
-
-const mokData: { music: Music[] } = {
-  music: [
-    { title: 'apt' },
-    { title: 'abt' },
-    { title: 'apt' },
-    { title: 'apt' },
-    { title: 'abt' },
-    { title: 'apt' },
-    { title: 'apt' },
-    { title: 'abt' },
-    { title: 'apt' },
-    { title: 'apt' },
-    { title: 'abt' },
-    { title: 'apt' },
-    { title: 'apt' },
-    { title: 'abt' },
-    { title: 'apt' },
-    { title: 'apt' },
-  ],
-};
 
 const NewList = () => {
   const listRef = useRef<HTMLDivElement>(null);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  const navigate = useNavigate();
+  const [latestData, setLatestData] = useState<Music[]>([]);
+
+  useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/latest',
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.data.code === 200) {
+          console.log(res.data.data);
+          setLatestData(res.data.data);
+          console.log(latestData);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      console.log(latestData);
+  }, []);
 
   const updateItemsPerPage = () => {
     if (window.innerWidth <= 900) {
@@ -73,7 +80,7 @@ const NewList = () => {
       const item = listRef.current.querySelector('div');
       if (item) {
         const itemWidth = item.clientWidth;
-        const gap = 40; // 아이템 간의 간격
+        const gap = 20;
         const scrollAmount = (itemWidth + gap) * itemsPerPage;
         listRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
       }
@@ -85,7 +92,7 @@ const NewList = () => {
       const item = listRef.current.querySelector('div');
       if (item) {
         const itemWidth = item.clientWidth;
-        const gap = 40; // 아이템 간의 간격
+        const gap = 20;
         const scrollAmount = (itemWidth + gap) * itemsPerPage;
         listRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
       }
@@ -94,6 +101,20 @@ const NewList = () => {
 
   const handlePlayClick = (index: number) => {
     setPlayingIndex((prevIndex) => (prevIndex === index ? null : index));
+    navigate(`music/${index}`);
+  };
+  const handleLike = (id: number) => {
+    apiClient({
+      method: 'POST',
+      url: '/musics/music/like',
+      data: { id },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -103,7 +124,11 @@ const NewList = () => {
           <FiClock />
           <h3>최신 발매곡</h3>
         </div>
-        <div>
+        <div css={s_div_button}>
+          <button css={s_button_all} onClick={() => navigate('list/newList')}>
+            더 보기
+          </button>
+
           <button css={s_button} onClick={handlePrev}>
             <FaArrowLeft />
           </button>
@@ -113,18 +138,45 @@ const NewList = () => {
         </div>
       </div>
       <div css={s_div_list} ref={listRef}>
-        {mokData.music.map((item, index) => (
+        {latestData.map((item, index) => (
           <div key={index} css={s_div_img}>
-            <button css={s_play_button} onClick={() => handlePlayClick(index)}>
-              <img src={lala} alt="라라" css={s_img} />
+            <div
+              css={css`
+                position: absolute;
+                z-index: 1;
+                right: 10px;
+                bottom: 40px;
+                :hover {
+                  background-color: #888;
+                  border-radius: 100%;
+                }
+                @media (max-width: 768px) {
+                  right: 5px;
+                  bottom: 20px;
+                }
+              `}
+            >
+              <DotDotDot
+                data={[
+                  {
+                    iconImage: <FaRegHeart />,
+                    text: '좋아요',
+                    clickHandler: () => handleLike(item.id),
+                    size: 20,
+                  },
+                ]}
+              />
+            </div>
+            <button css={s_play_button} onClick={() => handlePlayClick(item.id)}>
+              <img src={item.image} alt="라라" css={s_img} />
               {playingIndex === index ? (
                 <Lottie animationData={playMusic} loop={true} css={s_lottie} />
               ) : (
-                <FaPlay css={s_icon} className="icon" />
+                <FaPlay css={s_icon} className="icon" size={20} />
               )}
             </button>
             <div>
-              <p css={s_p}>{item.title}</p>
+              <p css={s_p}>{item.name}</p>
             </div>
           </div>
         ))}

@@ -1,53 +1,118 @@
-import { css } from '@emotion/react';
-import { useState } from 'react';
-import { VscHeart } from 'react-icons/vsc';
+import apiClient from '@/api/apiClient';
+import DotDotDot from '@/components/DotDotDot/DotDotDot';
+import { ReactNode, useEffect, useState } from 'react';
+import { FaRegTrashCan } from 'react-icons/fa6';
+import { RiMenuAddLine } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom';
 import lala from '../../assets/lalaticon/lala.jpg';
-import { s_container, s_div_title, s_p } from './style';
+import Modal from './Modal/Modal';
+import {
+  s_container,
+  s_div_container,
+  s_div_img,
+  s_div_item,
+  s_div_titie_img,
+  s_div_title,
+  s_h4,
+  s_img,
+  s_p,
+} from './style';
+import { css } from '@emotion/react';
 
-interface Record {
-  title: string;
-  image: string;
-  artist: string;
-  time: string;
-  heart: boolean;
+interface Artist {
+  id: number;
+  name: string;
 }
 
-const initialData: { music: Record[] } = {
-  music: [
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: false,
-    },
-    {
-      title: '라라',
-      image: 'lala.jpg',
-      artist: 'LALA',
-      time: '4:10',
-      heart: true,
-    },
-  ],
-};
+interface Record {
+  musicId: number;
+  title: string;
+  albumImage: string;
+  artists: Artist[];
+}
+
+// const mokData: { music: Record[] } = {
+//   music: [
+//     {
+//       id: 1,
+//       title: 'fkfㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ',
+//       image: 'lala.jpg',
+//       artist: 'LALA',
+//       time: '4:10',
+//       heart: true,
+//     },
+//     {
+//       id: 2,
+//       title: '라라',
+//       image: 'lala.jpg',
+//       artist: 'LALA',
+//       time: '4:10',
+//       heart: false,
+//     },
+//   ],
+// };
 
 const RecordPage = () => {
-  const [mokData, setMokData] = useState<{ music: Record[] }>(initialData);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isDropDown, setIsDropDown] = useState<boolean>(false);
+  const [history, setHistory] = useState<Record[]>([]);
+  const [isExist, setIsExist] = useState<boolean>(false);
+  const navigate = useNavigate();
+  // 음악 재생 기록 조회
+  useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: 'recommendations/history',
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.data.code === 200) {
+          setHistory(res.data.data);
+          setIsExist(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
 
-  const handleHeart = (index: number) => {
-    setMokData((prevData) => {
-      const newMusic = [...prevData.music];
-      newMusic[index].heart = !newMusic[index].heart;
-      return { music: newMusic };
-    });
+  // 모달 열기 함수
+  const openModal = () => {
+    setIsModalOpen(true);
   };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // 드랍다운 닫기
+  const closeDropDown = () => {
+    setIsDropDown(false);
+  };
+  interface DropDownItems {
+    iconImage: ReactNode;
+    text: string;
+    clickHandler: () => void;
+    size: number;
+  }
+
+  const items: DropDownItems[] = [
+    {
+      iconImage: <RiMenuAddLine />,
+      text: '플레이리스트 추가',
+      clickHandler: openModal,
+      size: 18,
+    },
+    {
+      iconImage: <FaRegTrashCan />,
+      text: '기록에서 삭제',
+      clickHandler: () => {
+        console.log('기록에서 삭제');
+      },
+      size: 18,
+    },
+  ];
 
   return (
     // 전체 레이아웃
@@ -57,78 +122,37 @@ const RecordPage = () => {
         <h3>최근 감상 기록</h3>
       </div>
       {/* 최근 음악 데이터 */}
-      <div
-        css={css`
-          margin-top: 20px;
-        `}
-      >
-        {mokData.music.map((item, index) => (
-          <div
-            key={index}
-            css={css`
-              display: flex;
-              justify-content: space-between;
-              border-bottom: 1px solid white;
-              align-items: center;
-              padding: 10px 0;
-              :hover > div > div > img {
-                filter: brightness(50%);
-                transition: 0.3s;
-              }
-            `}
-          >
-            {/* 이미지와 제목 */}
-            <div
-              css={css`
-                display: flex;
-                align-items: center;
-                width: 40%;
-              `}
-            >
-              <div
-                css={css`
-                  width: 80px;
-                  height: 80px;
-                  margin-right: 20px;
-                `}
-              >
-                <img
-                  src={lala}
-                  alt="라라"
-                  css={css`
-                    width: 100%;
-                    height: 100%;
-                    padding: 2px;
-                    border-radius: 8px;
-                  `}
-                />
+      <div css={s_div_container}>
+        {!isExist ? (
+          <div css={css`
+            color: gray;
+            font-size: 24px;
+          `}>음악을 시청해 주세요^^</div>
+        ) : (
+          history.map((item, index) => (
+            <>
+              <div key={index} css={s_div_item}>
+                {/* 이미지와 제목 */}
+                <div css={s_div_titie_img} onClick={() => navigate('/music/1')}>
+                  <div css={s_div_img}>
+                    <img src={lala} alt="라라" css={s_img} />
+                  </div>
+                  <h4 css={s_h4}>{item.title}</h4>
+                </div>
+                {/* 아티스트 */}
+                <p css={s_p}>{item.artists[0].name}</p>
+                {/* 하트 아이콘 */}
+                {/* <Heart isLike={item?} size={24} /> */}
+                {/* 드롭다운 */}
+                <DotDotDot data={items} />
+                {/* 시간 */}
+                {/* <p css={s_p}>{item.}</p> */}
               </div>
-              <h4
-                css={css`
-                  font-size: 24px;
-                  color: white;
-                  font-weight: 700;
-                `}
-              >
-                {item.title}
-              </h4>
-            </div>
-            {/* 아티스트 */}
-            <p css={s_p}>{item.artist}</p>
-            {/* 하트 아이콘 */}
-            <VscHeart
-              onClick={() => handleHeart(index)}
-              css={css`
-                cursor: pointer;
-                color: ${item.heart ? 'red' : 'white'};
-                font-size: 24px;
-                transition: color 0.3s;
-              `}
-            />
-            {/* 시간 */}
-            <p css={s_p}>{item.time}</p>
-          </div>
-        ))}
+              {/* 모달 컴포넌트 */}
+              <Modal isOpen={isModalOpen} onClose={closeModal} id={item.musicId} />
+            </>
+          ))
+        )}
       </div>
     </div>
   );

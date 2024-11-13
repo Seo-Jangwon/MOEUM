@@ -37,21 +37,6 @@ public class ServiceHealthIndicator implements HealthIndicator {
         services.put("music-service", url);
     }
 
-    @Value("${service.url.player}")
-    public void setPlayerServiceUrl(String url) {
-        services.put("player-service", url);
-    }
-
-    @Value("${service.url.history}")
-    public void setHistoryServiceUrl(String url) {
-        services.put("history-service", url);
-    }
-
-    @Value("${service.url.settings}")
-    public void setSettingsServiceUrl(String url) {
-        services.put("settings-service", url);
-    }
-
     @Value("${service.url.recommendations}")
     public void setRecommendationsServiceUrl(String url) {
         services.put("recommendations-service", url);

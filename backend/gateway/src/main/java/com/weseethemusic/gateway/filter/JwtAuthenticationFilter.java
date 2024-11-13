@@ -1,5 +1,16 @@
 package com.weseethemusic.gateway.filter;
 
+import com.weseethemusic.gateway.exception.ErrorCode;
+import com.weseethemusic.gateway.util.JwtUtil.TokenStatus;
+import java.net.URI;
+import java.net.URISyntaxException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weseethemusic.gateway.constants.SecurityConstants;
@@ -19,8 +30,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
 @Component
 @Slf4j
@@ -48,8 +57,6 @@ public class JwtAuthenticationFilter extends
 
             String token = exchange.getRequest().getHeaders()
                 .getFirst(SecurityConstants.JWT_HEADER);
-            String refreshToken = exchange.getRequest().getHeaders()
-                .getFirst(SecurityConstants.REFRESH_TOKEN_HEADER);
 
             // 토큰이 없는 경우
             if (token == null || !token.startsWith("Bearer ")) {
@@ -61,33 +68,40 @@ public class JwtAuthenticationFilter extends
             JwtUtil.TokenStatus status = jwtUtil.validateTokenStatus(extractedToken);
             log.debug("토큰 검증 결과: {}", status);
 
+            Integer userId;
+            String role;
+            ServerHttpRequest request;
+
             switch (status) {
                 case VALID:
-                    String userId = jwtUtil.getUserIdFromToken(extractedToken);
-                    String role = jwtUtil.getRoleFromToken(extractedToken);
+                    userId = jwtUtil.getUserIdFromToken(extractedToken);
+                    role = jwtUtil.getRoleFromToken(extractedToken);
+                    request = exchange.getRequest();
+
                     log.info("gateway - 유저: {}에 대한 토큰 검증 완료", userId);
-                    return chain.filter(exchange.mutate()
-                        .request(exchange.getRequest().mutate()
-                            .header("X-User-Id", userId)
-                            .header("X-Role", role)
-                            .build())
-                        .build());
+
+                    // ServerHttpRequestDecorator 사용하여 헤더 수정
+                    ServerHttpRequest modifiedRequestVALID = new ServerHttpRequestDecorator(
+                        request) {
+                        @Override
+                        public HttpHeaders getHeaders() {
+                            HttpHeaders headers = new HttpHeaders();
+                            headers.putAll(super.getHeaders());
+                            headers.add("X-Member-Id", userId.toString());
+                            headers.add("X-Role", role);
+                            return headers;
+                        }
+                    };
+
+                    // 수정된 요청으로 새로운 exchange 생성
+                    ServerWebExchange modifiedExchangeVALID = exchange.mutate()
+                        .request(modifiedRequestVALID)
+                        .build();
+
+                    return chain.filter(modifiedExchangeVALID);
 
                 case EXPIRED:
-                    if (refreshToken != null) {
-                        log.info("gateway - 토큰 만료. 토큰 재발급하러 감");
-                        return chain.filter(exchange.mutate()
-                            .request(exchange.getRequest().mutate()
-                                .path("/members/token")
-                                .header(SecurityConstants.REFRESH_TOKEN_HEADER, refreshToken)
-                                .build())
-                            .build());
-                    } else {
-                        log.warn("gateway - 토큰 만료. 리프레시 토큰이 없음");
-                        return handleError(exchange, JwtUtil.TokenStatus.EXPIRED,
-                            "토큰이 만료되었습니다. 리프레시 토큰이 필요합니다");
-                    }
-
+                    return handleError(exchange, TokenStatus.EXPIRED, "토큰이 만료되었습니다");
                 case INVALID:
                     log.error("gateway - 유효하지 않은 토큰: {}", token);
                     return handleError(exchange, JwtUtil.TokenStatus.INVALID, "유효하지 않은 토큰입니다");
@@ -103,6 +117,15 @@ public class JwtAuthenticationFilter extends
         };
     }
 
+    private String getRefreshTokenFromCookies(ServerWebExchange exchange) {
+        if (exchange.getRequest().getCookies()
+            .containsKey(SecurityConstants.REFRESH_TOKEN_COOKIE)) {
+            return exchange.getRequest().getCookies()
+                .getFirst(SecurityConstants.REFRESH_TOKEN_COOKIE).getValue();
+        }
+        return null;
+    }
+
 
     private Mono<Void> handleError(ServerWebExchange exchange, JwtUtil.TokenStatus status,
         String message) {
@@ -116,11 +139,8 @@ public class JwtAuthenticationFilter extends
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, String> errorDetails = new HashMap<>();
-        errorDetails.put("timestamp", LocalDateTime.now().toString());
-        errorDetails.put("status", status.name());
-        errorDetails.put("error", httpStatus.getReasonPhrase());
+        errorDetails.put("code", String.valueOf(ErrorCode.AUTHENTICATION_ERROR));
         errorDetails.put("message", message);
-        errorDetails.put("path", exchange.getRequest().getPath().value());
 
         byte[] bytes = null;
         try {

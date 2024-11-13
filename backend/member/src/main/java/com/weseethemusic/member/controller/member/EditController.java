@@ -1,8 +1,8 @@
 package com.weseethemusic.member.controller.member;
 
 import com.weseethemusic.member.dto.member.EditRequestDto;
-import com.weseethemusic.member.dto.member.EditResponseDto;
-import com.weseethemusic.member.service.eidt.EditService;
+import com.weseethemusic.member.dto.member.MemberInfoDto;
+import com.weseethemusic.member.service.edit.EditService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,23 +28,19 @@ public class EditController {
 
     @PutMapping("/nickname")
     public ResponseEntity<Map<String, Object>> updateNickname(
-        @RequestHeader("X-USER-ID") Long userId,
+        @RequestHeader("X-Member-Id") Long memberId,
         @RequestBody EditRequestDto editRequestDto) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
-            EditResponseDto data = editService.updateNickname(userId, editRequestDto.getNickname());
+            MemberInfoDto data = editService.updateNickname(memberId,
+                editRequestDto.getNickname());
 
             response.put("code", 200);
             response.put("data", data);
 
             return ResponseEntity.ok(response);
-
-        } catch (EntityNotFoundException e) {
-            response.put("code", 401);
-            response.put("message", "유효하지 않은 JWT 토큰입니다.");
-            return ResponseEntity.status(401).body(response);
 
         } catch (Exception e) {
             response.put("code", 500);
@@ -55,13 +51,13 @@ public class EditController {
 
     @PostMapping("/checkuser")
     public ResponseEntity<Map<String, Object>> checkUser(
-        @RequestHeader("X-USER-ID") Long userId,
+        @RequestHeader("X-Member-Id") Long memberId,
         @RequestBody EditRequestDto editRequestDto
     ) {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            boolean result = editService.checkUser(userId, editRequestDto.getPassword());
+            boolean result = editService.checkUser(memberId, editRequestDto.getPassword());
 
             if (result) {
                 response.put("code", 200);
@@ -81,13 +77,13 @@ public class EditController {
 
     @PutMapping(value = "/password")
     public ResponseEntity<Map<String, Object>> updatePassword(
-        @RequestHeader("X-USER-ID") Long userId,
+        @RequestHeader("X-Member-Id") Long memberId,
         EditRequestDto editRequestDto) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
-            EditResponseDto updatedMember = editService.updatePassword(userId,
+            MemberInfoDto updatedMember = editService.updatePassword(memberId,
                 editRequestDto.getPassword());
 
             Map<String, Object> data = new HashMap<>();
@@ -114,7 +110,7 @@ public class EditController {
 
     @PutMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> updateProfileImage(
-        @RequestHeader("X-USER-ID") Long userId,
+        @RequestHeader("X-Member-Id") Long memberId,
         @ModelAttribute EditRequestDto editRequestDto) {
 
         Map<String, Object> response = new HashMap<>();
@@ -127,8 +123,8 @@ public class EditController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            EditResponseDto updatedMember = editService.updateProfileImage(
-                userId, editRequestDto.getProfileImage());
+            MemberInfoDto updatedMember = editService.updateProfileImage(
+                memberId, editRequestDto.getProfileImage());
 
             response.put("code", 200);
             response.put("data", updatedMember);

@@ -1,0 +1,139 @@
+services:
+  mysql_member: &mysql_template
+    container_name: mysql-member
+    restart: always
+    image: mysql:8.0.40
+    volumes:
+      - mysql_member:/var/lib/mysql
+    environment:
+      TZ: Asia/Seoul
+      LANG: C.UTF-8
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: member
+    expose:
+      - "3306"
+    networks:
+      - moeum
+
+  mysql_music:
+    <<: *mysql_template
+    container_name: mysql-music
+    volumes:
+      - mysql_music:/var/lib/mysql
+    command: --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+    environment:
+      TZ: Asia/Seoul
+      LANG: C.UTF-8
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: music
+
+  mysql_rec:
+    <<: *mysql_template
+    container_name: mysql-rec
+    volumes:
+      - mysql_rec:/var/lib/mysql
+    environment:
+      TZ: Asia/Seoul
+      LANG: C.UTF-8
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: rec
+
+  elastic:
+    container_name: elastic-music
+    image: elasticsearch:8.15.3
+    environment:
+      - "discovery.type=single-node"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    expose:
+      - 9200
+    networks:
+      - moeum
+
+  redis_gateway: &redis_template
+    container_name: redis-gateway
+    restart: always
+    image: redis:7.4.1-alpine
+    expose:
+      - "6379"
+    command: [ "redis-server" ]
+    networks:
+      - moeum
+
+  redis_member:
+    <<: *redis_template
+    container_name: redis-member
+
+  redis_music:
+    <<: *redis_template
+    container_name: redis-music
+
+  redis_rec:
+    <<: *redis_template
+    container_name: redis-rec
+
+  rabbitmq:
+    container_name: moeum-rabbitmq
+    restart: always
+    image: rabbitmq:4.0.3-management-alpine
+    expose:
+      - "5672"
+    networks:
+      - moeum
+
+  gateway: &spring_template
+    container_name: moeum-gateway
+    restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 2s
+    build: ./backend/gateway
+    expose:
+      - 8080
+    networks:
+      - moeum
+
+  member:
+    <<: *spring_template
+    container_name: moeum-member
+    build: ./backend/member
+    expose:
+      - 8081
+
+  music:
+    <<: *spring_template
+    container_name: moeum-music
+    build: ./backend/music
+    expose:
+      - 8082
+
+  rec:
+    <<: *spring_template
+    container_name: moeum-recommendation
+    build: ./backend/recommendation
+    expose:
+      - 8083
+
+  client:
+    container_name: moeum-client
+    restart: always
+    build: ./frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - moeum
+
+volumes:
+  mysql_member:
+  mysql_music:
+  mysql_rec:
+  mongo_music:
+
+
+networks:
+  moeum:
+    driver: bridge
