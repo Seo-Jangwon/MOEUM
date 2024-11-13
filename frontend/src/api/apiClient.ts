@@ -27,7 +27,7 @@ apiClient.interceptors.response.use(
         const accessToken = tokenResponse.headers.authorization;
         setAccessToken(accessToken);
         originalRequest.headers.Authorization = accessToken;
-        return originalRequest;
+        return apiClient(originalRequest);
       } catch (refreshErr) {
         if (axios.isAxiosError(refreshErr)) {
           console.log(refreshErr.response?.data);

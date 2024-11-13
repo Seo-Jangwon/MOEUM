@@ -22,6 +22,8 @@ DELETE
 FROM album;
 DELETE
 FROM genre;
+delete
+from playlist;
 
 -- 2. 데이터 삽입
 INSERT INTO genre (id, name)
@@ -89,17 +91,17 @@ VALUES (1, 1),
 
 INSERT INTO playlist (id, created_at, description, is_public, member_id, name, updated_at)
 VALUES (1, '2024-10-29 00:00:00.000000', 'Quisque ut erat. Curabitur gravida nisi at nibh.', b'1',
-        16, 'Persistent', '2024-07-19 00:00:00.000000'),
-       (2, '2024-06-15 00:00:00.000000', 'Morbi a ipsum. Integer a nibh.', b'1', 4,
+        1, 'Persistent', '2024-07-19 00:00:00.000000'),
+       (2, '2024-06-15 00:00:00.000000', 'Morbi a ipsum. Integer a nibh.', b'1', 1,
         'internet solution', '2024-02-21 00:00:00.000000'),
        (3, '2024-10-17 00:00:00.000000',
-        'Aenean fermentum. Donec ut mauris eget massa tempor convallis.', b'1', 2, 'orchestration',
+        'Aenean fermentum. Donec ut mauris eget massa tempor convallis.', b'1', 1, 'orchestration',
         '2024-01-19 00:00:00.000000'),
        (4, '2024-06-08 00:00:00.000000',
-        'Suspendisse potenti. Cras in purus eu magna vulputate luctus.', b'1', 2, 'initiative',
+        'Suspendisse potenti. Cras in purus eu magna vulputate luctus.', b'1', 1, 'initiative',
         '2023-11-10 00:00:00.000000'),
        (5, '2024-09-26 00:00:00.000000',
-        'Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.', b'1', 12, 'Reactive',
+        'Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.', b'1', 1, 'Reactive',
         '2024-07-28 00:00:00.000000');
 
 INSERT INTO like_music (member_id, music_id)

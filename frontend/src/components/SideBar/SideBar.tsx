@@ -4,13 +4,20 @@ import SideBarContent from './SideBarContent/SideBarContent';
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+
   const handleClose = () => {
     setIsOpen(false);
   };
+
   return (
     <>
-      <SideBarButton onClick={() => setIsOpen(true)} />
-      <SideBarContent isOpen={isOpen} closeHandler={handleClose} />
+      <SideBarButton
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(true);
+        }}
+      />
+      <SideBarContent isOpen={isOpen} closeSideBar={handleClose} />
     </>
   );
 };

@@ -1,6 +1,5 @@
 import Button from '@/components/Button/Button';
 import { css } from '@emotion/react';
-import { ReactNode } from 'react';
 import {
   s_cancelButtonContainer,
   s_fullScreenWithModal,
@@ -11,22 +10,17 @@ import {
 
 interface ModalProps {
   title: string;
-  modalBody: ReactNode;
-  negativeButtonClickListener: () => void;
-  positiveButtonClickListener: () => void;
+  children: React.ReactNode;
+  handleSubmit: () => void;
+  handleClose: () => void;
 }
 
-const Modal = ({
-  title,
-  modalBody,
-  positiveButtonClickListener,
-  negativeButtonClickListener,
-}: ModalProps) => {
+const Modal = ({ title, children, handleClose, handleSubmit }: ModalProps) => {
   return (
-    <div css={s_fullScreenWithModal} onClick={negativeButtonClickListener}>
+    <div css={s_fullScreenWithModal} onClick={handleClose}>
       <div css={s_modalContainer} onClick={(e) => e.stopPropagation()}>
         <div css={s_modalTitleContainer}>{title}</div>
-        <div css={s_modalBodyContainer}>{modalBody}</div>
+        <div css={s_modalBodyContainer}>{children}</div>
         <div css={s_cancelButtonContainer}>
           <div
             css={css`
@@ -34,22 +28,8 @@ const Modal = ({
               gap: 20px;
             `}
           >
-            <Button
-              variant="grad"
-              children="전송"
-              onClick={(e) => {
-                e.preventDefault();
-                positiveButtonClickListener();
-              }}
-            ></Button>
-            <Button
-              variant="outline"
-              children="취소"
-              onClick={(e) => {
-                e.preventDefault();
-                negativeButtonClickListener();
-              }}
-            ></Button>
+            <Button variant="grad" children="전송" onClick={handleSubmit}></Button>
+            <Button variant="outline" children="취소" onClick={handleClose}></Button>
           </div>
         </div>
       </div>
