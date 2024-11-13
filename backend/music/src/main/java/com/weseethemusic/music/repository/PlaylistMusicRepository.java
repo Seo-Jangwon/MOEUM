@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PlaylistMusicRepository extends MongoRepository<PlaylistMusic, String> {
+public interface PlaylistMusicRepository extends MongoRepository<PlaylistMusic, Long> {
 
     List<PlaylistMusic> findByPlaylistIdOrderByOrder(Long playlistId);
 
