@@ -52,16 +52,16 @@ const handleLike = (id: number) => {
 const PopularPlayList = () => {
   const navigate = useNavigate();
 
-  const handlePage = (path: string) => {
-    return navigate(path);
-  };
+  // const handlePage = (path: string) => {
+  //   return navigate(path);
+  // };
   const handleMusicPage = (path: string) => {
     return navigate(path);
   };
   useEffect(() => {
     apiClient({
       method: 'GET',
-      url: '/musics/playlist',
+      url: '/musics/popular/playlist',
     })
       .then((res) => {
         console.log(res);
@@ -126,7 +126,7 @@ const PopularPlayList = () => {
                   border-radius: 10px;
                 }
               `}
-              onClick={() => handleMusicPage('music/1')}
+              onClick={() => handleMusicPage(`playlist/${item.id}`)}
             >
               <h5 css={s_h5}>{item.title}</h5>
             </button>

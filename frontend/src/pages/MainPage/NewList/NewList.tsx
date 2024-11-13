@@ -26,43 +26,36 @@ import {
 
 interface Music {
   id: number;
-  title: string;
-  img: string;
-  artist: string;
+  name: string;
+  image: string;
+  artist: string[];
 }
-
-const mokData: { music: Music[] } = {
-  music: [
-    { id: 1, title: 'apt' },
-    { id: 1, title: 'apt' },
-    { id: 1, title: 'apt' },
-    { id: 1, title: 'apt' },
-    { id: 1, title: 'apt' },
-    { id: 1, title: 'apt' },
-    { id: 1, title: 'apt' },
-    { id: 1, title: 'apt' },
-    { id: 1, title: 'apt' },
-  ],
-};
 
 const NewList = () => {
   const listRef = useRef<HTMLDivElement>(null);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const navigate = useNavigate();
+  const [latestData, setLatestData] = useState<Music[]>([]);
 
   useEffect(() => {
     apiClient({
       method: 'GET',
-      url: '/musics/popular',
+      url: '/musics/latest',
     })
       .then((res) => {
         console.log(res);
+        if (res.data.code === 200) {
+          console.log(res.data.data);
+          setLatestData(res.data.data);
+          console.log(latestData);
+        }
       })
       .catch((err) => {
         console.log(err);
       });
-  });
+      console.log(latestData);
+  }, []);
 
   const updateItemsPerPage = () => {
     if (window.innerWidth <= 900) {
@@ -87,7 +80,7 @@ const NewList = () => {
       const item = listRef.current.querySelector('div');
       if (item) {
         const itemWidth = item.clientWidth;
-        const gap = 20; // 아이템 간의 간격
+        const gap = 20;
         const scrollAmount = (itemWidth + gap) * itemsPerPage;
         listRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
       }
@@ -99,7 +92,7 @@ const NewList = () => {
       const item = listRef.current.querySelector('div');
       if (item) {
         const itemWidth = item.clientWidth;
-        const gap = 20; // 아이템 간의 간격
+        const gap = 20;
         const scrollAmount = (itemWidth + gap) * itemsPerPage;
         listRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
       }
@@ -145,7 +138,7 @@ const NewList = () => {
         </div>
       </div>
       <div css={s_div_list} ref={listRef}>
-        {mokData.music.map((item, index) => (
+        {latestData.map((item, index) => (
           <div key={index} css={s_div_img}>
             <div
               css={css`
@@ -174,8 +167,8 @@ const NewList = () => {
                 ]}
               />
             </div>
-            <button css={s_play_button} onClick={() => handlePlayClick(index)}>
-              <img src={lala} alt="라라" css={s_img} />
+            <button css={s_play_button} onClick={() => handlePlayClick(item.id)}>
+              <img src={item.image} alt="라라" css={s_img} />
               {playingIndex === index ? (
                 <Lottie animationData={playMusic} loop={true} css={s_lottie} />
               ) : (
@@ -183,7 +176,7 @@ const NewList = () => {
               )}
             </button>
             <div>
-              <p css={s_p}>{item.title}</p>
+              <p css={s_p}>{item.name}</p>
             </div>
           </div>
         ))}

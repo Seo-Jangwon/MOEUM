@@ -2,7 +2,7 @@ import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala4.png';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FaPlay, FaRegHeart } from 'react-icons/fa6';
 import { FiActivity } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -16,49 +16,22 @@ import {
   s_popular_container,
 } from './style';
 
-interface Music {
-  id: number;
-  title: string;
-  artist: string;
+interface Artist {
+  id: number
+  name: string
 }
 
-const mokData: { music: Music[] } = {
-  music: [
-    {
-      id: 1,
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-    {
-      id: 1,
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-    {
-      id: 1,
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-    {
-      id: 1,
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-    {
-      id: 1,
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-    {
-      id: 1,
-      title: 'EscapeSSAFY',
-      artist: 'MSR',
-    },
-  ],
-};
+interface Music {
+  id: number;
+  name: string;
+  image: string;
+  artists: Artist[]
+
+}
 
 const PopularList = () => {
   const navigate = useNavigate();
+  const [popularList, setPopularList] = useState<Music[]>([])
   const clickHandler = (index: number) => {
     navigate(`music/${index}`);
   };
@@ -70,7 +43,12 @@ const PopularList = () => {
       url: '/musics/popular',
     })
       .then((res) => {
-        console.log(res);
+        const jsonString = JSON.stringify(res.data.data);
+        console.log(jsonString)
+        console.log(res.data.data);
+        if (res.data.code === 200) {
+          setPopularList(res.data.data)
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -103,7 +81,7 @@ const PopularList = () => {
         </button>
       </div>
       <div css={s_popular_container}>
-        {mokData.music.slice(0, 4).map((item, index) => (
+        {popularList.slice(0, 6).map((item, index) => (
           <div key={index} css={s_popular_box} onClick={() => clickHandler(index)}>
             <div
               css={css`
@@ -112,13 +90,9 @@ const PopularList = () => {
                 aspect-ratio: 1 / 1;
               `}
             >
-              <div
-                css={css`
-                  position: relative;
-                `}
-              >
+              <div style={{ position: 'relative' }}>
                 <img
-                  src={lala}
+                  src={item.image}
                   alt="라라"
                   css={css`
                     width: 100%;
@@ -145,8 +119,8 @@ const PopularList = () => {
               </div>
             </div>
             <div css={s_div_data}>
-              <h5 css={s_h5_title}>{item.title}</h5>
-              <p css={s_p_artist}>{item.artist}</p>
+              <h5 css={s_h5_title}>{item.name}</h5>
+              <p css={s_p_artist}>{item.artists[0].name}</p>
             </div>
             <div
               css={css`
@@ -180,3 +154,4 @@ const PopularList = () => {
 };
 
 export default PopularList;
+

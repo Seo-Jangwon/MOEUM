@@ -1,7 +1,8 @@
+import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala4.png';
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { s_div_header } from '../MainPage/NewList/style';
 import {
   s_div_data,
@@ -14,39 +15,58 @@ import { s_div_item_box, s_div_item_container, s_h5 } from '../MainPage/PopularP
 import { s_container } from '../MainPage/style';
 
 interface Music {
-  title: string;
+  id: number;
+  name: string;
   image: string;
+  artist: string[];
 }
-
-const mokData: { music: Music[] } = {
-  music: [
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-    { title: '라라랜드', image: 'dfd.jpg' },
-  ],
-};
 
 const ListPage = () => {
   const { id } = useParams();
   const [title, setTitle] = useState<string>('');
+  const [latestData, setLatestData] = useState<Music[]>([]);
+  const [popularList, setPopularList] = useState<Music[]>([])
+
+
+  const navigate = useNavigate();
   useEffect(() => {
     if (id === 'Genre') {
       setTitle('장르');
     } else if (id === 'newList') {
       setTitle('최신곡');
+      apiClient({
+        method: 'GET',
+        url: '/musics/latest',
+      })
+        .then((res) => {
+          console.log(res);
+          if (res.data.code === 200) {
+            console.log(res.data.data);
+            setLatestData(res.data.data);
+            console.log(latestData);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      console.log(latestData);
     } else if (id === 'Popular') {
       setTitle('인기곡');
+      apiClient({
+        method: 'GET',
+        url: '/musics/popular',
+      })
+        .then((res) => {
+          const jsonString = JSON.stringify(res.data.data);
+          console.log(jsonString);
+          console.log(res.data.data);
+          if (res.data.code === 200) {
+            setPopularList(res.data.data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } else if (id === 'playList') {
       setTitle('플레이리스트');
     } else {
@@ -82,7 +102,7 @@ const ListPage = () => {
               gap: 10px;
             `}
           >
-            {mokData.music.map((item, index) => (
+            {latestData.map((item, index) => (
               <div>
                 <button
                   key={index}
@@ -109,7 +129,7 @@ const ListPage = () => {
                   `}
                 >
                   <img
-                    src={lala}
+                    src={item.image}
                     alt="라라"
                     css={css`
                       width: 100%;
@@ -126,7 +146,7 @@ const ListPage = () => {
                     text-align: center;
                   `}
                 >
-                  {item.title}
+                  {item.name}
                 </p>
               </div>
             ))}
@@ -138,15 +158,21 @@ const ListPage = () => {
     // 인기차트 리스트 페이지 //////////////////////////////////////////////
     return (
       <div css={s_container}>
-        <div>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+          `}
+        >
           <div css={s_div_header}>
             <div css={s_div_h3}>
               <h3>인기차트</h3>
             </div>
           </div>
           <div css={s_popular_container}>
-            {mokData.music.map((item, index) => (
-              <div key={index} css={s_popular_box}>
+            {popularList.map((item, index) => (
+              <div key={index} css={s_popular_box} onClick={() => navigate('/music/1')}>
                 <div
                   css={css`
                     border-radius: 100%;
@@ -157,7 +183,7 @@ const ListPage = () => {
                   `}
                 >
                   <img
-                    src={lala}
+                    src={item.image}
                     alt="라라"
                     css={css`
                       width: 100%;
@@ -167,7 +193,7 @@ const ListPage = () => {
                   />
                 </div>
                 <div css={s_div_data}>
-                  <h5 css={s_h5_title}>{item.title} </h5>
+                  <h5 css={s_h5_title}>{item.name} </h5>
                 </div>
               </div>
             ))}
