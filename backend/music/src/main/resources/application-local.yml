@@ -34,7 +34,6 @@ spring:
     mongodb:
       uri: mongodb+srv://${spring.data.mongodb.username}:${spring.data.mongodb.password}@ssafy.ngivl.mongodb.net/S11P31D203?authSource=admin
       database: S11P31D203
-      port: 27017
       authentication-database: admin
       auto-index-creation: true
       write-concern: NORMAL

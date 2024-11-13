@@ -1,5 +1,6 @@
-import { Theme, css } from '@emotion/react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Link } from 'react-router-dom';
 
 export const Container = styled.aside`
   display: flex;
@@ -37,7 +38,7 @@ export const CloseButton = styled.button`
   color: ${({ theme }) => theme.colors.white};
 `;
 
-export const s_sidebar_items = css`
+export const Content = styled.div`
   margin-top: 60px;
   height: 100%;
   display: flex;
@@ -45,7 +46,18 @@ export const s_sidebar_items = css`
   align-items: start;
   justify-content: space-between;
   gap: 40px;
+`;
 
+export const Section = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+`;
+
+export const Footer = styled.footer`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 `;
 
 export const s_item = css`
@@ -56,18 +68,10 @@ export const s_item = css`
   align-items: center;
 `;
 
-export const s_link_color = (theme: Theme) => css`
-  color: ${theme.colors.white};
+export const RouterLink = styled(Link)`
+  color: ${({ theme }) => theme.colors.white};
   :hover {
-    color: ${theme.colors.gray};
+    color: ${({ theme }) => theme.colors.gray};
     transition: 0.3s;
   }
 `;
-
-export const s_link_color2 = (theme: Theme) => css`
-  color: ${theme.colors.lightgray};
-  :hover{
-    color: ${theme.colors.gray};
-    transition: 0.3s;
-  }
-`

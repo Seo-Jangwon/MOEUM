@@ -3,12 +3,7 @@ package com.weseethemusic.music.service;
 import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
 import com.weseethemusic.music.common.entity.Music;
-import com.weseethemusic.music.dto.detail.AlbumDetailDto;
-import com.weseethemusic.music.dto.detail.ArtistDetailDto;
-import com.weseethemusic.music.dto.detail.ArtistDto;
-import com.weseethemusic.music.dto.detail.DiscographyAlbumDto;
-import com.weseethemusic.music.dto.detail.MusicDto;
-import com.weseethemusic.music.dto.detail.PopularMusicDto;
+import com.weseethemusic.music.dto.detail.*;
 import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
 import com.weseethemusic.music.repository.ArtistRepository;
@@ -112,6 +107,45 @@ public class MusicDetailServiceImpl implements MusicDetailService {
 
         return ArtistDetailDto.builder().name(artist.getName()).image(artist.getImageName())
             .discography(discography).popular(popular).build();
+    }
+
+    // 음악 상세 정보 조회
+    @Override
+    public MusicDetailDto getMusicDetail(Long musicId) {
+        MusicDetailDto result = new MusicDetailDto();
+
+        Music music = musicRepository.findById(musicId).orElse(null);
+
+        if (music == null) {
+            return new MusicDetailDto();
+        }
+
+        result.setMusicId(music.getId());
+        result.setMusicName(music.getName());
+        result.setAlbumId(music.getAlbum().getId());
+        result.setAlbumName(music.getAlbum().getName());
+        result.setAlbumImage(music.getAlbum().getImageName());
+        result.setGenre(music.getGenre().getName());
+
+        int duration = music.getDuration();
+        int[] durations = calculateDuration(duration);
+        result.setDuration(durations[0] == 0 ? durations[1] + ":" + durations[2]
+                : durations[0] + ":" + durations[1] + ":" + durations[2]);
+        result.setReleaseDate(music.getAlbum().getReleaseDate().toString());
+
+        List<Artist> artistList = artistMusicRepository.findAllByMusic(music);
+        List<MusicDetailArtistDto> artistDtos = new ArrayList<>();
+
+        for (Artist artist : artistList) {
+            MusicDetailArtistDto dto = new MusicDetailArtistDto();
+            dto.setId(artist.getId());
+            dto.setName(artist.getName());
+            artistDtos.add(dto);
+        }
+
+        result.setArtists(artistDtos);
+
+        return result;
     }
 
     public int[] calculateDuration(int duration) {
