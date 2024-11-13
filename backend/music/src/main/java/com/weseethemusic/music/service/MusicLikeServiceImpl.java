@@ -45,4 +45,11 @@ public class MusicLikeServiceImpl implements MusicLikeService {
             new LikeAlbum(memberId, albumRepository.findById(albumId).orElseThrow()));
     }
 
+    // 앨범 좋아요 해제
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void unlikeAlbum(Long memberId, Long albumId) {
+        likeAlbumRepository.deleteLikeAlbumByMemberIdAndAlbum_Id(memberId, albumId);
+    }
+    
 }

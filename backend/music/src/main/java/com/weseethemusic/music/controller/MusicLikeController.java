@@ -64,4 +64,17 @@ public class MusicLikeController {
         return ResponseDto.res(200);
     }
 
+    // 앨범 좋아요 해제
+    @DeleteMapping("/album/like")
+    public ResponseDto<Void> unlikeAlbum(@RequestHeader("X-Member-Id") Long memberId,
+        @RequestBody Map<String, Long> map) {
+        try {
+            musicLikeService.unlikeAlbum(memberId, map.get("id"));
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200);
+    }
+
 }
