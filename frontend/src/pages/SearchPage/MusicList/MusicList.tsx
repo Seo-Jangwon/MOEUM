@@ -14,26 +14,15 @@ import {
   s_titleContainer,
 } from './MusicList.style';
 
-const MusicList = ({
-  musicList,
-  keyword,
-  category,
-}: {
-  musicList: MusicI[];
-  keyword: string;
-  category: string;
-}) => {
+const MusicList = ({ musicList, keyword, category }: { musicList: MusicI[]; keyword: string; category: string }) => {
   const navigate = useNavigate();
   return (
     <div css={s_container}>
       <div css={s_titleContainer}>
         <div>노래</div>
         {/* 노래 상세 검색 페이지로 이동 로직 필요 */}
-        <div
-          style={{ cursor: 'pointer' }}
-          onClick={() => navigate(`/search/${category}?keyword=${keyword}`)}
-        >
-          {musicList.length > 0 ? '더 보기' : ''}
+        <div style={{ cursor: 'pointer' }} onClick={() => navigate(`/search/${category}?keyword=${keyword}`)}>
+          {musicList.length > 4 ? '더 보기' : ''}
         </div>
       </div>
       <div css={s_elementsContainer}>
@@ -42,7 +31,7 @@ const MusicList = ({
             <div
               css={s_firstElement}
               style={{ cursor: 'pointer' }}
-              onClick={() => navigate(`/music/${musicList[0].id}`)}
+              onClick={() => navigate(`/music?id=${musicList[0].id}`)}
             >
               <img src={musicList[0].albumImage} alt="이미지" css={s_firstElementImage} />
               <div css={s_firstElementText}>
@@ -69,11 +58,7 @@ const MusicList = ({
             <div css={s_otherElementContainer}>
               {musicList.slice(1).map((item, index) => {
                 return (
-                  <div
-                    css={s_otherElement}
-                    onClick={() => navigate(`/music/${item.id}`)}
-                    key={index}
-                  >
+                  <div css={s_otherElement} onClick={() => navigate(`/music/${item.id}`)} key={index}>
                     <div css={s_otherElementLeftChild}>
                       <img css={s_otherElementImage} src={item.albumImage} alt="" />
                       {item.title}
