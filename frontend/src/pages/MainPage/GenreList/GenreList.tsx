@@ -2,10 +2,7 @@ import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala7.png';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
-<<<<<<< HEAD
 import { useEffect, useState } from 'react';
-=======
->>>>>>> edb0fa34a7969ea9e1a6f4037605f5b68d3590f3
 import { FaRegHeart } from 'react-icons/fa6';
 import { FiThumbsUp } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
