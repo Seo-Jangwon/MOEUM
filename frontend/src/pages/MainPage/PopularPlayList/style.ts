@@ -14,6 +14,10 @@ export const s_div_h3 = css`
     font-size: 24px;
     gap: 6px;
   }
+  @media (max-width: 500px) {
+    font-size: 18px;
+    gap: 6px;
+  }
 `;
 
 export const s_div_item_container = css`
@@ -22,9 +26,9 @@ export const s_div_item_container = css`
   gap: 20px;
   @media (max-width: 767px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 `;
-
 
 export const s_div_item_box = (lala: string) => css`
   display: flex;
@@ -32,8 +36,9 @@ export const s_div_item_box = (lala: string) => css`
   justify-content: center;
   align-items: center;
   height: 100px;
-  @media(max-width:768px) {
-    height: 40px;
+  border-radius: 10px;
+  @media (max-width: 768px) {
+    height: 45px;
   }
   /* background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url(${lala}); */
 `;

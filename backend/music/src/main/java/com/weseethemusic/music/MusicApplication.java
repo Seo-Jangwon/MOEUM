@@ -6,7 +6,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.weseethemusic.music")
 @EnableCaching
 public class MusicApplication {
 

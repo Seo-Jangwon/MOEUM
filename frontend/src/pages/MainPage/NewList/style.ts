@@ -21,6 +21,10 @@ export const s_div_h3 = (theme: Theme) => css`
     font-size: 24px;
     gap: 6px;
   }
+  @media (max-width: 500px) {
+    font-size: 18px;
+    gap: 6px;
+  }
 `;
 
 export const s_button = (theme: Theme) => css`
@@ -35,11 +39,11 @@ export const s_button = (theme: Theme) => css`
     color: ${theme.colors.gray};
     cursor: not-allowed;
   }
-  @media(max-width: 1024px) {
+  @media (max-width: 1024px) {
     font-size: 18px;
   }
 
-  @media(max-width: 768px) {
+  @media (max-width: 768px) {
     font-size: 12px;
   }
 `;
@@ -70,7 +74,6 @@ export const s_div_list = css`
   gap: 20px;
   scroll-behavior: smooth;
   padding-bottom: 10px;
-
 `;
 
 export const s_div_img = css`
@@ -101,11 +104,9 @@ export const s_p = (theme: Theme) => css`
   font-weight: 600;
   font-size: 18px;
   padding-left: 5px;
-  @media(max-width: 1024px) {
+  @media (max-width: 1024px) {
     font-size: 12px;
   }
-
- 
 `;
 
 export const s_icon = css`
@@ -129,4 +130,12 @@ export const s_lottie = css`
   width: 50%;
   height: 50%;
   transform: translate(-50%, -50%);
+`;
+
+export const s_button_all = (theme: Theme) => css`
+  border: none;
+  border-radius: 5px;
+  padding: 2px 4px;
+  color: ${theme.colors.lightgray};
+  background: transparent;
 `;
