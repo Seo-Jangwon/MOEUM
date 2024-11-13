@@ -5,22 +5,107 @@ export const detailArtistMock = {
   image: 'https://hollywoodlife.com/wp-content/uploads/2017/02/bruno-mars.jpg?fit=620%2C350',
   listData: [
     {
+      id: 1,
       title: 'Count On Me',
       duration: '3:18',
     },
     {
+      id: 1,
       title: 'Grenade',
       duration: '3:42',
     },
     {
+      id: 1,
       title: 'Lock on Heaven’s Door',
       duration: '3:42',
     },
     {
+      id: 1,
       title: 'APT.',
       duration: '3:42',
     },
     {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
+      title: 'It Will Rain',
+      duration: '3:42',
+    },
+    {
+      id: 1,
       title: 'It Will Rain',
       duration: '3:42',
     },
