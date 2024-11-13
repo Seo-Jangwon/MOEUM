@@ -8,5 +8,7 @@ public interface HistoryService {
     List<MusicDto> getPlayHistory(Long memberId);
 
     void deletePlayHistory(Long memberId, Long musicId);
-    
+
+    void addPlayHistory(Long memberId, Long musicId);
+
 }
