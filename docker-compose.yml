@@ -38,20 +38,15 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: rec
 
-  # mongo_music:
-  #   container_name: mongo-music
-  #   restart: always
-  #   image: mongodb/mongodb-community-server:7.0-ubi8
-  #   volumes:
-  #     - mongo_music:/data/db
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: root
-  #     MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-  #     MONGO_INITDB_DATABASE: music
-  #   expose:
-  #     - "27017"
-  #   networks:
-  #     - moeum
+  elastic:
+    container_name: elastic-music
+    image: elasticsearch:8.15.3
+    environment:
+      - "discovery.type=single-node"
+    expose:
+      - 9200
+    networks:
+      - moeum
 
   redis_gateway: &redis_template
     container_name: redis-gateway
