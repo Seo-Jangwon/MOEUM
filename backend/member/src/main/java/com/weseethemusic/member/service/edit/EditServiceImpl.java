@@ -3,9 +3,8 @@ package com.weseethemusic.member.service.edit;
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.common.service.PresignedUrlService;
 import com.weseethemusic.member.common.service.S3Service;
-import com.weseethemusic.member.common.util.InputValidateUtil;
 import com.weseethemusic.member.common.util.SecurityUtil;
-import com.weseethemusic.member.dto.member.EditResponseDto;
+import com.weseethemusic.member.dto.member.MemberInfoDto;
 import com.weseethemusic.member.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -28,7 +27,7 @@ public class EditServiceImpl implements EditService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public EditResponseDto updateNickname(Long memberId, String nickname) {
+    public MemberInfoDto updateNickname(Long memberId, String nickname) {
         log.info("사용자 id: {} 닉네임 변경", memberId);
 
         try {
@@ -85,7 +84,7 @@ public class EditServiceImpl implements EditService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public EditResponseDto updatePassword(Long memberId, String password) {
+    public MemberInfoDto updatePassword(Long memberId, String password) {
         log.info("사용자 id: {} 비밀번호 변경", memberId);
 
         try {
@@ -117,7 +116,7 @@ public class EditServiceImpl implements EditService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public EditResponseDto updateProfileImage(Long memberId, MultipartFile file) {
+    public MemberInfoDto updateProfileImage(Long memberId, MultipartFile file) {
         log.info("사용자 id: {} 프로필 이미지 업데이트", memberId);
 
         try {
@@ -162,8 +161,8 @@ public class EditServiceImpl implements EditService {
         }
     }
 
-    private EditResponseDto convertToResponseDto(Member member) {
-        EditResponseDto responseDto = new EditResponseDto();
+    private MemberInfoDto convertToResponseDto(Member member) {
+        MemberInfoDto responseDto = new MemberInfoDto();
         responseDto.setEmail(member.getEmail());
         responseDto.setNickname(member.getNickname());
 

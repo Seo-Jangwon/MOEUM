@@ -1,7 +1,7 @@
 package com.weseethemusic.member.controller.member;
 
 import com.weseethemusic.member.dto.member.EditRequestDto;
-import com.weseethemusic.member.dto.member.EditResponseDto;
+import com.weseethemusic.member.dto.member.MemberInfoDto;
 import com.weseethemusic.member.service.edit.EditService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.HashMap;
@@ -34,7 +34,7 @@ public class EditController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            EditResponseDto data = editService.updateNickname(memberId,
+            MemberInfoDto data = editService.updateNickname(memberId,
                 editRequestDto.getNickname());
 
             response.put("code", 200);
@@ -83,7 +83,7 @@ public class EditController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            EditResponseDto updatedMember = editService.updatePassword(memberId,
+            MemberInfoDto updatedMember = editService.updatePassword(memberId,
                 editRequestDto.getPassword());
 
             Map<String, Object> data = new HashMap<>();
@@ -123,7 +123,7 @@ public class EditController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            EditResponseDto updatedMember = editService.updateProfileImage(
+            MemberInfoDto updatedMember = editService.updateProfileImage(
                 memberId, editRequestDto.getProfileImage());
 
             response.put("code", 200);
