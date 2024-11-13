@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.common.service.PresignedUrlService;
 import com.weseethemusic.member.common.service.S3Service;
-import com.weseethemusic.member.dto.member.EditResponseDto;
+import com.weseethemusic.member.dto.member.MemberInfoDto;
 import com.weseethemusic.member.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
@@ -77,7 +77,7 @@ class EditServiceImplTest {
         when(memberRepository.save(any(Member.class))).thenReturn(testMember);
 
         // when
-        EditResponseDto result = editService.updateNickname(USER_ID, newNickname);
+        MemberInfoDto result = editService.updateNickname(USER_ID, newNickname);
 
         // then
         assertThat(result).isNotNull();
@@ -128,7 +128,7 @@ class EditServiceImplTest {
         when(memberRepository.save(any(Member.class))).thenReturn(testMember);
 
         // when
-        EditResponseDto result = editService.updatePassword(USER_ID, newPassword);
+        MemberInfoDto result = editService.updatePassword(USER_ID, newPassword);
 
         // then
         assertThat(result).isNotNull();
@@ -155,7 +155,7 @@ class EditServiceImplTest {
         when(memberRepository.save(any(Member.class))).thenReturn(testMember);
 
         // when
-        EditResponseDto result = editService.updateProfileImage(USER_ID, file);
+        MemberInfoDto result = editService.updateProfileImage(USER_ID, file);
 
         // then
         assertThat(result).isNotNull();

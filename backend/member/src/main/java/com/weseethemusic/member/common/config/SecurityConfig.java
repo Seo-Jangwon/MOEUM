@@ -1,5 +1,6 @@
 package com.weseethemusic.member.common.config;
 
+import com.weseethemusic.member.common.constants.SecurityConstants;
 import com.weseethemusic.member.handler.CustomOauthSuccessHandler;
 import com.weseethemusic.member.service.security.CustomOauthService;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,13 +32,10 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-        .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정
-        .csrf(csrf -> csrf
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .ignoringRequestMatchers("/api/public/**") // 필요시 특정 엔드포인트 제외 가능
-        )
+//        .sessionManagement(
+//            session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+        .cors(AbstractHttpConfigurer::disable) // CORS 설정
+        .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().permitAll()
@@ -48,9 +47,9 @@ public class SecurityConfig {
 //                .defaultSuccessUrl("http://localhost:8081/login") // 인증 성공 후 리디렉션 URL
         )
         .logout(logout -> logout
-            .logoutSuccessUrl("http://localhost:8081/login") // 로그아웃 성공 후 리디렉션 URL
+            .logoutSuccessUrl("https://www.naver.com") // 로그아웃 성공 후 리디렉션 URL
             .invalidateHttpSession(true)
-            .deleteCookies("JSESSIONID")
+            .deleteCookies(SecurityConstants.REFRESH_TOKEN_COOKIE)
         );
 
     return http.build();
