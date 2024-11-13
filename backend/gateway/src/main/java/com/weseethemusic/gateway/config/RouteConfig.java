@@ -52,6 +52,7 @@ public class RouteConfig {
             .addExcludedPath("/musics/recommend")
             .addExcludedPath("/musics/popular")
             .addExcludedPath("/musics/popular/playlist")
+            .addExcludedPath("/musics/visualization/*")
             .addExcludedPath("/musics/latest")
             .addExcludedPath("/musics/detail/album/*")
             .addExcludedPath("/musics/detail/artist/*")
@@ -126,7 +127,7 @@ public class RouteConfig {
                     "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
                     "/musics/latest",
                     "/musics/detail/album/*",
-                    "/musics/detail/artist/*")
+                    "/musics/detail/artist/*", "/musics/visualization/*")
                 .filters(f -> f
                     .filter(requestLoggingFilter.apply(new Object()))
                     .circuitBreaker(config -> config
@@ -144,7 +145,7 @@ public class RouteConfig {
                     "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
                     "/musics/latest",
                     "/musics/detail/album/*",
-                    "/musics/detail/artist/*"))
+                    "/musics/detail/artist/*", "/musics/visualization/*"))
                 .filters(f -> f
                     .filter(requestLoggingFilter.apply(new Object()))
                     .filter(jwtAuthenticationFilter.apply(authConfig))
