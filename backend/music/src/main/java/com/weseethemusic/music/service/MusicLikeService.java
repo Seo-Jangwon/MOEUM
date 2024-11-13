@@ -1,5 +1,8 @@
 package com.weseethemusic.music.service;
 
+import com.weseethemusic.music.dto.like.MusicDto;
+import java.util.List;
+
 public interface MusicLikeService {
 
     void likeMusic(Long memberId, Long musicId);
@@ -13,5 +16,7 @@ public interface MusicLikeService {
     void likeArtist(Long memberId, Long artistId);
 
     void unlikeArtist(Long memberId, Long artistId);
-    
+
+    List<MusicDto> getMyLikeMusics(Long memberId);
+
 }

@@ -18,5 +18,8 @@ public interface LikeMusicRepository extends JpaRepository<LikeMusic, LikeMusicI
     List<Music> getPopularMusicsByGenre(int genreId);
 
     void deleteLikeMusicByMemberIdAndMusic_Id(Long memberId, Long musicId);
-    
+
+    @Query("select lm.music from LikeMusic lm where lm.memberId = :memberId")
+    List<Music> getMyLikeMusics(Long memberId);
+
 }
