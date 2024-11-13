@@ -5,10 +5,12 @@ import com.weseethemusic.recommendation.common.entity.Album;
 import com.weseethemusic.recommendation.common.entity.Artist;
 import com.weseethemusic.recommendation.common.entity.Genre;
 import com.weseethemusic.recommendation.common.entity.Music;
+import com.weseethemusic.recommendation.common.service.elasticsearch.MusicIndexService;
 import com.weseethemusic.recommendation.repository.AlbumRepository;
 import com.weseethemusic.recommendation.repository.ArtistRepository;
 import com.weseethemusic.recommendation.repository.GenreRepository;
 import com.weseethemusic.recommendation.repository.MusicRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MusicServiceImpl implements MusicService {
 
+    private final MusicIndexService musicIndexService;
     private final MusicRepository musicRepository;
     private final GenreRepository genreRepository;
     private final AlbumRepository albumRepository;
@@ -80,5 +83,11 @@ public class MusicServiceImpl implements MusicService {
         musicRepository.save(music);
         log.info("음악 저장 성공: {}", music.getId());
 
+        try {
+            List<Music> musicList = musicRepository.findAll();
+            musicIndexService.indexMusic(musicList);
+        } catch (Exception e) {
+            log.error("음악 인덱싱 불가 {}", e.getMessage());
+        }
     }
 }

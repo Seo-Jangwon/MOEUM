@@ -51,6 +51,7 @@ public class RouteConfig {
             .addExcludedPath("/musics/artist/*/discography")
             .addExcludedPath("/musics/recommend")
             .addExcludedPath("/musics/popular")
+            .addExcludedPath("/musics/popular/playlist")
             .addExcludedPath("/musics/latest")
             .addExcludedPath("/musics/detail/album/*")
             .addExcludedPath("/musics/detail/artist/*")
@@ -122,7 +123,8 @@ public class RouteConfig {
             .route("music-service-public", r -> r
                 .path("/musics/search/**", "/musics/detail/music/*",
                     "/musics/artist/*/discography",
-                    "/musics/popular", "/musics/recommend", "/musics/latest",
+                    "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
+                    "/musics/latest",
                     "/musics/detail/album/*",
                     "/musics/detail/artist/*")
                 .filters(f -> f
@@ -139,7 +141,8 @@ public class RouteConfig {
                 .and()
                 .not(p -> p.path("/musics/search/**", "/musics/detail/music/*",
                     "/musics/artist/*/discography",
-                    "/musics/popular", "/musics/recommend", "/musics/latest",
+                    "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
+                    "/musics/latest",
                     "/musics/detail/album/*",
                     "/musics/detail/artist/*"))
                 .filters(f -> f

@@ -18,6 +18,7 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+        
   data:
     redis:
       host: redis-music
@@ -28,8 +29,7 @@ spring:
           max-idle: 8
           min-idle: 2
     mongodb:
-      host: mongodb+srv://${spring.data.mongodb.username}:${spring.data.mongodb.password}@ssafy.ngivl.mongodb.net/S11P31D203?authSource=admin
-      database: music
+      database: S11P31D203
       authentication-database: admin
       auto-index-creation: true
       write-concern: NORMAL

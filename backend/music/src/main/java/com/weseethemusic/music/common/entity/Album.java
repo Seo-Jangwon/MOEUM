@@ -1,6 +1,6 @@
 package com.weseethemusic.music.common.entity;
 
-import com.weseethemusic.music.common.listner.AlbumEntityListener;
+import com.weseethemusic.music.common.listener.AlbumEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

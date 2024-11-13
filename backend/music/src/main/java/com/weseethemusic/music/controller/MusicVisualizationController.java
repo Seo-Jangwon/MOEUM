@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class MusicVisualizationController {
 
     private final MusicVisualizationServiceImpl visualizationService;
-
+    
+    // 음악 시각화 데이터 불러오기
     @GetMapping("/{musicId}")
     public ResponseDto<MusicVisualizationDto> getMusicVisualization(@PathVariable long musicId) {
         MusicVisualizationDto result;

@@ -1,4 +1,4 @@
-package com.weseethemusic.music.common.listner;
+package com.weseethemusic.music.common.listener;
 
 import com.weseethemusic.common.dto.MusicDto;
 import com.weseethemusic.common.event.MusicSyncEvent;
@@ -7,7 +7,6 @@ import com.weseethemusic.music.common.entity.SyncSagaForRecommendation;
 import com.weseethemusic.music.common.entity.SyncSagaForRecommendation.OperationType;
 import com.weseethemusic.music.common.publisher.MusicEventPublisher;
 import com.weseethemusic.music.common.service.SyncSagaService;
-import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostRemove;
 import jakarta.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
