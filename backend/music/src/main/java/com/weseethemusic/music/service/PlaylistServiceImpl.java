@@ -43,7 +43,6 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final PlaylistMusicRepository playlistMusicRepository;
     private final MusicRepository musicRepository;
-    private final PresignedUrlService presignedUrlService;
     private final ArtistMusicRepository artistMusicRepository;
     private final PlaylistLikeRepository playlistLikeRepository;
     private final LikeMusicRepository likeMusicRepository;
@@ -203,10 +202,10 @@ public class PlaylistServiceImpl implements PlaylistService {
                 }
 
                 // presignedUrl 생성
-                String presignedUrl = presignedUrlService.getPresignedUrl(album.getImageName());
+//                String presignedUrl = presignedUrlService.getPresignedUrl(album.getImageName());
 
                 PlaylistMusicResponse response = new PlaylistMusicResponse(music.getId(),
-                    music.getName(), presignedUrl, formatDuration(music.getDuration()),
+                    music.getName(), album.getImageName(), formatDuration(music.getDuration()),
                     artistResponses);
                 responses.add(response);
             }
@@ -243,8 +242,8 @@ public class PlaylistServiceImpl implements PlaylistService {
                         .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
 
                     // 이미지 URL 생성
-                    String imageUrl = presignedUrlService.getPresignedUrl(
-                        music.getAlbum().getImageName());
+//                    String imageUrl = presignedUrlService.getPresignedUrl(
+//                        music.getAlbum().getImageName());
 
                     // 총 재생 시간 계산
                     List<Long> musicIds = new ArrayList<>();
@@ -259,7 +258,8 @@ public class PlaylistServiceImpl implements PlaylistService {
                     }
 
                     PlaylistResponse response = new PlaylistResponse(playlist.getId(),
-                        playlist.getName(), imageUrl, formatTotalDuration(totalSeconds),
+                        playlist.getName(), music.getAlbum().getImageName(),
+                        formatTotalDuration(totalSeconds),
                         totalMusicCount);
                     responses.add(response);
                 }
@@ -305,8 +305,8 @@ public class PlaylistServiceImpl implements PlaylistService {
                         .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
 
                     // 이미지
-                    String imageUrl = presignedUrlService.getPresignedUrl(
-                        music.getAlbum().getImageName());
+//                    String imageUrl = presignedUrlService.getPresignedUrl(
+//                        music.getAlbum().getImageName());
 
                     // 총 재생 시간 계산
                     List<Long> musicIds = new ArrayList<>();
@@ -324,7 +324,8 @@ public class PlaylistServiceImpl implements PlaylistService {
                     boolean isOwner = playlist.getMemberId().equals(memberId);
 
                     PlaylistResponse response = new PlaylistResponse(playlist.getId(),
-                        playlist.getName(), imageUrl, formatTotalDuration(totalSeconds),
+                        playlist.getName(), music.getAlbum().getImageName(),
+                        formatTotalDuration(totalSeconds),
                         totalMusicCount);
                     responses.add(response);
                 }

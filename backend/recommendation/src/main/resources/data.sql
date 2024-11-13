@@ -2,6 +2,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 -- 기존 데이터 삭제
 DELETE
+FROM history;
+DELETE
 FROM artist_music;
 DELETE
 FROM music;
@@ -69,5 +71,35 @@ VALUES (1, 1),
        (3, 8),
        (3, 9),
        (4, 10);
+
+-- History 데이터 삽입
+-- 사용자 1: Pop과 Disco를 좋아하는 유저
+INSERT INTO history (member_id, music_id)
+VALUES
+    (1, 1),  -- Pop
+    (1, 2),  -- Disco
+    (1, 3),  -- Pop
+    (1, 6);  -- Disco
+
+-- 사용자 2: Latin 음악을 주로 듣는 유저
+INSERT INTO history (member_id, music_id)
+VALUES
+    (2, 5),  -- Latin
+    (2, 10); -- Latin
+
+-- 사용자 3: 다양한 장르를 듣는 유저
+INSERT INTO history (member_id, music_id)
+VALUES
+    (3, 1),  -- Pop
+    (3, 4),  -- Hiphop
+    (3, 7),  -- Musical
+    (3, 8),  -- Holiday
+    (3, 9);  -- Pop
+
+-- 사용자 4: Musical과 Holiday 음악을 좋아하는 유저
+INSERT INTO history (member_id, music_id)
+VALUES
+    (4, 7),  -- Musical
+    (4, 8);  -- Holiday
 
 SET FOREIGN_KEY_CHECKS = 1;
