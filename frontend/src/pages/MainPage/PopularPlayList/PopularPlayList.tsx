@@ -3,6 +3,7 @@ import lala from '@/assets/lalaticon/lala8.png';
 import Button from '@/components/Button/Button';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
+import { useEffect } from 'react';
 import { FaRegHeart } from 'react-icons/fa6';
 import { FiCrosshair } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -58,6 +59,18 @@ const PopularPlayList = () => {
   const handleMusicPage = (path: string) => {
     return navigate(path);
   };
+  useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/playlist',
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
 
   return (
     <>
