@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +56,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     // 재생 기록 추가
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void addPlayHistory(Long memberId, Long musicId) {
         historyRepository.save(History.builder().memberId(memberId)
             .music(musicRepository.findById(musicId).orElseThrow()).build());
