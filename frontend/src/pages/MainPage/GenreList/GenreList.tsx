@@ -2,6 +2,7 @@ import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala7.png';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
+import { useEffect, useState } from 'react';
 import { FaRegHeart } from 'react-icons/fa6';
 import { FiThumbsUp } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -52,6 +53,22 @@ const mokData: { music: Music[] } = {
 
 const GenreList = () => {
   const navigate = useNavigate();
+  const [genreData, setGenreData] = useState<string>('')
+
+  // 임시적으로 적어놓은것 나중에 지워야함
+  useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/todaygenre/1',
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+
   const handlePage = (path: string) => {
     navigate(path);
   };
