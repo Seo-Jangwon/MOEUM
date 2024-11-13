@@ -130,7 +130,7 @@ public class MusicDetailServiceImpl implements MusicDetailService {
         int duration = music.getDuration();
         int[] durations = calculateDuration(duration);
         result.setDuration(durations[0] == 0 ? durations[1] + ":" + durations[2]
-                : durations[0] + ":" + durations[1] + ":" + durations[2]);
+            : durations[0] + ":" + durations[1] + ":" + durations[2]);
         result.setReleaseDate(music.getAlbum().getReleaseDate().toString());
 
         List<Artist> artistList = artistMusicRepository.findAllByMusic(music);
@@ -149,7 +149,7 @@ public class MusicDetailServiceImpl implements MusicDetailService {
     }
 
     public int[] calculateDuration(int duration) {
-        return new int[]{duration / 3600, duration % 3600 / 60, duration % 3600 % 60};
+        return new int[]{duration / 3600, duration % 3600 / 60, duration % 60};
     }
 
 }

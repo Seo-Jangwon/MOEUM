@@ -14,4 +14,6 @@ public interface LikeAlbumRepository extends JpaRepository<LikeAlbum, LikeAlbumI
     @Query("select la.album from LikeAlbum la where la.memberId = :memberId")
     List<Album> findAllByMemberId(long memberId);
 
+    void deleteLikeAlbumByMemberIdAndAlbum_Id(Long memberId, Long albumId);
+    
 }
