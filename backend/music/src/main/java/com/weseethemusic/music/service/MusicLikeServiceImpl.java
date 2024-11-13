@@ -65,4 +65,11 @@ public class MusicLikeServiceImpl implements MusicLikeService {
             new LikeArtist(memberId, artistRepository.findById(artistId).orElseThrow()));
     }
 
+    // 아티스트 좋아요 해제
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void unlikeArtist(Long memberId, Long artistId) {
+        likeArtistRepository.deleteByMemberIdAndArtist_Id(memberId, artistId);
+    }
+
 }

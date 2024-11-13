@@ -11,5 +11,7 @@ public interface MusicLikeService {
     void unlikeAlbum(Long memberId, Long albumId);
 
     void likeArtist(Long memberId, Long artistId);
+
+    void unlikeArtist(Long memberId, Long artistId);
     
 }
