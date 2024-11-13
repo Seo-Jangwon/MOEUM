@@ -1,6 +1,6 @@
 package com.weseethemusic.music.common.entity;
 
-import com.weseethemusic.music.common.listner.MusicEntityListener;
+import com.weseethemusic.music.common.listener.MusicEntityListener;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +18,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Getter

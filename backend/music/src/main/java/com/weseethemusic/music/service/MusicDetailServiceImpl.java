@@ -148,7 +148,7 @@ public class MusicDetailServiceImpl implements MusicDetailService {
         return result;
     }
 
-    private int[] calculateDuration(int duration) {
+    public int[] calculateDuration(int duration) {
         return new int[]{duration / 3600, duration % 3600 / 60, duration % 3600 % 60};
     }
 

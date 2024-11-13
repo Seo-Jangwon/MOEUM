@@ -20,58 +20,14 @@ import {
   s_h3,
   s_playlist_p,
 } from './style';
+import LikeMusic from './LikeMusic/LikeMusic';
+import LikePlayList from './LikePlayList/LikePlayList';
+import LikeArtist from './LikeArtist/LikeArtist';
+import LikeAlbum from './LikeAlbum/LikeAlbum';
+import MyPlayList from './MyPlayList/MyPlayList';
 
-interface Music {
-  title: string;
-  artist: string;
-}
-interface PlayList {
-  title: string;
-}
-interface Artist {
-  title: string;
-}
 
-const musicList: { music: Music[] } = {
-  music: [
-    {
-      title: 'we See the MUSIC',
-      artist: 'ZOMBIE',
-    },
-    {
-      title: 'we See the MUSIC',
-      artist: 'ZOMBIE',
-    },
-    {
-      title: 'we See the MUSIC',
-      artist: 'ZOMBIE',
-    },
-    {
-      title: 'we See the MUSIC',
-      artist: 'ZOMBIE',
-    },
-    {
-      title: 'we See the MUSIC',
-      artist: 'ZOMBIE',
-    },
-    {
-      title: 'we See the MUSIC',
-      artist: 'ZOMBIE',
-    },
-    {
-      title: 'we See the MUSIC',
-      artist: 'ZOMBIE',
-    },
-    {
-      title: 'we See the MUSIC',
-      artist: 'ZOMBIE',
-    },
-    {
-      title: 'we See the MUSIC',
-      artist: 'ZOMBIE',
-    },
-  ],
-};
+
 const playList: { playList: PlayList[] } = {
   playList: [
     { title: '안녕하세용' },
@@ -83,16 +39,7 @@ const playList: { playList: PlayList[] } = {
     { title: '안녕하세용' },
   ],
 };
-const ArtistList: { artist: Artist[] } = {
-  artist: [
-    { title: '스트롱맨' },
-    { title: '스트롱맨' },
-    { title: '스트롱맨' },
-    { title: '스트롱맨' },
-    { title: '스트롱맨' },
-    { title: '스트롱맨' },
-  ],
-};
+
 
 const MyStoragePage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('music');
@@ -101,61 +48,7 @@ const MyStoragePage = () => {
     setSelectedCategory(category);
   };
 
-  // 좋아요한 음악
-  useEffect(() => {
-    apiClient({
-      method: 'GET',
-      url: '/musics/playlist/like',
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  // 좋아요한 플레이리스트
-  useEffect(() => {
-    apiClient({
-      method: 'GET',
-      url: '/musics/playlist/like',
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  // 좋아요한 아티스트
-  useEffect(() => {
-    apiClient({
-      method: 'GET',
-      url: '/musics/artist/like',
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  // 좋아요한 앨범
-  useEffect(() => {
-    apiClient({
-      method: 'GET',
-      url: '/musics/album/like',
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+ 
 
   // 내 플레이리스트
   useEffect(() => {
@@ -221,128 +114,23 @@ const MyStoragePage = () => {
       <div>
         {/* 음악 리스트 */}
         {selectedCategory === 'music' && (
-          <div css={s_popular_container}>
-            {musicList.music.map((item, index) => (
-              <div key={index} css={s_popular_box}>
-                <div>
-                  <div
-                    css={css`
-                      border-radius: 100%;
-                      overflow: hidden;
-                      margin: 5%;
-                      width: 50%;
-                      :hover {
-                        filter: brightness(0.5);
-                      }
-                    `}
-                  >
-                    <img
-                      src={lala}
-                      alt="라라"
-                      css={css`
-                        width: 100%;
-                        object-fit: cover;
-                      `}
-                    />
-                  </div>
-                </div>
-                <div css={s_div_data}>
-                  <h5 css={s_h5_title}>{item.title}</h5>
-                  <p css={s_p_artist}>{item.artist}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+         <LikeMusic />
         )}
         {/* 플레이리스트 */}
         {selectedCategory === 'playlist' && (
-          <div
-            css={css`
-              display: flex;
-              flex-wrap: wrap;
-              gap: 20px;
-            `}
-          >
-            {ArtistList.artist.map((item, index) => (
-              <>
-                <div
-                  css={css`
-                    position: relative;
-                  `}
-                >
-                  <button
-                    key={index}
-                    css={css`
-                      width: 36vw;
-                      height: 10vw;
-                      overflow: hidden;
-                      border: none;
-                      background: transparent;
-                      border-radius: 20px;
-                      :hover {
-                        filter: brightness(50%);
-                        transition: 0.3s;
-                      }
-                    `}
-                  >
-                    <img
-                      src={lala}
-                      alt="lala"
-                      css={css`
-                        width: 100%;
-                      `}
-                    />
-                  </button>
-                  <p css={s_playlist_p}>{item.title}</p>
-                </div>
-              </>
-            ))}
-          </div>
+         <LikePlayList />
         )}
         {/* 아티스트 리스트 */}
         {selectedCategory === 'artist' && (
-          <div css={s_div_item_container}>
-            {ArtistList.artist.map((item, index) => (
-              <>
-                <div key={index}>
-                  <button css={s_artist_button}>
-                    <img src={lala} alt="라라" style={{ borderRadius: '100%' }} />
-                  </button>
-                  <p css={s_artist_p}>{item.title}</p>
-                </div>
-              </>
-            ))}
-          </div>
+          <LikeArtist />
         )}
         {/* 앨범 리스트 */}
         {selectedCategory === 'album' && (
-          <div css={s_div_item_container}>
-            {playList.playList.map((item, index) => (
-              <>
-                <div>
-                  <button key={index} css={s_div_item_box}>
-                    <img src={lala} alt="라라" css={s_img} />
-                  </button>
-                  <h5 css={s_h5}>{item.title}</h5>
-                </div>
-              </>
-            ))}
-          </div>
+         <LikeAlbum />
         )}
         {/* 마이 플레이리스트 */}
         {selectedCategory === 'myPlayList' && (
-          <div css={s_div_item_container}>
-            {playList.playList.map((item, index) => (
-              <>
-                <div>
-                  <button key={index} css={s_div_item_box}>
-                    <img src={lala} alt="라라" css={s_img} />
-                  </button>
-                  <h5 css={s_h5}>{item.title}</h5>
-                </div>
-              </>
-            ))}
-          </div>
+          <MyPlayList />
         )}
       </div>
     </div>

@@ -1,9 +1,9 @@
 package com.weseethemusic.music.common.config;
 
-import com.weseethemusic.music.common.listner.AlbumEntityListener;
-import com.weseethemusic.music.common.listner.ArtistEntityListener;
-import com.weseethemusic.music.common.listner.GenreEntityListener;
-import com.weseethemusic.music.common.listner.MusicEntityListener;
+import com.weseethemusic.music.common.listener.AlbumEntityListener;
+import com.weseethemusic.music.common.listener.ArtistEntityListener;
+import com.weseethemusic.music.common.listener.GenreEntityListener;
+import com.weseethemusic.music.common.listener.MusicEntityListener;
 import com.weseethemusic.music.common.publisher.MusicEventPublisher;
 import com.weseethemusic.music.common.service.SyncSagaService;
 import org.springframework.context.annotation.Bean;

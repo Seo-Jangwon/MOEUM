@@ -14,13 +14,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class MusicVisualizationServiceImpl implements MusicVisualizationService {
 
+    // 음악 시각화 데이터 불러오기
     @Override
     public MusicVisualizationDto getMusicVisualization(long musicId) {
         ObjectMapper mapper = new ObjectMapper();
         MusicVisualizationDto result = new MusicVisualizationDto();
 
         try {
-            JsonNode root = mapper.readTree(new File("./data.json"));
+            JsonNode root = mapper.readTree(
+                new File("src/main/java/com/weseethemusic/music/service/data.json"));
             JsonNode dataNode = root.path("data");
 
             List<TimeDurationDto> vibrations = new ArrayList<>();
