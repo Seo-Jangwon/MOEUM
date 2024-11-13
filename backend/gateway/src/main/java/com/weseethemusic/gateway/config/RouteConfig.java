@@ -3,16 +3,16 @@ package com.weseethemusic.gateway.config;
 import com.weseethemusic.gateway.constants.SecurityConstants;
 import com.weseethemusic.gateway.filter.JwtAuthenticationFilter;
 import com.weseethemusic.gateway.filter.RequestLoggingFilter;
-import java.util.List;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.util.MultiValueMap;
-import reactor.core.publisher.Mono;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
+import org.springframework.web.server.ServerWebExchange;
 
 @Configuration
 public class RouteConfig {
@@ -53,7 +53,8 @@ public class RouteConfig {
             .addExcludedPath("/musics/popular")
             .addExcludedPath("/musics/latest")
             .addExcludedPath("/musics/detail/album/*")
-            .addExcludedPath("/musics/detail/artist/*");
+            .addExcludedPath("/musics/detail/artist/*")
+            .addExcludedPath("/members/token");
 
         return builder.routes()
             // 멤버 서비스 공개 경로
@@ -63,27 +64,48 @@ public class RouteConfig {
                 .filters(f -> f.filter(requestLoggingFilter.apply(new Object())))
                 .uri(memberServiceUrl))
 
-            // 멤버 서비스 인증 경로
+            // 멤버 서비스 토큰 재발급 경로 (인증 없이)
             .route("member-token-refresh", r -> r
                 .path("/members/token")
                 .filters(f -> f
                     .filter(requestLoggingFilter.apply(new Object()))
-                    .modifyRequestBody(String.class, String.class,
-                        (exchange, body) -> {
-                            ServerHttpRequest request = exchange.getRequest();
-                            MultiValueMap<String, HttpCookie> cookies = request.getCookies();
-                            List<HttpCookie> refreshTokenCookies = cookies.get(
-                                SecurityConstants.REFRESH_TOKEN_COOKIE);
+                    // Refresh Token을 헤더에 추가하는 커스텀 필터
+                    .filter((exchange, chain) -> {
+                        ServerHttpRequest request = exchange.getRequest();
+                        String refreshToken = getRefreshTokenFromCookies(exchange);
+                        String token = exchange.getRequest().getHeaders()
+                            .getFirst(SecurityConstants.JWT_HEADER);
 
-                            if (refreshTokenCookies != null && !refreshTokenCookies.isEmpty()) {
-                                String refreshToken = refreshTokenCookies.get(0).getValue();
-                                exchange.getRequest().mutate()
-                                    .header(SecurityConstants.REFRESH_TOKEN_HEADER, refreshToken)
-                                    .build();
-                            }
-                            return Mono.just(body);
-                        })
-                    .filter(jwtAuthenticationFilter.apply(authConfig)))
+                        if (refreshToken != null) {
+                            // ServerHttpRequestDecorator 사용하여 헤더 수정
+                            ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(
+                                request) {
+                                @Override
+                                public HttpHeaders getHeaders() {
+                                    HttpHeaders headers = new HttpHeaders();
+                                    super.getHeaders().forEach(
+                                        (key, values) -> headers.put(key, new ArrayList<>(values)));
+                                    headers.remove(SecurityConstants.JWT_HEADER);
+                                    headers.add(SecurityConstants.REFRESH_TOKEN_HEADER,
+                                        refreshToken);
+                                    headers.add(SecurityConstants.JWT_HEADER, token);
+                                    return headers;
+                                }
+                            };
+
+                            // 수정된 요청으로 새로운 exchange 생성
+                            ServerWebExchange modifiedExchange = exchange.mutate()
+                                .request(modifiedRequest)
+                                .build();
+
+                            return chain.filter(modifiedExchange);
+
+                        }
+
+                        return chain.filter(exchange);
+                    })
+                )
+                // JWT 인증 필터는 제외됨
                 .uri(memberServiceUrl))
 
             .route("member-service-protected", r -> r
@@ -138,5 +160,14 @@ public class RouteConfig {
                 .uri(recommendationsServiceUrl))
 
             .build();
+    }
+
+    private String getRefreshTokenFromCookies(ServerWebExchange exchange) {
+        if (exchange.getRequest().getCookies()
+            .containsKey(SecurityConstants.REFRESH_TOKEN_COOKIE)) {
+            return exchange.getRequest().getCookies()
+                .getFirst(SecurityConstants.REFRESH_TOKEN_COOKIE).getValue();
+        }
+        return null;
     }
 }

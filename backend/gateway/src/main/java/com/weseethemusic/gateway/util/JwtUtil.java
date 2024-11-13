@@ -105,8 +105,9 @@ public class JwtUtil {
             Claims claims = validateToken(token);
             return claims.get("role", String.class);
         } catch (Exception e) {
-            log.error("토큰에서 userid 추출 실패", e);
+            log.error("토큰에서 role 추출 실패", e);
             throw e;
         }
     }
+
 }

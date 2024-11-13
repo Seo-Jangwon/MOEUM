@@ -7,11 +7,16 @@ import com.weseethemusic.music.common.entity.Playlist;
 import com.weseethemusic.music.common.entity.PlaylistLike;
 import com.weseethemusic.music.common.entity.PlaylistMusic;
 import com.weseethemusic.music.common.service.PresignedUrlService;
+import com.weseethemusic.music.dto.detail.ArtistDto;
 import com.weseethemusic.music.dto.playlist.ArtistResponse;
 import com.weseethemusic.music.dto.playlist.CreatePlaylistRequest;
 import com.weseethemusic.music.dto.playlist.PlaylistMusicResponse;
 import com.weseethemusic.music.dto.playlist.PlaylistResponse;
+import com.weseethemusic.music.dto.playlist.TodayGenreDto;
+import com.weseethemusic.music.dto.playlist.TodayGenreMusicDto;
+import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
+import com.weseethemusic.music.repository.LikeMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
 import com.weseethemusic.music.repository.PlaylistLikeRepository;
 import com.weseethemusic.music.repository.PlaylistMusicRepository;
@@ -41,6 +46,10 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final PresignedUrlService presignedUrlService;
     private final ArtistMusicRepository artistMusicRepository;
     private final PlaylistLikeRepository playlistLikeRepository;
+    private final LikeMusicRepository likeMusicRepository;
+
+    private final MusicDetailServiceImpl musicDetailService;
+    private final AlbumRepository albumRepository;
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -97,6 +106,41 @@ public class PlaylistServiceImpl implements PlaylistService {
         }
     }
 
+    // 오늘의 장르 조회
+    @Override
+    public TodayGenreDto getTodayGenre(int genreId) {
+        List<TodayGenreMusicDto> result = new ArrayList<>();
+
+        List<Music> musics = likeMusicRepository.getPopularMusicsByGenre(genreId);
+        int totalDuration = 0;
+
+        for (Music music : musics) {
+            List<Artist> artists = artistMusicRepository.findAllByMusic(music);
+            List<ArtistDto> artistDtos = new ArrayList<>();
+
+            for (Artist artist : artists) {
+                artistDtos.add(
+                    ArtistDto.builder().id(artist.getId()).name(artist.getName()).build());
+            }
+
+            totalDuration += music.getDuration();
+            int[] durations = musicDetailService.calculateDuration(music.getDuration());
+
+            result.add(TodayGenreMusicDto.builder().id(music.getId()).name(music.getName())
+                .image(albumRepository.getAlbumImage(music.getAlbum().getId())).duration(
+                    durations[0] == 0 ? durations[1] + ":" + durations[2]
+                        : durations[0] + ":" + durations[1] + ":" + durations[2])
+                .artists(artistDtos).build());
+        }
+
+        int[] finalDurations = musicDetailService.calculateDuration(totalDuration);
+        String finalDuration =
+            finalDurations[0] == 0 ? finalDurations[1] + "분 " + finalDurations[2] + "초"
+                : finalDurations[0] + "시간 " + finalDurations[1] + "분";
+
+        return TodayGenreDto.builder().totalDuration(finalDuration).musics(result).build();
+    }
+
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deletePlaylist(Long memberId, Long playlistId) {
@@ -122,8 +166,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Transactional(readOnly = true)
     public List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId) {
         try {
-            List<PlaylistMusic> playlistMusics = playlistMusicRepository
-                .findByPlaylistIdOrderByOrder(playlistId);
+            List<PlaylistMusic> playlistMusics = playlistMusicRepository.findByPlaylistIdOrderByOrder(
+                playlistId);
 
             if (playlistMusics.isEmpty()) {
                 throw new RuntimeException("플레이리스트를 찾을 수 없습니다.");
@@ -153,25 +197,17 @@ public class PlaylistServiceImpl implements PlaylistService {
                 List<Artist> artists = artistMusicRepository.findAllByMusic(music);
 
                 for (Artist artist : artists) {
-                    ArtistResponse artistResponse = new ArtistResponse(
-                        artist.getId(),
-                        artist.getName()
-                    );
+                    ArtistResponse artistResponse = new ArtistResponse(artist.getId(),
+                        artist.getName());
                     artistResponses.add(artistResponse);
                 }
 
                 // presignedUrl 생성
-                String presignedUrl = presignedUrlService.getPresignedUrl(
-                    album.getImageName()
-                );
+                String presignedUrl = presignedUrlService.getPresignedUrl(album.getImageName());
 
-                PlaylistMusicResponse response = new PlaylistMusicResponse(
-                    music.getId(),
-                    music.getName(),
-                    presignedUrl,
-                    formatDuration(music.getDuration()),
-                    artistResponses
-                );
+                PlaylistMusicResponse response = new PlaylistMusicResponse(music.getId(),
+                    music.getName(), presignedUrl, formatDuration(music.getDuration()),
+                    artistResponses);
                 responses.add(response);
             }
 
@@ -200,8 +236,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
                 // 최신 음악의 이미지를 가져오기 위해 가장 높은 trackOrder를 가진 음악 조회
                 PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
-                        playlist.getId())
-                    .orElse(null);
+                    playlist.getId()).orElse(null);
 
                 if (latestMusic != null) {
                     Music music = musicRepository.findById(latestMusic.getMusicId())
@@ -223,13 +258,9 @@ public class PlaylistServiceImpl implements PlaylistService {
                         totalSeconds += m.getDuration();
                     }
 
-                    PlaylistResponse response = new PlaylistResponse(
-                        playlist.getId(),
-                        playlist.getName(),
-                        imageUrl,
-                        formatTotalDuration(totalSeconds),
-                        totalMusicCount
-                    );
+                    PlaylistResponse response = new PlaylistResponse(playlist.getId(),
+                        playlist.getName(), imageUrl, formatTotalDuration(totalSeconds),
+                        totalMusicCount);
                     responses.add(response);
                 }
             }
@@ -267,8 +298,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
                 // 가장 높은 trackorder
                 PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
-                        playlist.getId())
-                    .orElse(null);
+                    playlist.getId()).orElse(null);
 
                 if (latestMusic != null) {
                     Music music = musicRepository.findById(latestMusic.getMusicId())
@@ -392,8 +422,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void likePlaylist(Long playlistId, Long memberId) {
         try {
-            Optional<PlaylistLike> existingLike = playlistLikeRepository
-                .findByMemberIdAndPlaylistId(memberId, playlistId);
+            Optional<PlaylistLike> existingLike = playlistLikeRepository.findByMemberIdAndPlaylistId(
+                memberId, playlistId);
 
             if (existingLike.isPresent()) {
                 // 이미 좋아요가 있으면 취소
@@ -421,9 +451,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void disLikePlaylist(Long playlistId, Long memberId) {
         try {
-            PlaylistLike playlistLike = playlistLikeRepository
-                .findByMemberIdAndPlaylistId(memberId, playlistId)
-                .orElseThrow(() -> new RuntimeException("좋아요하지 않은 플레이리스트입니다."));
+            PlaylistLike playlistLike = playlistLikeRepository.findByMemberIdAndPlaylistId(memberId,
+                playlistId).orElseThrow(() -> new RuntimeException("좋아요하지 않은 플레이리스트입니다."));
 
             playlistLikeRepository.delete(playlistLike);
         } catch (Exception e) {
