@@ -16,9 +16,9 @@ import lombok.Setter;
 public class MusicDto {
 
     private long id;
-    private String name;
+    private String title;
     private String duration;
-    private String imageName;
+    private String albumImage;
     private List<ArtistDto> artists;
 
 }

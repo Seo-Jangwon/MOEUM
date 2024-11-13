@@ -15,8 +15,6 @@ import com.weseethemusic.recommendation.dto.recommendation.UserPreference;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -145,13 +143,13 @@ public class MusicRecommendationService {
     private MusicDto convertToDto(MusicDocument document) {
         MusicDto music = new MusicDto();
         music.setId(document.getId());
-        music.setName(document.getName());
+        music.setTitle(document.getName());
         music.setDuration(formatDuration(document.getDuration()));
 
         if (document.getAlbum() != null) {
             System.out.println("앨범 정보: " + document.getAlbum());
             System.out.println("앨범 이미지: " + document.getAlbum().getImageName());
-            music.setImageName(document.getAlbum().getImageName());
+            music.setAlbumImage(document.getAlbum().getImageName());
         } else {
             System.out.println("앨범 없음");
         }
