@@ -1,9 +1,14 @@
 package com.weseethemusic.gateway.filter;
 
+import com.weseethemusic.gateway.util.JwtUtil.TokenStatus;
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,8 +56,6 @@ public class JwtAuthenticationFilter extends
 
             String token = exchange.getRequest().getHeaders()
                 .getFirst(SecurityConstants.JWT_HEADER);
-            String refreshToken = exchange.getRequest().getHeaders()
-                .getFirst(SecurityConstants.REFRESH_TOKEN_HEADER);
 
             // 토큰이 없는 경우
             if (token == null || !token.startsWith("Bearer ")) {
@@ -64,16 +67,21 @@ public class JwtAuthenticationFilter extends
             JwtUtil.TokenStatus status = jwtUtil.validateTokenStatus(extractedToken);
             log.debug("토큰 검증 결과: {}", status);
 
+            Integer userId;
+            String role;
+            ServerHttpRequest request;
+
             switch (status) {
                 case VALID:
-                    Integer userId = jwtUtil.getUserIdFromToken(extractedToken);
-                    String role = jwtUtil.getRoleFromToken(extractedToken);
+                    userId = jwtUtil.getUserIdFromToken(extractedToken);
+                    role = jwtUtil.getRoleFromToken(extractedToken);
+                    request = exchange.getRequest();
+
                     log.info("gateway - 유저: {}에 대한 토큰 검증 완료", userId);
 
-                    ServerHttpRequest request = exchange.getRequest();
-
                     // ServerHttpRequestDecorator 사용하여 헤더 수정
-                    ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(request) {
+                    ServerHttpRequest modifiedRequestVALID = new ServerHttpRequestDecorator(
+                        request) {
                         @Override
                         public HttpHeaders getHeaders() {
                             HttpHeaders headers = new HttpHeaders();
@@ -85,27 +93,14 @@ public class JwtAuthenticationFilter extends
                     };
 
                     // 수정된 요청으로 새로운 exchange 생성
-                    ServerWebExchange modifiedExchange = exchange.mutate()
-                        .request(modifiedRequest)
+                    ServerWebExchange modifiedExchangeVALID = exchange.mutate()
+                        .request(modifiedRequestVALID)
                         .build();
 
-                    return chain.filter(modifiedExchange);
+                    return chain.filter(modifiedExchangeVALID);
 
                 case EXPIRED:
-                    if (refreshToken != null) {
-                        log.info("gateway - 토큰 만료. 토큰 재발급하러 감");
-                        return chain.filter(exchange.mutate()
-                            .request(exchange.getRequest().mutate()
-                                .path("/members/token")
-                                .header(SecurityConstants.REFRESH_TOKEN_HEADER, refreshToken)
-                                .build())
-                            .build());
-                    } else {
-                        log.warn("gateway - 토큰 만료. 리프레시 토큰이 없음");
-                        return handleError(exchange, JwtUtil.TokenStatus.EXPIRED,
-                            "토큰이 만료되었습니다. 리프레시 토큰이 필요합니다");
-                    }
-
+                    return handleError(exchange, TokenStatus.EXPIRED, "토큰이 만료되었습니다");
                 case INVALID:
                     log.error("gateway - 유효하지 않은 토큰: {}", token);
                     return handleError(exchange, JwtUtil.TokenStatus.INVALID, "유효하지 않은 토큰입니다");
@@ -119,6 +114,15 @@ public class JwtAuthenticationFilter extends
                     return handleError(exchange, JwtUtil.TokenStatus.INVALID, "토큰 처리 중 오류가 발생했습니다");
             }
         };
+    }
+
+    private String getRefreshTokenFromCookies(ServerWebExchange exchange) {
+        if (exchange.getRequest().getCookies()
+            .containsKey(SecurityConstants.REFRESH_TOKEN_COOKIE)) {
+            return exchange.getRequest().getCookies()
+                .getFirst(SecurityConstants.REFRESH_TOKEN_COOKIE).getValue();
+        }
+        return null;
     }
 
 
