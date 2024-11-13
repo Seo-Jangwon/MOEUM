@@ -1,5 +1,6 @@
 package com.weseethemusic.gateway.filter;
 
+import com.weseethemusic.gateway.exception.ErrorCode;
 import com.weseethemusic.gateway.util.JwtUtil.TokenStatus;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -138,11 +139,8 @@ public class JwtAuthenticationFilter extends
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, String> errorDetails = new HashMap<>();
-        errorDetails.put("timestamp", LocalDateTime.now().toString());
-        errorDetails.put("status", status.name());
-        errorDetails.put("error", httpStatus.getReasonPhrase());
+        errorDetails.put("code", String.valueOf(ErrorCode.AUTHENTICATION_ERROR));
         errorDetails.put("message", message);
-        errorDetails.put("path", exchange.getRequest().getPath().value());
 
         byte[] bytes = null;
         try {

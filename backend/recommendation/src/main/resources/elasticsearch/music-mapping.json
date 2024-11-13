@@ -1,0 +1,37 @@
+{
+  "mappings": {
+    "properties": {
+      "id": { "type": "long" },
+      "name": { "type": "text" },
+      "album": {
+        "properties": {
+          "id": { "type": "long" },
+          "name": { "type": "text" },
+          "releaseDate": { "type": "date" },
+          "imageName": { "type": "keyword" }
+        }
+      },
+      "genre": {
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "keyword" }
+        }
+      },
+      "artists": {
+        "properties": {
+          "id": { "type": "long" },
+          "name": { "type": "text" }
+        }
+      },
+      "duration": { "type": "integer" },
+      "danceability": { "type": "double" },
+      "loudness": { "type": "double" },
+      "mode": { "type": "boolean" },
+      "speechiness": { "type": "double" },
+      "acousticness": { "type": "double" },
+      "valence": { "type": "double" },
+      "tempo": { "type": "double" },
+      "energy": { "type": "double" }
+    }
+  }
+}
