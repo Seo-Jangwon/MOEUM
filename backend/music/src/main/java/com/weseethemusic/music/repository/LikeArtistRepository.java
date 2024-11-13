@@ -14,4 +14,6 @@ public interface LikeArtistRepository extends JpaRepository<LikeArtist, LikeArti
     @Query("select la.artist from LikeArtist la where la.memberId = :memberId")
     List<Artist> findAllByMemberId(long memberId);
 
+    void deleteByMemberIdAndArtist_Id(Long memberId, Long artistId);
+    
 }

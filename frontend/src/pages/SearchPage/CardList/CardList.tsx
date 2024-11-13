@@ -35,7 +35,7 @@ const CardList = ({
               navigate(`/search/${clickUrl}?keyword=${keyword}`);
             }}
           >
-            {dataList.length > 0 ? '더 보기' : null}
+            {dataList.length > 4 ? '더 보기' : null}
           </span>
         ) : null}
       </div>

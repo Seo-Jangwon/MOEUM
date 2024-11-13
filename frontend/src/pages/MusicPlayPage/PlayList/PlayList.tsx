@@ -1,13 +1,23 @@
 import CardDetailListItem from '@/pages/SearchMorePage/CardDetailListItem/CardDetailListItem';
-import { MusicI } from '@/pages/SearchPage';
 import { useNavigate } from 'react-router-dom';
+import { MusicI } from '..';
 import { s_container, s_playListTitle } from './PlayList.style';
 
-const PlayList = ({ musicData }: { musicData: MusicI[] }) => {
+const PlayList = ({
+  musicData,
+  variant,
+  listId,
+  listIdx,
+}: {
+  musicData: MusicI[];
+  variant: 'music' | 'playlist';
+  listId: number | undefined;
+  listIdx: number | undefined;
+}) => {
   const navigate = useNavigate();
   return (
     <div css={s_container}>
-      <div css={s_playListTitle}>재생목록</div>
+      <div css={s_playListTitle}>{variant === 'music' ? '추천곡' : '재생목록'}</div>
       {musicData.map((item, index) => {
         return (
           <CardDetailListItem
@@ -16,6 +26,9 @@ const PlayList = ({ musicData }: { musicData: MusicI[] }) => {
             name={item.title}
             itemId={item.id}
             key={index}
+            playlistid={listId}
+            playlistidx={listIdx}
+            replace={true}
             artist={
               <>
                 {item.artists.map((artist, idx) => (

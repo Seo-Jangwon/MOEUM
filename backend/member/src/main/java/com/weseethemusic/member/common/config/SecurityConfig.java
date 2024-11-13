@@ -1,7 +1,8 @@
 package com.weseethemusic.member.common.config;
 
 import com.weseethemusic.member.common.constants.SecurityConstants;
-import com.weseethemusic.member.handler.CustomOauthSuccessHandler;
+import com.weseethemusic.member.handler.CustomOAuthFailureHandler;
+import com.weseethemusic.member.handler.CustomOAuthSuccessHandler;
 import com.weseethemusic.member.service.security.CustomOauthService;
 import java.util.HashSet;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +13,10 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -26,7 +25,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private final CustomOauthSuccessHandler customOauthSuccessHandler;
+  private final CustomOAuthSuccessHandler customOAuthSuccessHandler;
+  private final CustomOAuthFailureHandler customOAuthFailureHandler;
   private final CustomOauthService customOauthService;
 
   @Bean
@@ -43,7 +43,9 @@ public class SecurityConfig {
         .oauth2Login(oauth -> oauth
                 .userInfoEndpoint(userInfo -> userInfo.userService(customOauthService)
                     .userAuthoritiesMapper(grantedAuthoritiesMapper()))
-                .successHandler(customOauthSuccessHandler)
+                .successHandler(customOAuthSuccessHandler)
+                .failureHandler(customOAuthFailureHandler)
+//                .failureUrl("https://www.daum.net")
 //                .defaultSuccessUrl("http://localhost:8081/login") // 인증 성공 후 리디렉션 URL
         )
         .logout(logout -> logout

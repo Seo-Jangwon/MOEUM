@@ -1,13 +1,3 @@
-import lalaImg1 from '@/assets/lalaticon/lala.jpg';
-import lalaImg2 from '@/assets/lalaticon/lala1.png';
-import lalaImg3 from '@/assets/lalaticon/lala2.png';
-import lalaImg4 from '@/assets/lalaticon/lala3.png';
-import lalaImg5 from '@/assets/lalaticon/lala4.png';
-import lalaImg6 from '@/assets/lalaticon/lala5.png';
-import lalaImg7 from '@/assets/lalaticon/lala6.png';
-import lalaImg8 from '@/assets/lalaticon/lala7.png';
-import lalaImg9 from '@/assets/lalaticon/lala8.png';
-import lalaImg10 from '@/assets/lalaticon/lala9.png';
 import lylicsVisualizationButton from '@/assets/lylicsVisualizationButton.svg';
 import Modal from '@/pages/RecordPage/Modal/Modal';
 import useSettingStore from '@/stores/settingStore';
@@ -21,8 +11,8 @@ import { MdOutlineSync } from 'react-icons/md';
 import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
 import { TbPlaylistAdd } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
-import testData from '../data.json';
-import lalaSong from '../lalaSong.m4a';
+import { Data, musicDetailInfoI } from '..';
+import lalaSong from '../All I Want for Christmas Is You-2-M....mp3';
 import {
   s_canvas,
   s_container,
@@ -39,9 +29,13 @@ import MyHeart from './MyHeart';
 const MusicPlayer = ({
   currentMusicId,
   nextMusicId,
+  musicDetailInfo,
+  musicAnalyzedData,
 }: {
   currentMusicId: number;
   nextMusicId: number;
+  musicDetailInfo: musicDetailInfoI;
+  musicAnalyzedData: Data;
 }) => {
   const divRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -49,18 +43,6 @@ const MusicPlayer = ({
   const playerBarRef = useRef<HTMLDivElement | null>(null);
   const audioSrcRef = useRef<HTMLAudioElement | null>(null);
   const prevTimeRef = useRef<number>(0);
-  const imgArr = useRef<string[]>([
-    lalaImg1,
-    lalaImg2,
-    lalaImg3,
-    lalaImg4,
-    lalaImg5,
-    lalaImg6,
-    lalaImg7,
-    lalaImg8,
-    lalaImg9,
-    lalaImg10,
-  ]);
 
   const engineRef = useRef<Engine | null>(null);
   const renderRef = useRef<Render | null>(null);
@@ -86,7 +68,7 @@ const MusicPlayer = ({
   function changeEndEventIdx(idx: number) {
     endEventIdx.current = idx;
   }
-  const data = useRef(testData.data.notes);
+  const data = useRef(musicAnalyzedData.notes);
 
   /** 영상의 재생 상태 변경하는 함수 */
   function changeVideoState() {
@@ -132,8 +114,7 @@ const MusicPlayer = ({
           divRef.current
         ) {
           const x =
-            (divRef.current.clientWidth + document.body.clientWidth * 0.05) *
-            (document.fullscreenElement ? 1 : 1.4);
+            (divRef.current.clientWidth + document.body.clientWidth * 0.05) * (document.fullscreenElement ? 1 : 1.4);
           const y =
             data.current[timeIdx.current].y === 100
               ? 0
@@ -145,13 +126,6 @@ const MusicPlayer = ({
             data.current[timeIdx.current].sides,
             data.current[timeIdx.current].width,
             {
-              render: {
-                sprite: {
-                  texture: imgArr.current[Math.floor(Math.random() * 10)],
-                  xScale: 1,
-                  yScale: 1,
-                },
-              },
               angle: data.current[timeIdx.current].angle,
               mass: 100,
               force: Vector.create(-divRef.current.clientWidth / 500, 0),
@@ -221,10 +195,7 @@ const MusicPlayer = ({
         timeIdx.current--;
       } else {
         // 뒤로 이동했을 때
-        while (
-          timeIdx.current > 0 &&
-          data.current[timeIdx.current].time > audioSrcRef.current.currentTime
-        ) {
+        while (timeIdx.current > 0 && data.current[timeIdx.current].time > audioSrcRef.current.currentTime) {
           timeIdx.current--;
         }
       }
@@ -236,10 +207,7 @@ const MusicPlayer = ({
 
   /** 키보드로 재생 컨트롤 할 수 있는 함수 */
   function MusicPlayPageKeyboardEvent(e: KeyboardEvent) {
-    if (
-      document.activeElement?.tagName === 'INPUT' &&
-      !(document.activeElement.getAttribute('type') === 'range')
-    ) {
+    if (document.activeElement?.tagName === 'INPUT' && !(document.activeElement.getAttribute('type') === 'range')) {
       return;
     } else {
       if (e.key === ' ') {
@@ -254,13 +222,11 @@ const MusicPlayer = ({
       } else if (audioSrcRef.current) {
         if (e.key === 'ArrowDown') {
           e.preventDefault();
-          audioSrcRef.current.volume =
-            audioSrcRef.current.volume >= 0.05 ? audioSrcRef.current.volume - 0.05 : 0;
+          audioSrcRef.current.volume = audioSrcRef.current.volume >= 0.05 ? audioSrcRef.current.volume - 0.05 : 0;
           setAudioVolume(audioSrcRef.current.volume);
         } else if (e.key === 'ArrowUp') {
           e.preventDefault();
-          audioSrcRef.current.volume =
-            audioSrcRef.current.volume <= 0.95 ? audioSrcRef.current.volume + 0.05 : 1;
+          audioSrcRef.current.volume = audioSrcRef.current.volume <= 0.95 ? audioSrcRef.current.volume + 0.05 : 1;
           setAudioVolume(audioSrcRef.current.volume);
         } else if (e.key === 'ArrowLeft') {
           e.preventDefault();
@@ -305,7 +271,7 @@ const MusicPlayer = ({
             audioSrcRef.current?.play();
           }
         } else if (endEventIdx.current === 2) {
-          navigate(`/music/${nextMusicId}`);
+          navigate(`/music?id=${nextMusicId}`);
         }
       });
       audioSrcRef.current.src = lalaSong;
@@ -366,19 +332,13 @@ const MusicPlayer = ({
       },
     });
 
-    const wallRight = Bodies.rectangle(
-      windowWidth + 250,
-      windowHeight / 2,
-      5,
-      windowHeight + 1000,
-      {
-        label: 'wall',
-        isStatic: true,
-        render: {
-          fillStyle: '#121212',
-        },
+    const wallRight = Bodies.rectangle(windowWidth + 250, windowHeight / 2, 5, windowHeight + 1000, {
+      label: 'wall',
+      isStatic: true,
+      render: {
+        fillStyle: '#121212',
       },
-    );
+    });
 
     const wallTop = Bodies.rectangle(windowWidth / 2, -250, windowWidth + 1000, 5, {
       label: 'wall',
@@ -388,19 +348,13 @@ const MusicPlayer = ({
       },
     });
 
-    const wallBottom = Bodies.rectangle(
-      windowWidth / 2,
-      windowHeight + 250,
-      windowWidth + 1000,
-      10,
-      {
-        label: 'wall',
-        isStatic: true,
-        render: {
-          fillStyle: '#121212',
-        },
+    const wallBottom = Bodies.rectangle(windowWidth / 2, windowHeight + 250, windowWidth + 1000, 10, {
+      label: 'wall',
+      isStatic: true,
+      render: {
+        fillStyle: '#121212',
       },
-    );
+    });
     World.add(engineRef.current.world, wallLeft);
     World.add(engineRef.current.world, wallRight);
     World.add(engineRef.current.world, wallTop);
@@ -471,15 +425,6 @@ const MusicPlayer = ({
     navigate(location.pathname);
   }
 
-  function onTimeLineInputRangeChanged(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log('ch');
-    setPlayTime(Number(e.target.value));
-  }
-  function onTimeLineInputRangeChanged2(e: React.MouseEvent<HTMLInputElement>) {
-    console.log((e.target as HTMLInputElement).value);
-    setPlayTime(Number(e.currentTarget.value));
-  }
-
   return (
     <>
       <div css={s_container}>
@@ -496,7 +441,7 @@ const MusicPlayer = ({
           <div
             ref={playerBarRef}
             css={css`
-              /* display: ${playerBarVisible ? 'flex' : 'none'}; */
+              display: ${playerBarVisible ? 'flex' : 'none'};
               ${s_playerBar}
             `}
           >
@@ -505,9 +450,7 @@ const MusicPlayer = ({
                 css={css`
                   ${s_playerBarTimeLineRange}
                   ${s_playerBarRange(
-                    audioSrcRef.current
-                      ? (audioSrcRef.current.currentTime / audioSrcRef.current.duration) * 100
-                      : 0,
+                    audioSrcRef.current ? (audioSrcRef.current.currentTime / audioSrcRef.current.duration) * 100 : 0,
                   )}
                 `}
                 type="range"
@@ -537,12 +480,8 @@ const MusicPlayer = ({
                     }
                   }}
                 />
-                {!isPaused ? (
-                  <FaPause onClick={changeVideoState} />
-                ) : (
-                  <FaCirclePlay onClick={changeVideoState} />
-                )}
-                <LiaForwardSolid onClick={() => navigate(`/music/${nextMusicId}`)} />
+                {!isPaused ? <FaPause onClick={changeVideoState} /> : <FaCirclePlay onClick={changeVideoState} />}
+                <LiaForwardSolid onClick={() => navigate(`/music?id=${nextMusicId}`)} />
                 <MdOutlineSync onClick={() => changeEndEventIdx(1)} />
               </div>
               <div>

@@ -14,19 +14,31 @@ const CardDetailListItem = ({
   itemId,
   category,
   artist,
+  replace,
+  playlistid,
+  playlistidx = 0,
 }: {
   imageUrl: string;
   itemId: number;
   name: string;
   category: string;
   artist?: ReactNode;
+  replace?: boolean;
+  playlistid?: number;
+  playlistidx?: number;
 }) => {
   const navigate = useNavigate();
   return (
     <div
       css={s_container}
       onClick={() => {
-        navigate(`/${category}/${itemId}`);
+        if (category !== 'music') navigate(`/${category}/${itemId}`, { replace });
+        else {
+          if (playlistid) {
+            navigate(`/music?id=${itemId}&list=${playlistid}&idx=${playlistidx}`, { replace });
+          }
+          navigate(`/music?`, { replace });
+        }
       }}
     >
       <div css={s_imageContainer}>

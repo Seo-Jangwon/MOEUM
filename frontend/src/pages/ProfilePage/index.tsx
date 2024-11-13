@@ -1,26 +1,19 @@
 import apiClient from '@/api/apiClient';
 import Modal from '@/components/Modal/Modal';
 import { ReactNode, useRef, useState } from 'react';
+import { BiTrash } from 'react-icons/bi';
 import { FaPlus } from 'react-icons/fa6';
 import { ImCross } from 'react-icons/im';
 import { IoIosArrowDropright } from 'react-icons/io';
+import { MdDriveFileRenameOutline } from 'react-icons/md';
+import { PiImagesSquareBold } from 'react-icons/pi';
+import { RiLockPasswordLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import SettingComponent from '../SettingPage/Components/SettingComponent/SettingComponent';
-import logo from '../SignUpPage/image/logo.png';
-import { MdDriveFileRenameOutline } from "react-icons/md";
-import { PiImagesSquareBold } from "react-icons/pi";
-import { RiLockPasswordLine } from "react-icons/ri";
-import { BiTrash } from "react-icons/bi";
 
-
-
-import {
-  s_componentsContainer,
-  s_modalInputStyle,
-  s_modalText,
-  s_textContainer,
-  s_titleContainer,
-} from './style';
+import useAuthStore from '@/stores/authStore';
+import useUserInfoStore from '@/stores/userInfoStore';
+import { s_componentsContainer, s_modalInputStyle, s_modalText, s_textContainer, s_titleContainer } from './style';
 
 interface profileComponentsData {
   iconImage: ReactNode;
@@ -38,6 +31,9 @@ interface editModalComponentsData {
 const ProfilePage = () => {
   const navigate = useNavigate();
 
+  const { nickname, registeredDate, profileImage, email, setEmail, setNickname, setProfileImage, signOutInUserInfo } =
+    useUserInfoStore();
+  const { signOut } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const modalDataIdx = useRef<number>(0);
   const [submitData, setSubmitData] = useState<string>('');
@@ -118,6 +114,7 @@ const ProfilePage = () => {
     })
       .then((response) => {
         if (response.data.code === 200) {
+          setNickname(response.data.data.nickname);
           alert('닉네임 변경이 완료되었습니다.');
         } else {
           alert('오류가 발생하였습니다.');
@@ -130,7 +127,6 @@ const ProfilePage = () => {
       .finally(() => {
         navigate(0);
       });
-    setSubmitImage(null);
   }
 
   function changeProfileImage() {
@@ -152,6 +148,7 @@ const ProfilePage = () => {
     })
       .then((response) => {
         if (response.data.code === 200) {
+          setProfileImage(response.data.data.profileImage);
           alert('프로필 사진 변경이 되었습니다.');
         } else {
           alert('오류가 발생하였습니다.');
@@ -164,7 +161,6 @@ const ProfilePage = () => {
       .finally(() => {
         navigate(0);
       });
-    changeSubmitData('');
   }
 
   function changePassword() {
@@ -188,7 +184,6 @@ const ProfilePage = () => {
         .catch((err) => {
           alert('오류가 발생하였습니다. 다시 시도해 주십시오.');
           console.log(err);
-          navigate(0);
         });
     } else {
       //현재 비밀번호 인증 후
@@ -212,7 +207,6 @@ const ProfilePage = () => {
           navigate(0);
         });
     }
-    changeSubmitData('');
   }
 
   function deleteUser() {
@@ -223,7 +217,8 @@ const ProfilePage = () => {
       .then((response) => {
         if (response.data.code === 200) {
           alert('회원 탈퇴가 완료되었습니다');
-          //저스탠드 데이터 초기화 필요
+          signOut();
+          signOutInUserInfo();
           navigate('/');
         } else {
           alert('오류가 발생하였습니다.');
@@ -232,9 +227,6 @@ const ProfilePage = () => {
       .catch((err) => {
         alert('오류가 발생하였습니다. 다시 시도해 주십시오.');
         console.log(err);
-      })
-      .finally(() => {
-        navigate(0);
       });
     changeSubmitData('');
   }
@@ -334,15 +326,15 @@ const ProfilePage = () => {
         {isModalOpen ? <Modal {...editModalComponentsData[modalDataIdx.current]} /> : null}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div>
-            <img src={logo} css={{ backgroundColor: 'gray', opacity: 0.7, borderRadius: '25px' }} />
+            <img src={profileImage} css={{ backgroundColor: 'gray', opacity: 0.7, borderRadius: '25px' }} />
           </div>
           &nbsp;
-          <p>닉네임</p>
+          <p>{nickname}</p>
         </div>
       </div>
       <div css={s_componentsContainer}>
-        <div css={s_textContainer}>이메일: 이메일</div>
-        <div css={s_textContainer}>가입일: 가입일</div>
+        <div css={s_textContainer}>이메일: {email}</div>
+        <div css={s_textContainer}>가입일: {registeredDate}</div>
         {profileComponentsDatas.map((item, index) => {
           return <SettingComponent key={index} {...item} />;
         })}

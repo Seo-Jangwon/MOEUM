@@ -14,11 +14,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CustomOauthSuccessHandler implements AuthenticationSuccessHandler {
+public class CustomOAuthSuccessHandler implements AuthenticationSuccessHandler {
 
   private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -27,10 +28,46 @@ public class CustomOauthSuccessHandler implements AuthenticationSuccessHandler {
       Authentication authentication) throws IOException, ServletException {
 
     OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+    String provider = (String) request.getSession().getAttribute("provider");
 
-    // 필요한 정보 가져오기 (email, nickname)
+    // 필요한 정보 가져오기 (email, nickname, profileImage)
     String email = oAuth2User.getAttribute("email");
-    String nickname = oAuth2User.getAttribute("nickname");
+    String nickname = null;
+    String profileImage = null;
+
+    if ("google".equalsIgnoreCase(provider)) {
+      nickname = (String) oAuth2User.getAttribute("name");
+      profileImage = (String) oAuth2User.getAttribute("picture");
+
+    } else if ("spotify".equalsIgnoreCase(provider)) {
+      nickname = (String) oAuth2User.getAttribute("display_name");
+
+      // Spotify의 프로필 이미지 가져오기
+      Map<String, Object> images = (Map<String, Object>) oAuth2User.getAttribute("images");
+      if (images != null && !images.isEmpty()) {
+        profileImage = (String) ((Map<String, Object>) images.get(0)).get("url");
+      }
+
+    } else if ("kakao".equalsIgnoreCase(provider)) {
+      Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttribute("kakao_account");
+      if (kakaoAccount != null) {
+        email = (String) kakaoAccount.get("email");
+
+        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+        if (profile != null) {
+          nickname = (String) profile.get("nickname");
+          profileImage = (String) profile.get("profile_image_url");
+        }
+      }
+    }
+
+    // nickname 기본값 설정
+    if (nickname == null || nickname.trim().isEmpty()) {
+      nickname = (email != null && email.contains("@")) ? email.split("@")[0] : "Anonymous";
+    }
+
+    log.info("Provider: " + provider);
+    log.info("Nickname: " + nickname);
 
     // access_token 및 refresh_token 가져오기
     String accessToken = (String) oAuth2User.getAttribute("access_token");
@@ -44,7 +81,8 @@ public class CustomOauthSuccessHandler implements AuthenticationSuccessHandler {
     String targetUrl = "https://www.naver.com"; // 프론트엔드 URL로 수정
     String target = UriComponentsBuilder.fromUriString(targetUrl)
         .queryParam("email", email)
-        .queryParam("nickname", nickname)
+        .queryParam("name", nickname)
+        .queryParam("profileImage", profileImage)
         .build().toUriString();
 
     // 리디렉션 처리
