@@ -43,8 +43,11 @@ const PopularList = () => {
       url: '/musics/popular',
     })
       .then((res) => {
+<<<<<<< HEAD
+=======
         const jsonString = JSON.stringify(res.data.data);
         console.log(jsonString)
+>>>>>>> edb0fa34a7969ea9e1a6f4037605f5b68d3590f3
         console.log(res.data.data);
         if (res.data.code === 200) {
           setPopularList(res.data.data)
