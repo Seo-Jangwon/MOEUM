@@ -1,10 +1,14 @@
 package com.weseethemusic.member.handler;
 
+import com.weseethemusic.member.common.constants.SecurityConstants;
+import com.weseethemusic.member.common.util.JwtUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -14,7 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
@@ -22,70 +27,48 @@ import java.util.Map;
 public class CustomOAuthSuccessHandler implements AuthenticationSuccessHandler {
 
   private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+  private final JwtUtil jwtUtil;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException, ServletException {
 
     OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-    String provider = (String) request.getSession().getAttribute("provider");
-
-    // 필요한 정보 가져오기 (email, nickname, profileImage)
     String email = oAuth2User.getAttribute("email");
-    String nickname = null;
-    String profileImage = null;
+    String nickname = oAuth2User.getAttribute("nickname");
+    String profileImage = oAuth2User.getAttribute("profileImage");
+    Long userId = oAuth2User.getAttribute("id");
 
-    if ("google".equalsIgnoreCase(provider)) {
-      nickname = (String) oAuth2User.getAttribute("name");
-      profileImage = (String) oAuth2User.getAttribute("picture");
+    // JWT 액세스 및 리프레시 토큰 생성
+    String accessToken = jwtUtil.generateAccessToken(email, "USER", userId, true);
+    String refreshToken = jwtUtil.generateRefreshToken(email);
 
-    } else if ("spotify".equalsIgnoreCase(provider)) {
-      nickname = (String) oAuth2User.getAttribute("display_name");
+    // 리프레시 토큰을 Redis에 저장
+    jwtUtil.storeRefreshTokenInRedis(email, refreshToken);
 
-      // Spotify의 프로필 이미지 가져오기
-      Map<String, Object> images = (Map<String, Object>) oAuth2User.getAttribute("images");
-      if (images != null && !images.isEmpty()) {
-        profileImage = (String) ((Map<String, Object>) images.get(0)).get("url");
-      }
+    // 리프레시 토큰을 HTTP-Only 쿠키로 설정
+    ResponseCookie refreshTokenCookie = ResponseCookie.from(SecurityConstants.REFRESH_TOKEN_COOKIE, refreshToken)
+        .httpOnly(true)
+        .secure(true)
+        .path("/")
+        .maxAge(Duration.ofDays(7))
+        .sameSite("None")
+        .build();
+    response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
-    } else if ("kakao".equalsIgnoreCase(provider)) {
-      Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttribute("kakao_account");
-      if (kakaoAccount != null) {
-        email = (String) kakaoAccount.get("email");
-
-        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
-        if (profile != null) {
-          nickname = (String) profile.get("nickname");
-          profileImage = (String) profile.get("profile_image_url");
-        }
-      }
-    }
-
-    // nickname 기본값 설정
-    if (nickname == null || nickname.trim().isEmpty()) {
-      nickname = (email != null && email.contains("@")) ? email.split("@")[0] : "Anonymous";
-    }
-
-    log.info("Provider: " + provider);
-    log.info("Nickname: " + nickname);
-
-    // access_token 및 refresh_token 가져오기
-    String accessToken = (String) oAuth2User.getAttribute("access_token");
-    String refreshToken = (String) oAuth2User.getAttribute("refresh_token");
-
-    // access_token과 refresh_token을 세션에 저장
-    request.getSession().setAttribute("ACCESS_TOKEN", accessToken);
-    request.getSession().setAttribute("REFRESH_TOKEN", refreshToken);
+    // 액세스 토큰을 응답 헤더에 추가
+    response.setHeader(SecurityConstants.JWT_HEADER, "Bearer " + accessToken);
 
     // 프론트엔드로 리디렉션 URL 설정
-    String targetUrl = "https://www.naver.com"; // 프론트엔드 URL로 수정
-    String target = UriComponentsBuilder.fromUriString(targetUrl)
+    String targetUrl = UriComponentsBuilder.fromUriString("https://weseethemusic.com/oauth")
         .queryParam("email", email)
         .queryParam("name", nickname)
         .queryParam("profileImage", profileImage)
-        .build().toUriString();
+        .encode(StandardCharsets.UTF_8)
+        .build()
+        .toUriString();
 
     // 리디렉션 처리
-    redirectStrategy.sendRedirect(request, response, target);
+    redirectStrategy.sendRedirect(request, response, targetUrl);
   }
 }
