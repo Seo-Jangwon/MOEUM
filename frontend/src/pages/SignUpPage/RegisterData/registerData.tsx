@@ -134,8 +134,6 @@ const RegisterData = ({
           if (onBlur) {
             onBlur()
           }
-
-          
         }}
         css={(theme) => s_input(theme, isValidInput)}
       />

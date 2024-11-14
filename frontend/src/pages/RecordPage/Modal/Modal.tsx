@@ -30,9 +30,11 @@ interface Playlist {
   totalMusicCount: number;
 }
 
+
+
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const isPlayList = useRef<boolean>(true);
-  const [isExist, setIsExist] = useState<boolean>(false)
+  // const [isExist, setIsExist] = useState<boolean>(false)
   const [myPlayList, setMyPlayList] = useState<Playlist[]>([])
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [playlistTitle, setPlaylistTitle] = useState<string>('');
