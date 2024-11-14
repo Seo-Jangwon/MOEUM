@@ -1,4 +1,3 @@
-import lala from '@/assets/lalaticon/lala2.png';
 import Lottie from 'lottie-react';
 import { useEffect, useRef, useState } from 'react';
 import { FaArrowLeft, FaArrowRight, FaPlay, FaRegHeart } from 'react-icons/fa';
@@ -54,7 +53,7 @@ const NewList = () => {
       .catch((err) => {
         console.log(err);
       });
-      console.log(latestData);
+    console.log(latestData);
   }, []);
 
   const updateItemsPerPage = () => {

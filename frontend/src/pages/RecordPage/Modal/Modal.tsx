@@ -18,7 +18,6 @@ import {
 } from './style';
 
 interface ModalProps {
-  id: number;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -52,8 +51,7 @@ const mokData = {
   },
 };
 
-
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const isPlayList = useRef<boolean>(true);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [playlistTitle, setPlaylistTitle] = useState<string>('');

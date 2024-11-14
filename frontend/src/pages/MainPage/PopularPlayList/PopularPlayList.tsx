@@ -1,13 +1,15 @@
 import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala8.png';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
+import Modal from '@/pages/RecordPage/Modal/Modal';
 import { css } from '@emotion/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FaRegHeart } from 'react-icons/fa6';
 import { FiCrosshair } from 'react-icons/fi';
+import { PiPlaylist } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import { s_button_all, s_div_header } from '../NewList/style';
-import { s_div_h3, s_div_item_box, s_div_item_container, s_h5 } from './style';
+import { s_div_button, s_div_h3, s_div_item_box, s_div_item_container, s_h5, s_icon_div } from './style';
 
 interface PlayList {
   id: number;
@@ -38,7 +40,7 @@ const mokData: { data: PlayList[] } = {
 const handleLike = (id: number) => {
   apiClient({
     method: 'POST',
-    url: '/musics/music/like',
+    url: '/musics/playlist/like',
     data: { id },
   })
     .then((res) => {
@@ -49,15 +51,32 @@ const handleLike = (id: number) => {
     });
 };
 
+interface Playlist {
+  id: number;
+  name: string;
+  image: string;
+}
+
 const PopularPlayList = () => {
   const navigate = useNavigate();
+  const [popularPlayList, setPopularPlayList] = useState<Playlist[]>([])
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  // const handlePage = (path: string) => {
-  //   return navigate(path);
-  // };
+
+
   const handleMusicPage = (path: string) => {
     return navigate(path);
   };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
     apiClient({
       method: 'GET',
@@ -65,11 +84,14 @@ const PopularPlayList = () => {
     })
       .then((res) => {
         console.log(res);
+        if (res.data.code === 200) {
+          setPopularPlayList(res.data.data)
+        }
       })
       .catch((err) => {
         console.log(err);
       });
-  });
+  }, []);
 
   return (
     <>
@@ -83,19 +105,10 @@ const PopularPlayList = () => {
         </button>
       </div>
       <div css={s_div_item_container}>
-        {mokData.data.map((item, index) => (
+        {popularPlayList.map((item, index) => (
           <div css={s_div_item_box(lala)} key={index}>
             <div
-              css={css`
-                position: absolute;
-                top: 10px;
-                right: 0;
-                z-index: 1;
-                :hover {
-                  background-color: #888;
-                  border-radius: 100%;
-                }
-              `}
+              css={s_icon_div}
             >
               <DotDotDot
                 data={[
@@ -105,34 +118,26 @@ const PopularPlayList = () => {
                     clickHandler: () => handleLike(item.id),
                     size: 20,
                   },
+                  {
+                    iconImage: <PiPlaylist />,
+                    text: '플레이리스트 추가',
+                    clickHandler: () => openModal(),
+                    size: 20,
+                  },
                 ]}
               />
             </div>
             <button
               key={index}
-              css={css`
-                width: 100%;
-                height: 100%;
-                border: none;
-                :hover {
-                  transition: 0.3s;
-                  filter: brightness(0.5);
-                }
-                border: 0;
-                border-radius: 20px;
-                background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)),
-                  url(${lala});
-                @media (max-width: 768px) {
-                  border-radius: 10px;
-                }
-              `}
+              css={s_div_button}
               onClick={() => handleMusicPage(`playlist/${item.id}`)}
             >
-              <h5 css={s_h5}>{item.title}</h5>
+              <h5 css={s_h5}>{item.name}</h5>
             </button>
           </div>
         ))}
       </div>
+      <Modal isOpen={isModalOpen} onClose={closeModal} />
     </>
   );
 };
