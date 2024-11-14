@@ -20,5 +20,6 @@ public class MusicDto {
     private String duration;
     private String albumImage;
     private List<ArtistDto> artists;
+    private String genre;
 
 }
