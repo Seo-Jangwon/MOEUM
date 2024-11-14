@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { FiEye, FiX } from 'react-icons/fi';
 import { IoMdSettings } from 'react-icons/io';
 import { IoFileTrayStackedOutline } from 'react-icons/io5';
+import { Link } from 'react-router-dom';
 import SideBarContentItem from '../SideBarContentItem/SideBarContentItem';
 import * as S from './SideBarContent.style';
 
@@ -54,11 +55,11 @@ const SideBarContent = ({ isOpen, closeSideBar }: SideBarContentProps) => {
         </S.Section>
       </S.Content>
       <S.Footer>
-        <S.RouterLink to="/faq">FAQ</S.RouterLink>
-        <S.RouterLink to="#" onClick={openContactModal}>
+        <Link to="/faq">FAQ</Link>
+        <Link to="#" onClick={openContactModal}>
           1:1 문의
-        </S.RouterLink>
-        {isLoggedIn ? <a onClick={signOut}>로그아웃</a> : <S.RouterLink to="/signin">로그인</S.RouterLink>}
+        </Link>
+        {isLoggedIn ? <a onClick={signOut}>로그아웃</a> : <Link to="/signin">로그인</Link>}
       </S.Footer>
       {isContactModalOpen && <ContactModal handleClose={closeContactModal} />}
     </S.Container>
