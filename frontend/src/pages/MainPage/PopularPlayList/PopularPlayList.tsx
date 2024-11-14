@@ -2,7 +2,6 @@ import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala8.png';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import Modal from '@/pages/RecordPage/Modal/Modal';
-import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { FaRegHeart } from 'react-icons/fa6';
 import { FiCrosshair } from 'react-icons/fi';
@@ -11,31 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { s_button_all, s_div_header } from '../NewList/style';
 import { s_div_button, s_div_h3, s_div_item_box, s_div_item_container, s_h5, s_icon_div } from './style';
 
-interface PlayList {
-  id: number;
-  title: string;
-}
 
-const mokData: { data: PlayList[] } = {
-  data: [
-    {
-      id: 1,
-      title: '공부할 때 들으면 좋은 음악선',
-    },
-    {
-      id: 2,
-      title: '공부할 때 들으면 좋은 음악선',
-    },
-    {
-      id: 3,
-      title: '공부할 때 들으면 좋은 음악선',
-    },
-    {
-      id: 4,
-      title: '공부할 때 들으면 좋은 음악선',
-    },
-  ],
-};
 
 const handleLike = (id: number) => {
   apiClient({

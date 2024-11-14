@@ -22,59 +22,22 @@ interface ModalProps {
   onClose: () => void;
 }
 
-const mokData = {
-  code: 200,
-  data: {
-    playlists: [
-      {
-        id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
-        totalDuration: '1시간 23분',
-        totalMusicCount: 20,
-      },
-      {
-        id: 2,
-        title: '플레이리스트 2',
-        image: '/mantra.png',
-        totalDuration: '2시간 34분',
-        totalMusicCount: 40,
-      },
-      {
-        id: 2,
-        title: '플레이리스트 2',
-        image: '/mantra.png',
-        totalDuration: '2시간 34분',
-        totalMusicCount: 40,
-      },
-    ],
-  },
-};
+interface Playlist {
+  id: number;
+  title: string;
+  image: string;
+  totalDuration: string;
+  totalMusicCount: number;
+}
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const isPlayList = useRef<boolean>(true);
+  const [isExist, setIsExist] = useState<boolean>(false)
+  const [myPlayList, setMyPlayList] = useState<Playlist[]>([])
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [playlistTitle, setPlaylistTitle] = useState<string>('');
 
-  useEffect(() => {
-    apiClient({
-      method: 'GET',
-      url: '/musics/playlist',
-    })
-      .then((res) => {
-        console.log(res);
-        if (res.status === HttpStatusCode.Ok) {
-          console.log(res);
-        } else if (res.data.code === 500) {
-          alert('내부 서버 오류입니다.');
-        } else {
-          alert('알 수 없는 오류입니다.');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+
 
   const handleAddButtonClick = () => {
     setIsAdding(true);
@@ -85,10 +48,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       apiClient({
         method: 'POST',
         url: '/musics/playlist/create',
-        data: { title: playlistTitle, music: [] },
+        data: { title: playlistTitle, musics: [] },
       })
         .then((res) => {
-          if (res.status === HttpStatusCode.Ok) {
+          if (res.data.code === 200) {
             console.log(res);
             setIsAdding(false);
             setPlaylistTitle('');
@@ -105,6 +68,28 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       alert('플레이리스트 제목을 입력해주세요.');
     }
   };
+
+  useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/playlist',
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.data.code === 200) {
+          setMyPlayList(res.data.data.musics)
+          console.log(myPlayList);
+          
+        } else if (res.data.code === 500) {
+          alert('내부 서버 오류입니다.');
+        } else {
+          alert('알 수 없는 오류입니다.');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const handleAddPlayList = (id: number) => {
     apiClient({
@@ -156,7 +141,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   gap: 20px;
                 `}
               >
-                {mokData.data.playlists.map((item, index) => (
+                {myPlayList.map((item, index) => (
                   <div
                     key={index}
                     css={s_div_playlist_item_container}
@@ -194,9 +179,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               ) : (
-                <Button variant="grad" onClick={handleAddButtonClick} css={s_plus_button}>
+                <div  css={s_plus_button}>
+                <Button variant="grad" onClick={handleAddButtonClick}>
                   추가
                 </Button>
+                </div>
               )}
             </>
           ) : (
