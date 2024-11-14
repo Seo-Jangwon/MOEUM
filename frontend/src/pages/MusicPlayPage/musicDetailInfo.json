@@ -1,0 +1,16 @@
+{
+  "code": 200,
+  "data": {
+    "musicId": 1,
+    "musicName": "null",
+    "albumId": 0,
+    "albumName": "null",
+    "albumImage": "",
+    "albumIndex": 1,
+    "audioPath": "https://youtu.be/FtDyxkzpFes",
+    "genre": ["asdf"],
+    "duration": "115",
+    "releaseDate": "null",
+    "artists": [{ "id": 1, "name": "asdf" }]
+  }
+}
