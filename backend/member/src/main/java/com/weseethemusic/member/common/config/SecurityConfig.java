@@ -41,6 +41,10 @@ public class SecurityConfig {
             .anyRequest().permitAll()
         )
         .oauth2Login(oauth -> oauth
+                .authorizationEndpoint(authorization -> authorization
+                    .baseUri("/members/oauth2/authorization"))
+                .redirectionEndpoint(redirection -> redirection
+                    .baseUri("/members/oauth2/code/*"))
                 .userInfoEndpoint(userInfo -> userInfo.userService(customOauthService)
                     .userAuthoritiesMapper(grantedAuthoritiesMapper()))
                 .successHandler(customOAuthSuccessHandler)
@@ -86,4 +90,5 @@ public class SecurityConfig {
   public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
     return authorities -> new HashSet<>(authorities);
   }
+
 }
