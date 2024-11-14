@@ -10,6 +10,11 @@ services:
       LANG: C.UTF-8
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: member
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     expose:
       - "3306"
     networks:
@@ -41,12 +46,20 @@ services:
   elastic:
     container_name: elastic-music
     image: elasticsearch:8.15.3
+    volumes:
+      - elastic_music:/usr/share/elasticsearch/data
     environment:
       - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
     deploy:
       resources:
         limits:
           memory: 2G
+    healthcheck:
+      test: curl -s http://localhost:9200 >/dev/null || exit 1
+      interval: 10s
+      timeout: 30s
+      retries: 5
     expose:
       - 9200
     networks:
@@ -59,6 +72,11 @@ services:
     expose:
       - "6379"
     command: [ "redis-server" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
     networks:
       - moeum
 
@@ -80,17 +98,21 @@ services:
     image: rabbitmq:4.0.3-management-alpine
     expose:
       - "5672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
     networks:
       - moeum
 
   gateway: &spring_template
     container_name: moeum-gateway
     restart: always
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 2s
     build: ./backend/gateway
+    depends_on:
+      redis_gateway:
+        condition: service_healthy
     expose:
       - 8080
     networks:
@@ -98,6 +120,13 @@ services:
 
   member:
     <<: *spring_template
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mysql_member:
+        condition: service_healthy
+      redis_member:
+        condition: service_healthy
     container_name: moeum-member
     build: ./backend/member
     expose:
@@ -105,6 +134,13 @@ services:
 
   music:
     <<: *spring_template
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mysql_music:
+        condition: service_healthy
+      redis_music:
+        condition: service_healthy
     container_name: moeum-music
     build: ./backend/music
     expose:
@@ -112,6 +148,15 @@ services:
 
   rec:
     <<: *spring_template
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      elastic:
+        condition: service_healthy
+      mysql_rec:
+        condition: service_healthy
+      redis_rec:
+        condition: service_healthy
     container_name: moeum-recommendation
     build: ./backend/recommendation
     expose:
@@ -132,6 +177,7 @@ volumes:
   mysql_music:
   mysql_rec:
   mongo_music:
+  elastic_music:
 
 
 networks:

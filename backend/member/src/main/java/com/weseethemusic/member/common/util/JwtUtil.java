@@ -202,4 +202,9 @@ public class JwtUtil {
         }
     }
 
+    public void storeRefreshTokenInRedis(String email, String refreshToken) {
+        redisTemplate.opsForValue().set("RT:" + email, refreshToken, refreshTokenExpiration, TimeUnit.MILLISECONDS);
+    }
+
+
 }
