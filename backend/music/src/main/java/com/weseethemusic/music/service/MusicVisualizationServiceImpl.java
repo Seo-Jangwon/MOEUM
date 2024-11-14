@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weseethemusic.music.dto.visualization.MusicVisualizationDto;
 import com.weseethemusic.music.dto.visualization.ShapeDto;
 import com.weseethemusic.music.dto.visualization.TimeDurationDto;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -21,8 +21,13 @@ public class MusicVisualizationServiceImpl implements MusicVisualizationService 
         MusicVisualizationDto result = new MusicVisualizationDto();
 
         try {
-            JsonNode root = mapper.readTree(
-                new File("src/main/java/com/weseethemusic/music/service/data.json"));
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data.json");
+
+            if (inputStream == null) {
+                throw new IllegalArgumentException("File not found: data.json");
+            }
+
+            JsonNode root = mapper.readTree(inputStream);
             JsonNode dataNode = root.path("data");
 
             List<TimeDurationDto> vibrations = new ArrayList<>();

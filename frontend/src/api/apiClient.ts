@@ -33,8 +33,8 @@ apiClient.interceptors.response.use(
           console.log(refreshErr.response?.data);
         }
         // 갱신에 실패한 경우 로그아웃
-        // signOut();
-        // window.location.href = '/signin';
+        signOut();
+        window.location.href = '/signin';
         return Promise.reject(refreshErr);
       }
     }
