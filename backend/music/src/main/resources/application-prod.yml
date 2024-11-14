@@ -19,6 +19,10 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
 
+  sql:
+    init:
+      mode: always
+
   data:
     redis:
       host: redis-music
