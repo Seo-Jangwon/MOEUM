@@ -11,12 +11,12 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,14 +30,45 @@ public class CustomOauthService extends DefaultOAuth2UserService {
     OAuth2User oAuth2User = super.loadUser(userRequest);
     Map<String, Object> attributes = oAuth2User.getAttributes();
 
+    // provider 이름 가져오기
+    String registrationId = userRequest.getClientRegistration().getRegistrationId();
+    String provider = registrationId;
+
     // 사용자 정보 추출
-    String email = (String) attributes.get("email");
-    String nickname = (String) attributes.get("display_name");
+    String email = null;
+    String nickname = null;
     String profileImage = null;
 
-    // 프로필 이미지가 있는 경우 가져오기
-    if (attributes.containsKey("images") && !((List<?>) attributes.get("images")).isEmpty()) {
-      profileImage = (String) ((Map<String, Object>) ((List<?>) attributes.get("images")).get(0)).get("url");
+    if ("google".equalsIgnoreCase(registrationId)) {
+      email = (String) attributes.get("email");
+      nickname = (String) attributes.get("name");
+      profileImage = (String) attributes.get("picture");
+
+    } else if ("spotify".equalsIgnoreCase(registrationId)) {
+      email = (String) attributes.get("email");
+      nickname = (String) attributes.get("display_name");
+
+      // Spotify 프로필 이미지가 있는 경우 가져오기
+      if (attributes.containsKey("images") && !((List<?>) attributes.get("images")).isEmpty()) {
+        profileImage = (String) ((Map<String, Object>) ((List<?>) attributes.get("images")).get(0)).get("url");
+      }
+
+    } else if ("kakao".equalsIgnoreCase(registrationId)) {
+      Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+      if (kakaoAccount != null) {
+        email = (String) kakaoAccount.get("email");
+
+        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+        if (profile != null) {
+          nickname = (String) profile.get("nickname");
+          profileImage = (String) profile.get("profile_image_url");
+        }
+      }
+    }
+
+    // 기본값 설정
+    if (nickname == null || nickname.trim().isEmpty()) {
+      nickname = email != null && email.contains("@") ? email.split("@")[0] : "Anonymous";
     }
 
     // 기존 사용자 여부 확인 및 저장 또는 업데이트
@@ -48,7 +79,7 @@ public class CustomOauthService extends DefaultOAuth2UserService {
       member.setEmail(email);
       member.setNickname(nickname);
       member.setProfileImage(profileImage);
-      member.setProvider("spotify");
+      member.setProvider(provider);
       member.setCreatedAt(new Date());
       member.setRole(Role.USER); // 기본 역할 설정
       memberRepository.save(member);

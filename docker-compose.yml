@@ -43,6 +43,10 @@ services:
     image: elasticsearch:8.15.3
     environment:
       - "discovery.type=single-node"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
     expose:
       - 9200
     networks:

@@ -8,4 +8,5 @@ public class MemberInfoDto {
     String email;
     String nickname;
     String profileImage;
+    String registeredDate;
 }

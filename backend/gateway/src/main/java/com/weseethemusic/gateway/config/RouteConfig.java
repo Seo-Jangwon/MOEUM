@@ -52,9 +52,11 @@ public class RouteConfig {
             .addExcludedPath("/musics/recommend")
             .addExcludedPath("/musics/popular")
             .addExcludedPath("/musics/popular/playlist")
+            .addExcludedPath("/musics/visualization/*")
             .addExcludedPath("/musics/latest")
             .addExcludedPath("/musics/detail/album/*")
             .addExcludedPath("/musics/detail/artist/*")
+            .addExcludedPath("/musics/todaygenre/*")
             .addExcludedPath("/members/token");
 
         return builder.routes()
@@ -74,8 +76,6 @@ public class RouteConfig {
                     .filter((exchange, chain) -> {
                         ServerHttpRequest request = exchange.getRequest();
                         String refreshToken = getRefreshTokenFromCookies(exchange);
-                        String token = exchange.getRequest().getHeaders()
-                            .getFirst(SecurityConstants.JWT_HEADER);
 
                         if (refreshToken != null) {
                             // ServerHttpRequestDecorator 사용하여 헤더 수정
@@ -86,10 +86,8 @@ public class RouteConfig {
                                     HttpHeaders headers = new HttpHeaders();
                                     super.getHeaders().forEach(
                                         (key, values) -> headers.put(key, new ArrayList<>(values)));
-                                    headers.remove(SecurityConstants.JWT_HEADER);
-                                    headers.add(SecurityConstants.REFRESH_TOKEN_HEADER,
+                                    headers.set(SecurityConstants.REFRESH_TOKEN_HEADER,
                                         refreshToken);
-                                    headers.add(SecurityConstants.JWT_HEADER, token);
                                     return headers;
                                 }
                             };
@@ -126,7 +124,7 @@ public class RouteConfig {
                     "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
                     "/musics/latest",
                     "/musics/detail/album/*",
-                    "/musics/detail/artist/*")
+                    "/musics/detail/artist/*", "/musics/visualization/*", "/musics/todaygenre/*")
                 .filters(f -> f
                     .filter(requestLoggingFilter.apply(new Object()))
                     .circuitBreaker(config -> config
@@ -144,7 +142,7 @@ public class RouteConfig {
                     "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
                     "/musics/latest",
                     "/musics/detail/album/*",
-                    "/musics/detail/artist/*"))
+                    "/musics/detail/artist/*", "/musics/visualization/*", "/musics/todaygenre/*"))
                 .filters(f -> f
                     .filter(requestLoggingFilter.apply(new Object()))
                     .filter(jwtAuthenticationFilter.apply(authConfig))
