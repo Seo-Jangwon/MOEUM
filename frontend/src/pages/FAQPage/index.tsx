@@ -1,16 +1,11 @@
+import ContactModal from '@/components/Modal/ConatactModal/ContactModal';
 import { css, Theme } from '@emotion/react';
 import { ReactNode, useRef, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa6';
 import { IoMdCard, IoMdExit, IoMdPhonePortrait } from 'react-icons/io';
 import Accordion from './Accordion/Accordion';
 import Card from './CardInFAQ/CardInFAQ';
-import {
-  s_1vs1Container,
-  s_1vs1text,
-  s_1vs1textWithAnchor,
-  s_BodyContainer,
-  s_TitleText,
-} from './style';
+import { s_1vs1Container, s_1vs1text, s_1vs1textWithAnchor, s_BodyContainer, s_TitleText } from './style';
 
 interface categoryData {
   iconImage: ReactNode;
@@ -100,10 +95,19 @@ const FAQPage = () => {
   ]);
 
   const [isClicked, isClickedChanged] = useState<number>(0);
+  const [isContactModalOpen, setIsConatctModalOpen] = useState(false);
 
   function changeClickedIndex(idx: number): void {
     isClickedChanged(idx);
   }
+  const openContactModal = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation();
+    setIsConatctModalOpen(true);
+  };
+  const closeContactModal = () => {
+    // e.stopPropagation();
+    setIsConatctModalOpen(false);
+  };
 
   return (
     <>
@@ -125,21 +129,15 @@ const FAQPage = () => {
       </div>
       <div>
         {detailDatas.current[isClicked].map((item, index) => {
-          return (
-            <Accordion
-              title={item.title}
-              description={item.description}
-              leftIcon={item.leftIcon}
-              key={index}
-            />
-          );
+          return <Accordion title={item.title} description={item.description} leftIcon={item.leftIcon} key={index} />;
         })}
       </div>
       <div css={s_1vs1Container}>
         <div css={s_1vs1text}>찾으시는 내용이 없나요?</div>
-        <a href="1vs1" css={s_1vs1textWithAnchor}>
-          1:1 문의 바로가기 &gt;{' '}
+        <a css={s_1vs1textWithAnchor} onClick={openContactModal}>
+          1:1 문의{' '}
         </a>
+        {isContactModalOpen && <ContactModal handleClose={closeContactModal} />}
       </div>
     </>
   );
