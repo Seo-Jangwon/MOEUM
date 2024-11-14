@@ -4,6 +4,7 @@ import Button from '@/components/Button/Button';
 import { css } from '@emotion/react';
 import { HttpStatusCode } from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
+import { RiDeleteBin6Line } from "react-icons/ri";
 import {
   s_button,
   s_button_input,
@@ -30,16 +31,12 @@ interface Playlist {
   totalMusicCount: number;
 }
 
-
-
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const isPlayList = useRef<boolean>(true);
   // const [isExist, setIsExist] = useState<boolean>(false)
-  const [myPlayList, setMyPlayList] = useState<Playlist[]>([])
+  const [myPlayList, setMyPlayList] = useState<Playlist[]>([]);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [playlistTitle, setPlaylistTitle] = useState<string>('');
-
-
 
   const handleAddButtonClick = () => {
     setIsAdding(true);
@@ -79,9 +76,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       .then((res) => {
         console.log(res);
         if (res.data.code === 200) {
-          setMyPlayList(res.data.data.musics)
+          setMyPlayList(res.data.data.musics);
           console.log(myPlayList);
-          
         } else if (res.data.code === 500) {
           alert('내부 서버 오류입니다.');
         } else {
@@ -92,6 +88,19 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         console.log(err);
       });
   }, []);
+
+  const handleDeletePlayList = (id: number) => {
+    apiClient({
+      method: 'DELETE',
+      url: `/musics/playlist/delete/${id}`,
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleAddPlayList = (id: number) => {
     apiClient({
@@ -154,10 +163,24 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     <div css={s_div_img}>
                       <img src={lala} alt="라라" css={s_img} />
                     </div>
-                    <div css={s_playlist_data}>
-                      <h5>{item.title}</h5>
-                      <p>{item.totalDuration}</p>
-                      <p>{item.totalMusicCount} 곡</p>
+                    <div css={css`
+                      display: flex;
+                      align-items: center;
+                      gap: 5px;
+                    `}>
+                      <div css={s_playlist_data}>
+                        <h5>{item.title}</h5>
+                        <p>{item.totalDuration}</p>
+                        <p>{item.totalMusicCount} 곡</p>
+                      </div>
+                      <div css={css`
+                        margin-left: 5px;
+                        :hover {
+                          color: red;
+                        }
+                      `}
+                        onClick={() => handleDeletePlayList(item.id)}
+                      ><RiDeleteBin6Line /></div>
                     </div>
                   </div>
                 ))}
@@ -181,10 +204,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               ) : (
-                <div  css={s_plus_button}>
-                <Button variant="grad" onClick={handleAddButtonClick}>
-                  추가
-                </Button>
+                <div css={s_plus_button}>
+                  <Button variant="grad" onClick={handleAddButtonClick}>
+                    추가
+                  </Button>
                 </div>
               )}
             </>

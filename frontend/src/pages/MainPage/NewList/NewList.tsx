@@ -48,6 +48,8 @@ const NewList = () => {
           console.log(res.data.data);
           setLatestData(res.data.data);
           console.log(latestData);
+          console.log("fuck you");
+          
         }
       })
       .catch((err) => {
