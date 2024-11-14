@@ -33,11 +33,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(corsConfig -> corsConfig.configurationSource(request -> {
+        http.csrf(AbstractHttpConfigurer::disable)
+            .cors(corsConfig -> corsConfig.configurationSource(request -> {
                 CorsConfiguration config = new CorsConfiguration();
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-                config.setAllowedOrigins(List.of("https://weseethemusic.com", "http://localhost:5173"));
+                config.setAllowedOrigins(
+                    List.of("https://weseethemusic.com", "http://localhost:5173"));
                 config.setAllowCredentials(true);
                 config.setAllowedMethods(
                     List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
