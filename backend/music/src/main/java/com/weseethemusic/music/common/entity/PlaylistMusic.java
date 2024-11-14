@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class PlaylistMusic {
 
     @Id
-    private Long id;
+    private String id;
     private Long playlistId;
     private Long musicId;
     private double order;
