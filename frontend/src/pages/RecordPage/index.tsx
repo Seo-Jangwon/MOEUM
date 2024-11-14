@@ -90,7 +90,6 @@ const RecordPage = () => {
   const closeDropDown = () => {
     setIsDropDown(false);
   };
-  
   interface DropDownItems {
     iconImage: ReactNode;
     text: string;
@@ -142,6 +141,8 @@ const RecordPage = () => {
                 </div>
                 {/* 아티스트 */}
                 <p css={s_p}>{item.artists[0].name}</p>
+                {/* 하트 아이콘 */}
+                {/* <Heart isLike={item?} size={24} /> */}
                 {/* 드롭다운 */}
                 <DotDotDot data={items} />
                 {/* 시간 */}

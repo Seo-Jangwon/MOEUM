@@ -9,6 +9,7 @@ import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
 import com.weseethemusic.music.dto.general.GeneralPlaylistDto;
 import com.weseethemusic.music.dto.playlist.TodayGenreDto;
+import com.weseethemusic.music.dto.playlist.TodayGenreMusicDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.service.MusicServiceImpl;
 import com.weseethemusic.music.service.PlaylistServiceImpl;

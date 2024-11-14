@@ -54,29 +54,3 @@ export const s_h5 = (theme: Theme) => css`
     font-size: 8px;
   }
 `;
-
-export const s_icon_div = css`
-  position: absolute;
-  top: 10px;
-  right: 0;
-  z-index: 1;
-  :hover {
-    background-color: #888;
-    border-radius: 100%;
-  }
-`;
-
-export const s_div_button = css`
-  width: 100%;
-  height: 100%;
-  border: none;
-  :hover {
-    transition: 0.3s;
-    filter: brightness(0.5);
-  }
-  border: 0;
-  border-radius: 20px;
-  @media (max-width: 768px) {
-    border-radius: 10px;
-  }
-`;

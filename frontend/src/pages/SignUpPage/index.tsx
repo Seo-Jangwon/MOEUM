@@ -41,7 +41,7 @@ const SignUpPage = () => {
   };
 
   const handleNicknameBlur = () => {
-    if (!validateNickname(nickname) && nickname.length > 0) {
+    if (!validateNickname(nickname)) {
       setError('닉네임은 2~16자의 한글, 영문, 숫자로 입력해주세요.');
     } else {
       setError('');
@@ -49,7 +49,7 @@ const SignUpPage = () => {
   };
 
   const handleEmailBlur = () => {
-    if (!validateEmail(email) && email.length > 0) {
+    if (!validateEmail(email)) {
       setError('유효한 이메일 형식을 입력해주세요.');
     } else {
       setError('');
@@ -57,7 +57,7 @@ const SignUpPage = () => {
   };
 
   const handlePasswordBlur = () => {
-    if (!validatePassword(password) && password.length > 0) {
+    if (!validatePassword(password)) {
       setError('비밀번호는 8~15자, 영문, 숫자, 특수문자를 포함해야 합니다.');
     } else {
       setError('');
@@ -65,7 +65,7 @@ const SignUpPage = () => {
   };
 
   const handleCheckPasswordBlur = () => {
-    if (password !== checkPassword && checkPassword.length > 0) {
+    if (password !== checkPassword) {
       setError('비밀번호가 일치하지 않습니다.');
     } else {
       setError('');
@@ -73,7 +73,7 @@ const SignUpPage = () => {
   };
 
   const handleCertificationNumberBlur = () => {
-    if (certificationNumber.length === 0 ) {
+    if (certificationNumber.length === 0) {
       setError('인증번호를 입력해주세요.');
     } else {
       setError('');
@@ -242,7 +242,7 @@ const SignUpPage = () => {
               }
               certification={isValidCertification}
               onSend={handleCertificationCode}
-              onBlur = {handleCertificationNumberBlur}
+              onBlur = {handleCertificationCode}
             />
           )}
           <RegisterData

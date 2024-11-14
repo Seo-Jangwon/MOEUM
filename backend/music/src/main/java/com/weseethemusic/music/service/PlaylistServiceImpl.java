@@ -217,14 +217,13 @@ public class PlaylistServiceImpl implements PlaylistService {
         }
     }
 
+
     @Override
     @Transactional(readOnly = true)
     public List<PlaylistResponse> getMyPlaylists(Long memberId) {
         try {
             List<Playlist> playlists = playlistRepository.findByMemberId(memberId);
             List<PlaylistResponse> responses = new ArrayList<>();
-
-            log.info("플레이리스트 개수: {}", playlists.size());
 
             for (Playlist playlist : playlists) {
                 List<PlaylistMusic> playlistMusics = playlistMusicRepository.findByPlaylistIdOrderByOrder(
@@ -233,56 +232,37 @@ public class PlaylistServiceImpl implements PlaylistService {
                 // 총 재생 시간과 음악 수 계산
                 int totalMusicCount = playlistMusics.size();
                 int totalSeconds = 0;
-                String imageUrl = "default_image_url"; // 기본 이미지 URL 설정
 
-                try {
-                    // 음악이 있는 경우에만 이미지와 재생시간 계산
-                    if (!playlistMusics.isEmpty()) {
-                        // 최신 음악의 이미지 가져옴
-                        PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
-                            playlist.getId()).orElse(null);
+                // 최신 음악의 이미지를 가져오기 위해 가장 높은 trackOrder를 가진 음악 조회
+                PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
+                    playlist.getId()).orElse(null);
 
-                        if (latestMusic != null) {
-                            // 음악이 존재하는지 먼저 확인
-                            Optional<Music> musicOptional = musicRepository.findById(
-                                latestMusic.getMusicId());
+                if (latestMusic != null) {
+                    Music music = musicRepository.findById(latestMusic.getMusicId())
+                        .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
 
-                            if (musicOptional.isPresent()) {
-                                Music music = musicOptional.get();
-                                // 앨범과 이미지 이름이 null이 아닌지 확인
-                                if (music.getAlbum() != null
-                                    && music.getAlbum().getImageName() != null) {
-                                    imageUrl = music.getAlbum().getImageName();
-                                }
+                    // 이미지 URL 생성
+//                    String imageUrl = presignedUrlService.getPresignedUrl(
+//                        music.getAlbum().getImageName());
 
-                                // 총 재생 시간 계산
-                                List<Long> musicIds = new ArrayList<>();
-                                for (PlaylistMusic playlistMusic : playlistMusics) {
-                                    musicIds.add(playlistMusic.getMusicId());
-                                }
-
-                                List<Music> musics = musicRepository.findAllById(musicIds);
-                                for (Music m : musics) {
-                                    totalSeconds += m.getDuration();
-
-                                }
-                            }
-                        }
+                    // 총 재생 시간 계산
+                    List<Long> musicIds = new ArrayList<>();
+                    for (PlaylistMusic playlistMusic : playlistMusics) {
+                        musicIds.add(playlistMusic.getMusicId());
                     }
-                } catch (Exception e) {
-                    // 음악 정보 조회 중 오류가 발생해도 플레이리스트는 반환
-                    log.error("플레이리스트 {}의 음악 정보 조회 중 오류 발생", playlist.getId(), e);
-                }
 
-                // 모든 플레이리스트에 대해 응답 생성
-                PlaylistResponse response = new PlaylistResponse(
-                    playlist.getId(),
-                    playlist.getName(),
-                    imageUrl,
-                    formatTotalDuration(totalSeconds),
-                    totalMusicCount
-                );
-                responses.add(response);
+                    List<Music> musics = musicRepository.findAllById(musicIds);
+
+                    for (Music m : musics) {
+                        totalSeconds += m.getDuration();
+                    }
+
+                    PlaylistResponse response = new PlaylistResponse(playlist.getId(),
+                        playlist.getName(), music.getAlbum().getImageName(),
+                        formatTotalDuration(totalSeconds),
+                        totalMusicCount);
+                    responses.add(response);
+                }
             }
 
             return responses;
@@ -300,16 +280,11 @@ public class PlaylistServiceImpl implements PlaylistService {
             List<Playlist> myPlaylists = playlistRepository.findByMemberId(memberId);
             List<PlaylistLike> likedPlaylists = playlistLikeRepository.findByMemberId(memberId);
 
-            log.info("좋아요 개수: {}", likedPlaylists.size());
-            log.info("플레이리스트 개수: {}", myPlaylists.size());
-
             // 중복 제거
             Set<Playlist> uniquePlaylists = new LinkedHashSet<>(myPlaylists);
             for (PlaylistLike like : likedPlaylists) {
                 uniquePlaylists.add(like.getPlaylist());
             }
-
-            log.info("uniquePlaylists 개수: {}", uniquePlaylists.size());
 
             List<PlaylistResponse> responses = new ArrayList<>();
 
@@ -317,59 +292,43 @@ public class PlaylistServiceImpl implements PlaylistService {
                 List<PlaylistMusic> playlistMusics = playlistMusicRepository.findByPlaylistIdOrderByOrder(
                     playlist.getId());
 
-                log.info("playlistMusics 개수: {}", playlistMusics.size());
                 // 총 재생 시간과 음악 수 계산
                 int totalMusicCount = playlistMusics.size();
                 int totalSeconds = 0;
-                String imageUrl = "default_image_url"; // 기본 이미지 URL
 
-                try {
-                    // 음악이 있는 경우에만 이미지와 재생시간 계산
-                    if (!playlistMusics.isEmpty()) {
-                        log.info("음악이 있는 경우에만 이미지와 재생시간 계산");
-                        PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
-                            playlist.getId()).orElse(null);
+                // 가장 높은 trackorder
+                PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
+                    playlist.getId()).orElse(null);
 
-                        if (latestMusic != null) {
-                            // 음악이 존재하는지 먼저 확인
-                            Optional<Music> musicOptional = musicRepository.findById(
-                                latestMusic.getMusicId());
+                if (latestMusic != null) {
+                    Music music = musicRepository.findById(latestMusic.getMusicId())
+                        .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
 
-                            if (musicOptional.isPresent()) {
-                                Music music = musicOptional.get();
-                                // 앨범이 null이 아닌지 확인
-                                if (music.getAlbum() != null
-                                    && music.getAlbum().getImageName() != null) {
-                                    imageUrl = music.getAlbum().getImageName();
-                                }
+                    // 이미지
+//                    String imageUrl = presignedUrlService.getPresignedUrl(
+//                        music.getAlbum().getImageName());
 
-                                // 총 재생 시간 계산
-                                List<Long> musicIds = new ArrayList<>();
-                                for (PlaylistMusic playlistMusic : playlistMusics) {
-                                    musicIds.add(playlistMusic.getMusicId());
-                                }
-
-                                List<Music> musics = musicRepository.findAllById(musicIds);
-                                for (Music m : musics) {
-                                    totalSeconds += m.getDuration();
-                                }
-                            }
-                        }
+                    // 총 재생 시간 계산
+                    List<Long> musicIds = new ArrayList<>();
+                    for (PlaylistMusic playlistMusic : playlistMusics) {
+                        musicIds.add(playlistMusic.getMusicId());
                     }
-                } catch (Exception e) {
-                    // 음악 정보 조회 중 오류가 발생해도 플레이리스트는 반환
-                    log.error("플레이리스트 {}의 음악 정보 조회 중 오류 발생", playlist.getId(), e);
-                }
 
-                // 모든 플레이리스트에 대해 응답 생성
-                PlaylistResponse response = new PlaylistResponse(
-                    playlist.getId(),
-                    playlist.getName(),
-                    imageUrl,
-                    formatTotalDuration(totalSeconds),
-                    totalMusicCount
-                );
-                responses.add(response);
+                    List<Music> musics = musicRepository.findAllById(musicIds);
+
+                    for (Music m : musics) {
+                        totalSeconds += m.getDuration();
+                    }
+
+                    // 플레이리스트 소유 여부
+                    boolean isOwner = playlist.getMemberId().equals(memberId);
+
+                    PlaylistResponse response = new PlaylistResponse(playlist.getId(),
+                        playlist.getName(), music.getAlbum().getImageName(),
+                        formatTotalDuration(totalSeconds),
+                        totalMusicCount);
+                    responses.add(response);
+                }
             }
 
             return responses;

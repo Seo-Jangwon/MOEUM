@@ -39,28 +39,18 @@ export const s_canvas = css`
   aspect-ratio: 16/9;
 `;
 
-export const s_playerBarContainer = css`
-  display: flex;
+export const s_playerBar = css`
   position: absolute;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   bottom: 0;
   left: 0;
-  align-items: center;
   width: 100%;
-`;
-
-export const s_palyerBar = css`
-  flex-direction: column;
   > div {
     width: 95%;
     margin: 0 2.5%;
   }
-`;
-
-export const s_lyrics = css`
-  font-size: 2rem;
-  margin-bottom: 10px;
 `;
 
 export const s_playerBarRange = (progress: number) => css`
@@ -78,7 +68,13 @@ export const s_playerBarRange = (progress: number) => css`
     height: 6px;
     width: 100%;
     border-radius: 10px;
-    background: linear-gradient(to right, #f7f7f7 0%, #f7f7f7 calc(${progress}%), #444 calc(${progress}%), #444 100%);
+    background: linear-gradient(
+      to right,
+      #f7f7f7 0%,
+      #f7f7f7 calc(${progress}%),
+      #444 calc(${progress}%),
+      #444 100%
+    );
     opacity: 0.7;
   }
   &::-moz-range-thumb {
@@ -88,7 +84,13 @@ export const s_playerBarRange = (progress: number) => css`
     height: 6px;
     width: 100%;
     border-radius: 10px;
-    background: linear-gradient(to right, #f7f7f7 0%, #f7f7f7 calc(${progress}%), #444 calc(${progress}%), #444 100%);
+    background: linear-gradient(
+      to right,
+      #f7f7f7 0%,
+      #f7f7f7 calc(${progress}%),
+      #444 calc(${progress}%),
+      #444 100%
+    );
     opacity: 0.7;
   }
 `;
