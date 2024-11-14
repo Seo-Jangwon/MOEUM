@@ -221,7 +221,7 @@ public class PlaylistServiceTest {
     private PlaylistMusic createPlaylistMusic(Long id, Long playlistId, Long musicId,
         double order) {
         PlaylistMusic playlistMusic = new PlaylistMusic();
-        playlistMusic.setId(id);
+        playlistMusic.setId(String.valueOf(id));
         playlistMusic.setPlaylistId(playlistId);
         playlistMusic.setMusicId(musicId);
         playlistMusic.setOrder(order);

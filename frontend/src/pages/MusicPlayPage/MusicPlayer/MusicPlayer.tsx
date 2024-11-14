@@ -11,14 +11,16 @@ import { MdOutlineSync } from 'react-icons/md';
 import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
 import { TbPlaylistAdd } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Data, musicDetailInfoI } from '..';
-import lalaSong from '../All I Want for Christmas Is You-2-M....mp3';
+import { Data, LyricsI, musicDetailInfoI } from '..';
+import testSong from '../All I Want for Christmas Is You-2-M....mp3';
 import {
   s_canvas,
   s_container,
   s_iconButton,
   s_infoContainer,
-  s_playerBar,
+  s_lyrics,
+  s_palyerBar,
+  s_playerBarContainer,
   s_playerBarController,
   s_playerBarRange,
   s_playerBarTimeLineRange,
@@ -31,11 +33,13 @@ const MusicPlayer = ({
   nextMusicId,
   musicDetailInfo,
   musicAnalyzedData,
+  musicLyricsData,
 }: {
   currentMusicId: number;
   nextMusicId: number;
   musicDetailInfo: musicDetailInfoI;
   musicAnalyzedData: Data;
+  musicLyricsData: LyricsI;
 }) => {
   const divRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -51,14 +55,16 @@ const MusicPlayer = ({
   const animationRef = useRef<number>();
 
   const timeIdx = useRef<number>(0);
+  const lyricsTimeIdx = useRef<number>(0);
   const endEventIdx = useRef<number>(0);
 
   const { visualization, toggleVisualization } = useSettingStore();
 
   const [isPaused, setIsPaused] = useState<boolean>(true);
-  const [playTime, setPlayTime] = useState<number>(0);
   const [audioVolume, setAudioVolume] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [currentLyrics, setCurrentLyrics] = useState<string>('');
+  const [isLyricsVisualized, setIsLyricsVisualized] = useState<boolean>(true);
 
   /** 재생중인 노래가 끝났을 때 어떻게 할지 설정하는 함수
    * idx -> 0 그냥 끝남
@@ -68,7 +74,8 @@ const MusicPlayer = ({
   function changeEndEventIdx(idx: number) {
     endEventIdx.current = idx;
   }
-  const data = useRef(musicAnalyzedData.notes);
+  const data = useRef<Data['notes']>();
+  const lyricsData = useRef<LyricsI['lyrics']>();
 
   /** 영상의 재생 상태 변경하는 함수 */
   function changeVideoState() {
@@ -107,28 +114,29 @@ const MusicPlayer = ({
     if (data.current && timeIdx.current < data.current.length) {
       if (audioSrcRef.current) {
         prevTimeRef.current = audioSrcRef.current.currentTime;
-        setPlayTime(audioSrcRef.current.currentTime);
+        if (audioSrcRef.current.currentTime > lyricsData.current![lyricsTimeIdx.current].times) {
+          setCurrentLyrics(lyricsData.current![lyricsTimeIdx.current].lyric);
+          lyricsTimeIdx.current++;
+        }
         if (
           audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
           engineRef.current !== null &&
           divRef.current
         ) {
-          const x =
-            (divRef.current.clientWidth + document.body.clientWidth * 0.05) * (document.fullscreenElement ? 1 : 1.4);
-          const y =
-            data.current[timeIdx.current].y === 100
-              ? 0
-              : ((100 - data.current[timeIdx.current].y) * divRef.current.clientHeight) /
-                (document.fullscreenElement ? 100 : 50);
+          const x = canvasRef.current!.clientWidth / 2;
+          const y = (canvasRef.current!.clientHeight * data.current[timeIdx.current].y) / 100;
           const polygon = Bodies.polygon(
-            x,
+            x / 2,
             y,
             data.current[timeIdx.current].sides,
             data.current[timeIdx.current].width,
             {
               angle: data.current[timeIdx.current].angle,
               mass: 100,
-              force: Vector.create(-divRef.current.clientWidth / 500, 0),
+              force: Vector.create(
+                (divRef.current.clientWidth / 500) * data.current[timeIdx.current].direction[0],
+                (divRef.current.clientHeight / 300) * data.current[timeIdx.current].direction[1] * -1,
+              ),
               frictionAir: 0,
               collisionFilter: { group: -1 },
               position: { x, y },
@@ -192,11 +200,24 @@ const MusicPlayer = ({
         ) {
           timeIdx.current++;
         }
+        while (
+          lyricsTimeIdx.current < lyricsData.current!.length - 1 &&
+          lyricsData.current![lyricsTimeIdx.current].times < audioSrcRef.current.currentTime
+        ) {
+          lyricsTimeIdx.current++;
+        }
         timeIdx.current--;
+        lyricsTimeIdx.current--;
       } else {
         // 뒤로 이동했을 때
         while (timeIdx.current > 0 && data.current[timeIdx.current].time > audioSrcRef.current.currentTime) {
           timeIdx.current--;
+        }
+        while (
+          lyricsTimeIdx.current > 0 &&
+          lyricsData.current![lyricsTimeIdx.current].times > audioSrcRef.current.currentTime
+        ) {
+          lyricsTimeIdx.current--;
         }
       }
       if (!isPaused) {
@@ -230,14 +251,10 @@ const MusicPlayer = ({
           setAudioVolume(audioSrcRef.current.volume);
         } else if (e.key === 'ArrowLeft') {
           e.preventDefault();
-          setPlayTime((prev) => (prev >= 10 ? prev - 10 : 0));
           audioSrcRef.current.currentTime -= 10;
           audioTimeChanged();
         } else if (e.key == 'ArrowRight') {
           e.preventDefault();
-          setPlayTime((prev) =>
-            prev <= audioSrcRef.current!.duration - 10 ? prev + 10 : audioSrcRef.current!.duration,
-          );
           audioSrcRef.current.currentTime += 10;
           audioTimeChanged();
         }
@@ -257,6 +274,9 @@ const MusicPlayer = ({
         setPlayerBarVisible(false);
       }, 3000); // 3초 후 playerBar 숨김
     };
+    data.current = musicAnalyzedData.notes;
+
+    lyricsData.current = musicLyricsData.lyrics;
 
     if (audioSrcRef.current) {
       audioSrcRef.current.addEventListener('ended', () => {
@@ -274,7 +294,9 @@ const MusicPlayer = ({
           navigate(`/music?id=${nextMusicId}`);
         }
       });
-      audioSrcRef.current.src = lalaSong;
+
+      audioSrcRef.current.src = testSong;
+      // audioSrcRef.current.src = musicDetailInfo.audioPath;
       setAudioVolume(audioSrcRef.current.volume);
     }
 
@@ -438,77 +460,86 @@ const MusicPlayer = ({
         <audio ref={audioSrcRef} />
         <div css={s_videoContainer} ref={divRef}>
           <canvas css={s_canvas} ref={canvasRef} onClick={changeVideoState} />
-          <div
-            ref={playerBarRef}
-            css={css`
-              display: ${playerBarVisible ? 'flex' : 'none'};
-              ${s_playerBar}
-            `}
-          >
-            <div>
-              <input
-                css={css`
-                  ${s_playerBarTimeLineRange}
-                  ${s_playerBarRange(
-                    audioSrcRef.current ? (audioSrcRef.current.currentTime / audioSrcRef.current.duration) * 100 : 0,
-                  )}
-                `}
-                type="range"
-                max={audioSrcRef.current?.duration || 1}
-                min={0}
-                step={1}
-                onChange={(e) => {
-                  if (audioSrcRef.current) {
-                    setPlayTime(parseFloat(e.target.value));
-                    audioSrcRef.current.currentTime = parseFloat(e.target.value);
-                  }
-                }}
-              />
-            </div>
-            <div css={s_playerBarController}>
+          <div ref={playerBarRef} css={s_playerBarContainer}>
+            <div css={s_lyrics}>{isLyricsVisualized ? currentLyrics : 'test'}</div>
+            <div
+              css={css`
+                display: ${playerBarVisible ? 'flex' : 'none'};
+                ${s_palyerBar}
+              `}
+            >
               <div>
-                <MyHeart isLike={true} category={'music'} id={currentMusicId} size={24} />
-                <TbPlaylistAdd onClick={() => setIsModalOpen(true)} />
-              </div>
-              <div>
-                <RxShuffle onClick={() => changeEndEventIdx(2)} />
-                <LiaBackwardSolid
-                  onClick={() => {
-                    if (audioSrcRef.current) {
-                      timeIdx.current = 0;
-                      audioSrcRef.current.currentTime = 0;
-                    }
-                  }}
-                />
-                {!isPaused ? <FaPause onClick={changeVideoState} /> : <FaCirclePlay onClick={changeVideoState} />}
-                <LiaForwardSolid onClick={() => navigate(`/music?id=${nextMusicId}`)} />
-                <MdOutlineSync onClick={() => changeEndEventIdx(1)} />
-              </div>
-              <div>
-                <RxSpeakerLoud onClick={muteUnMute} />
                 <input
-                  css={s_playerBarRange(audioVolume * 100)}
+                  css={css`
+                    ${s_playerBarTimeLineRange}
+                    ${s_playerBarRange(
+                      audioSrcRef.current ? (audioSrcRef.current.currentTime / audioSrcRef.current.duration) * 100 : 0,
+                    )}
+                  `}
                   type="range"
-                  max={1}
-                  value={audioVolume}
-                  step={0.01}
+                  max={audioSrcRef.current?.duration || 1}
+                  min={0}
+                  step={1}
                   onChange={(e) => {
                     if (audioSrcRef.current) {
-                      if (parseFloat(e.target.value) > 0) audioSrcRef.current.muted = false;
-                      else audioSrcRef.current.muted = true;
-                      audioSrcRef.current.volume = parseFloat(e.target.value);
-                      setAudioVolume(parseFloat(e.target.value));
+                      audioSrcRef.current.currentTime = parseFloat(e.target.value);
                     }
                   }}
                 />
-                <img
-                  src={lylicsVisualizationButton}
-                  alt="가사 시각화 버튼"
-                  css={s_iconButton}
-                  onClick={toggleVisualization}
-                />
-                <BsPip onClick={handlePip} css={s_iconButton} height={'25px'} width={'25px'} />
-                <FaExpand onClick={handleFullScreen} css={s_iconButton} />
+              </div>
+              <div css={s_playerBarController}>
+                <div>
+                  <MyHeart isLike={true} category={'music'} id={currentMusicId} size={24} />
+                  <TbPlaylistAdd onClick={() => setIsModalOpen(true)} />
+                </div>
+                <div>
+                  <RxShuffle onClick={() => changeEndEventIdx(2)} />
+                  <LiaBackwardSolid
+                    onClick={() => {
+                      if (audioSrcRef.current) {
+                        timeIdx.current = 0;
+                        audioSrcRef.current.currentTime = 0;
+                      }
+                    }}
+                  />
+                  {!isPaused ? <FaPause onClick={changeVideoState} /> : <FaCirclePlay onClick={changeVideoState} />}
+                  <LiaForwardSolid onClick={() => navigate(`/music?id=${nextMusicId}`)} />
+                  <MdOutlineSync onClick={() => changeEndEventIdx(1)} />
+                </div>
+                <div>
+                  <RxSpeakerLoud onClick={muteUnMute} />
+                  <input
+                    css={s_playerBarRange(audioVolume * 100)}
+                    type="range"
+                    max={1}
+                    value={audioVolume}
+                    step={0.01}
+                    onChange={(e) => {
+                      if (audioSrcRef.current) {
+                        if (parseFloat(e.target.value) > 0) audioSrcRef.current.muted = false;
+                        else audioSrcRef.current.muted = true;
+                        audioSrcRef.current.volume = parseFloat(e.target.value);
+                        setAudioVolume(parseFloat(e.target.value));
+                      }
+                    }}
+                  />
+                  <img
+                    src={lylicsVisualizationButton}
+                    alt="가사 시각화 버튼"
+                    css={s_iconButton}
+                    onClick={toggleVisualization}
+                  />
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsLyricsVisualized((prev) => !prev);
+                    }}
+                  >
+                    Sub
+                  </button>
+                  <BsPip onClick={handlePip} css={s_iconButton} height={'25px'} width={'25px'} />
+                  <FaExpand onClick={handleFullScreen} css={s_iconButton} />
+                </div>
               </div>
             </div>
           </div>

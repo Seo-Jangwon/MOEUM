@@ -28,7 +28,7 @@ public class PlaylistController {
 
     private final PlaylistService playlistService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> createPlaylist(
         @RequestHeader("X-Member-Id") Long memberId,
         @RequestBody CreatePlaylistRequest request) {
