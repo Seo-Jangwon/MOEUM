@@ -47,10 +47,8 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
   }
 
   function getMusicDatas() {
-    console.log('check');
     if (isDataLoading.current) return;
     isDataLoading.current = true;
-    console.log('heck');
     apiClient({
       method: 'GET',
       url: `/musics/search/${variant}`,
