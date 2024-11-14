@@ -9,6 +9,7 @@ import com.weseethemusic.recommendation.common.entity.Music;
 import java.io.StringReader;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MusicIndexService {
@@ -29,7 +31,7 @@ public class MusicIndexService {
         try {
             elasticsearchClient.indices().delete(d -> d.index(INDEX_NAME));
         } catch (Exception e) {
-            System.out.println("인덱스 삭제 불가: " + e.getMessage());
+            log.error("인덱스 삭제 불가: {}", e.getMessage());
         }
     }
 
