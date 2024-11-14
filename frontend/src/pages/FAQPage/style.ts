@@ -44,6 +44,7 @@ export const s_1vs1text = (theme: Theme) => css`
 `;
 
 export const s_1vs1textWithAnchor = (theme: Theme) => css`
+  text-decoration: underline;
   color: ${theme.colors.lightgray};
   padding: 5px 0;
   :hover {

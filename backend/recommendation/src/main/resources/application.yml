@@ -9,11 +9,6 @@ spring:
   config:
     import:
       - classpath:application-secret.yml
-  jpa:
-    defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always
 
   management:
     endpoint:
@@ -74,7 +69,8 @@ rabbitmq:
 
   logging:
     level:
-      com.weseethemusic.auth: DEBUG
+      com.weseethemusic.recommendation: DEBUG
+      org.elasticsearch.client: DEBUG
       org.springframework.security: INFO
       org.hibernate.SQL: DEBUG
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE

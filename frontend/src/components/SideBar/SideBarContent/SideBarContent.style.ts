@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Link } from 'react-router-dom';
 
 export const Container = styled.aside`
   display: flex;
@@ -58,6 +57,15 @@ export const Footer = styled.footer`
   display: flex;
   flex-direction: column;
   gap: 15px;
+
+  a {
+    cursor: pointer;
+    color: ${({ theme }) => theme.colors.white};
+    :hover {
+      color: ${({ theme }) => theme.colors.gray};
+      transition: 0.3s;
+    }
+  }
 `;
 
 export const s_item = css`
@@ -66,12 +74,4 @@ export const s_item = css`
   font-size: 36px;
   gap: 20px;
   align-items: center;
-`;
-
-export const RouterLink = styled(Link)`
-  color: ${({ theme }) => theme.colors.white};
-  :hover {
-    color: ${({ theme }) => theme.colors.gray};
-    transition: 0.3s;
-  }
 `;

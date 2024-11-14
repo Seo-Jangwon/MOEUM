@@ -11,8 +11,7 @@ import { MdOutlineSync } from 'react-icons/md';
 import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
 import { TbPlaylistAdd } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Data, musicDetailInfoI } from '..';
-import lalaSong from '../All I Want for Christmas Is You-2-M....mp3';
+import { Data, LyricsI, musicDetailInfoI } from '..';
 import {
   s_canvas,
   s_container,
@@ -31,11 +30,13 @@ const MusicPlayer = ({
   nextMusicId,
   musicDetailInfo,
   musicAnalyzedData,
+  musicLyricsData,
 }: {
   currentMusicId: number;
   nextMusicId: number;
   musicDetailInfo: musicDetailInfoI;
   musicAnalyzedData: Data;
+  musicLyricsData: LyricsI;
 }) => {
   const divRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -51,14 +52,16 @@ const MusicPlayer = ({
   const animationRef = useRef<number>();
 
   const timeIdx = useRef<number>(0);
+  const lyricsTimeIdx = useRef<number>(0);
   const endEventIdx = useRef<number>(0);
 
   const { visualization, toggleVisualization } = useSettingStore();
 
   const [isPaused, setIsPaused] = useState<boolean>(true);
-  const [playTime, setPlayTime] = useState<number>(0);
   const [audioVolume, setAudioVolume] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [currentLyrics, setCurrentLyrics] = useState<string>('');
+  const [isLyricsVisualized, setIsLyricsVisualized] = useState<boolean>(true);
 
   /** 재생중인 노래가 끝났을 때 어떻게 할지 설정하는 함수
    * idx -> 0 그냥 끝남
@@ -68,7 +71,8 @@ const MusicPlayer = ({
   function changeEndEventIdx(idx: number) {
     endEventIdx.current = idx;
   }
-  const data = useRef(musicAnalyzedData.notes);
+  const data = useRef<Data['notes']>();
+  const lyricsData = useRef<LyricsI['lyrics']>();
 
   /** 영상의 재생 상태 변경하는 함수 */
   function changeVideoState() {
@@ -107,7 +111,9 @@ const MusicPlayer = ({
     if (data.current && timeIdx.current < data.current.length) {
       if (audioSrcRef.current) {
         prevTimeRef.current = audioSrcRef.current.currentTime;
-        setPlayTime(audioSrcRef.current.currentTime);
+        if (audioSrcRef.current.currentTime < lyricsData.current![lyricsTimeIdx.current].times) {
+          setCurrentLyrics(lyricsData.current![lyricsTimeIdx.current].lyric);
+        }
         if (
           audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
           engineRef.current !== null &&
@@ -128,7 +134,10 @@ const MusicPlayer = ({
             {
               angle: data.current[timeIdx.current].angle,
               mass: 100,
-              force: Vector.create(-divRef.current.clientWidth / 500, 0),
+              force: Vector.create(
+                (divRef.current.clientWidth / 500) * data.current[timeIdx.current].direction[0],
+                (divRef.current.clientHeight / 300) * data.current[timeIdx.current].direction[1],
+              ),
               frictionAir: 0,
               collisionFilter: { group: -1 },
               position: { x, y },
@@ -192,11 +201,24 @@ const MusicPlayer = ({
         ) {
           timeIdx.current++;
         }
+        while (
+          lyricsTimeIdx.current < lyricsData.current!.length - 1 &&
+          lyricsData.current![lyricsTimeIdx.current].times < audioSrcRef.current.currentTime
+        ) {
+          lyricsTimeIdx.current++;
+        }
         timeIdx.current--;
+        lyricsTimeIdx.current--;
       } else {
         // 뒤로 이동했을 때
         while (timeIdx.current > 0 && data.current[timeIdx.current].time > audioSrcRef.current.currentTime) {
           timeIdx.current--;
+        }
+        while (
+          lyricsTimeIdx.current > 0 &&
+          lyricsData.current![lyricsTimeIdx.current].times > audioSrcRef.current.currentTime
+        ) {
+          lyricsTimeIdx.current--;
         }
       }
       if (!isPaused) {
@@ -230,14 +252,10 @@ const MusicPlayer = ({
           setAudioVolume(audioSrcRef.current.volume);
         } else if (e.key === 'ArrowLeft') {
           e.preventDefault();
-          setPlayTime((prev) => (prev >= 10 ? prev - 10 : 0));
           audioSrcRef.current.currentTime -= 10;
           audioTimeChanged();
         } else if (e.key == 'ArrowRight') {
           e.preventDefault();
-          setPlayTime((prev) =>
-            prev <= audioSrcRef.current!.duration - 10 ? prev + 10 : audioSrcRef.current!.duration,
-          );
           audioSrcRef.current.currentTime += 10;
           audioTimeChanged();
         }
@@ -257,6 +275,9 @@ const MusicPlayer = ({
         setPlayerBarVisible(false);
       }, 3000); // 3초 후 playerBar 숨김
     };
+    data.current = musicAnalyzedData.notes;
+
+    lyricsData.current = musicLyricsData.lyrics;
 
     if (audioSrcRef.current) {
       audioSrcRef.current.addEventListener('ended', () => {
@@ -274,7 +295,7 @@ const MusicPlayer = ({
           navigate(`/music?id=${nextMusicId}`);
         }
       });
-      audioSrcRef.current.src = lalaSong;
+      audioSrcRef.current.src = musicDetailInfo.audioPath;
       setAudioVolume(audioSrcRef.current.volume);
     }
 
@@ -445,6 +466,7 @@ const MusicPlayer = ({
               ${s_playerBar}
             `}
           >
+            <div>{isLyricsVisualized ? currentLyrics : ''}</div>
             <div>
               <input
                 css={css`
@@ -459,7 +481,6 @@ const MusicPlayer = ({
                 step={1}
                 onChange={(e) => {
                   if (audioSrcRef.current) {
-                    setPlayTime(parseFloat(e.target.value));
                     audioSrcRef.current.currentTime = parseFloat(e.target.value);
                   }
                 }}
@@ -507,6 +528,14 @@ const MusicPlayer = ({
                   css={s_iconButton}
                   onClick={toggleVisualization}
                 />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsLyricsVisualized((prev) => !prev);
+                  }}
+                >
+                  Sub
+                </button>
                 <BsPip onClick={handlePip} css={s_iconButton} height={'25px'} width={'25px'} />
                 <FaExpand onClick={handleFullScreen} css={s_iconButton} />
               </div>

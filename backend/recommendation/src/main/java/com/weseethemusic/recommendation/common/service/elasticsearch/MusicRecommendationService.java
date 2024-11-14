@@ -1,129 +1,157 @@
 package com.weseethemusic.recommendation.common.service.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.Script;
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.FunctionScore;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
 import com.weseethemusic.recommendation.common.document.MusicDocument;
+import com.weseethemusic.recommendation.common.entity.Music;
 import com.weseethemusic.recommendation.dto.history.ArtistDto;
 import com.weseethemusic.recommendation.dto.recommendation.MusicDto;
 import com.weseethemusic.recommendation.dto.recommendation.UserPreference;
+import com.weseethemusic.recommendation.repository.MusicRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class MusicRecommendationService {
 
     private static final String INDEX_NAME = "music";
     private final PreferenceAnalyzer preferenceAnalyzer;
     private final ElasticsearchClient elasticsearchClient;
+    private final MusicRepository musicRepository;
 
     public MusicRecommendationService(PreferenceAnalyzer preferenceAnalyzer,
-        ElasticsearchClient elasticsearchClient) {
+        ElasticsearchClient elasticsearchClient, MusicRepository musicRepository) {
         this.preferenceAnalyzer = preferenceAnalyzer;
         this.elasticsearchClient = elasticsearchClient;
+        this.musicRepository = musicRepository;
     }
 
-    public List<MusicDto> getRecommendations(long memberId) throws IOException {
+    @Transactional(readOnly = true)
+    public List<MusicDto> getRecommendations(Long musicId, Long memberId) throws IOException {
         UserPreference preference = preferenceAnalyzer.analyzePreference(memberId);
-        BoolQuery.Builder boolQuery = new BoolQuery.Builder();
+        Music currentMusic = null;
 
-        // 장르 필터 적용
-        addGenreFilter(boolQuery, preference.getTopGenreIds());
+        if (musicId != null) {
+            currentMusic = musicRepository.findById(musicId)
+                .orElseThrow(() -> new IllegalArgumentException("음악을 찾을 수 없습니다."));
+            log.info("현재 재생중인 음악: {}", currentMusic.getName());
+            preference = preferenceAnalyzer.combinePreferences(preference, currentMusic, 0.3,
+                0.7); // 현재 음악의 가중치를 더 높임
+        }
 
-        // 아티스트 필터 적용
-        addArtistFilter(boolQuery, preference.getTopArtistIds());
+        Query query = createRecommendationQuery(musicId, preference, currentMusic);
+        log.debug("생성된 쿼리: {}", query);
 
-        // 음악 특성 필터 적용
-        addMusicFeatureFilters(boolQuery, preference.getAverageFeatures());
+        SearchResponse<MusicDocument> searchResponse = elasticsearchClient.search(s -> s
+            .index(INDEX_NAME)
+            .query(query)
+            .size(5)
+            .trackScores(true)
+            .sort(sort -> sort.score(sc -> sc.order(SortOrder.Desc))), MusicDocument.class);
 
-        // 검색 요청 생성 및 실행
-        SearchRequest searchRequest = createSearchRequest(boolQuery);
-        SearchResponse<MusicDocument> searchResponse = elasticsearchClient.search(searchRequest,
-            MusicDocument.class);
+        log.info("검색 완료 - total hits: {}", searchResponse.hits().total().value());
 
-        // 결과 변환
+        if (searchResponse.hits().hits().isEmpty()) {
+            log.warn("추천 결과 없음");
+        } else {
+            for (Hit<MusicDocument> hit : searchResponse.hits().hits()) {
+                log.debug("Hit - score: {}, music: {}", hit.score(), hit.source().getName());
+            }
+        }
+
         return convertSearchResults(searchResponse);
     }
 
-    private void addGenreFilter(BoolQuery.Builder boolQuery, List<Integer> genreIds) {
-        if (!genreIds.isEmpty()) {
-            BoolQuery.Builder genreBool = new BoolQuery.Builder();
-            for (Integer genreId : genreIds) {
-                MatchQuery matchQuery = new MatchQuery.Builder()
+    private Query createRecommendationQuery(Long currentMusicId, UserPreference preference,
+        Music currentMusic) {
+        BoolQuery.Builder boolQuery = new BoolQuery.Builder();
+
+        // 현재 음악 제외
+        if (currentMusicId != null) {
+            boolQuery.mustNot(q -> q.match(m -> m.field("id").query(currentMusicId.toString())));
+        }
+
+        List<Query> shouldQueries = new ArrayList<>();
+
+        // 장르 매칭 (현재 음악의 장르에 높은 가중치)
+        if (currentMusic != null) {
+            shouldQueries.add(Query.of(q -> q
+                .match(m -> m
                     .field("genre.id")
-                    .query(String.valueOf(genreId))
-                    .build();
-                Query query = new Query.Builder().match(matchQuery).build();
-                genreBool.should(query);
-            }
-            boolQuery.filter(new Query.Builder().bool(genreBool.build()).build());
+                    .query(String.valueOf(currentMusic.getGenre().getId()))
+                    .boost(3.0f))));
         }
-    }
 
-    private void addArtistFilter(BoolQuery.Builder boolQuery, List<Long> artistIds) {
-        if (!artistIds.isEmpty()) {
-            BoolQuery.Builder artistBool = new BoolQuery.Builder();
-            for (Long artistId : artistIds) {
-                MatchQuery matchQuery = new MatchQuery.Builder()
+        // 선호 장르 매칭
+        for (Integer genreId : preference.getTopGenreIds()) {
+            shouldQueries.add(Query.of(q -> q
+                .match(m -> m
+                    .field("genre.id")
+                    .query(genreId.toString())
+                    .boost(1.5f))));
+        }
+
+        // 현재 음악의 아티스트 매칭
+        if (currentMusic != null) {
+            for (var artistMusic : currentMusic.getArtistMusics()) {
+                shouldQueries.add(Query.of(q -> q
+                    .match(m -> m
+                        .field("artists.id")
+                        .query(String.valueOf(artistMusic.getArtist().getId()))
+                        .boost(2.0f))));
+            }
+        }
+
+        // 선호 아티스트 매칭
+        for (Long artistId : preference.getTopArtistIds()) {
+            shouldQueries.add(Query.of(q -> q
+                .match(m -> m
                     .field("artists.id")
-                    .query(String.valueOf(artistId))
-                    .build();
-                Query query = new Query.Builder().match(matchQuery).build();
-                artistBool.should(query);
-            }
-            boolQuery.filter(new Query.Builder().bool(artistBool.build()).build());
+                    .query(artistId.toString())
+                    .boost(1.0f))));
         }
+
+        // 현재 음악이 있다면 더 높은 가중치
+        float featureBoost = currentMusic != null ? 2.0f : 1.0f;
+        addFeatureQueries(shouldQueries, preference.getAverageFeatures(), featureBoost);
+
+        boolQuery.should(shouldQueries);
+        boolQuery.minimumShouldMatch("1");
+
+        return Query.of(q -> q.bool(boolQuery.build()));
     }
 
-    private void addMusicFeatureFilters(BoolQuery.Builder boolQuery,
-        UserPreference.MusicFeatures features) {
-        // Danceability 범위
-        addRangeFilter(boolQuery, "danceability", features.getDanceability(), 0.1);
-
-        // Loudness 범위
-        addRangeFilter(boolQuery, "loudness", features.getLoudness(), 3.0);
-
-        // Speechiness 범위
-        addRangeFilter(boolQuery, "speechiness", features.getSpeechiness(), 0.1);
-
-        // Acousticness 범위
-        addRangeFilter(boolQuery, "acousticness", features.getAcousticness(), 0.1);
-
-        // Valence 범위
-        addRangeFilter(boolQuery, "valence", features.getValence(), 0.1);
-
-        // Tempo 범위
-        addRangeFilter(boolQuery, "tempo", features.getTempo(), 20.0);
-
-        // Energy 범위
-        addRangeFilter(boolQuery, "energy", features.getEnergy(), 0.1);
+    private void addFeatureQueries(List<Query> queries, UserPreference.MusicFeatures features,
+        float boost) {
+        addFeatureQuery(queries, "danceability", features.getDanceability(), 0.1, boost);
+        addFeatureQuery(queries, "energy", features.getEnergy(), 0.1, boost);
+        addFeatureQuery(queries, "valence", features.getValence(), 0.1, boost);
+        addFeatureQuery(queries, "tempo", features.getTempo(), 20.0, boost);
+        addFeatureQuery(queries, "acousticness", features.getAcousticness(), 0.1, boost);
+        addFeatureQuery(queries, "speechiness", features.getSpeechiness(), 0.1, boost);
+        addFeatureQuery(queries, "loudness", features.getLoudness(), 3.0, boost);
     }
 
-    private void addRangeFilter(BoolQuery.Builder boolQuery, String field, double value,
-        double range) {
-        Query rangeQuery = new Query.Builder()
+    private void addFeatureQuery(List<Query> queries, String field, double value, double range,
+        float boost) {
+        queries.add(Query.of(q -> q
             .range(r -> r
                 .field(field)
                 .gte(JsonData.of(value - range))
-                .lte(JsonData.of(value + range)))
-            .build();
-        boolQuery.filter(rangeQuery);
-    }
-
-    private SearchRequest createSearchRequest(BoolQuery.Builder boolQuery) {
-        return SearchRequest.of(builder ->
-            builder
-                .index(INDEX_NAME)
-                .query(q -> q.bool(boolQuery.build()))
-                .size(5)
-        );
+                .lte(JsonData.of(value + range))
+                .boost(boost))));
     }
 
     private List<MusicDto> convertSearchResults(SearchResponse<MusicDocument> searchResponse) {
@@ -145,13 +173,13 @@ public class MusicRecommendationService {
         music.setId(document.getId());
         music.setTitle(document.getName());
         music.setDuration(formatDuration(document.getDuration()));
+        music.setGenre(document.getGenre().getName());
 
         if (document.getAlbum() != null) {
-            System.out.println("앨범 정보: " + document.getAlbum());
-            System.out.println("앨범 이미지: " + document.getAlbum().getImageName());
+            log.info("앨범 정보: {}", document.getAlbum());
             music.setAlbumImage(document.getAlbum().getImageName());
         } else {
-            System.out.println("앨범 없음");
+            log.error("앨범 없음");
         }
 
         List<ArtistDto> artistDtos = new ArrayList<>();

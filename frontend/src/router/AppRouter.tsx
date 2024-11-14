@@ -1,4 +1,5 @@
 import AppLayout from '@/layouts/AppLayout';
+import PrivateLayout from '@/layouts/PrivateLayout';
 import MusicPlayPage from '@/pages/MusicPlayPage';
 import SparkleEffect from '@/pages/test/test';
 import { lazy } from 'react';
@@ -18,7 +19,6 @@ const RecentRecordPage = lazy(() => import('@/pages/RecordPage'));
 const ListPage = lazy(() => import('@/pages/ListPage'));
 const SearchMorePage = lazy(() => import('@/pages/SearchMorePage'));
 const MyStoragePage = lazy(() => import('@/pages/MyStoragePage'));
-const SupportPage = lazy(() => import('@/pages/SupportPage'));
 const DetailPlayList = lazy(() => import('@/pages/DetailPlayListpage'));
 
 const router = createBrowserRouter([
@@ -37,10 +37,6 @@ const router = createBrowserRouter([
       },
       { path: 'test', element: <SparkleEffect /> },
       {
-        path: 'calibration',
-        element: <CalibrationPage />,
-      },
-      {
         path: 'signin',
         element: <SignInPage />,
       },
@@ -49,20 +45,8 @@ const router = createBrowserRouter([
         element: <SignUpPage />,
       },
       {
-        path: 'support',
-        element: <SupportPage />,
-      },
-      {
-        path: 'record',
-        element: <RecentRecordPage />,
-      },
-      {
         path: 'faq',
         element: <FAQPage />,
-      },
-      {
-        path: 'music',
-        element: <MusicPlayPage />,
       },
       {
         path: 'album/:id',
@@ -73,36 +57,55 @@ const router = createBrowserRouter([
         element: <DetailPage variant="artist" />,
       },
       {
-        path: 'settings',
-        element: <SettingPage />,
-      },
-      {
-        path: 'myStorage',
-        element: <MyStoragePage />,
-      },
-      {
-        path: 'profile',
-        element: <ProfilePage />,
+        element: <PrivateLayout />,
+        children: [
+          {
+            path: 'calibration',
+            element: <CalibrationPage />,
+          },
+          {
+            path: 'record',
+            element: <RecentRecordPage />,
+          },
+          {
+            path: 'music',
+            element: <MusicPlayPage />,
+          },
+          {
+            path: 'settings',
+            element: <SettingPage />,
+          },
+          {
+            path: 'mystorage',
+            element: <MyStoragePage />,
+          },
+          {
+            path: 'profile',
+            element: <ProfilePage />,
+          },
+        ],
       },
       {
         path: 'search',
-        element: <SearchPage />,
-      },
-      {
-        path: 'search/music',
-        element: <SearchMorePage variant="music" />,
-      },
-      {
-        path: 'search/album',
-        element: <SearchMorePage variant="album" />,
-      },
-      {
-        path: 'search/artist',
-        element: <SearchMorePage variant="artist" />,
-      },
-      {
-        path: 'search/playlist',
-        element: <SearchMorePage variant="playlist" />,
+        children: [
+          { index: true, element: <SearchPage /> },
+          {
+            path: 'music',
+            element: <SearchMorePage variant="music" />,
+          },
+          {
+            path: 'album',
+            element: <SearchMorePage variant="album" />,
+          },
+          {
+            path: 'artist',
+            element: <SearchMorePage variant="artist" />,
+          },
+          {
+            path: 'playlist',
+            element: <SearchMorePage variant="playlist" />,
+          },
+        ],
       },
       {
         path: 'list/:id',
