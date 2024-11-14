@@ -135,7 +135,7 @@ const MusicPlayer = ({
               mass: 100,
               force: Vector.create(
                 (divRef.current.clientWidth / 500) * data.current[timeIdx.current].direction[0],
-                (divRef.current.clientHeight / 300) * data.current[timeIdx.current].direction[1],
+                (divRef.current.clientHeight / 300) * data.current[timeIdx.current].direction[1] * -1,
               ),
               frictionAir: 0,
               collisionFilter: { group: -1 },
