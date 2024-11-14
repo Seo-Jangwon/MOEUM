@@ -1,7 +1,9 @@
 package com.weseethemusic.music.service;
 
+import com.weseethemusic.common.dto.GenreDto;
 import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
+import com.weseethemusic.music.common.entity.Genre;
 import com.weseethemusic.music.common.entity.Music;
 import com.weseethemusic.music.common.entity.Playlist;
 import com.weseethemusic.music.common.entity.PlaylistMusic;
@@ -14,6 +16,7 @@ import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
 import com.weseethemusic.music.repository.ArtistRepository;
+import com.weseethemusic.music.repository.GenreRepository;
 import com.weseethemusic.music.repository.LikeAlbumRepository;
 import com.weseethemusic.music.repository.LikeArtistRepository;
 import com.weseethemusic.music.repository.LikeMusicRepository;
@@ -38,6 +41,7 @@ public class MusicServiceImpl implements MusicService {
     private final LikeAlbumRepository likeAlbumRepository;
     private final PlaylistLikeRepository playlistLikeRepository;
     private final PlaylistMusicRepository playlistMusicRepository;
+    private final GenreRepository genreRepository;
 
     // 좋아요 한 아티스트 목록 조회
     @Override
@@ -89,6 +93,19 @@ public class MusicServiceImpl implements MusicService {
 
             result.add(GeneralPlaylistDto.builder().id(playlist.getId()).name(playlist.getName())
                 .image(albumRepository.getAlbumImage(music.getAlbum().getId())).build());
+        }
+
+        return result;
+    }
+
+    // 전체 장르 목록 조회
+    @Override
+    public List<GenreDto> getGenres() {
+        List<GenreDto> result = new ArrayList<>();
+        List<Genre> genres = genreRepository.findAll();
+
+        for (Genre genre : genres) {
+            result.add(GenreDto.fromEntity(genre));
         }
 
         return result;

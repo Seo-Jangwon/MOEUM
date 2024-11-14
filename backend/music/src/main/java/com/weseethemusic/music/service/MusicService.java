@@ -1,5 +1,6 @@
 package com.weseethemusic.music.service;
 
+import com.weseethemusic.common.dto.GenreDto;
 import com.weseethemusic.music.dto.general.GeneralAlbumDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
@@ -20,5 +21,7 @@ public interface MusicService {
     List<GeneralAlbumDto> getAlbumLikes(long memberId);
 
     List<GeneralPlaylistDto> getPopularPlaylists();
+
+    List<GenreDto> getGenres();
     
 }
