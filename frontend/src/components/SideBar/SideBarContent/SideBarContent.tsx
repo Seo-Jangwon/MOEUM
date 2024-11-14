@@ -44,7 +44,7 @@ const SideBarContent = ({ isOpen, closeSideBar }: SideBarContentProps) => {
       <S.Content>
         <S.Section>
           <SideBarContentItem title="내가 본 음악" to="/record" Icon={FiEye} color="F7309D" />
-          <SideBarContentItem title="내 보관함" to="/myStorage" Icon={IoFileTrayStackedOutline} color="30DDF7" />
+          <SideBarContentItem title="내 보관함" to="/mystorage" Icon={IoFileTrayStackedOutline} color="30DDF7" />
           <SideBarContentItem
             title="설정"
             to="/settings"
