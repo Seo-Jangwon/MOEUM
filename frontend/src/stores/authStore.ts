@@ -18,6 +18,7 @@ const useAuthStore = create<AuthStore>()(
       },
       signOut: () => {
         set({ accessToken: '', isLoggedIn: false });
+        window.location.href = '/';
       },
     }),
     { name: 'auth-store' },
