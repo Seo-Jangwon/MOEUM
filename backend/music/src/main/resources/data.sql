@@ -11,6 +11,8 @@
 DELETE
 FROM playlist_like;
 DELETE
+FROM playlist;
+DELETE
 FROM like_music;
 DELETE
 FROM artist_music;
@@ -22,8 +24,7 @@ DELETE
 FROM album;
 DELETE
 FROM genre;
-delete
-from playlist;
+
 
 -- 2. 데이터 삽입
 INSERT INTO genre (id, name)
