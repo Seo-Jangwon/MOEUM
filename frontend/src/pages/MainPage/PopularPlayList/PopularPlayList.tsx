@@ -1,5 +1,4 @@
 import apiClient from '@/api/apiClient';
-import lala from '@/assets/lalaticon/lala8.png';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import Modal from '@/pages/RecordPage/Modal/Modal';
 import { useEffect, useState } from 'react';
@@ -9,8 +8,7 @@ import { PiPlaylist } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import { s_button_all, s_div_header } from '../NewList/style';
 import { s_div_button, s_div_h3, s_div_item_box, s_div_item_container, s_h5, s_icon_div } from './style';
-
-
+import { css } from '@emotion/react';
 
 const handleLike = (id: number) => {
   apiClient({
@@ -34,10 +32,8 @@ interface Playlist {
 
 const PopularPlayList = () => {
   const navigate = useNavigate();
-  const [popularPlayList, setPopularPlayList] = useState<Playlist[]>([])
+  const [popularPlayList, setPopularPlayList] = useState<Playlist[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-
 
   const handleMusicPage = (path: string) => {
     return navigate(path);
@@ -60,7 +56,7 @@ const PopularPlayList = () => {
       .then((res) => {
         console.log(res);
         if (res.data.code === 200) {
-          setPopularPlayList(res.data.data)
+          setPopularPlayList(res.data.data);
         }
       })
       .catch((err) => {
@@ -81,10 +77,8 @@ const PopularPlayList = () => {
       </div>
       <div css={s_div_item_container}>
         {popularPlayList.map((item, index) => (
-          <div css={s_div_item_box(lala)} key={index}>
-            <div
-              css={s_icon_div}
-            >
+          <div css={s_div_item_box} key={index}>
+            <div css={s_icon_div}>
               <DotDotDot
                 data={[
                   {
@@ -92,21 +86,17 @@ const PopularPlayList = () => {
                     text: '좋아요',
                     clickHandler: () => handleLike(item.id),
                     size: 20,
-                  },
-                  {
-                    iconImage: <PiPlaylist />,
-                    text: '플레이리스트 추가',
-                    clickHandler: () => openModal(),
-                    size: 20,
-                  },
+                  }
                 ]}
               />
             </div>
-            <button
-              key={index}
-              css={s_div_button}
-              onClick={() => handleMusicPage(`playlist/${item.id}`)}
-            >
+            <button key={index} css={s_div_button} onClick={() => handleMusicPage(`playlist/${item.id}`)}>
+              <img src={item.image} alt="PlayListImage" css={css`
+                  width: 100%;
+                  height: 100%;
+                  border-radius:20px;
+                `} />
+
               <h5 css={s_h5}>{item.name}</h5>
             </button>
           </div>

@@ -148,7 +148,7 @@ const RecordPage = () => {
                 {/* <p css={s_p}>{item.}</p> */}
               </div>
               {/* 모달 컴포넌트 */}
-              <Modal isOpen={isModalOpen} onClose={closeModal} id={item.musicId} />
+              <Modal isOpen={isModalOpen} onClose={closeModal} />
             </>
           ))
         )}

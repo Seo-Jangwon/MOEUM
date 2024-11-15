@@ -8,16 +8,10 @@ interface ListPageProps {
   title: string;
 }
 
-interface Artist {
-  id: number;
-  name: string;
-}
-
 interface Music {
   id: number;
   name: string;
   image: string;
-  artists: Artist[];
 }
 
 const AllGenreList = ({ title }: ListPageProps) => {
@@ -28,13 +22,13 @@ const AllGenreList = ({ title }: ListPageProps) => {
   useEffect(() => {
     apiClient({
       method: 'GET',
-      url: '/musics/latest',
+      url: '/musics/todaygenre',
     })
       .then((res) => {
         console.log(res);
         if (res.data.code === 200) {
           console.log(res.data.data);
-          setGenreList(res.data.data);
+          setGenreList(res.data.data.genres);
         }
       })
       .catch((err) => {
@@ -58,6 +52,10 @@ const AllGenreList = ({ title }: ListPageProps) => {
         <div css={s_div_item_container}>
           {genreList.map((item, index) => (
             <button key={index} css={s_div_item_box}>
+              <img src={item.image} alt="image"  css={css`
+                width: 100%;
+                border-radius: 10px;
+              `} />
               <h5 css={s_h5}>{item.name}</h5>
             </button>
           ))}

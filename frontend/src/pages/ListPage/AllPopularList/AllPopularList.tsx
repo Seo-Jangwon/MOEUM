@@ -46,7 +46,7 @@ const AllPopularList = ({ title }: ListPageProps) => {
         alert('서비스 점검 중입니다.');
         console.log(err);
       });
-  });
+  },[]);
 
   return (
     <div css={s_container}>

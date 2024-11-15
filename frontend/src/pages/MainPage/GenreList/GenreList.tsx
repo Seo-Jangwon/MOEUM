@@ -1,5 +1,4 @@
 import apiClient from '@/api/apiClient';
-import lala from '@/assets/lalaticon/lala7.png';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
@@ -8,85 +7,34 @@ import { FiThumbsUp } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { s_button_all, s_div_header } from '../NewList/style';
 import { s_div_item_box, s_div_item_container, s_div_title, s_h5, s_img } from './style';
-import { PiPlaylist } from 'react-icons/pi';
-import Modal from '@/pages/RecordPage/Modal/Modal';
 
 
-interface Music {
+interface Genre {
   id: number;
-  title: string;
+  name: string;
+  image: string;
 }
-
-const mokData: { music: Music[] } = {
-  music: [
-    {
-      id: 1,
-      title: '봄',
-    },
-    {
-      id: 1,
-      title: '여름',
-    },
-    {
-      id: 1,
-      title: '가을',
-    },
-    {
-      id: 1,
-      title: '겨울',
-    },
-    {
-      id: 1,
-      title: 'Spring',
-    },
-    {
-      id: 1,
-      title: 'Summer',
-    },
-    {
-      id: 1,
-      title: 'Autumn',
-    },
-    {
-      id: 1,
-      title: 'Winter',
-    },
-  ],
-};
 
 const GenreList = () => {
   const navigate = useNavigate();
-  const [genreData, setGenreData] = useState<string>('')
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  // 모달 닫기 함수
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-
-  // 임시적으로 적어놓은것 나중에 지워야함
+  const [genreData, setGenreData] = useState<Genre[]>([])
+  
   useEffect(() => {
     apiClient({
       method: 'GET',
-      url: '/musics/todaygenre/1',
+      url: '/musics/todaygenre',
     })
       .then((res) => {
         console.log(res);
+        if (res.data.code === 200) {
+          setGenreData(res.data.data.genres)
+        }
       })
       .catch((err) => {
         console.log(err);
       });
   },[]);
 
-  const handlePage = (path: string) => {
-    navigate(path);
-  };
   const handleMusicPage = (path: string) => {
     navigate(path);
   };
@@ -116,16 +64,16 @@ const GenreList = () => {
         </button>
       </div>
       <div css={s_div_item_container}>
-        {mokData.music.map((item, index) => (
+        {genreData.map((item, index) => (
           <div
             css={css`
               position: relative;
             `}
             key={index}
           >
-            <button key={index} css={s_div_item_box} onClick={() => handleMusicPage('music/12')}>
-              <img src={lala} alt="라라" css={s_img} />
-              <h5 css={s_h5}>{item.title}</h5>
+            <button key={index} css={s_div_item_box} onClick={() => handleMusicPage(`playlist/${item.id}`)}>
+              <img src={item.image} alt="라라" css={s_img} />
+              <h5 css={s_h5}>{item.name}</h5>
             </button>
             <div
               css={css`
@@ -147,19 +95,13 @@ const GenreList = () => {
                     clickHandler: () => handleLike(item.id),
                     size: 20,
                   },
-                  {
-                    iconImage: <PiPlaylist />,
-                    text: '플레이리스트 추가',
-                    clickHandler: () => openModal(),
-                    size: 20,
-                  },
+                 
                 ]}
               />
             </div>
           </div>
         ))}
       </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal} />
     </>
   );
 };
