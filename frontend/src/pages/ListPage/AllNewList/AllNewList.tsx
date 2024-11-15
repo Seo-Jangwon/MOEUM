@@ -66,9 +66,8 @@ const AllNewList = ({ title }: ListPageProps) => {
           `}
         >
           {newList.map((item, index) => (
-            <div>
+            <div key={index}>
               <button
-                key={index}
                 css={css`
                   background: transparent;
                   border: 0;
@@ -103,7 +102,7 @@ const AllNewList = ({ title }: ListPageProps) => {
               </button>
               <p
                 css={css`
-                  font-size: 24px;
+                  font-size: 18px;
                   font-weight: 700;
                   color: white;
                   text-align: center;

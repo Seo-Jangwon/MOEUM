@@ -7,16 +7,11 @@ interface ListPageProps {
   title: string;
 }
 
-interface Artist {
-  id: number;
-  name: string;
-}
 
 interface Music {
   id: number;
   name: string;
   image: string;
-  artists: Artist[];
 }
 
 
@@ -26,7 +21,7 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
   useEffect(() => {
     apiClient({
       method: 'GET',
-      url: '/musics/latest',
+      url: '/musics/popular/playlist',
     })
       .then((res) => {
         console.log(res);
