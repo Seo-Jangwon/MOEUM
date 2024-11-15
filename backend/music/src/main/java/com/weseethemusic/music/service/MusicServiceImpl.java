@@ -158,6 +158,8 @@ public class MusicServiceImpl implements MusicService {
             List<ArtistDto> artistDtos = new ArrayList<>();
 
             for (Artist artist : artists) {
+                log.info("artist: {}", artist.getName());
+
                 artistDtos.add(
                     ArtistDto.builder().id(artist.getId()).name(artist.getName()).build());
             }
