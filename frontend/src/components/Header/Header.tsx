@@ -1,9 +1,11 @@
 import useAuthStore from '@/stores/authStore';
+import { useState } from 'react';
+import { FiSearch } from 'react-icons/fi';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Button from '../Button/Button';
 import SearchBox from '../SearchBox/SearchBox';
 import SideBar from '../SideBar/SideBar';
-import { s_container, s_logo } from './Header.style';
+import { s_container, s_headerItem, s_logo, s_searchButton } from './Header.style';
 
 interface HeaderProps {
   search: boolean;
@@ -12,7 +14,7 @@ interface HeaderProps {
 const Header = ({ search }: HeaderProps) => {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuthStore();
-  console.log(isLoggedIn);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
     <nav css={s_container}>
@@ -22,9 +24,18 @@ const Header = ({ search }: HeaderProps) => {
           <img src="/logo.svg" alt="logo" />
         </NavLink>
       </div>
-      {search && <SearchBox />}
+      {search && <SearchBox isOpen={isSearchOpen} handleClose={() => setIsSearchOpen(false)} />}
       {search && (
-        <div style={{ zIndex: 0 }}>
+        <div css={s_headerItem}>
+          <button
+            css={s_searchButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsSearchOpen(true);
+            }}
+          >
+            <FiSearch size={28} />
+          </button>
           {isLoggedIn ? (
             <img src="/logo.svg" onClick={() => navigate('/profile')} />
           ) : (

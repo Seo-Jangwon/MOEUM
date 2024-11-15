@@ -1,3 +1,4 @@
+import useClickOutside from '@/hooks/useClickOutside';
 import useSearchedKeywordStore from '@/stores/searchedKeywordStore';
 import useThemeStore from '@/stores/themeStore';
 import { useRef, useState } from 'react';
@@ -15,24 +16,29 @@ import {
   s_wrapper,
 } from './SearchBox.style';
 
-const SearchBox = () => {
+interface SearchBoxProps {
+  isOpen: boolean;
+  handleClose: () => void;
+}
+
+const SearchBox = ({ isOpen, handleClose }: SearchBoxProps) => {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { searches, removeAllSearchKeyword, addSearchKeyword, removeSearchKeyword } =
-    useSearchedKeywordStore();
+  const { searches, removeAllSearchKeyword, addSearchKeyword, removeSearchKeyword } = useSearchedKeywordStore();
   const [userInput, setUserInput] = useState<string>('');
   const [isInputFocused, setIsInputFocosed] = useState<boolean>(false);
   const lightMode = useThemeStore((state) => state.lightMode);
+  const searchRef = useClickOutside<HTMLDivElement>(handleClose);
 
   function search() {
     const searchKeyword = userInput;
     navigate(`/search?keyword=${searchKeyword}`);
   }
   return (
-    <div css={s_wrapper}>
+    <div css={s_wrapper} ref={searchRef}>
       <div
         css={(theme) =>
-          s_container(theme, lightMode, userInput === '' && isInputFocused && searches.length > 0)
+          s_container(theme, lightMode, userInput === '' && isInputFocused && searches.length > 0, isOpen)
         }
       >
         <FaMagnifyingGlass size={24} />
