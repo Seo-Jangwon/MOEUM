@@ -1,7 +1,7 @@
 import { css, Theme } from '@emotion/react';
 
 export const s_input = (theme: Theme) => css`
-  width: 30rem;
+  width: 100%;
   padding: 0.75rem 1.5rem;
   font-size: x-large;
   color: ${theme.colors.white};
