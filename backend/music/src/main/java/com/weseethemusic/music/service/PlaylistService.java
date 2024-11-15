@@ -33,4 +33,5 @@ public interface PlaylistService {
 
     TodayGenreDto getTodayGenre(int genreId);
 
+    List<PlaylistResponse> likePlaylistList(Long memberId);
 }

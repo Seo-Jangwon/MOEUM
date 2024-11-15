@@ -140,6 +140,64 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<PlaylistResponse> likePlaylistList(Long memberId) {
+        try {
+            List<PlaylistLike> likedPlaylists = playlistLikeRepository.findByMemberId(memberId);
+
+            List<Playlist> Playlists = new ArrayList<>();
+            for (PlaylistLike like : likedPlaylists) {
+                Playlists.add(like.getPlaylist());
+            }
+
+            List<PlaylistResponse> responses = new ArrayList<>();
+
+            for (Playlist playlist : Playlists) {
+                List<PlaylistMusic> playlistMusics = playlistMusicRepository.findByPlaylistIdOrderByOrder(
+                    playlist.getId());
+
+                // 총 재생 시간과 음악 수 계산
+                int totalMusicCount = playlistMusics.size();
+                int totalSeconds = 0;
+
+                // 가장 높은 trackorder
+                PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
+                    playlist.getId()).orElse(null);
+                Music music = new Music();
+                int[] durations = new int[3];
+
+                if (latestMusic != null) {
+                    music = musicRepository.findById(latestMusic.getMusicId())
+                        .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
+
+                    // 총 재생 시간 계산
+                    List<Long> musicIds = new ArrayList<>();
+                    for (PlaylistMusic playlistMusic : playlistMusics) {
+                        musicIds.add(playlistMusic.getMusicId());
+                    }
+
+                    List<Music> musics = musicRepository.findAllById(musicIds);
+
+                    for (Music m : musics) {
+                        totalSeconds += m.getDuration();
+                    }
+
+                    durations = musicDetailService.calculateDuration(totalSeconds);
+                }
+
+                PlaylistResponse response = createPlaylistResponse(playlist, music, durations,
+                    totalMusicCount);
+                responses.add(response);
+            }
+
+            return responses;
+        } catch (Exception e) {
+            log.error("플레이리스트 목록 조회 중 오류 발생", e);
+            throw new RuntimeException("플레이리스트 목록 조회에 실패했습니다.");
+        }
+    }
+
+    @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deletePlaylist(Long memberId, Long playlistId) {
         Playlist playlist = playlistRepository.findById(playlistId)
@@ -247,20 +305,14 @@ public class PlaylistServiceImpl implements PlaylistService {
                 int totalMusicCount = playlistMusics.size();
                 int totalSeconds = 0;
 
-                // 최신 음악의 이미지를 가져오기 위해 가장 높은 trackOrder를 가진 음악 조회
                 PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
                     playlist.getId()).orElse(null);
-                PlaylistResponse response = new PlaylistResponse();
                 Music music = new Music();
                 int[] durations = new int[3];
 
                 if (latestMusic != null) {
                     music = musicRepository.findById(latestMusic.getMusicId())
                         .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
-
-                    // 이미지 URL 생성
-//                    String imageUrl = presignedUrlService.getPresignedUrl(
-//                        music.getAlbum().getImageName());
 
                     // 총 재생 시간 계산
                     List<Long> musicIds = new ArrayList<>();
@@ -277,15 +329,8 @@ public class PlaylistServiceImpl implements PlaylistService {
                     durations = musicDetailService.calculateDuration(totalSeconds);
                 }
 
-                response.setId(playlist.getId());
-                response.setName(playlist.getName());
-                response.setImage(
-                    music.getAlbum() == null ? "" : music.getAlbum().getImageName());
-                response.setTotalDuration(
-                    durations[0] == 0 ? durations[1] + "분 " + durations[2] + "초"
-                        : durations[0] + "시간 " + durations[1] + "분");
-                response.setTotalMusicCount(totalMusicCount);
-
+                PlaylistResponse response = createPlaylistResponse(playlist, music, durations,
+                    totalMusicCount);
                 responses.add(response);
             }
 
@@ -323,14 +368,12 @@ public class PlaylistServiceImpl implements PlaylistService {
                 // 가장 높은 trackorder
                 PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
                     playlist.getId()).orElse(null);
+                Music music = new Music();
+                int[] durations = new int[3];
 
                 if (latestMusic != null) {
-                    Music music = musicRepository.findById(latestMusic.getMusicId())
+                    music = musicRepository.findById(latestMusic.getMusicId())
                         .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
-
-                    // 이미지
-//                    String imageUrl = presignedUrlService.getPresignedUrl(
-//                        music.getAlbum().getImageName());
 
                     // 총 재생 시간 계산
                     List<Long> musicIds = new ArrayList<>();
@@ -344,14 +387,12 @@ public class PlaylistServiceImpl implements PlaylistService {
                         totalSeconds += m.getDuration();
                     }
 
-                    // 플레이리스트 소유 여부
-                    boolean isOwner = playlist.getMemberId().equals(memberId);
-
-                    PlaylistResponse response = new PlaylistResponse(playlist.getId(),
-                        playlist.getName(), music.getAlbum().getImageName(),
-                        formatTotalDuration(totalSeconds), totalMusicCount);
-                    responses.add(response);
+                    durations = musicDetailService.calculateDuration(totalSeconds);
                 }
+
+                PlaylistResponse response = createPlaylistResponse(playlist, music, durations,
+                    totalMusicCount);
+                responses.add(response);
             }
 
             return responses;
@@ -485,21 +526,23 @@ public class PlaylistServiceImpl implements PlaylistService {
         }
     }
 
+    private PlaylistResponse createPlaylistResponse(Playlist playlist, Music music, int[] durations,
+        int totalMusicCount) {
+        PlaylistResponse response = new PlaylistResponse();
+        response.setId(playlist.getId());
+        response.setName(playlist.getName());
+        response.setImage(music.getAlbum() == null ? "" : music.getAlbum().getImageName());
+        response.setTotalDuration(
+            durations[0] == 0 ? durations[1] + "분 " + durations[2] + "초"
+                : durations[0] + "시간 " + durations[1] + "분");
+        response.setTotalMusicCount(totalMusicCount);
+        return response;
+    }
+
     private String formatDuration(int seconds) {
         int minutes = seconds / 60;
         int remainingSeconds = seconds % 60;
         return String.format("%d:%02d", minutes, remainingSeconds);
-    }
-
-    private String formatTotalDuration(int totalSeconds) {
-        int hours = totalSeconds / 3600;
-        int minutes = (totalSeconds % 3600) / 60;
-
-        if (hours > 0) {
-            return String.format("%d시간 %d분", hours, minutes);
-        } else {
-            return String.format("%d분", minutes);
-        }
     }
 
 }
