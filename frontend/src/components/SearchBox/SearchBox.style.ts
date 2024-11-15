@@ -9,7 +9,12 @@ export const s_wrapper = css`
   justify-content: center;
 `;
 
-export const s_container = (theme: Theme, lightMode: boolean, recentKeywordScreen: boolean) => css`
+export const s_container = (
+  theme: Theme,
+  lightMode: boolean,
+  recentKeywordScreen: boolean,
+  isOpen: boolean = false,
+) => css`
   display: flex;
   position: relative;
   justify-content: space-around;
@@ -27,8 +32,13 @@ export const s_container = (theme: Theme, lightMode: boolean, recentKeywordScree
     color: #fff;
     outline: 2px solid ${theme.colors.white};
   }
-  @media (max-width: 767px) {
-    display: none;
+
+  @media (max-width: 768px) {
+    display: ${isOpen ? 'flex' : 'none'};
+    z-index: 100;
+    height: 40px;
+    width: 100%;
+    margin: 0 16px;
   }
 `;
 
