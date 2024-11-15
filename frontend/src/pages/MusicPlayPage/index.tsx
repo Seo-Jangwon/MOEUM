@@ -6,6 +6,7 @@ import testPlayListData from './listData.json';
 import testLyricsData from './lyricsData.json';
 import testMusicDetailInfo from './musicDetailInfo.json';
 import MusicPlayer from './MusicPlayer/MusicPlayer';
+import PlayList from './PlayList/PlayList';
 import { s_container } from './style';
 
 export interface musicDetailInfoI {
@@ -137,6 +138,7 @@ const MusicPlayPage: React.FC = () => {
     <div css={s_container}>
       {isLoading ? null : (
         <>
+          <div></div>
           <MusicPlayer
             musicAnalyzedData={musicAnalyzedData}
             musicDetailInfo={musicDetailInfo!}
@@ -148,12 +150,12 @@ const MusicPlayPage: React.FC = () => {
                 : musicListDetailInfo![0].id
             }
           />
-          {/* <PlayList
+          <PlayList
             musicData={musicListDetailInfo!}
             variant={playListId.current ? 'playlist' : 'music'}
             listId={playListId.current ? playListId.current : undefined}
             listIdx={playListIdx.current ? playListIdx.current : undefined}
-          /> */}
+          />
         </>
       )}
     </div>

@@ -545,9 +545,25 @@ const MusicPlayer = ({
           </div>
         </div>
         <div css={s_infoContainer}>
-          <div>노래 제목</div>
-          <div>아티스트</div>
-          <div>노래 설명</div>
+          <div>{musicDetailInfo.musicName}</div>
+          <div>
+            {musicDetailInfo.artists.map((item, index) => {
+              return (
+                <span
+                  key={index}
+                  css={css`
+                    :hover {
+                      text-decoration: underline;
+                    }
+                  `}
+                  onClick={() => navigate(`/artist/${item.id}`)}
+                >
+                  {item.name}
+                </span>
+              );
+            })}
+          </div>
+          <div>{musicDetailInfo.releaseDate}</div>
         </div>
       </div>
       <video ref={videoRef} style={{ display: 'none' }} />

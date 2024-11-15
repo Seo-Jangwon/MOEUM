@@ -39,5 +39,5 @@ export const s_textContainer = css`
   flex-grow: 1;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 5px;
 `;
