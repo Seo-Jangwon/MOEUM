@@ -30,8 +30,7 @@ public class PlaylistController {
 
     @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> createPlaylist(
-        @RequestHeader("X-Member-Id") Long memberId,
-        @RequestBody CreatePlaylistRequest request) {
+        @RequestHeader("X-Member-Id") Long memberId, @RequestBody CreatePlaylistRequest request) {
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -48,8 +47,7 @@ public class PlaylistController {
 
     @DeleteMapping("/delete/{playlistId}")
     public ResponseEntity<Map<String, Object>> deletePlaylist(
-        @RequestHeader("X-Member-Id") Long memberId,
-        @PathVariable Long playlistId) {
+        @RequestHeader("X-Member-Id") Long memberId, @PathVariable Long playlistId) {
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -65,8 +63,7 @@ public class PlaylistController {
     }
 
     @GetMapping("/detail/{playlistId}")
-    public ResponseEntity<Map<String, Object>> getPlaylistMusic(
-        @PathVariable Long playlistId) {
+    public ResponseEntity<Map<String, Object>> getPlaylistMusic(@PathVariable Long playlistId) {
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -107,8 +104,8 @@ public class PlaylistController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getMyPlaylistsAll(
         @RequestHeader("X-Member-Id") Long memberId) {
-
         Map<String, Object> response = new HashMap<>();
+
         try {
             List<PlaylistResponse> musics = playlistService.getMyPlaylistsAll(memberId);
             Map<String, Object> data = new HashMap<>();
@@ -119,14 +116,14 @@ public class PlaylistController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("code", 500);
-            response.put("message", "내부 서버 오류");
+            response.put("message", e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }
 
     @PutMapping("/{playlistId}")
-    public ResponseEntity<Map<String, Object>> updatePlaylist(
-        @PathVariable Long playlistId, @RequestBody UpdatePlaylistRequest request) {
+    public ResponseEntity<Map<String, Object>> updatePlaylist(@PathVariable Long playlistId,
+        @RequestBody UpdatePlaylistRequest request) {
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -146,8 +143,8 @@ public class PlaylistController {
     }
 
     @PostMapping("/{playlistId}/add/{musicId}")
-    public ResponseEntity<Map<String, Object>> addOnPlaylist(
-        @PathVariable Long playlistId, @PathVariable Long musicId) {
+    public ResponseEntity<Map<String, Object>> addOnPlaylist(@PathVariable Long playlistId,
+        @PathVariable Long musicId) {
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -167,8 +164,7 @@ public class PlaylistController {
     }
 
     @PostMapping("/like")
-    public ResponseEntity<Map<String, Object>> likePlaylist(@RequestBody LikeRequest
-        likeRequest,
+    public ResponseEntity<Map<String, Object>> likePlaylist(@RequestBody LikeRequest likeRequest,
         @RequestHeader("X-Member-Id") Long memberId) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -185,8 +181,8 @@ public class PlaylistController {
     }
 
     @DeleteMapping("/like")
-    public ResponseEntity<Map<String, Object>> disLikePlaylist(
-        @RequestBody LikeRequest likeRequest, @RequestHeader("X-Member-Id") Long memberId) {
+    public ResponseEntity<Map<String, Object>> disLikePlaylist(@RequestBody LikeRequest likeRequest,
+        @RequestHeader("X-Member-Id") Long memberId) {
         Map<String, Object> response = new HashMap<>();
         try {
             playlistService.disLikePlaylist(likeRequest.getId(), memberId);

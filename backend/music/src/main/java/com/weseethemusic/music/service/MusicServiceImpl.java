@@ -23,6 +23,7 @@ import com.weseethemusic.music.repository.LikeMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
 import com.weseethemusic.music.repository.PlaylistLikeRepository;
 import com.weseethemusic.music.repository.PlaylistMusicRepository;
+import com.weseethemusic.music.repository.PlaylistRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class MusicServiceImpl implements MusicService {
     private final PlaylistLikeRepository playlistLikeRepository;
     private final PlaylistMusicRepository playlistMusicRepository;
     private final GenreRepository genreRepository;
+    private final PlaylistRepository playlistRepository;
 
     // 좋아요 한 아티스트 목록 조회
     @Override
@@ -88,7 +90,12 @@ public class MusicServiceImpl implements MusicService {
 
         for (Playlist playlist : playlists) {
             PlaylistMusic playlistMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
-                playlist.getId()).orElseThrow();
+                playlist.getId()).orElse(null);
+
+            if (playlistMusic == null) {
+                break;
+            }
+
             Music music = musicRepository.findById(playlistMusic.getMusicId()).orElseThrow();
 
             result.add(GeneralPlaylistDto.builder().id(playlist.getId()).name(playlist.getName())
