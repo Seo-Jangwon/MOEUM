@@ -2,7 +2,7 @@ import lylicsVisualizationButton from '@/assets/lylicsVisualizationButton.svg';
 import Modal from '@/pages/RecordPage/Modal/Modal';
 import useSettingStore from '@/stores/settingStore';
 import { css } from '@emotion/react';
-import { Bodies, Engine, Events, Render, Runner, Vector, World } from 'matter-js';
+import { Bodies, Engine, Events, IEventCollision, Render, Runner, Vector, World } from 'matter-js';
 import { useEffect, useRef, useState } from 'react';
 import { BsPip } from 'react-icons/bs';
 import { FaCirclePlay, FaExpand, FaPause } from 'react-icons/fa6';
@@ -199,6 +199,23 @@ const MusicPlayer = ({
     }
   }
 
+  /**왼쪽의 벽과 충돌 시 사라지게 하는 이벤트 함수 */
+  function handleObjectCollide(event: IEventCollision<Engine>) {
+    console.log(engineRef.current?.world.bodies);
+    event.pairs.forEach((pair) => {
+      const { bodyA, bodyB } = pair;
+      if (bodyA.label === 'wall' && bodyB.label !== 'wall') {
+        if (engineRef.current) {
+          World.remove(engineRef.current?.world, bodyB);
+        }
+      } else if (bodyB.label === 'wall' && bodyA.label !== 'wall') {
+        if (engineRef.current) {
+          World.remove(engineRef.current?.world, bodyA);
+        }
+      }
+    });
+  }
+
   /** 오디오의 현재 재생 시간을 사용자가 조정 했을 경우 */
   function audioTimeChanged() {
     if (data.current && audioSrcRef.current) {
@@ -329,10 +346,56 @@ const MusicPlayer = ({
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = (window.innerWidth / 16) * 9;
+
+      if (engineRef.current) {
+        const bodies = [...engineRef.current.world.bodies];
+        bodies.forEach((body) => {
+          World.remove(engineRef.current!.world, body);
+        });
+      }
+
+      const windowWidth = window.screen.width;
+      const windowHeight = window.screen.height;
+
+      const wallLeft = Bodies.rectangle(-250, windowHeight / 2, 5, windowHeight + 1000, {
+        label: 'wall',
+        isStatic: true,
+        render: {
+          fillStyle: '#121212',
+        },
+      });
+
+      const wallRight = Bodies.rectangle(windowWidth + 500, windowHeight / 2, 5, windowHeight + 1000, {
+        label: 'wall',
+        isStatic: true,
+        render: {
+          fillStyle: '#121212',
+        },
+      });
+
+      const wallTop = Bodies.rectangle(windowWidth / 2, -250, windowWidth + 1000, 5, {
+        label: 'wall',
+        isStatic: true,
+        render: {
+          fillStyle: '#121212',
+        },
+      });
+
+      const wallBottom = Bodies.rectangle(windowWidth / 2, windowHeight + 250, windowWidth + 1000, 10, {
+        label: 'wall',
+        isStatic: true,
+        render: {
+          fillStyle: '#121212',
+        },
+      });
+      World.add(engineRef.current!.world, wallLeft);
+
+      World.add(engineRef.current!.world, wallRight);
+      World.add(engineRef.current!.world, wallTop);
+      World.add(engineRef.current!.world, wallBottom);
     };
 
     window.addEventListener('resize', resize);
-    resize();
 
     engineRef.current = Engine.create();
     renderRef.current = Render.create({
@@ -366,7 +429,7 @@ const MusicPlayer = ({
       },
     });
 
-    const wallRight = Bodies.rectangle(windowWidth + 250, windowHeight / 2, 5, windowHeight + 1000, {
+    const wallRight = Bodies.rectangle(windowWidth + 500, windowHeight / 2, 5, windowHeight + 1000, {
       label: 'wall',
       isStatic: true,
       render: {
@@ -394,18 +457,7 @@ const MusicPlayer = ({
     World.add(engineRef.current.world, wallTop);
     World.add(engineRef.current.world, wallBottom);
 
-    /**왼쪽의 벽과 충돌 시 사라지게 하는 이벤트 함수 */
-    Events.on(engineRef.current, 'collisionStart', (event) => {
-      console.log(engineRef.current?.world.bodies);
-      event.pairs.forEach((pair) => {
-        const { bodyA, bodyB } = pair;
-        if (bodyA.label === 'wall' && bodyB.label !== 'wall') {
-          if (engineRef.current) World.remove(engineRef.current?.world, bodyB);
-        } else if (bodyB.label === 'wall' && bodyA.label !== 'wall') {
-          if (engineRef.current) World.remove(engineRef.current?.world, bodyA);
-        }
-      });
-    });
+    Events.on(engineRef.current, 'collisionStart', handleObjectCollide);
 
     document.addEventListener('visibilitychange', onVisibiliyChanged);
     document.addEventListener('keydown', MusicPlayPageKeyboardEvent);

@@ -97,7 +97,7 @@ const MusicPlayPage: React.FC = () => {
             ? apiClient({ method: 'GET', url: `/musics/playlist/detail/${playListId.current}` })
             : apiClient({ method: 'GET', url: `/recommendations?musicId=${musicId.current}` }),
           apiClient({ method: 'GET', url: `/musics/visualization/${musicId.current}` }),
-          apiClient({ method: 'GET', url: `/player/lyrics/${musicId.current}` }),
+          apiClient({ method: 'GET', url: `/musics/visualization/${musicId.current}/lyrics` }),
         ]);
 
         if (musicDetailDataResponse.data.code === 200) {
