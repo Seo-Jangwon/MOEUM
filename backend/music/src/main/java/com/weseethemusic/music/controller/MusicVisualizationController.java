@@ -4,7 +4,9 @@ import com.weseethemusic.music.common.exception.CustomException;
 import com.weseethemusic.music.common.exception.ErrorCode;
 import com.weseethemusic.music.dto.ResponseDto;
 import com.weseethemusic.music.dto.visualization.MusicVisualizationDto;
+import com.weseethemusic.music.dto.visualization.TimeDurationDto;
 import com.weseethemusic.music.service.MusicVisualizationServiceImpl;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,20 @@ public class MusicVisualizationController {
 
         try {
             result = visualizationService.getMusicVisualization(musicId);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200, result);
+    }
+
+    // 음악 가사 데이터 불러오기
+    @GetMapping("/{musicId}/lyrics")
+    public ResponseDto<List<TimeDurationDto>> getMusicLyrics(@PathVariable long musicId) {
+        List<TimeDurationDto> result;
+
+        try {
+            result = visualizationService.getMusicLyrics(musicId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
