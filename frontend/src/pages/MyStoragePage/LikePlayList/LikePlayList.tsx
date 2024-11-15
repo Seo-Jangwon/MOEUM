@@ -24,7 +24,7 @@ const LikePlayList = () => {
       .then((res) => {
         console.log(res);
         if (res.data.code === 200) {
-          setLikePlayList(res.data);
+          setLikePlayList(res.data.data);
           setIsExist(true);
         }
       })

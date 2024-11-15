@@ -2,9 +2,8 @@ import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala6.png';
 import Button from '@/components/Button/Button';
 import { css } from '@emotion/react';
-import { HttpStatusCode } from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import { RiDeleteBin6Line } from "react-icons/ri";
+import { RiDeleteBin6Line } from 'react-icons/ri';
 import {
   s_button,
   s_button_input,
@@ -109,10 +108,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     })
       .then((res) => {
         console.log(res);
-        if (res.status === HttpStatusCode.Ok) {
+        if (res.data.code === 200) {
           console.log(res);
-        } else {
-          alert('테스트 중입니다.');
+          alert('삭제되었습니다.');
         }
       })
       .catch((err) => {
@@ -163,24 +161,32 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     <div css={s_div_img}>
                       <img src={lala} alt="라라" css={s_img} />
                     </div>
-                    <div css={css`
-                      display: flex;
-                      align-items: center;
-                      gap: 5px;
-                    `}>
+                    <div
+                      css={css`
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                      `}
+                    >
                       <div css={s_playlist_data}>
                         <h5>{item.title}</h5>
                         <p>{item.totalDuration}</p>
                         <p>{item.totalMusicCount} 곡</p>
                       </div>
-                      <div css={css`
-                        margin-left: 5px;
-                        :hover {
-                          color: red;
-                        }
-                      `}
-                        onClick={() => handleDeletePlayList(item.id)}
-                      ><RiDeleteBin6Line /></div>
+                      <div
+                        css={css`
+                          margin-left: 5px;
+                          :hover {
+                            color: red;
+                          }
+                        `}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeletePlayList(item.id);
+                        }}
+                      >
+                        <RiDeleteBin6Line />
+                      </div>
                     </div>
                   </div>
                 ))}
