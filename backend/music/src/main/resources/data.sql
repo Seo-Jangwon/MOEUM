@@ -1,5 +1,7 @@
 -- 1. 데이터 삭제
 DELETE
+FROM history;
+DELETE
 FROM playlist_like;
 DELETE
 FROM playlist;
