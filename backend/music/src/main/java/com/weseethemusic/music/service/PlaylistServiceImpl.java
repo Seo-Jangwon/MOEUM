@@ -208,6 +208,8 @@ public class PlaylistServiceImpl implements PlaylistService {
         }
 
         try {
+            // 플레이리스트 좋아요 삭제
+            playlistLikeRepository.deleteByPlaylistId(playlistId);
             // 플레이리스트 음악 삭제
             playlistMusicRepository.deleteByPlaylistId(playlistId);
             // 플레이리스트 삭제
