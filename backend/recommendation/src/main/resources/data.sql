@@ -1,5 +1,3 @@
-SET FOREIGN_KEY_CHECKS = 0;
-
 -- 기존 데이터 삭제
 DELETE
 FROM history;
@@ -13,6 +11,7 @@ DELETE
 FROM album;
 DELETE
 FROM genre;
+
 
 -- Genre 데이터 삽입
 INSERT INTO genre (id, name)
@@ -8354,5 +8353,3 @@ INSERT INTO history (member_id, music_id)
 VALUES
     (4, 7),  -- Musical
     (4, 8);  -- Holiday
-
-SET FOREIGN_KEY_CHECKS = 1;
