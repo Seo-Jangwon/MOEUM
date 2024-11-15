@@ -65,6 +65,7 @@ const MusicPlayer = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentLyrics, setCurrentLyrics] = useState<string>('');
   const [isLyricsVisualized, setIsLyricsVisualized] = useState<boolean>(true);
+  const [currentTimeLine, setCurrentTImeLine] = useState<number>(0);
 
   /** 재생중인 노래가 끝났을 때 어떻게 할지 설정하는 함수
    * idx -> 0 그냥 끝남
@@ -118,6 +119,7 @@ const MusicPlayer = ({
           setCurrentLyrics(lyricsData.current![lyricsTimeIdx.current].lyric);
           lyricsTimeIdx.current++;
         }
+        setCurrentTImeLine(audioSrcRef.current.currentTime);
         if (
           audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
           engineRef.current !== null &&
@@ -473,15 +475,17 @@ const MusicPlayer = ({
                   css={css`
                     ${s_playerBarTimeLineRange}
                     ${s_playerBarRange(
-                      audioSrcRef.current ? (audioSrcRef.current.currentTime / audioSrcRef.current.duration) * 100 : 0,
+                      audioSrcRef.current ? (currentTimeLine / audioSrcRef.current.duration) * 100 : 0,
                     )}
                   `}
                   type="range"
                   max={audioSrcRef.current?.duration || 1}
+                  value={currentTimeLine}
                   min={0}
                   step={1}
                   onChange={(e) => {
                     if (audioSrcRef.current) {
+                      setCurrentTImeLine(parseFloat(e.target.value));
                       audioSrcRef.current.currentTime = parseFloat(e.target.value);
                     }
                   }}
