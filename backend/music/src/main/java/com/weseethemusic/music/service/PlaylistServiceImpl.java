@@ -533,10 +533,10 @@ public class PlaylistServiceImpl implements PlaylistService {
         PlaylistResponse response = new PlaylistResponse();
         response.setId(playlist.getId());
         response.setName(playlist.getName());
-        response.setImage(music.getAlbum() == null ? "" : music.getAlbum().getImageName());
-        response.setTotalDuration(
-            durations[0] == 0 ? durations[1] + "분 " + durations[2] + "초"
-                : durations[0] + "시간 " + durations[1] + "분");
+        response.setImage(music.getAlbum() == null ? "https://picsum.photos/500/500"
+            : music.getAlbum().getImageName());
+        response.setTotalDuration(durations[0] == 0 ? durations[1] + "분 " + durations[2] + "초"
+            : durations[0] + "시간 " + durations[1] + "분");
         response.setTotalMusicCount(totalMusicCount);
         return response;
     }
