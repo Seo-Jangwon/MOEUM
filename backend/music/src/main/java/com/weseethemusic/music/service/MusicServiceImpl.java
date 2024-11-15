@@ -1,6 +1,5 @@
 package com.weseethemusic.music.service;
 
-import com.weseethemusic.common.dto.GenreDto;
 import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
 import com.weseethemusic.music.common.entity.Genre;
@@ -25,14 +24,15 @@ import com.weseethemusic.music.repository.LikeMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
 import com.weseethemusic.music.repository.PlaylistLikeRepository;
 import com.weseethemusic.music.repository.PlaylistMusicRepository;
-import com.weseethemusic.music.repository.PlaylistRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MusicServiceImpl implements MusicService {
 
     private final LikeMusicRepository likeMusicRepository;
@@ -45,7 +45,6 @@ public class MusicServiceImpl implements MusicService {
     private final PlaylistLikeRepository playlistLikeRepository;
     private final PlaylistMusicRepository playlistMusicRepository;
     private final GenreRepository genreRepository;
-    private final PlaylistRepository playlistRepository;
 
     // 좋아요 한 아티스트 목록 조회
     @Override
@@ -93,15 +92,15 @@ public class MusicServiceImpl implements MusicService {
         for (Playlist playlist : playlists) {
             PlaylistMusic playlistMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
                 playlist.getId()).orElse(null);
+            Music music = null;
 
-            if (playlistMusic == null) {
-                break;
+            if (playlistMusic != null) {
+                music = musicRepository.findById(playlistMusic.getMusicId()).orElse(null);
             }
 
-            Music music = musicRepository.findById(playlistMusic.getMusicId()).orElseThrow();
-
             result.add(GeneralPlaylistDto.builder().id(playlist.getId()).name(playlist.getName())
-                .image(albumRepository.getAlbumImage(music.getAlbum().getId())).build());
+                .image(music == null ? "https://picsum.photos/500/500"
+                    : music.getAlbum().getImageName()).build());
         }
 
         return result;
