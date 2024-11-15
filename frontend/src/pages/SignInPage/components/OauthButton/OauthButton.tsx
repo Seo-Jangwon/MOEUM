@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { s_container, s_img_container } from './OauthButton.style';
+import { s_container, s_img_container, s_title } from './OauthButton.style';
 
 interface OauthButtonProps {
   to: string;
@@ -13,7 +13,7 @@ const OauthButton = ({ title, to, Icon }: OauthButtonProps) => {
       <figure css={s_img_container}>
         <img css={{ width: '100%', height: '100%' }} src={Icon} />
       </figure>
-      <span>{title}</span>
+      <span css={s_title}>{title}</span>
     </Link>
   );
 };
