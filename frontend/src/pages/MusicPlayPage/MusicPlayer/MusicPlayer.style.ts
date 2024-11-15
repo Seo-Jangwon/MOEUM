@@ -52,6 +52,7 @@ export const s_playerBarContainer = css`
 
 export const s_palyerBar = css`
   flex-direction: column;
+  width: 100%;
   > div {
     width: 95%;
     margin: 0 2.5%;
