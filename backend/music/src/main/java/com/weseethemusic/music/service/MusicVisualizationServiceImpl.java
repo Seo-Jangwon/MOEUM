@@ -2,6 +2,8 @@ package com.weseethemusic.music.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.weseethemusic.music.dto.visualization.LyricDto;
+import com.weseethemusic.music.dto.visualization.LyricListDto;
 import com.weseethemusic.music.dto.visualization.MusicVisualizationDto;
 import com.weseethemusic.music.dto.visualization.ShapeDto;
 import com.weseethemusic.music.dto.visualization.TimeDurationDto;
@@ -55,4 +57,34 @@ public class MusicVisualizationServiceImpl implements MusicVisualizationService 
         return result;
     }
 
+    // 가사 시각화 데이터 불러오기
+    public LyricListDto getMusicLyrics(long musicId) {
+        ObjectMapper mapper = new ObjectMapper();
+        LyricListDto result = new LyricListDto();
+
+        try {
+            InputStream inputStream = getClass().getClassLoader()
+                .getResourceAsStream("lyrics.json");
+
+            if (inputStream == null) {
+                throw new IllegalArgumentException("File not found: lyrics.json");
+            }
+
+            JsonNode root = mapper.readTree(inputStream);
+            JsonNode dataNode = root.path("data");
+
+            List<LyricDto> lyrics = new ArrayList<>();
+
+            for (JsonNode lyricNode : dataNode.path("lyrics")) {
+                LyricDto lyricDto = mapper.treeToValue(lyricNode, LyricDto.class);
+                lyrics.add(lyricDto);
+            }
+
+            result.setLyrics(lyrics);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
 }

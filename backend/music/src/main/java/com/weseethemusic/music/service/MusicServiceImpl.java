@@ -1,6 +1,5 @@
 package com.weseethemusic.music.service;
 
-import com.weseethemusic.common.dto.GenreDto;
 import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
 import com.weseethemusic.music.common.entity.Genre;
@@ -12,6 +11,8 @@ import com.weseethemusic.music.dto.general.GeneralAlbumDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
 import com.weseethemusic.music.dto.general.GeneralPlaylistDto;
+import com.weseethemusic.music.dto.playlist.RealTodayGenreDto;
+import com.weseethemusic.music.dto.playlist.TodayGenreListDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
@@ -26,10 +27,12 @@ import com.weseethemusic.music.repository.PlaylistMusicRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MusicServiceImpl implements MusicService {
 
     private final LikeMusicRepository likeMusicRepository;
@@ -88,11 +91,16 @@ public class MusicServiceImpl implements MusicService {
 
         for (Playlist playlist : playlists) {
             PlaylistMusic playlistMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
-                playlist.getId()).orElseThrow();
-            Music music = musicRepository.findById(playlistMusic.getMusicId()).orElseThrow();
+                playlist.getId()).orElse(null);
+            Music music = null;
+
+            if (playlistMusic != null) {
+                music = musicRepository.findById(playlistMusic.getMusicId()).orElse(null);
+            }
 
             result.add(GeneralPlaylistDto.builder().id(playlist.getId()).name(playlist.getName())
-                .image(albumRepository.getAlbumImage(music.getAlbum().getId())).build());
+                .image(music == null ? "https://picsum.photos/500/500"
+                    : music.getAlbum().getImageName()).build());
         }
 
         return result;
@@ -100,15 +108,15 @@ public class MusicServiceImpl implements MusicService {
 
     // 전체 장르 목록 조회
     @Override
-    public List<GenreDto> getGenres() {
-        List<GenreDto> result = new ArrayList<>();
+    public TodayGenreListDto getGenres() {
+        List<RealTodayGenreDto> result = new ArrayList<>();
         List<Genre> genres = genreRepository.findAll();
 
         for (Genre genre : genres) {
-            result.add(GenreDto.fromEntity(genre));
+            result.add(RealTodayGenreDto.fromEntity(genre));
         }
 
-        return result;
+        return TodayGenreListDto.builder().genres(result).build();
     }
 
 

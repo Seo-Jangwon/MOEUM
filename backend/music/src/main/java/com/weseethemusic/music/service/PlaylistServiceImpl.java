@@ -6,7 +6,6 @@ import com.weseethemusic.music.common.entity.Music;
 import com.weseethemusic.music.common.entity.Playlist;
 import com.weseethemusic.music.common.entity.PlaylistLike;
 import com.weseethemusic.music.common.entity.PlaylistMusic;
-import com.weseethemusic.music.common.service.PresignedUrlService;
 import com.weseethemusic.music.dto.detail.ArtistDto;
 import com.weseethemusic.music.dto.playlist.ArtistResponse;
 import com.weseethemusic.music.dto.playlist.CreatePlaylistRequest;
@@ -165,11 +164,15 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Transactional(readOnly = true)
     public List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId) {
         try {
+            log.debug("플레이리스트 음악 조회 시작 - playlistId: {}", playlistId);
+
             List<PlaylistMusic> playlistMusics = playlistMusicRepository.findByPlaylistIdOrderByOrder(
                 playlistId);
+            log.debug("조회된 플레이리스트 음악 수: {}", playlistMusics.size());
 
             if (playlistMusics.isEmpty()) {
-                throw new RuntimeException("플레이리스트를 찾을 수 없습니다.");
+                log.debug("플레이리스트가 비어있음 - playlistId: {}", playlistId);
+                return new ArrayList<>();
             }
 
             // 필요한 음악 ID 목록 추출
@@ -177,32 +180,42 @@ public class PlaylistServiceImpl implements PlaylistService {
             for (PlaylistMusic playlistMusic : playlistMusics) {
                 musicIds.add(playlistMusic.getMusicId());
             }
+            log.debug("조회할 음악 ID 목록: {}", musicIds);
 
             // 음악 정보 한 번에 조회
             List<Music> musics = musicRepository.findAllById(musicIds);
+            log.debug("조회된 음악 수: {}", musics.size());
 
             Map<Long, Music> musicMap = new HashMap<>();
             for (Music music : musics) {
                 musicMap.put(music.getId(), music);
             }
+            log.debug("음악 맵 크기: {}", musicMap.size());
 
             List<PlaylistMusicResponse> responses = new ArrayList<>();
             for (PlaylistMusic playlistMusic : playlistMusics) {
                 Music music = musicMap.get(playlistMusic.getMusicId());
+                if (music == null) {
+                    log.warn("음악을 찾을 수 없음 - musicId: {}", playlistMusic.getMusicId());
+                    continue;
+                }
+
                 Album album = music.getAlbum();
+                if (album == null) {
+                    log.warn("앨범 정보가 없음 - musicId: {}", music.getId());
+                    continue;
+                }
 
                 // 아티스트 목록 생성
-                List<ArtistResponse> artistResponses = new ArrayList<>();
                 List<Artist> artists = artistMusicRepository.findAllByMusic(music);
+                log.debug("음악 {} 의 아티스트 수: {}", music.getId(), artists.size());
 
+                List<ArtistResponse> artistResponses = new ArrayList<>();
                 for (Artist artist : artists) {
                     ArtistResponse artistResponse = new ArtistResponse(artist.getId(),
                         artist.getName());
                     artistResponses.add(artistResponse);
                 }
-
-                // presignedUrl 생성
-//                String presignedUrl = presignedUrlService.getPresignedUrl(album.getImageName());
 
                 PlaylistMusicResponse response = new PlaylistMusicResponse(music.getId(),
                     music.getName(), album.getImageName(), formatDuration(music.getDuration()),
@@ -210,9 +223,10 @@ public class PlaylistServiceImpl implements PlaylistService {
                 responses.add(response);
             }
 
+            log.debug("최종 응답 음악 수: {}", responses.size());
             return responses;
         } catch (Exception e) {
-            log.error("플레이리스트 음악 조회 중 오류 발생", e);
+            log.error("플레이리스트 음악 조회 중 오류 발생 - playlistId: {}", playlistId, e);
             throw new RuntimeException("플레이리스트 음악 조회에 실패했습니다.");
         }
     }
@@ -236,9 +250,12 @@ public class PlaylistServiceImpl implements PlaylistService {
                 // 최신 음악의 이미지를 가져오기 위해 가장 높은 trackOrder를 가진 음악 조회
                 PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
                     playlist.getId()).orElse(null);
+                PlaylistResponse response = new PlaylistResponse();
+                Music music = new Music();
+                int[] durations = new int[3];
 
                 if (latestMusic != null) {
-                    Music music = musicRepository.findById(latestMusic.getMusicId())
+                    music = musicRepository.findById(latestMusic.getMusicId())
                         .orElseThrow(() -> new RuntimeException("음악을 찾을 수 없습니다."));
 
                     // 이미지 URL 생성
@@ -257,12 +274,19 @@ public class PlaylistServiceImpl implements PlaylistService {
                         totalSeconds += m.getDuration();
                     }
 
-                    PlaylistResponse response = new PlaylistResponse(playlist.getId(),
-                        playlist.getName(), music.getAlbum().getImageName(),
-                        formatTotalDuration(totalSeconds),
-                        totalMusicCount);
-                    responses.add(response);
+                    durations = musicDetailService.calculateDuration(totalSeconds);
                 }
+
+                response.setId(playlist.getId());
+                response.setName(playlist.getName());
+                response.setImage(
+                    music.getAlbum() == null ? "" : music.getAlbum().getImageName());
+                response.setTotalDuration(
+                    durations[0] == 0 ? durations[1] + "분 " + durations[2] + "초"
+                        : durations[0] + "시간 " + durations[1] + "분");
+                response.setTotalMusicCount(totalMusicCount);
+
+                responses.add(response);
             }
 
             return responses;
@@ -325,8 +349,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
                     PlaylistResponse response = new PlaylistResponse(playlist.getId(),
                         playlist.getName(), music.getAlbum().getImageName(),
-                        formatTotalDuration(totalSeconds),
-                        totalMusicCount);
+                        formatTotalDuration(totalSeconds), totalMusicCount);
                     responses.add(response);
                 }
             }

@@ -1,17 +1,17 @@
 package com.weseethemusic.music.dto.visualization;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
-public class TimeDurationDto {
+@NoArgsConstructor
+public class LyricDto {
 
-    private double time;
-    private double duration;
+    private double times;
+    private String lyric;
 
 }

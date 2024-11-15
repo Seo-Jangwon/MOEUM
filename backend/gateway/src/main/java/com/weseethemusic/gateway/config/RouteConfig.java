@@ -51,6 +51,7 @@ public class RouteConfig {
             .addExcludedPath("/musics/artist/*/discography")
             .addExcludedPath("/musics/recommend")
             .addExcludedPath("/musics/playlist")
+            .addExcludedPath("/musics/playlist/**")
             .addExcludedPath("/musics/popular")
             .addExcludedPath("/musics/popular/playlist")
             .addExcludedPath("/musics/visualization/*")
@@ -61,107 +62,190 @@ public class RouteConfig {
             .addExcludedPath("/musics/todaygenre/*")
             .addExcludedPath("/members/token");
 
-        return builder.routes()
-            // 멤버 서비스 공개 경로
-            .route("member-service-public", r -> r
-                .path("/members/register/token", "/members/register/check/token",
-                    "/members/register", "/members/login")
-                .filters(f -> f.filter(requestLoggingFilter.apply(new Object())))
-                .uri(memberServiceUrl))
+//        return builder.routes()
+//            // 멤버 서비스 공개 경로
+//            .route("member-service-public", r -> r
+//                .path("/members/register/token", "/members/register/check/token",
+//                    "/members/register", "/members/login")
+//                .filters(f -> f.filter(requestLoggingFilter.apply(new Object())))
+//                .uri(memberServiceUrl))
+//
+//            // 멤버 서비스 토큰 재발급 경로 (인증 없이)
+//            .route("member-token-refresh", r -> r
+//                .path("/members/token")
+//                .filters(f -> f
+//                    .filter(requestLoggingFilter.apply(new Object()))
+//                    // Refresh Token을 헤더에 추가하는 커스텀 필터
+//                    .filter((exchange, chain) -> {
+//                        ServerHttpRequest request = exchange.getRequest();
+//                        String refreshToken = getRefreshTokenFromCookies(exchange);
+//
+//                        if (refreshToken != null) {
+//                            // ServerHttpRequestDecorator 사용하여 헤더 수정
+//                            ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(
+//                                request) {
+//                                @Override
+//                                public HttpHeaders getHeaders() {
+//                                    HttpHeaders headers = new HttpHeaders();
+//                                    super.getHeaders().forEach(
+//                                        (key, values) -> headers.put(key, new ArrayList<>(values)));
+//                                    headers.set(SecurityConstants.REFRESH_TOKEN_HEADER,
+//                                        refreshToken);
+//                                    return headers;
+//                                }
+//                            };
+//
+//                            // 수정된 요청으로 새로운 exchange 생성
+//                            ServerWebExchange modifiedExchange = exchange.mutate()
+//                                .request(modifiedRequest)
+//                                .build();
+//
+//                            return chain.filter(modifiedExchange);
+//
+//                        }
+//
+//                        return chain.filter(exchange);
+//                    })
+//                )
+//                // JWT 인증 필터는 제외됨
+//                .uri(memberServiceUrl))
+//
+//            .route("member-service-protected", r -> r
+//                .path("/members/**", "/settings/**")
+//                .and()
+//                .not(p -> p.path("/members/register/token", "/members/register/check/token",
+//                    "/members/register", "/members/login"))
+//                .filters(f -> f
+//                    .filter(requestLoggingFilter.apply(new Object()))
+//                    .filter(jwtAuthenticationFilter.apply(authConfig)))
+//                .uri(memberServiceUrl))
+//
+//            // 뮤직 서비스 공개 경로
+//            .route("music-service-public", r -> r
+//                .path("/musics/search/**", "/musics/detail/music/*",
+//                    "/musics/artist/*/discography",
+//                    "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
+//                    "/musics/latest",
+//                    "/musics/detail/album/*",
+//                    "/musics/detail/artist/*", "/musics/visualization/*", "/musics/todaygenre/*")
+//                .filters(f -> f
+//                    .filter(requestLoggingFilter.apply(new Object()))
+//                    .circuitBreaker(config -> config
+//                        .setName("music-service")
+//                        .setFallbackUri("/fallback/music"))
+//                    .retry(3))
+//                .uri(musicServiceUrl))
+//
+//            // 뮤직 서비스 인증 경로
+//            .route("music-service-protected", r -> r
+//                .path("/musics/**", "/player/**")
+//                .and()
+//                .not(p -> p.path("/musics/search/**", "/musics/detail/music/*",
+//                    "/musics/artist/*/discography",
+//                    "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
+//                    "/musics/latest",
+//                    "/musics/detail/album/*",
+//                    "/musics/detail/artist/*", "/musics/visualization/*", "/musics/todaygenre/*"))
+//                .filters(f -> f
+//                    .filter(requestLoggingFilter.apply(new Object()))
+//                    .filter(jwtAuthenticationFilter.apply(authConfig))
+//                    .circuitBreaker(config -> config
+//                        .setName("music-service")
+//                        .setFallbackUri("/fallback/music"))
+//                    .retry(3))
+//                .uri(musicServiceUrl))
+//
+//            // 추천 서비스 경로(인증 필요)
+//            .route("recommendations-service", r -> r
+//                .path("/recommendations/**")
+//                .filters(f -> f
+//                    .filter(requestLoggingFilter.apply(new Object()))
+//                    .filter(jwtAuthenticationFilter.apply(authConfig)))
+//                .uri(recommendationsServiceUrl))
+//
+//            .build();
 
-            // 멤버 서비스 토큰 재발급 경로 (인증 없이)
-            .route("member-token-refresh", r -> r
-                .path("/members/token")
+        return builder.routes()
+            // 모든 서비스에 대해 인증 없이 접근 가능하도록 설정
+            .route("member-service", r -> r
+                .path("/members/**", "/settings/**")
                 .filters(f -> f
                     .filter(requestLoggingFilter.apply(new Object()))
-                    // Refresh Token을 헤더에 추가하는 커스텀 필터
+                    .filter((exchange, chain) -> {
+
+                        ServerHttpRequest request = exchange.getRequest();
+                        ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(
+                            request) {
+                            @Override
+                            public HttpHeaders getHeaders() {
+                                HttpHeaders headers = new HttpHeaders();
+                                super.getHeaders().forEach((key, values) -> {
+                                    // 각 헤더의 값을 새로운 ArrayList로 복사하여 수정 가능하도록 처리
+                                    headers.put(key, new ArrayList<>(values));
+                                });
+                                // 필요한 헤더 추가
+                                headers.add("X-Member-Id", "1");
+                                headers.add("X-Role", "ADMIN");
+                                return headers;
+                            }
+                        };
+                        return chain.filter(exchange.mutate().request(modifiedRequest).build());
+                    }))
+                .uri(memberServiceUrl))
+
+            .route("music-service", r -> r
+                .path("/musics/**", "/player/**")
+                .filters(f -> f
+                    .filter(requestLoggingFilter.apply(new Object()))
                     .filter((exchange, chain) -> {
                         ServerHttpRequest request = exchange.getRequest();
-                        String refreshToken = getRefreshTokenFromCookies(exchange);
-
-                        if (refreshToken != null) {
-                            // ServerHttpRequestDecorator 사용하여 헤더 수정
-                            ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(
-                                request) {
-                                @Override
-                                public HttpHeaders getHeaders() {
-                                    HttpHeaders headers = new HttpHeaders();
-                                    super.getHeaders().forEach(
-                                        (key, values) -> headers.put(key, new ArrayList<>(values)));
-                                    headers.set(SecurityConstants.REFRESH_TOKEN_HEADER,
-                                        refreshToken);
-                                    return headers;
-                                }
-                            };
-
-                            // 수정된 요청으로 새로운 exchange 생성
-                            ServerWebExchange modifiedExchange = exchange.mutate()
-                                .request(modifiedRequest)
-                                .build();
-
-                            return chain.filter(modifiedExchange);
-
-                        }
-
-                        return chain.filter(exchange);
+                        ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(
+                            request) {
+                            @Override
+                            public HttpHeaders getHeaders() {
+                                HttpHeaders headers = new HttpHeaders();
+                                super.getHeaders().forEach((key, values) -> {
+                                    // 각 헤더의 값을 새로운 ArrayList로 복사하여 수정 가능하도록 처리
+                                    headers.put(key, new ArrayList<>(values));
+                                });
+                                // 필요한 헤더 추가
+                                headers.add("X-Member-Id", "1");
+                                headers.add("X-Role", "ADMIN");
+                                return headers;
+                            }
+                        };
+                        return chain.filter(exchange.mutate().request(modifiedRequest).build());
                     })
-                )
-                // JWT 인증 필터는 제외됨
-                .uri(memberServiceUrl))
-
-            .route("member-service-protected", r -> r
-                .path("/members/**", "/settings/**")
-                .and()
-                .not(p -> p.path("/members/register/token", "/members/register/check/token",
-                    "/members/register", "/members/login"))
-                .filters(f -> f
-                    .filter(requestLoggingFilter.apply(new Object()))
-                    .filter(jwtAuthenticationFilter.apply(authConfig)))
-                .uri(memberServiceUrl))
-
-            // 뮤직 서비스 공개 경로
-            .route("music-service-public", r -> r
-                .path("/musics/search/**", "/musics/detail/music/*",
-                    "/musics/artist/*/discography",
-                    "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
-                    "/musics/latest",
-                    "/musics/detail/album/*",
-                    "/musics/detail/artist/*", "/musics/visualization/*", "/musics/todaygenre/*")
-                .filters(f -> f
-                    .filter(requestLoggingFilter.apply(new Object()))
                     .circuitBreaker(config -> config
                         .setName("music-service")
                         .setFallbackUri("/fallback/music"))
                     .retry(3))
                 .uri(musicServiceUrl))
 
-            // 뮤직 서비스 인증 경로
-            .route("music-service-protected", r -> r
-                .path("/musics/**", "/player/**")
-                .and()
-                .not(p -> p.path("/musics/search/**", "/musics/detail/music/*",
-                    "/musics/artist/*/discography",
-                    "/musics/popular", "/musics/popular/playlist", "/musics/recommend",
-                    "/musics/latest",
-                    "/musics/detail/album/*",
-                    "/musics/detail/artist/*", "/musics/visualization/*", "/musics/todaygenre/*"))
-                .filters(f -> f
-                    .filter(requestLoggingFilter.apply(new Object()))
-                    .filter(jwtAuthenticationFilter.apply(authConfig))
-                    .circuitBreaker(config -> config
-                        .setName("music-service")
-                        .setFallbackUri("/fallback/music"))
-                    .retry(3))
-                .uri(musicServiceUrl))
-
-            // 추천 서비스 경로(인증 필요)
             .route("recommendations-service", r -> r
                 .path("/recommendations/**")
                 .filters(f -> f
                     .filter(requestLoggingFilter.apply(new Object()))
-                    .filter(jwtAuthenticationFilter.apply(authConfig)))
+                    .filter((exchange, chain) -> {
+                        ServerHttpRequest request = exchange.getRequest();
+                        ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(
+                            request) {
+                            @Override
+                            public HttpHeaders getHeaders() {
+                                HttpHeaders headers = new HttpHeaders();
+                                super.getHeaders().forEach((key, values) -> {
+                                    // 각 헤더의 값을 새로운 ArrayList로 복사하여 수정 가능하도록 처리
+                                    headers.put(key, new ArrayList<>(values));
+                                });
+                                // 필요한 헤더 추가
+                                headers.add("X-Member-Id", "1");
+                                headers.add("X-Role", "ADMIN");
+                                return headers;
+                            }
+                        };
+                        return chain.filter(exchange.mutate().request(modifiedRequest).build());
+                    }))
                 .uri(recommendationsServiceUrl))
-
             .build();
     }
 
