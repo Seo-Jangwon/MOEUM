@@ -7,8 +7,14 @@ export const s_container = (theme: Theme) => css`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  justify-self: center;
   gap: 48px;
   color: ${theme.colors.white};
+  width: 30rem;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    padding: 0 24px;
+  }
 `;
 
 export const s_content = css`
@@ -17,6 +23,7 @@ export const s_content = css`
   align-items: center;
   gap: 2rem;
   text-align: center;
+  width: 100%;
 `;
 
 export const s_error_box = css`
@@ -33,30 +40,22 @@ export const s_error_box = css`
 
 export const s_button = css({ fontSize: 'x-large', marginTop: '24px', padding: '10px 20px' });
 
-export const s_titlebox = (theme: Theme) => css`
+export const s_titlebox = css`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  ${theme.typography.title};
+  font-size: 2.2rem;
+  font-weight: 700;
+  @media screen and (max-width: 768px) {
+    font-size: 1.6rem;
+  }
 `;
 
 export const s_form = css`
   display: flex;
-  width: 30rem;
+  width: 100%;
   flex-direction: column;
   gap: 10px;
-`;
-
-export const s_input = (theme: Theme) => css`
-  padding: 0.75rem 1.5rem;
-  font-size: x-large;
-  color: ${theme.colors.white};
-  border-radius: 0.875rem;
-  background: transparent;
-  border: 2px solid ${theme.colors.white};
-  ::placeholder {
-    color: ${theme.colors.white};
-  }
 `;
 
 export const s_links = (theme: Theme) => css`
@@ -71,7 +70,7 @@ export const s_links = (theme: Theme) => css`
 
 export const s_oauth_box = css`
   display: flex;
-  width: 30rem;
+  width: 100%;
   gap: 28px;
   justify-content: center;
   flex-direction: column;
@@ -88,4 +87,19 @@ export const s_line_text = (theme: Theme) => css`
   gap: 12px;
   color: ${theme.colors.lightgray};
   align-items: center;
+  text-wrap: nowrap;
+
+  @media (max-width: 768px) {
+    font-size: small;
+  }
+`;
+
+// export const s_oauth_box_button = css({ display: 'flex', justifyContent: 'center', gap: '32px',  });
+export const s_oauth_box_button = css`
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  @media (max-width: 768px) {
+    gap: 24px;
+  }
 `;
