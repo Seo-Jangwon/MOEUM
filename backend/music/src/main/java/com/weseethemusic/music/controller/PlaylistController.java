@@ -169,6 +169,22 @@ public class PlaylistController {
         }
     }
 
+    @GetMapping("/like")
+    public ResponseEntity<Map<String, Object>> likePlaylistList(
+        @RequestHeader("X-Member-Id") Long memberId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<PlaylistResponse> playlists = playlistService.likePlaylistList(memberId);
+            response.put("code", 200);
+            response.put("data", playlists);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("code", 500);
+            response.put("message", "내부 서버 오류");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
     @PostMapping("/like")
     public ResponseEntity<Map<String, Object>> likePlaylist(@RequestBody LikeRequest likeRequest,
         @RequestHeader("X-Member-Id") Long memberId) {
