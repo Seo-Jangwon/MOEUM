@@ -1,5 +1,6 @@
 package com.weseethemusic.music.controller;
 
+import com.weseethemusic.common.dto.GenreDto;
 import com.weseethemusic.music.common.exception.CustomException;
 import com.weseethemusic.music.common.exception.ErrorCode;
 import com.weseethemusic.music.dto.ResponseDto;
@@ -110,6 +111,20 @@ public class MusicController {
             result = musicService.getAllDiscography(artistId);
         } catch (NoSuchElementException e) {
             throw new CustomException(ErrorCode.NOT_FOUND, "아티스트 정보를 찾을 수 없습니다.");
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+        }
+
+        return ResponseDto.res(200, result);
+    }
+
+    // 전체 장르 목록 조회
+    @GetMapping("/todaygenre")
+    public ResponseDto<List<GenreDto>> getGenres() {
+        List<GenreDto> result;
+
+        try {
+            result = musicService.getGenres();
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
