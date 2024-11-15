@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql-music:3306/music?serverTimezone=Asia/Seoul&useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://mysql-rec:3306/rec?serverTimezone=Asia/Seoul&useUnicode=true&characterEncoding=utf8
     hikari:
       maximum-pool-size: 20
       minimum-idle: 10
