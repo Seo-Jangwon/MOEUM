@@ -51,3 +51,10 @@ export const s_logo = (theme: Theme) => css`
   font-size: large;
   font-weight: bold;
 `;
+
+export const s_profileButton = (theme: Theme) => css`
+  color: ${theme.colors.white};
+  border-radius: 100%;
+  padding: 8px;
+  overflow: hidden;
+`;
