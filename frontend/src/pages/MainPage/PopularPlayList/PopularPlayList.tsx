@@ -1,10 +1,8 @@
 import apiClient from '@/api/apiClient';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
-import Modal from '@/pages/RecordPage/Modal/Modal';
 import { useEffect, useState } from 'react';
 import { FaRegHeart } from 'react-icons/fa6';
 import { FiCrosshair } from 'react-icons/fi';
-import { PiPlaylist } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import { s_button_all, s_div_header } from '../NewList/style';
 import { s_div_button, s_div_h3, s_div_item_box, s_div_item_container, s_h5, s_icon_div } from './style';
@@ -33,20 +31,11 @@ interface Playlist {
 const PopularPlayList = () => {
   const navigate = useNavigate();
   const [popularPlayList, setPopularPlayList] = useState<Playlist[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handleMusicPage = (path: string) => {
     return navigate(path);
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  // 모달 닫기 함수
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
 
   useEffect(() => {
     apiClient({
@@ -102,7 +91,6 @@ const PopularPlayList = () => {
           </div>
         ))}
       </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal} />
     </>
   );
 };

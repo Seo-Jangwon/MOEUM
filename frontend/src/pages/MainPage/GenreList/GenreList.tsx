@@ -9,6 +9,8 @@ import { s_button_all, s_div_header } from '../NewList/style';
 import { s_div_item_box, s_div_item_container, s_div_title, s_h5, s_img } from './style';
 
 
+
+
 interface Genre {
   id: number;
   name: string;

@@ -31,9 +31,10 @@ interface editModalComponentsData {
 const ProfilePage = () => {
   const navigate = useNavigate();
 
-  const { nickname, registeredDate, profileImage, email, setEmail, setNickname, setProfileImage, signOutInUserInfo } =
-    useUserInfoStore();
-  const { signOut } = useAuthStore();
+  const { userInfo, setUserInfo } = useUserInfoStore();
+  const { nickname, registeredDate, profileImage, email } = userInfo;
+
+  const signOut = useAuthStore((state) => state.signOut);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const modalDataIdx = useRef<number>(0);
   const [submitData, setSubmitData] = useState<string>('');
@@ -114,7 +115,7 @@ const ProfilePage = () => {
     })
       .then((response) => {
         if (response.data.code === 200) {
-          setNickname(response.data.data.nickname);
+          setUserInfo((prev) => ({ ...prev, nickname: response.data.data.nickname }));
           alert('닉네임 변경이 완료되었습니다.');
         } else {
           alert('오류가 발생하였습니다.');
@@ -148,7 +149,7 @@ const ProfilePage = () => {
     })
       .then((response) => {
         if (response.data.code === 200) {
-          setProfileImage(response.data.data.profileImage);
+          setUserInfo((prev) => ({ ...prev, profileImage: response.data.data.profileImage }));
           alert('프로필 사진 변경이 되었습니다.');
         } else {
           alert('오류가 발생하였습니다.');
@@ -218,7 +219,6 @@ const ProfilePage = () => {
         if (response.data.code === 200) {
           alert('회원 탈퇴가 완료되었습니다');
           signOut();
-          signOutInUserInfo();
           navigate('/');
         } else {
           alert('오류가 발생하였습니다.');

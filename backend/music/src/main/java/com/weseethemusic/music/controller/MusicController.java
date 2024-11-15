@@ -1,6 +1,5 @@
 package com.weseethemusic.music.controller;
 
-import com.weseethemusic.common.dto.GenreDto;
 import com.weseethemusic.music.common.exception.CustomException;
 import com.weseethemusic.music.common.exception.ErrorCode;
 import com.weseethemusic.music.dto.ResponseDto;
@@ -9,7 +8,7 @@ import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
 import com.weseethemusic.music.dto.general.GeneralPlaylistDto;
 import com.weseethemusic.music.dto.playlist.TodayGenreDto;
-import com.weseethemusic.music.dto.playlist.TodayGenreMusicDto;
+import com.weseethemusic.music.dto.playlist.TodayGenreListDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.service.MusicServiceImpl;
 import com.weseethemusic.music.service.PlaylistServiceImpl;
@@ -120,8 +119,8 @@ public class MusicController {
 
     // 전체 장르 목록 조회
     @GetMapping("/todaygenre")
-    public ResponseDto<List<GenreDto>> getGenres() {
-        List<GenreDto> result;
+    public ResponseDto<TodayGenreListDto> getGenres() {
+        TodayGenreListDto result;
 
         try {
             result = musicService.getGenres();

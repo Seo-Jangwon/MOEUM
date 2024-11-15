@@ -1,10 +1,10 @@
 package com.weseethemusic.music.service;
 
-import com.weseethemusic.common.dto.GenreDto;
 import com.weseethemusic.music.dto.general.GeneralAlbumDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
 import com.weseethemusic.music.dto.general.GeneralPlaylistDto;
+import com.weseethemusic.music.dto.playlist.TodayGenreListDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
 import java.util.List;
 
@@ -22,6 +22,6 @@ public interface MusicService {
 
     List<GeneralPlaylistDto> getPopularPlaylists();
 
-    List<GenreDto> getGenres();
-    
+    TodayGenreListDto getGenres();
+
 }

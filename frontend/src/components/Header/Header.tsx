@@ -1,9 +1,13 @@
 import useAuthStore from '@/stores/authStore';
-import { NavLink, useNavigate } from 'react-router-dom';
+import useUserInfoStore from '@/stores/userInfoStore';
+import { useState } from 'react';
+import { FiSearch } from 'react-icons/fi';
+import { PiUserCircle } from 'react-icons/pi';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Button from '../Button/Button';
 import SearchBox from '../SearchBox/SearchBox';
 import SideBar from '../SideBar/SideBar';
-import { s_container, s_logo } from './Header.style';
+import { s_container, s_headerItem, s_logo, s_profileButton, s_searchButton } from './Header.style';
 
 interface HeaderProps {
   search: boolean;
@@ -12,21 +16,39 @@ interface HeaderProps {
 const Header = ({ search }: HeaderProps) => {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuthStore();
-  console.log(isLoggedIn);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const userInfo = useUserInfoStore((state) => state.userInfo);
 
   return (
     <nav css={s_container}>
-      <div css={{ display: 'flex', gap: '8px', alignItems: 'center', zIndex: 1 }}>
-        <SideBar />
-        <NavLink css={s_logo} to="/">
-          <img src="/logo.svg" alt="logo" />
-        </NavLink>
-      </div>
-      {search && <SearchBox />}
-      {search && (
-        <div style={{ zIndex: 0 }}>
+      {!isSearchOpen && (
+        <div css={{ display: 'flex', gap: '8px', alignItems: 'center', zIndex: 1 }}>
+          <SideBar />
+          <NavLink css={s_logo} to="/">
+            <img src="/logo.svg" alt="logo" />
+          </NavLink>
+        </div>
+      )}
+      {search && <SearchBox isOpen={isSearchOpen} handleClose={() => setIsSearchOpen(false)} />}
+      {search && !isSearchOpen && (
+        <div css={s_headerItem}>
+          <button
+            css={s_searchButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsSearchOpen(true);
+            }}
+          >
+            <FiSearch size={28} />
+          </button>
           {isLoggedIn ? (
-            <img src="/logo.svg" onClick={() => navigate('/profile')} />
+            <Link to="/profile" css={s_profileButton}>
+              {userInfo.profileImage ? (
+                <img src={userInfo.profileImage} alt="profile" style={{ width: '100%', height: '100%' }} />
+              ) : (
+                <PiUserCircle size={32} />
+              )}
+            </Link>
           ) : (
             <Button
               variant="inverted"
