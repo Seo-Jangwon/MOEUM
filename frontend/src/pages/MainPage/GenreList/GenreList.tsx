@@ -8,6 +8,9 @@ import { FiThumbsUp } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { s_button_all, s_div_header } from '../NewList/style';
 import { s_div_item_box, s_div_item_container, s_div_title, s_h5, s_img } from './style';
+import { PiPlaylist } from 'react-icons/pi';
+import Modal from '@/pages/RecordPage/Modal/Modal';
+
 
 interface Music {
   id: number;
@@ -54,6 +57,18 @@ const mokData: { music: Music[] } = {
 const GenreList = () => {
   const navigate = useNavigate();
   const [genreData, setGenreData] = useState<string>('')
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
 
   // 임시적으로 적어놓은것 나중에 지워야함
   useEffect(() => {
@@ -67,7 +82,7 @@ const GenreList = () => {
       .catch((err) => {
         console.log(err);
       });
-  });
+  },[]);
 
   const handlePage = (path: string) => {
     navigate(path);
@@ -132,12 +147,19 @@ const GenreList = () => {
                     clickHandler: () => handleLike(item.id),
                     size: 20,
                   },
+                  {
+                    iconImage: <PiPlaylist />,
+                    text: '플레이리스트 추가',
+                    clickHandler: () => openModal(),
+                    size: 20,
+                  },
                 ]}
               />
             </div>
           </div>
         ))}
       </div>
+      <Modal isOpen={isModalOpen} onClose={closeModal} />
     </>
   );
 };
