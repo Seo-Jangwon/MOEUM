@@ -82,8 +82,10 @@ const MusicPlayer = ({
   function changeVideoState() {
     if (audioSrcRef.current) {
       if (audioSrcRef.current.paused) {
+        engineRef.current!.timing.timeScale = 1;
         audioSrcRef.current.play();
       } else {
+        engineRef.current!.timing.timeScale = 0;
         audioSrcRef.current.pause();
       }
       setIsPaused(audioSrcRef.current.paused);
@@ -107,19 +109,23 @@ const MusicPlayer = ({
   /** 애니메이션 실행 함수
    */
   function createObjectsAtTimes() {
-    if (audioSrcRef.current === null) return;
-    if (Math.abs(audioSrcRef.current.currentTime - prevTimeRef.current) > 1) {
+    if (audioSrcRef.current === null && lyricsData.current === null) return;
+    if (Math.abs(audioSrcRef.current!.currentTime - prevTimeRef.current) > 1) {
       audioTimeChanged();
       return;
     }
-    if (data.current && timeIdx.current < data.current.length) {
+    if (data.current && timeIdx.current < data.current.length - 1) {
       if (audioSrcRef.current) {
         prevTimeRef.current = audioSrcRef.current.currentTime;
-        if (audioSrcRef.current.currentTime > lyricsData.current![lyricsTimeIdx.current].times) {
+        if (
+          lyricsTimeIdx.current < lyricsData.current!.length - 1 &&
+          audioSrcRef.current.currentTime > lyricsData.current![lyricsTimeIdx.current].times
+        ) {
           setCurrentLyrics(lyricsData.current![lyricsTimeIdx.current].lyric);
           lyricsTimeIdx.current++;
         }
         setCurrentTImeLine(audioSrcRef.current.currentTime);
+        engineRef.current?.world.bodies.forEach((item) => {});
         if (
           audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
           engineRef.current !== null &&
@@ -135,6 +141,7 @@ const MusicPlayer = ({
             {
               angle: data.current[timeIdx.current].angle,
               mass: 100,
+              label: '',
               force: Vector.create(
                 (divRef.current.clientWidth / 500) * data.current[timeIdx.current].direction[0],
                 (divRef.current.clientHeight / 300) * data.current[timeIdx.current].direction[1] * -1,
@@ -162,8 +169,12 @@ const MusicPlayer = ({
    */
   function deleteAllShape() {
     if (engineRef.current) {
-      engineRef.current.world.bodies.forEach((body) => {
-        if (body.label !== 'wall') World.remove(engineRef.current!.world, body);
+      console.log('asdf');
+      const bodies = [...engineRef.current.world.bodies];
+      bodies.forEach((body) => {
+        if (body.label !== 'wall') {
+          World.remove(engineRef.current!.world, body);
+        }
       });
     }
   }
@@ -197,27 +208,26 @@ const MusicPlayer = ({
         // 앞으로 이동했을 때
 
         while (
-          timeIdx.current < data.current.length - 1 &&
+          timeIdx.current < data.current.length - 2 &&
           data.current[timeIdx.current].time < audioSrcRef.current.currentTime
         ) {
           timeIdx.current++;
         }
         while (
-          lyricsTimeIdx.current < lyricsData.current!.length - 1 &&
+          lyricsTimeIdx.current < lyricsData.current!.length - 2 &&
           lyricsData.current![lyricsTimeIdx.current].times < audioSrcRef.current.currentTime
         ) {
           lyricsTimeIdx.current++;
         }
-        timeIdx.current--;
-        lyricsTimeIdx.current--;
       } else {
         // 뒤로 이동했을 때
         while (timeIdx.current > 0 && data.current[timeIdx.current].time > audioSrcRef.current.currentTime) {
           timeIdx.current--;
         }
         while (
-          lyricsTimeIdx.current > 0 &&
-          lyricsData.current![lyricsTimeIdx.current].times > audioSrcRef.current.currentTime
+          lyricsTimeIdx.current === lyricsData.current?.length ||
+          (lyricsTimeIdx.current > 0 &&
+            lyricsData.current![lyricsTimeIdx.current].times > audioSrcRef.current.currentTime)
         ) {
           lyricsTimeIdx.current--;
         }
