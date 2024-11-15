@@ -2,6 +2,8 @@ package com.weseethemusic.music.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.weseethemusic.music.dto.visualization.LyricDto;
+import com.weseethemusic.music.dto.visualization.LyricListDto;
 import com.weseethemusic.music.dto.visualization.MusicVisualizationDto;
 import com.weseethemusic.music.dto.visualization.ShapeDto;
 import com.weseethemusic.music.dto.visualization.TimeDurationDto;
@@ -55,27 +57,34 @@ public class MusicVisualizationServiceImpl implements MusicVisualizationService 
         return result;
     }
 
-    public List<TimeDurationDto> getMusicLyrics(long musicId) {
+    // 가사 시각화 데이터 불러오기
+    public LyricListDto getMusicLyrics(long musicId) {
         ObjectMapper mapper = new ObjectMapper();
-        List<TimeDurationDto> vibrations = new ArrayList<>();
-
-        String filePath = "src/main/java/com/weseethemusic/music/service/data.json"; // data.json 파일 경로
+        LyricListDto result = new LyricListDto();
 
         try {
-            JsonNode root = mapper.readTree(new File(filePath));
-            JsonNode vibrationsNode = root.path("data").path("vibrations");
+            InputStream inputStream = getClass().getClassLoader()
+                .getResourceAsStream("lyrics.json");
 
-            // vibrations 필드에서 time과 duration 데이터를 추출하여 TimeDurationDto 객체로 변환
-            for (JsonNode vibrationNode : vibrationsNode) {
-                double time = vibrationNode.path("time").asDouble();
-                double duration = vibrationNode.path("duration").asDouble();
-                vibrations.add(new TimeDurationDto(time, duration));
+            if (inputStream == null) {
+                throw new IllegalArgumentException("File not found: lyrics.json");
             }
 
+            JsonNode root = mapper.readTree(inputStream);
+            JsonNode dataNode = root.path("data");
+
+            List<LyricDto> lyrics = new ArrayList<>();
+
+            for (JsonNode lyricNode : dataNode.path("lyrics")) {
+                LyricDto lyricDto = mapper.treeToValue(lyricNode, LyricDto.class);
+                lyrics.add(lyricDto);
+            }
+
+            result.setLyrics(lyrics);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return vibrations;
+        return result;
     }
 }
