@@ -21,7 +21,7 @@ const LikeArtist = () => {
         console.log(res);
         if (res.data.code === 200) {
           setIsExist(true);
-          setLikeArtist(res.data);
+          setLikeArtist(res.data.data);
         }
       })
       .catch((err) => {

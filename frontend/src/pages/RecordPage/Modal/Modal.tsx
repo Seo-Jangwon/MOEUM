@@ -2,8 +2,8 @@ import apiClient from '@/api/apiClient';
 import lala from '@/assets/lalaticon/lala6.png';
 import Button from '@/components/Button/Button';
 import { css } from '@emotion/react';
-import { HttpStatusCode } from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
+import { RiDeleteBin6Line } from 'react-icons/ri';
 import {
   s_button,
   s_button_input,
@@ -18,65 +18,24 @@ import {
 } from './style';
 
 interface ModalProps {
-  id: number;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const mokData = {
-  code: 200,
-  data: {
-    playlists: [
-      {
-        id: 1,
-        title: '플레이리스트 1',
-        image: '/apt.png',
-        totalDuration: '1시간 23분',
-        totalMusicCount: 20,
-      },
-      {
-        id: 2,
-        title: '플레이리스트 2',
-        image: '/mantra.png',
-        totalDuration: '2시간 34분',
-        totalMusicCount: 40,
-      },
-      {
-        id: 2,
-        title: '플레이리스트 2',
-        image: '/mantra.png',
-        totalDuration: '2시간 34분',
-        totalMusicCount: 40,
-      },
-    ],
-  },
-};
+interface Playlist {
+  id: number;
+  title: string;
+  image: string;
+  totalDuration: string;
+  totalMusicCount: number;
+}
 
-
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const isPlayList = useRef<boolean>(true);
+  // const [isExist, setIsExist] = useState<boolean>(false)
+  const [myPlayList, setMyPlayList] = useState<Playlist[]>([]);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [playlistTitle, setPlaylistTitle] = useState<string>('');
-
-  useEffect(() => {
-    apiClient({
-      method: 'GET',
-      url: '/musics/playlist',
-    })
-      .then((res) => {
-        console.log(res);
-        if (res.status === HttpStatusCode.Ok) {
-          console.log(res);
-        } else if (res.data.code === 500) {
-          alert('내부 서버 오류입니다.');
-        } else {
-          alert('알 수 없는 오류입니다.');
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   const handleAddButtonClick = () => {
     setIsAdding(true);
@@ -87,10 +46,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
       apiClient({
         method: 'POST',
         url: '/musics/playlist/create',
-        data: { title: playlistTitle, music: [] },
+        data: { title: playlistTitle, musics: [] },
       })
         .then((res) => {
-          if (res.status === HttpStatusCode.Ok) {
+          if (res.data.code === 200) {
             console.log(res);
             setIsAdding(false);
             setPlaylistTitle('');
@@ -108,6 +67,40 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
     }
   };
 
+  useEffect(() => {
+    apiClient({
+      method: 'GET',
+      url: '/musics/playlist',
+    })
+      .then((res) => {
+        console.log(res);
+        if (res.data.code === 200) {
+          setMyPlayList(res.data.data.musics);
+          console.log(myPlayList);
+        } else if (res.data.code === 500) {
+          alert('내부 서버 오류입니다.');
+        } else {
+          alert('알 수 없는 오류입니다.');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  const handleDeletePlayList = (id: number) => {
+    apiClient({
+      method: 'DELETE',
+      url: `/musics/playlist/delete/${id}`,
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const handleAddPlayList = (id: number) => {
     apiClient({
       method: 'GET',
@@ -115,10 +108,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
     })
       .then((res) => {
         console.log(res);
-        if (res.status === HttpStatusCode.Ok) {
+        if (res.data.code === 200) {
           console.log(res);
-        } else {
-          alert('테스트 중입니다.');
+          alert('삭제되었습니다.');
         }
       })
       .catch((err) => {
@@ -158,7 +150,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
                   gap: 20px;
                 `}
               >
-                {mokData.data.playlists.map((item, index) => (
+                {myPlayList.map((item, index) => (
                   <div
                     key={index}
                     css={s_div_playlist_item_container}
@@ -169,10 +161,32 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
                     <div css={s_div_img}>
                       <img src={lala} alt="라라" css={s_img} />
                     </div>
-                    <div css={s_playlist_data}>
-                      <h5>{item.title}</h5>
-                      <p>{item.totalDuration}</p>
-                      <p>{item.totalMusicCount} 곡</p>
+                    <div
+                      css={css`
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                      `}
+                    >
+                      <div css={s_playlist_data}>
+                        <h5>{item.title}</h5>
+                        <p>{item.totalDuration}</p>
+                        <p>{item.totalMusicCount} 곡</p>
+                      </div>
+                      <div
+                        css={css`
+                          margin-left: 5px;
+                          :hover {
+                            color: red;
+                          }
+                        `}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeletePlayList(item.id);
+                        }}
+                      >
+                        <RiDeleteBin6Line />
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -196,9 +210,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
                   </div>
                 </div>
               ) : (
-                <Button variant="grad" onClick={handleAddButtonClick} css={s_plus_button}>
-                  추가
-                </Button>
+                <div css={s_plus_button}>
+                  <Button variant="grad" onClick={handleAddButtonClick}>
+                    추가
+                  </Button>
+                </div>
               )}
             </>
           ) : (

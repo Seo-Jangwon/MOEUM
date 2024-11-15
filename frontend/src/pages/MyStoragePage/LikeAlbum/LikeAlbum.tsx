@@ -28,14 +28,15 @@ const LikeAlbum = () => {
       .then((res) => {
         console.log(res);
         if (res.data.code === 200) {
-          setLikeAlbum(res.data);
+          setLikeAlbum(res.data.data);
+          
           setIsExist(true);
         }
       })
       .catch((err) => {
         console.log(err);
       });
-  });
+  },[]);
 
   return (
     <div css={s_div_item_container}>

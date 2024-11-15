@@ -75,7 +75,8 @@ export const s_button_position = css`
 `;
 
 export const s_plus_button = css`
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: end;
+
 `;

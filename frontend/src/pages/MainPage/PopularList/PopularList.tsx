@@ -34,8 +34,6 @@ const PopularList = () => {
       url: '/musics/popular',
     })
       .then((res) => {
-        const jsonString = JSON.stringify(res.data.data);
-        console.log(jsonString);
         console.log(res.data.data);
         if (res.data.code === 200) {
           setPopularList(res.data.data);
@@ -111,7 +109,11 @@ const PopularList = () => {
             </div>
             <div css={s_div_data}>
               <h5 css={s_h5_title}>{item.name}</h5>
-              <p css={s_p_artist}>{item.artists[0].name}</p>
+              <p css={s_p_artist}>
+                {item.artists.map((item, index) => (
+                  <p key={index}>{item.name}</p>
+                ))}
+              </p>
             </div>
             <div
               css={css`
