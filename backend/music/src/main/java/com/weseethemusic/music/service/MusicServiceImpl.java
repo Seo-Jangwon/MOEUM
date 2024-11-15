@@ -100,7 +100,8 @@ public class MusicServiceImpl implements MusicService {
 
             result.add(GeneralPlaylistDto.builder().id(playlist.getId()).name(playlist.getName())
                 .image(music == null ? "https://picsum.photos/500/500"
-                    : music.getAlbum().getImageName()).build());
+                    : music.getAlbum().getImageName())
+                .build());
         }
 
         return result;
