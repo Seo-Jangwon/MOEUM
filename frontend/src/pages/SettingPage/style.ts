@@ -1,4 +1,4 @@
-import lala from '@/assets/lalaticon/lala.jpg';
+import lala from '@/assets/lalaticon/lala7.png';
 import { css, Theme } from '@emotion/react';
 
 export const s_container = css``;

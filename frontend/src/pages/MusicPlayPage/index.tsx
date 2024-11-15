@@ -1,29 +1,32 @@
 import apiClient from '@/api/apiClient';
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import testData from './data.json';
+import { default as testAnalyzedData, default as testData } from './data.json';
+import testPlayListData from './listData.json';
+import testLyricsData from './lyricsData.json';
+import testMusicDetailInfo from './musicDetailInfo.json';
 import MusicPlayer from './MusicPlayer/MusicPlayer';
 import PlayList from './PlayList/PlayList';
 import { s_container } from './style';
 
 export interface musicDetailInfoI {
   musicId: number;
-  musicTitle: string;
+  musicName: string;
   albumId: number;
-  albumTitle: string;
+  albumName: string;
   albumImage: string;
   albumIndex: number;
+  audioPath: string;
   genre: string[];
   duration: string;
-  releaseData: string;
-  audioPath: string;
+  releaseDate: string;
   artists: { id: number; name: string }[];
 }
 export interface MusicI {
   id: number;
   title: string;
   albumImage: string;
-  duration: number;
+  duration: string;
   artists: { id: number; name: string }[];
 }
 
@@ -73,9 +76,6 @@ const MusicPlayPage: React.FC = () => {
         searchParams.get('list'),
         searchParams.get('idx'),
       ];
-      queryString.forEach((s_item) => {
-        console.log(s_item);
-      });
       if (queryString[0]) musicId.current = parseInt(queryString[0]);
       else {
         navigate('/');
@@ -123,6 +123,11 @@ const MusicPlayPage: React.FC = () => {
         setIsLoading(false);
       } catch (error) {
         console.log(error);
+        setLylicsData(testLyricsData.data);
+        setMusicAnalyzedData(testAnalyzedData.data);
+        setMusicDetailInfo(testMusicDetailInfo.data);
+        setMusicListDetailInfo(testPlayListData.data.recommendedMusics);
+        setIsLoading(false);
         console.log('망함 ㅅㄱ!');
       }
     };
@@ -131,19 +136,9 @@ const MusicPlayPage: React.FC = () => {
 
   return (
     <div css={s_container}>
-      <div>
-        <button
-          onClick={() => {
-            const params = new URLSearchParams(location.search);
-            params.set('id', Math.floor(Math.random() * 10).toString());
-            navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-          }}
-        >
-          asdf
-        </button>
-      </div>
       {isLoading ? null : (
         <>
+          <div></div>
           <MusicPlayer
             musicAnalyzedData={musicAnalyzedData}
             musicDetailInfo={musicDetailInfo!}

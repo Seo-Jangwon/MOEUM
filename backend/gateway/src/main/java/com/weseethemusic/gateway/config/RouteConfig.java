@@ -50,12 +50,15 @@ public class RouteConfig {
             .addExcludedPath("/musics/detail/music/*")
             .addExcludedPath("/musics/artist/*/discography")
             .addExcludedPath("/musics/recommend")
+            .addExcludedPath("/musics/playlist")
+            .addExcludedPath("/musics/playlist/**")
             .addExcludedPath("/musics/popular")
             .addExcludedPath("/musics/popular/playlist")
             .addExcludedPath("/musics/visualization/*")
             .addExcludedPath("/musics/latest")
             .addExcludedPath("/musics/detail/album/*")
             .addExcludedPath("/musics/detail/artist/*")
+            .addExcludedPath("/musics/detail/music/*")
             .addExcludedPath("/musics/todaygenre/*")
             .addExcludedPath("/members/token");
 
