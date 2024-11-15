@@ -43,6 +43,7 @@ services:
     image: elasticsearch:8.15.3
     environment:
       - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
     deploy:
       resources:
         limits:
