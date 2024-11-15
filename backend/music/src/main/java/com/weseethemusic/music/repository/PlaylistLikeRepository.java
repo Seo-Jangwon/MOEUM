@@ -13,11 +13,10 @@ public interface PlaylistLikeRepository extends JpaRepository<PlaylistLike, Long
 
     Optional<PlaylistLike> findByMemberIdAndPlaylistId(Long memberId, Long playlistId);
 
-    boolean existsByMemberIdAndPlaylistId(Long memberId, Long playlistId);
-
     List<PlaylistLike> findByMemberId(Long memberId);
 
     @Query("select pl.playlist from PlaylistLike pl group by pl.playlist.id order by count(*) desc limit 5")
     List<Playlist> getPopularPlaylists();
 
+    void deleteByPlaylistId(Long playlistId);
 }
