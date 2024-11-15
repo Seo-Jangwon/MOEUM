@@ -12,7 +12,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
@@ -27,6 +27,7 @@ spring:
           max-active: 10
           max-idle: 8
           min-idle: 2
+
     mongodb:
       host: mongo-music
       port: 27017
@@ -34,7 +35,3 @@ spring:
       authentication-database: admin
       auto-index-creation: true
       write-concern: NORMAL
-
-  sql:
-    init:
-      mode: always
