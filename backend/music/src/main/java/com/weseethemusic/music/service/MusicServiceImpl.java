@@ -12,6 +12,8 @@ import com.weseethemusic.music.dto.general.GeneralAlbumDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
 import com.weseethemusic.music.dto.general.GeneralMusicDto;
 import com.weseethemusic.music.dto.general.GeneralPlaylistDto;
+import com.weseethemusic.music.dto.playlist.RealTodayGenreDto;
+import com.weseethemusic.music.dto.playlist.TodayGenreListDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
@@ -107,15 +109,15 @@ public class MusicServiceImpl implements MusicService {
 
     // 전체 장르 목록 조회
     @Override
-    public List<GenreDto> getGenres() {
-        List<GenreDto> result = new ArrayList<>();
+    public TodayGenreListDto getGenres() {
+        List<RealTodayGenreDto> result = new ArrayList<>();
         List<Genre> genres = genreRepository.findAll();
 
         for (Genre genre : genres) {
-            result.add(GenreDto.fromEntity(genre));
+            result.add(RealTodayGenreDto.fromEntity(genre));
         }
 
-        return result;
+        return TodayGenreListDto.builder().genres(result).build();
     }
 
 
