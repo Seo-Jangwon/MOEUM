@@ -19,12 +19,12 @@ import {
   s_line_text,
   s_links,
   s_oauth_box,
+  s_oauth_box_button,
   s_titlebox,
 } from './style';
 
 const isValidEmail = (email: string) => {
-  const emailRegEx =
-    /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
+  const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
   return emailRegEx.test(email);
 };
 
@@ -69,12 +69,7 @@ const SignInPage = () => {
           <p>당신이 어떤 사람인지 알고 싶어요.</p>
         </article>
         <form css={s_form} onSubmit={handleSubmit}>
-          <Input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="이메일"
-          />
+          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="이메일" />
           <Input
             type="password"
             value={password}
@@ -93,10 +88,10 @@ const SignInPage = () => {
       <section css={s_oauth_box}>
         <div css={s_line_text}>
           <Line />
-          <p css={{ textWrap: 'nowrap' }}>다른 방법으로 계속하기</p>
+          <p>다른 방법으로 계속하기</p>
           <Line />
         </div>
-        <div css={{ display: 'flex', justifyContent: 'center', gap: '32px' }}>
+        <div css={s_oauth_box_button}>
           <OauthButton to="/oauth/google" Icon={googleLogo} title="Google" />
           <OauthButton to="/oauth/kakao" Icon={kakaoLogo} title="Kakao" />
           <OauthButton to="/oauth/facebook" Icon={facebookLogo} title="Facebook" />

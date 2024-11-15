@@ -10,6 +10,7 @@ export const s_container = css`
   align-items: center;
   padding: 0 16px;
   height: 80px;
+
   z-index: 90;
   ::before {
     content: '';
@@ -17,6 +18,29 @@ export const s_container = css`
     inset: 0;
     backdrop-filter: blur(50px);
   }
+`;
+
+export const s_searchButton = (theme: Theme) => css`
+  @media (max-width: 768px) {
+    display: block;
+  }
+  background: none;
+  border: none;
+  display: none;
+  color: ${theme.colors.white};
+  padding: 8px;
+  border-radius: 16px;
+  transition: 200ms ease-in-out 0s;
+  :active {
+    color: ${theme.colors.dark};
+  }
+`;
+
+export const s_headerItem = css`
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 export const s_logo = (theme: Theme) => css`
