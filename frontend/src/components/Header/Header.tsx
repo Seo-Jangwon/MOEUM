@@ -21,14 +21,16 @@ const Header = ({ search }: HeaderProps) => {
 
   return (
     <nav css={s_container}>
-      <div css={{ display: 'flex', gap: '8px', alignItems: 'center', zIndex: 1 }}>
-        <SideBar />
-        <NavLink css={s_logo} to="/">
-          <img src="/logo.svg" alt="logo" />
-        </NavLink>
-      </div>
+      {!isSearchOpen && (
+        <div css={{ display: 'flex', gap: '8px', alignItems: 'center', zIndex: 1 }}>
+          <SideBar />
+          <NavLink css={s_logo} to="/">
+            <img src="/logo.svg" alt="logo" />
+          </NavLink>
+        </div>
+      )}
       {search && <SearchBox isOpen={isSearchOpen} handleClose={() => setIsSearchOpen(false)} />}
-      {search && (
+      {search && !isSearchOpen && (
         <div css={s_headerItem}>
           <button
             css={s_searchButton}
