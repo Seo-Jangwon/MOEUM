@@ -51,6 +51,7 @@ public class RouteConfig {
             .addExcludedPath("/musics/artist/*/discography")
             .addExcludedPath("/musics/recommend")
             .addExcludedPath("/musics/playlist")
+            .addExcludedPath("/musics/playlist/**")
             .addExcludedPath("/musics/popular")
             .addExcludedPath("/musics/popular/playlist")
             .addExcludedPath("/musics/visualization/*")
