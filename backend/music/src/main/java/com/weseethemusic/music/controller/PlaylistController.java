@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/musics/playlist")
 @RequiredArgsConstructor
@@ -63,7 +65,11 @@ public class PlaylistController {
     }
 
     @GetMapping("/detail/{playlistId}")
-    public ResponseEntity<Map<String, Object>> getPlaylistMusic(@PathVariable Long playlistId) {
+    public ResponseEntity<Map<String, Object>> getPlaylistMusic(
+        @RequestHeader(value = "X-Member-Id", required = false) Long memberId,
+        @PathVariable Long playlistId) {
+
+        log.info("회원 {}가 플레이리스트 조회", memberId);
 
         Map<String, Object> response = new HashMap<>();
         try {
