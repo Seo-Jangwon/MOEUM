@@ -55,4 +55,27 @@ public class MusicVisualizationServiceImpl implements MusicVisualizationService 
         return result;
     }
 
+    public List<TimeDurationDto> getMusicLyrics(long musicId) {
+        ObjectMapper mapper = new ObjectMapper();
+        List<TimeDurationDto> vibrations = new ArrayList<>();
+
+        String filePath = "src/main/java/com/weseethemusic/music/service/data.json"; // data.json 파일 경로
+
+        try {
+            JsonNode root = mapper.readTree(new File(filePath));
+            JsonNode vibrationsNode = root.path("data").path("vibrations");
+
+            // vibrations 필드에서 time과 duration 데이터를 추출하여 TimeDurationDto 객체로 변환
+            for (JsonNode vibrationNode : vibrationsNode) {
+                double time = vibrationNode.path("time").asDouble();
+                double duration = vibrationNode.path("duration").asDouble();
+                vibrations.add(new TimeDurationDto(time, duration));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return vibrations;
+    }
 }
