@@ -6,7 +6,7 @@ import { s_div_button } from './style';
 
 interface Playlist {
   id: number;
-  title: string;
+  name: string;
   image: string;
   totalDuration: string;
   totalMusicCount: number;
@@ -25,7 +25,9 @@ const LikePlayList = () => {
         console.log(res);
         if (res.data.code === 200) {
           setLikePlayList(res.data.data);
-          setIsExist(true);
+          if (res.data.data.length !== 0) {
+            setIsExist(true);
+          }
         }
       })
       .catch((err) => {
@@ -42,28 +44,20 @@ const LikePlayList = () => {
       `}
     >
       {!isExist ? (
-        <div style={{color: 'white'}}>좋아요한 플레이리스트가 없습니다.</div>
+        <div style={{ color: 'white' }}>좋아요한 플레이리스트가 없습니다.</div>
       ) : (
         likePlayList.map((item, index) => (
-          <>
-            <div
-              css={css`
-                position: relative;
-              `}
-            >
-              <button
-                key={index}
-                css={s_div_button}
-              >
-                <img
-                  src={item.image}
-                  alt="lala"
-                  style={{width: '100%'}}
-                />
-              </button>
-              <p css={s_playlist_p}>{item.title}</p>
-            </div>
-          </>
+          <div
+            key={index}
+            css={css`
+              position: relative;
+            `}
+          >
+            <button key={index} css={s_div_button}>
+              <img src={item.image} alt="lala" style={{ width: '100%', height: '100%' }} />
+            </button>
+            <p css={s_playlist_p}>{item.name}</p>
+          </div>
         ))
       )}
     </div>

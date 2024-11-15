@@ -20,17 +20,18 @@ import {
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  musicId: number;
 }
 
 interface Playlist {
   id: number;
-  title: string;
+  name: string;
   image: string;
   totalDuration: string;
   totalMusicCount: number;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, musicId }) => {
   const isPlayList = useRef<boolean>(true);
   // const [isExist, setIsExist] = useState<boolean>(false)
   const [myPlayList, setMyPlayList] = useState<Playlist[]>([]);
@@ -53,6 +54,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             console.log(res);
             setIsAdding(false);
             setPlaylistTitle('');
+            fetchPlaylists();
           } else if (res.data.code === 500) {
             alert('내부 서버 오류입니다.');
           } else {
@@ -67,14 +69,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  useEffect(() => {
+  const fetchPlaylists = () => {
     apiClient({
       method: 'GET',
-      url: '/musics/playlist',
+      url: '/musics/playlist/create',
     })
       .then((res) => {
         console.log(res);
         if (res.data.code === 200) {
+          console.log(res);
           setMyPlayList(res.data.data.musics);
           console.log(myPlayList);
         } else if (res.data.code === 500) {
@@ -86,6 +89,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  useEffect(() => {
+    fetchPlaylists();
   }, []);
 
   const handleDeletePlayList = (id: number) => {
@@ -95,6 +102,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     })
       .then((res) => {
         console.log(res);
+        setMyPlayList((prevPlaylists) => prevPlaylists.filter((playlist) => playlist.id !== id));
       })
       .catch((err) => {
         console.log(err);
@@ -103,14 +111,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   const handleAddPlayList = (id: number) => {
     apiClient({
-      method: 'GET',
-      url: `/musics/playlist/detail/${id}`,
+      method: 'POST',
+      url: `/musics/playlist/${id}/add/${musicId}`,
     })
       .then((res) => {
         console.log(res);
         if (res.data.code === 200) {
-          console.log(res);
-          alert('삭제되었습니다.');
+          alert('플레이리스트에 추가되었습니다.');
+          fetchPlaylists();
         }
       })
       .catch((err) => {
@@ -169,7 +177,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                       `}
                     >
                       <div css={s_playlist_data}>
-                        <h5>{item.title}</h5>
+                        <h5>{item.name}</h5>
                         <p>{item.totalDuration}</p>
                         <p>{item.totalMusicCount} 곡</p>
                       </div>

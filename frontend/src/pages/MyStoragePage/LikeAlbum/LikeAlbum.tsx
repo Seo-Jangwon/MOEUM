@@ -29,8 +29,9 @@ const LikeAlbum = () => {
         console.log(res);
         if (res.data.code === 200) {
           setLikeAlbum(res.data.data);
-          
-          setIsExist(true);
+          if (res.data.data.length !== 0) {
+            setIsExist(true);
+          }
         }
       })
       .catch((err) => {
