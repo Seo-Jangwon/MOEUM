@@ -35,3 +35,7 @@ spring:
       authentication-database: admin
       auto-index-creation: true
       write-concern: NORMAL
+
+  sql:
+    init:
+      mode: always
