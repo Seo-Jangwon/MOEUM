@@ -19,15 +19,15 @@ const MyPlayList = () => {
   useEffect(() => {
     apiClient({
       method: 'GET',
-      url: '/musics/playlist',
+      url: '/musics/playlist/create',
     })
       .then((res) => {
         console.log(res);
         if (res.data.code === 200) {
-          setIsExist(true);
           setMyPlayList(res.data.data.musics);
-          console.log(res.data.data);
-          
+          if (res.data.data.musics.length !== 0) {
+            setIsExist(true)
+          }
         }
       })
       .catch((err) => {
