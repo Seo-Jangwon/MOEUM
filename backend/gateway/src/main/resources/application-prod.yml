@@ -23,7 +23,7 @@ spring:
         - id: recommendation-service
           uri: http://moeum-rec:8083
           predicates:
-            - Path=/recommend/**
+            - Path=/recommendations/**
             - Method=POST,GET,PUT,DELETE
           metadata:
             health-check-url: /actuator/health
