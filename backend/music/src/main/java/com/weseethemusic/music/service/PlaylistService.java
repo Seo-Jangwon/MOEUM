@@ -14,6 +14,9 @@ public interface PlaylistService {
 
     void deletePlaylist(Long memberId, Long playlistId);
 
+    @Transactional(readOnly = true)
+    PlaylistResponse getPlaylistDetail(Long playlistId);
+
     List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId);
 
     List<PlaylistResponse> getMyPlaylists(Long memberId);
@@ -22,7 +25,6 @@ public interface PlaylistService {
 
     List<PlaylistMusicResponse> updatePlaylist(Long playlistId, String title, List<Long> musicIds);
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     List<PlaylistMusicResponse> updatePlaylistOne(Long playlistId, Long musicId);
 
     void likePlaylist(Long playlistId, Long memberId);
