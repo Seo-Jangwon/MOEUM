@@ -228,10 +228,11 @@ public class PlaylistServiceImpl implements PlaylistService {
             Playlist playlist = playlistRepository.findById(playlistId)
                 .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
 
+            // 플레이리스트 음악 목록
             List<PlaylistMusic> playlistMusics = playlistMusicRepository.findByPlaylistIdOrderByOrder(
                 playlistId);
 
-            // 음악 ID 목록 생성
+            // 음악 id 목록
             List<Long> musicIds = new ArrayList<>();
             for (PlaylistMusic playlistMusic : playlistMusics) {
                 musicIds.add(playlistMusic.getMusicId());
@@ -241,19 +242,20 @@ public class PlaylistServiceImpl implements PlaylistService {
             int totalSeconds = 0;
             Music representativeMusic = new Music();
 
-            // 음악 조회
+            // 음악조회
             if (!musicIds.isEmpty()) {
                 List<Music> musics = musicRepository.findAllById(musicIds);
 
-                // 총 재생시간
                 for (Music music : musics) {
                     musicMap.put(music.getId(), music);
                     totalSeconds += music.getDuration();
                 }
 
-                // 대표 음악 설정 (마지막 음악)
-                if (!playlistMusics.isEmpty()) {
-                    PlaylistMusic latestMusic = playlistMusics.get(playlistMusics.size() - 1);
+                // 대표 음악
+                PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
+                        playlistId)
+                    .orElse(null);
+                if (latestMusic != null) {
                     representativeMusic = musicMap.get(latestMusic.getMusicId());
                 }
             }
@@ -276,7 +278,7 @@ public class PlaylistServiceImpl implements PlaylistService {
                     continue;
                 }
 
-                // 아티스트 정보 조회
+                // 아티스트 정보
                 List<Artist> artists = artistMusicRepository.findAllByMusic(music);
                 List<ArtistResponse> artistResponses = new ArrayList<>();
                 for (Artist artist : artists) {
