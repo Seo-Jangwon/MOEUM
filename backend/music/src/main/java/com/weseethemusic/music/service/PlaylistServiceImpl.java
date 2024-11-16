@@ -228,11 +228,11 @@ public class PlaylistServiceImpl implements PlaylistService {
             Playlist playlist = playlistRepository.findById(playlistId)
                 .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
 
-            // 플레이리스트 음악 목록
+            //음악 목록 조회
             List<PlaylistMusic> playlistMusics = playlistMusicRepository.findByPlaylistIdOrderByOrder(
                 playlistId);
 
-            // 음악 id 목록
+            // 음악목록
             List<Long> musicIds = new ArrayList<>();
             for (PlaylistMusic playlistMusic : playlistMusics) {
                 musicIds.add(playlistMusic.getMusicId());
@@ -242,10 +242,11 @@ public class PlaylistServiceImpl implements PlaylistService {
             int totalSeconds = 0;
             Music representativeMusic = new Music();
 
-            // 음악조회
+            // 음악 조회
             if (!musicIds.isEmpty()) {
                 List<Music> musics = musicRepository.findAllById(musicIds);
 
+                // 재생시간 계산
                 for (Music music : musics) {
                     musicMap.put(music.getId(), music);
                     totalSeconds += music.getDuration();
@@ -278,7 +279,7 @@ public class PlaylistServiceImpl implements PlaylistService {
                     continue;
                 }
 
-                // 아티스트 정보
+                // 아티스트 정보 조회
                 List<Artist> artists = artistMusicRepository.findAllByMusic(music);
                 List<ArtistResponse> artistResponses = new ArrayList<>();
                 for (Artist artist : artists) {
@@ -288,7 +289,7 @@ public class PlaylistServiceImpl implements PlaylistService {
                     ));
                 }
 
-                // 응답 생성
+                // 음악 정보 응답
                 PlaylistMusicResponse musicResponse = new PlaylistMusicResponse(
                     music.getId(),
                     music.getName(),
@@ -307,7 +308,6 @@ public class PlaylistServiceImpl implements PlaylistService {
             throw new RuntimeException("플레이리스트 상세 정보 조회에 실패했습니다.");
         }
     }
-
 
     @Override
     @Transactional(readOnly = true)
