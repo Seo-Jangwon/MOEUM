@@ -14,6 +14,9 @@ public interface PlaylistService {
 
     void deletePlaylist(Long memberId, Long playlistId);
 
+    @Transactional(readOnly = true)
+    PlaylistResponse getPlaylistDetail(Long playlistId);
+
     List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId);
 
     List<PlaylistResponse> getMyPlaylists(Long memberId);

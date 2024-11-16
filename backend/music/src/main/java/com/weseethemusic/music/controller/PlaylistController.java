@@ -73,9 +73,10 @@ public class PlaylistController {
 
         Map<String, Object> response = new HashMap<>();
         try {
-            List<PlaylistMusicResponse> musics = playlistService.getPlaylistMusics(playlistId);
+
+            PlaylistResponse playlistResponse = playlistService.getPlaylistDetail(playlistId);
             Map<String, Object> data = new HashMap<>();
-            data.put("musics", musics);
+            data.put("musics", playlistResponse);
 
             response.put("code", 200);
             response.put("data", data);
