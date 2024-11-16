@@ -4,6 +4,7 @@ import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
 import com.weseethemusic.music.common.entity.Music;
 import com.weseethemusic.music.dto.detail.*;
+import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
 import com.weseethemusic.music.repository.ArtistRepository;
@@ -42,25 +43,25 @@ public class MusicDetailServiceImpl implements MusicDetailService {
         // TODO: query 최적화
 
         List<Music> musics = musicRepository.findAllByAlbum_Id(albumId);
-        List<MusicDto> musicDtos = new ArrayList<>();
-        Set<ArtistDto> artistSet = new HashSet<>();
+        List<MusicImageDto> musicDtos = new ArrayList<>();
+        Set<ArtistImageDto> artistSet = new HashSet<>();
 
         for (Music music : musics) {
             duration += music.getDuration();
 
             List<Artist> artistList = artistMusicRepository.findAllByMusic(music);
-            List<ArtistDto> artistDtos = new ArrayList<>();
+            List<ArtistImageDto> artistDtos = new ArrayList<>();
 
             for (Artist artist : artistList) {
-                ArtistDto dto = ArtistDto.builder().id(artist.getId()).name(artist.getName())
-                    .build();
+                ArtistImageDto dto = ArtistImageDto.builder().id(artist.getId())
+                    .name(artist.getName()).image(artist.getImageName()).build();
 
                 artistDtos.add(dto);
                 artistSet.add(dto);
             }
 
             musicDtos.add(
-                MusicDto.builder().id(music.getId()).name(music.getName()).artists(artistDtos)
+                MusicImageDto.builder().id(music.getId()).name(music.getName()).artists(artistDtos)
                     .duration(music.getDuration() / 60 + "분 " + music.getDuration() % 60 + "초")
                     .build());
         }
