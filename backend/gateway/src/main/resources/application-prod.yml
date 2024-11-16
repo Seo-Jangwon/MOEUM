@@ -21,7 +21,7 @@ spring:
             health-check-url: /actuator/health
 
         - id: recommendation-service
-          uri: http://moeum-rec:8083
+          uri: http://moeum-recommendation:8083
           predicates:
             - Path=/recommendations/**
             - Method=POST,GET,PUT,DELETE
@@ -32,4 +32,4 @@ service:
   url:
     member: http://moeum-member:8081
     music: http://moeum-music:8082
-    recommendations: http://moeum-rec:8083
+    recommendations: http://moeum-recommendation:8083
