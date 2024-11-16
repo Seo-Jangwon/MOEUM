@@ -106,7 +106,7 @@ const MusicPlayPage: React.FC = () => {
           console.log('망함 ㅅㄱ');
         }
         if (musicListDetailDataResponse.data.code === 200) {
-          setMusicListDetailInfo(musicListDetailDataResponse.data.data);
+          setMusicListDetailInfo(musicListDetailDataResponse.data.data.recommendedMusics);
         } else {
           console.log('망함 ㅅㄱ');
         }

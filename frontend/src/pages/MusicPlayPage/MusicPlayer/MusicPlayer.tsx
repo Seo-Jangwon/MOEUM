@@ -28,6 +28,13 @@ import {
 } from './MusicPlayer.style';
 import MyHeart from './MyHeart';
 
+interface CustomBody extends Matter.Body {
+  isGlow: boolean; // 반짝임 여부
+  isPing: boolean;
+  glowFlag?: boolean;
+  pingFlag?: number;
+}
+
 const MusicPlayer = ({
   currentMusicId,
   nextMusicId,
@@ -106,6 +113,107 @@ const MusicPlayer = ({
     }
   }
 
+  // 헬퍼 함수들 (위와 동일)
+  function hexToRgb(hex: string): [number, number, number] {
+    const bigint = parseInt(hex.slice(1), 16);
+    return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+  }
+
+  function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+
+    let h = 0,
+      s = 0,
+      l = (max + min) / 2;
+
+    if (delta !== 0) {
+      s = l > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+      switch (max) {
+        case r:
+          h = ((g - b) / delta + (g < b ? 6 : 0)) * 60;
+          break;
+        case g:
+          h = ((b - r) / delta + 2) * 60;
+          break;
+        case b:
+          h = ((r - g) / delta + 4) * 60;
+          break;
+      }
+    }
+
+    return [Math.round(h), Math.round(s * 100), Math.round(l * 100)];
+  }
+
+  function hslToRgb(h: number, s: number, l: number): [number, number, number] {
+    s /= 100;
+    l /= 100;
+
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = l - c / 2;
+
+    let r = 0,
+      g = 0,
+      b = 0;
+
+    if (h >= 0 && h < 60) [r, g, b] = [c, x, 0];
+    else if (h >= 60 && h < 120) [r, g, b] = [x, c, 0];
+    else if (h >= 120 && h < 180) [r, g, b] = [0, c, x];
+    else if (h >= 180 && h < 240) [r, g, b] = [0, x, c];
+    else if (h >= 240 && h < 300) [r, g, b] = [x, 0, c];
+    else if (h >= 300 && h < 360) [r, g, b] = [c, 0, x];
+
+    return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+  }
+  function rgbToHex(r: number, g: number, b: number): string {
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+  }
+
+  function extractAlphaFromHsla(hsla: string): number | null {
+    const match = hsla.match(/hsla?\(\d+, \d+%, \d+%, (\d*\.?\d+)\)/);
+    if (match) {
+      return parseFloat(match[1]); // alpha 값을 소수로 반환
+    }
+    return null; // HSLA 형식이 아니면 null 반환
+  }
+
+  // 2. hsla 형식에서 alpha 값을 변경하는 함수
+  function modifyAlphaInHsla(hsla: string, newAlpha: number): string {
+    return hsla.replace(
+      /hsla?\(\d+, \d+%, \d+%, [\d.]+\)/,
+      `hsla(${hsla.match(/\d+/g)?.[0]}, ${hsla.match(/\d+/g)?.[1]}%, ${hsla.match(/\d+/g)?.[2]}%, ${newAlpha})`,
+    );
+  }
+
+  // 3. Matter.js 물체의 strokeStyle에 접근하여 투명도만 낮추는 함수
+  function adjustStrokeOpacityAndDelete(body: Matter.Body, engine: Matter.Engine): void {
+    const currentStrokeStyle = body.render.strokeStyle; // 현재 strokeStyle 값
+    if (currentStrokeStyle) {
+      let alpha = extractAlphaFromHsla(currentStrokeStyle);
+
+      if (alpha !== null) {
+        // 투명도를 0.05씩 낮춤
+        alpha = Math.max(0, alpha - 0.05); // alpha가 0 미만으로 가지 않도록 제한
+
+        // strokeStyle을 변경하여 alpha 적용
+        const newStrokeStyle = modifyAlphaInHsla(currentStrokeStyle, alpha);
+        body.render.strokeStyle = newStrokeStyle; // 새로운 strokeStyle을 적용
+        body.circleRadius! += 10;
+
+        // 투명도가 0이면 물체를 삭제
+        if (alpha === 0) {
+          World.remove(engine.world, body); // 물체 삭제
+        }
+      }
+    }
+  }
+
   /** 애니메이션 실행 함수
    */
   function createObjectsAtTimes() {
@@ -125,7 +233,61 @@ const MusicPlayer = ({
           lyricsTimeIdx.current++;
         }
         setCurrentTImeLine(audioSrcRef.current.currentTime);
-        engineRef.current?.world.bodies.forEach((item) => {});
+        engineRef.current?.world.bodies.forEach((item) => {
+          if (item.label === 'wave') {
+            console.log(item.render.strokeStyle);
+            adjustStrokeOpacityAndDelete(item, engineRef.current!);
+          } else {
+            if (item.isGlow) {
+              const currentColor = item.render.fillStyle || '#FFFFFF';
+              const [r, g, b] = hexToRgb(currentColor);
+              const [h, s, l] = rgbToHsl(r, g, b);
+              if (s < 40) item.glowFlag = false;
+              if (s === 100) item.glowFlag = true;
+              if (item.glowFlag) {
+                const newColor = rgbToHex(...hslToRgb(h, s - 1, l));
+                item.render.fillStyle = newColor;
+              } else {
+                const newColor = rgbToHex(...hslToRgb(h, s + 1, l));
+                item.render.fillStyle = newColor;
+              }
+            }
+            if (item.isPing) {
+              if (item.pingFlag === 0) {
+                // pingFlag가 0일 경우 파장 생성
+                const x = item.position.x;
+                const y = item.position.y;
+
+                const wave = Bodies.circle(
+                  x,
+                  y,
+                  10, // 기본 크기
+                  {
+                    label: 'wave',
+                    render: {
+                      strokeStyle: 'hsla(50, 80%, 40%, 1)',
+                      lineWidth: 5,
+                      fillStyle: `rgba(255, 0, 255, 0)`, // 초기 투명도 1로 설정
+                    },
+                    isSensor: true, // 물리적 상호작용 없이 설정
+                    frictionAir: 0,
+                    collisionFilter: { group: -1 },
+                  },
+                );
+
+                // 파장 생성 후 물리 엔진에 추가
+                World.add(engineRef.current.world, wave);
+
+                console.log(wave);
+                // pingFlag를 1로 리셋
+                item.pingFlag = 1;
+              } else {
+                // pingFlag가 0이 아닐 경우 0.05씩 감소
+                item.pingFlag -= 0.05;
+              }
+            }
+          }
+        });
         if (
           audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
           engineRef.current !== null &&
@@ -133,12 +295,15 @@ const MusicPlayer = ({
         ) {
           const x = canvasRef.current!.clientWidth / 2;
           const y = (canvasRef.current!.clientHeight * data.current[timeIdx.current].y) / 100;
+          const color: string = '#ff00ff';
           const polygon = Bodies.polygon(
             x / 2,
             y,
             data.current[timeIdx.current].sides,
             data.current[timeIdx.current].width,
+
             {
+              render: { fillStyle: color },
               angle: data.current[timeIdx.current].angle,
               mass: 100,
               label: '',
@@ -150,7 +315,13 @@ const MusicPlayer = ({
               collisionFilter: { group: -1 },
               position: { x, y },
             },
-          );
+          ) as CustomBody;
+
+          polygon.isGlow = polygon.glowFlag = data.current[timeIdx.current].effect.some((str) => str === 'GLOW');
+          if (data.current[timeIdx.current].effect.some((str) => str === 'PING')) {
+            polygon.isPing = true;
+            polygon.pingFlag = 0;
+          }
 
           World.add(engineRef.current.world, polygon);
           timeIdx.current += 1;
@@ -169,7 +340,6 @@ const MusicPlayer = ({
    */
   function deleteAllShape() {
     if (engineRef.current) {
-      console.log('asdf');
       const bodies = [...engineRef.current.world.bodies];
       bodies.forEach((body) => {
         if (body.label !== 'wall') {
@@ -201,7 +371,6 @@ const MusicPlayer = ({
 
   /**왼쪽의 벽과 충돌 시 사라지게 하는 이벤트 함수 */
   function handleObjectCollide(event: IEventCollision<Engine>) {
-    console.log(engineRef.current?.world.bodies);
     event.pairs.forEach((pair) => {
       const { bodyA, bodyB } = pair;
       if (bodyA.label === 'wall' && bodyB.label !== 'wall') {
@@ -506,7 +675,6 @@ const MusicPlayer = ({
   };
 
   function onExitPip() {
-    console.log(location.pathname);
     if (videoRef.current) videoRef.current.removeEventListener('enterpictureinpicture', onExitPip);
     navigate(location.pathname);
   }
@@ -519,7 +687,6 @@ const MusicPlayer = ({
           onClose={() => {
             setIsModalOpen(false);
           }}
-          id={currentMusicId}
         />
         <audio ref={audioSrcRef} />
         <div css={s_videoContainer} ref={divRef}>
