@@ -33,6 +33,7 @@ export interface MusicI {
 export interface Data {
   vibrations: { time: number; duration: number }[];
   notes: Note[];
+  backgrounds: { start: number; end: number; color: string }[];
 }
 
 export interface Note {
@@ -43,6 +44,7 @@ export interface Note {
   width: number;
   effect: string[];
   direction: number[];
+  color: string;
   sides: number;
   angle: number;
 }
@@ -111,7 +113,8 @@ const MusicPlayPage: React.FC = () => {
           console.log('망함 ㅅㄱ');
         }
         if (musicAnalyzedDataResponse.data.code === 200) {
-          setMusicAnalyzedData(musicAnalyzedDataResponse.data.data);
+          // setMusicAnalyzedData(musicAnalyzedDataResponse.data.data);
+          setMusicAnalyzedData(testAnalyzedData.data);
         } else {
           console.log('망함 ㅅㄱ!');
         }

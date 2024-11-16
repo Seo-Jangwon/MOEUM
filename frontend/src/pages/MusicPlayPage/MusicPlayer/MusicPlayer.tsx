@@ -82,7 +82,10 @@ const MusicPlayer = ({
   function changeEndEventIdx(idx: number) {
     endEventIdx.current = idx;
   }
-  const data = useRef<Data['notes']>();
+  const noteDatas = useRef<Data['notes']>();
+  const backgroundDatas = useRef<Data['backgrounds']>();
+  const vibrationsDatas = useRef<Data['vibrations']>();
+
   const lyricsData = useRef<LyricsI['lyrics']>();
 
   /** 영상의 재생 상태 변경하는 함수 */
@@ -107,110 +110,36 @@ const MusicPlayer = ({
   /** 백그라운드로 이동했다가 돌아왔을 떄 실행하는 함수. 딜레이로 인해 갑자기 생성되는 물체들 지움 */
   function onVisibiliyChanged() {
     if (document.visibilityState === 'visible') {
-      if (data.current && audioSrcRef.current) {
+      if (noteDatas.current && audioSrcRef.current) {
         deleteAllShape();
       }
     }
   }
-
-  // 헬퍼 함수들 (위와 동일)
-  function hexToRgb(hex: string): [number, number, number] {
-    const bigint = parseInt(hex.slice(1), 16);
-    return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+  function extractHSLAValues(hsla: string): [number, number, number, number] {
+    const tempStr1 = hsla.slice(5, -1);
+    const value = tempStr1.split(',');
+    // 배열 형태로 반환
+    return [
+      parseFloat(value[0]), // Hue
+      parseFloat(value[1]), // Saturation
+      parseFloat(value[2]), // Lightness
+      parseFloat(value[3]), // Alpha (opacity)
+    ];
   }
-
-  function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
-    r /= 255;
-    g /= 255;
-    b /= 255;
-
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const delta = max - min;
-
-    let h = 0,
-      s = 0,
-      l = (max + min) / 2;
-
-    if (delta !== 0) {
-      s = l > 0.5 ? delta / (2 - max - min) : delta / (max + min);
-      switch (max) {
-        case r:
-          h = ((g - b) / delta + (g < b ? 6 : 0)) * 60;
-          break;
-        case g:
-          h = ((b - r) / delta + 2) * 60;
-          break;
-        case b:
-          h = ((r - g) / delta + 4) * 60;
-          break;
-      }
-    }
-
-    return [Math.round(h), Math.round(s * 100), Math.round(l * 100)];
-  }
-
-  function hslToRgb(h: number, s: number, l: number): [number, number, number] {
-    s /= 100;
-    l /= 100;
-
-    const c = (1 - Math.abs(2 * l - 1)) * s;
-    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
-    const m = l - c / 2;
-
-    let r = 0,
-      g = 0,
-      b = 0;
-
-    if (h >= 0 && h < 60) [r, g, b] = [c, x, 0];
-    else if (h >= 60 && h < 120) [r, g, b] = [x, c, 0];
-    else if (h >= 120 && h < 180) [r, g, b] = [0, c, x];
-    else if (h >= 180 && h < 240) [r, g, b] = [0, x, c];
-    else if (h >= 240 && h < 300) [r, g, b] = [x, 0, c];
-    else if (h >= 300 && h < 360) [r, g, b] = [c, 0, x];
-
-    return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
-  }
-  function rgbToHex(r: number, g: number, b: number): string {
-    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
-  }
-
-  function extractAlphaFromHsla(hsla: string): number | null {
-    const match = hsla.match(/hsla?\(\d+, \d+%, \d+%, (\d*\.?\d+)\)/);
-    if (match) {
-      return parseFloat(match[1]); // alpha 값을 소수로 반환
-    }
-    return null; // HSLA 형식이 아니면 null 반환
-  }
-
-  // 2. hsla 형식에서 alpha 값을 변경하는 함수
-  function modifyAlphaInHsla(hsla: string, newAlpha: number): string {
-    return hsla.replace(
-      /hsla?\(\d+, \d+%, \d+%, [\d.]+\)/,
-      `hsla(${hsla.match(/\d+/g)?.[0]}, ${hsla.match(/\d+/g)?.[1]}%, ${hsla.match(/\d+/g)?.[2]}%, ${newAlpha})`,
-    );
-  }
-
   // 3. Matter.js 물체의 strokeStyle에 접근하여 투명도만 낮추는 함수
   function adjustStrokeOpacityAndDelete(body: Matter.Body, engine: Matter.Engine): void {
     const currentStrokeStyle = body.render.strokeStyle; // 현재 strokeStyle 값
     if (currentStrokeStyle) {
-      let alpha = extractAlphaFromHsla(currentStrokeStyle);
+      const [h, s, l, a] = extractHSLAValues(currentStrokeStyle);
 
-      if (alpha !== null) {
-        // 투명도를 0.05씩 낮춤
-        alpha = Math.max(0, alpha - 0.05); // alpha가 0 미만으로 가지 않도록 제한
-
-        // strokeStyle을 변경하여 alpha 적용
-        const newStrokeStyle = modifyAlphaInHsla(currentStrokeStyle, alpha);
-        body.render.strokeStyle = newStrokeStyle; // 새로운 strokeStyle을 적용
-        body.circleRadius! += 10;
-
-        // 투명도가 0이면 물체를 삭제
-        if (alpha === 0) {
-          World.remove(engine.world, body); // 물체 삭제
-        }
+      console.log(currentStrokeStyle);
+      if (a < 0.05) {
+        World.remove(engine.world, body);
       }
+      const newStrokeStyle = `hsla(${h}, ${s}%, ${l}%, ${a - 0.02})`;
+      console.log(newStrokeStyle);
+      body.render.strokeStyle = newStrokeStyle; // 새로운 strokeStyle을 적용
+      body.circleRadius! += canvasRef.current?.clientWidth / 150;
     }
   }
 
@@ -222,7 +151,7 @@ const MusicPlayer = ({
       audioTimeChanged();
       return;
     }
-    if (data.current && timeIdx.current < data.current.length - 1) {
+    if (noteDatas.current && timeIdx.current < noteDatas.current.length - 1) {
       if (audioSrcRef.current) {
         prevTimeRef.current = audioSrcRef.current.currentTime;
         if (
@@ -235,29 +164,30 @@ const MusicPlayer = ({
         setCurrentTImeLine(audioSrcRef.current.currentTime);
         engineRef.current?.world.bodies.forEach((item) => {
           if (item.label === 'wave') {
-            console.log(item.render.strokeStyle);
             adjustStrokeOpacityAndDelete(item, engineRef.current!);
           } else {
             if (item.isGlow) {
-              const currentColor = item.render.fillStyle || '#FFFFFF';
-              const [r, g, b] = hexToRgb(currentColor);
-              const [h, s, l] = rgbToHsl(r, g, b);
+              // 반짝이는 효과
+              const currentColor = item.render.fillStyle;
+              const values = extractHSLAValues(currentColor!);
+              const [h, s, l, a] = values;
               if (s < 40) item.glowFlag = false;
-              if (s === 100) item.glowFlag = true;
+              if (s > 99) item.glowFlag = true;
               if (item.glowFlag) {
-                const newColor = rgbToHex(...hslToRgb(h, s - 1, l));
+                const newColor = `hsla(${h}, ${s - 2}%, ${l}%, ${a})`;
                 item.render.fillStyle = newColor;
               } else {
-                const newColor = rgbToHex(...hslToRgb(h, s + 1, l));
+                const newColor = `hsla(${h}, ${s + 2}%, ${l}%, ${a})`;
                 item.render.fillStyle = newColor;
               }
             }
             if (item.isPing) {
+              // 파장이 퍼져나가는 효과
               if (item.pingFlag === 0) {
                 // pingFlag가 0일 경우 파장 생성
                 const x = item.position.x;
                 const y = item.position.y;
-
+                console.log(item.render.fillStyle);
                 const wave = Bodies.circle(
                   x,
                   y,
@@ -265,7 +195,7 @@ const MusicPlayer = ({
                   {
                     label: 'wave',
                     render: {
-                      strokeStyle: 'hsla(50, 80%, 40%, 1)',
+                      strokeStyle: item.render.fillStyle,
                       lineWidth: 5,
                       fillStyle: `rgba(255, 0, 255, 0)`, // 초기 투명도 1로 설정
                     },
@@ -289,27 +219,28 @@ const MusicPlayer = ({
           }
         });
         if (
-          audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
+          audioSrcRef.current?.currentTime >= noteDatas.current[timeIdx.current].time &&
           engineRef.current !== null &&
           divRef.current
         ) {
           const x = canvasRef.current!.clientWidth / 2;
-          const y = (canvasRef.current!.clientHeight * data.current[timeIdx.current].y) / 100;
-          const color: string = '#ff00ff';
+          const y = (canvasRef.current!.clientHeight * noteDatas.current[timeIdx.current].y) / 100;
+          renderRef.current!.options.background =
+            backgroundDatas.current![noteDatas.current[timeIdx.current].section].color;
           const polygon = Bodies.polygon(
             x / 2,
             y,
-            data.current[timeIdx.current].sides,
-            data.current[timeIdx.current].width,
+            noteDatas.current[timeIdx.current].sides,
+            noteDatas.current[timeIdx.current].width,
 
             {
-              render: { fillStyle: color },
-              angle: data.current[timeIdx.current].angle,
+              render: { fillStyle: noteDatas.current[timeIdx.current].color },
+              angle: noteDatas.current[timeIdx.current].angle,
               mass: 100,
               label: '',
               force: Vector.create(
-                (divRef.current.clientWidth / 500) * data.current[timeIdx.current].direction[0],
-                (divRef.current.clientHeight / 300) * data.current[timeIdx.current].direction[1] * -1,
+                (divRef.current.clientWidth / 500) * noteDatas.current[timeIdx.current].direction[0],
+                (divRef.current.clientHeight / 300) * noteDatas.current[timeIdx.current].direction[1] * -1,
               ),
               frictionAir: 0,
               collisionFilter: { group: -1 },
@@ -317,11 +248,13 @@ const MusicPlayer = ({
             },
           ) as CustomBody;
 
-          polygon.isGlow = polygon.glowFlag = data.current[timeIdx.current].effect.some((str) => str === 'GLOW');
-          if (data.current[timeIdx.current].effect.some((str) => str === 'PING')) {
+          polygon.isGlow = polygon.glowFlag = noteDatas.current[timeIdx.current].effect.some((str) => str === 'GLOW');
+          if (noteDatas.current[timeIdx.current].effect.some((str) => str === 'PING')) {
             polygon.isPing = true;
             polygon.pingFlag = 0;
           }
+
+          console.log(polygon);
 
           World.add(engineRef.current.world, polygon);
           timeIdx.current += 1;
@@ -387,15 +320,15 @@ const MusicPlayer = ({
 
   /** 오디오의 현재 재생 시간을 사용자가 조정 했을 경우 */
   function audioTimeChanged() {
-    if (data.current && audioSrcRef.current) {
+    if (noteDatas.current && audioSrcRef.current) {
       deleteAllShape();
       prevTimeRef.current = audioSrcRef.current.currentTime;
-      if (audioSrcRef.current.currentTime > data.current[timeIdx.current].time) {
+      if (audioSrcRef.current.currentTime > noteDatas.current[timeIdx.current].time) {
         // 앞으로 이동했을 때
 
         while (
-          timeIdx.current < data.current.length - 2 &&
-          data.current[timeIdx.current].time < audioSrcRef.current.currentTime
+          timeIdx.current < noteDatas.current.length - 2 &&
+          noteDatas.current[timeIdx.current].time < audioSrcRef.current.currentTime
         ) {
           timeIdx.current++;
         }
@@ -407,7 +340,7 @@ const MusicPlayer = ({
         }
       } else {
         // 뒤로 이동했을 때
-        while (timeIdx.current > 0 && data.current[timeIdx.current].time > audioSrcRef.current.currentTime) {
+        while (timeIdx.current > 0 && noteDatas.current[timeIdx.current].time > audioSrcRef.current.currentTime) {
           timeIdx.current--;
         }
         while (
@@ -472,7 +405,9 @@ const MusicPlayer = ({
         setPlayerBarVisible(false);
       }, 3000); // 3초 후 playerBar 숨김
     };
-    data.current = musicAnalyzedData.notes;
+    noteDatas.current = musicAnalyzedData.notes;
+    backgroundDatas.current = musicAnalyzedData.backgrounds;
+    vibrationsDatas.current = musicAnalyzedData.vibrations;
 
     lyricsData.current = musicLyricsData.lyrics;
 
@@ -574,7 +509,7 @@ const MusicPlayer = ({
 
       options: {
         wireframes: false,
-        background: '#ffadff',
+        background: '#000',
       },
     });
 
