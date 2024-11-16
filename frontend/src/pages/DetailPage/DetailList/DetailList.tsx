@@ -15,7 +15,7 @@ const DetailList = ({ title, data }: DetailListProps) => {
       </article>
       <ol css={s_listContainer}>
         {data.map((el, index) => (
-          <DetailListItem {...el} index={index + 1} />
+          <DetailListItem {...el} index={index + 1} key={el.id} />
         ))}
       </ol>
     </section>

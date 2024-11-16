@@ -6,40 +6,29 @@ import DetailCover from './DetailCover/DetailCover';
 import DetailList from './DetailList/DetailList';
 import { s_container } from './style';
 
-export type DetailVariants = 'album' | 'artist';
+export type DetailVariants = 'album' | 'artist' | 'playlist';
 
 interface DetailPageProps {
   variant: DetailVariants;
 }
 
-// const getVariant = (param: variant) => {
-//   switch (param) {
-//     case 'artist':
-//       return {
-//         detailCover: <DetailCover />,
-//         detailList: <DetailList title="인기곡" />,
-//         detailCardList: <DetailCardList />,
-//       };
-//     case 'album':
-//       return {
-//         detailCover: <DetailCover />,
-//         detailList: <DetailList title="인기곡" />,
-//         detailCardList: <DetailCardList />,
-//       };
-//   }
-// };
-
-// 데이터 받아와서 가공하기
-
 const DetailPage = ({ variant }: DetailPageProps) => {
   const { id } = useParams();
-  const detailData = useFetchDetail(variant, id!);
+  const { isPending, isError, data, error, isSuccess } = useFetchDetail(variant, id!);
+  if (isPending) {
+    console.log('loading');
+    return null;
+  }
+  if (isError) {
+    console.log(error?.message);
+    return null;
+  }
   return (
     <Flex>
       <main css={s_container}>
-        <DetailCover title={detailData!.coverTitle} background={detailData!.image} />
-        <DetailList title={detailData!.listType as string} data={detailData!.listData} />
-        <DetailCardList />
+        <DetailCover title={data!.coverTitle} background={data!.image} />
+        <DetailList title={data!.listTitle as string} data={data!.listData} />
+        {!!data?.cardListData?.length && <DetailCardList title={data.cardListTitle} data={data.cardListData} />}
       </main>
     </Flex>
   );
