@@ -1,5 +1,6 @@
 package com.weseethemusic.music.dto.detail;
 
+import com.weseethemusic.music.dto.search.ArtistImageDto;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,12 +17,12 @@ public class AlbumDetailDto {
     private String image;
     private String totalDuration;
     private String releaseDate;
-    private List<ArtistDto> artists;
-    private List<MusicDto> musics;
+    private List<ArtistImageDto> artists;
+    private List<MusicImageDto> musics;
 
     @Builder
     public AlbumDetailDto(long id, String name, String image, String totalDuration,
-        String releaseDate, List<ArtistDto> artists, List<MusicDto> musics) {
+        String releaseDate, List<ArtistImageDto> artists, List<MusicImageDto> musics) {
         this.id = id;
         this.name = name;
         this.image = image;
