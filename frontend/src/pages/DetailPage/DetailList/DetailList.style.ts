@@ -55,6 +55,12 @@ export const s_liTime = css`
 
 export const s_cardWrapper = css`
   display: grid;
-  grid-template-columns: repeat(5, 180px);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
+`;
+
+export const s_totalInfo = (theme: Theme) => css`
+  color: ${theme.colors.lightgray};
+  font-size: large;
+  font-weight: 600;
 `;

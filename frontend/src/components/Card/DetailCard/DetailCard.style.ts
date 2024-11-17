@@ -4,6 +4,11 @@ export const s_detailCard = css`
   display: flex;
   flex-direction: column;
   width: 160px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  :hover {
+    filter: brightness(0.5);
+  }
 `;
 
 export const s_detailCardImage = css`

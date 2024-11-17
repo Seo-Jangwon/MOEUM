@@ -5,8 +5,7 @@ import { FaRegHeart } from 'react-icons/fa6';
 import { FiCrosshair } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { s_button_all, s_div_header } from '../NewList/style';
-import { s_div_button, s_div_h3, s_div_item_box, s_div_item_container, s_h5, s_icon_div } from './style';
-import { css } from '@emotion/react';
+import { s_coverImage, s_div_button, s_div_h3, s_div_item_box, s_div_item_container, s_h5, s_icon_div } from './style';
 
 const handleLike = (id: number) => {
   apiClient({
@@ -35,7 +34,6 @@ const PopularPlayList = () => {
   const handleMusicPage = (path: string) => {
     return navigate(path);
   };
-
 
   useEffect(() => {
     apiClient({
@@ -75,17 +73,12 @@ const PopularPlayList = () => {
                     text: '좋아요',
                     clickHandler: () => handleLike(item.id),
                     size: 20,
-                  }
+                  },
                 ]}
               />
             </div>
             <button key={index} css={s_div_button} onClick={() => handleMusicPage(`playlist/${item.id}`)}>
-              <img src={item.image} alt="PlayListImage" css={css`
-                  width: 100%;
-                  height: 100%;
-                  border-radius:20px;
-                `} />
-
+              <img src={item.image} alt="PlayListImage" css={s_coverImage} />
               <h5 css={s_h5}>{item.name}</h5>
             </button>
           </div>

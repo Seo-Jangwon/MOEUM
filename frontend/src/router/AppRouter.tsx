@@ -19,7 +19,6 @@ const RecentRecordPage = lazy(() => import('@/pages/RecordPage'));
 const ListPage = lazy(() => import('@/pages/ListPage'));
 const SearchMorePage = lazy(() => import('@/pages/SearchMorePage'));
 const MyStoragePage = lazy(() => import('@/pages/MyStoragePage'));
-const DetailPlayList = lazy(() => import('@/pages/DetailPlayListpage'));
 
 const router = createBrowserRouter([
   {
@@ -55,6 +54,14 @@ const router = createBrowserRouter([
       {
         path: 'artist/:id',
         element: <DetailPage variant="artist" />,
+      },
+      {
+        path: 'playlist/:id',
+        element: <DetailPage variant="playlist" />,
+      },
+      {
+        path: 'list/:id',
+        element: <ListPage />,
       },
       {
         element: <PrivateLayout />,
@@ -106,14 +113,6 @@ const router = createBrowserRouter([
             element: <SearchMorePage variant="playlist" />,
           },
         ],
-      },
-      {
-        path: 'list/:id',
-        element: <ListPage />,
-      },
-      {
-        path: 'playlist/:id',
-        element: <DetailPlayList />,
       },
     ],
   },

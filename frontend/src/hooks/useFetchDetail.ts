@@ -9,36 +9,48 @@ const TITLE_BY_VARIANTS = {
   playlist: { listTitle: '플레이리스트' },
 };
 
+const detailApiPath = (variant: DetailVariants) => {
+  return variant === 'playlist' ? `/musics/playlist/detail` : `/musics/detail/${variant}`;
+};
+
 const useFetchDetail = (variant: DetailVariants, id: string) => {
   const { isPending, isError, data, error, isSuccess } = useQuery({
     queryKey: ['detail', variant, id],
     queryFn: async () => {
-      const { data } = (await apiClient.get(`/musics/detail/${variant}/${id}`)).data;
-      const transformedData = { ...TITLE_BY_VARIANTS[variant], coverTitle: data.name, image: data.image } as Detail;
+      const { data } = (await apiClient.get(`${detailApiPath(variant)}/${id}`)).data;
+      const normalizedData = { ...TITLE_BY_VARIANTS[variant], coverTitle: data.name, image: data.image } as Detail;
 
       switch (variant) {
         case 'album':
-          transformedData.totalDuration = data.totalDuration;
-          transformedData.listData = data.musics;
-          transformedData.cardListData = data.artists;
-          break;
+          normalizedData.totalDuration = data.totalDuration;
+          normalizedData.listData = data.musics;
+          normalizedData.cardListData = data.artists.slice(0, 5);
+          break; 
 
         case 'artist':
-          transformedData.listData = data.popular?.slice(0, 10).map((el: { [key: string]: string }) => ({
+          normalizedData.listData = data.popular?.slice(0, 10).map((el: { [key: string]: string }) => ({
             id: el.id,
             name: el.musicName,
             duration: el.musicDuration,
           }));
-          transformedData.cardListData = data.discography.slice(0, 5);
+          normalizedData.cardListData = data.discography.slice(0, 5);
           break;
 
-        case 'playlist':
-          transformedData.totalDuration = data.totalDuration;
-          transformedData.listData = data.musics;
+        case 'playlist': {
+          const playListData = data.musics;
+          normalizedData.totalDuration = playListData.totalDuration;
+          normalizedData.coverTitle = playListData.name;
+          normalizedData.image = playListData.image;
+          normalizedData.listData = playListData.playlistMusics.map((el: { [key: string]: string }) => ({
+            id: el.id,
+            name: el.title,
+            duration: el.duration,
+          }));
           break;
+        }
       }
 
-      return transformedData;
+      return normalizedData;
     },
   });
 
