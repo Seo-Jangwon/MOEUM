@@ -4,13 +4,12 @@ import useSettingStore from '@/stores/settingStore';
 import { css } from '@emotion/react';
 import { Bodies, Engine, Events, IEventCollision, Render, Runner, Vector, World } from 'matter-js';
 import { useEffect, useRef, useState } from 'react';
-import { BsPip } from 'react-icons/bs';
 import { FaCirclePlay, FaExpand, FaPause } from 'react-icons/fa6';
 import { LiaBackwardSolid, LiaForwardSolid } from 'react-icons/lia';
 import { MdOutlineSync } from 'react-icons/md';
 import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
 import { TbPlaylistAdd } from 'react-icons/tb';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Data, LyricsI, musicDetailInfoI } from '..';
 import testSong from '../All I Want for Christmas Is You-2-M....mp3';
 import {
@@ -50,7 +49,6 @@ const MusicPlayer = ({
 }) => {
   const divRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerBarRef = useRef<HTMLDivElement | null>(null);
   const audioSrcRef = useRef<HTMLAudioElement | null>(null);
   const prevTimeRef = useRef<number>(0);
@@ -103,7 +101,6 @@ const MusicPlayer = ({
   }
 
   const navigate = useNavigate();
-  const location = useLocation();
   const [playerBarVisible, setPlayerBarVisible] = useState<boolean>(false);
   const timeoutId = useRef<NodeJS.Timeout>();
 
@@ -132,14 +129,12 @@ const MusicPlayer = ({
     if (currentStrokeStyle) {
       const [h, s, l, a] = extractHSLAValues(currentStrokeStyle);
 
-      console.log(currentStrokeStyle);
       if (a < 0.05) {
         World.remove(engine.world, body);
       }
       const newStrokeStyle = `hsla(${h}, ${s}%, ${l}%, ${a - 0.02})`;
-      console.log(newStrokeStyle);
       body.render.strokeStyle = newStrokeStyle; // 새로운 strokeStyle을 적용
-      body.circleRadius! += canvasRef.current?.clientWidth / 150;
+      body.circleRadius! += canvasRef.current!.clientWidth / 150;
     }
   }
 
@@ -166,28 +161,28 @@ const MusicPlayer = ({
           if (item.label === 'wave') {
             adjustStrokeOpacityAndDelete(item, engineRef.current!);
           } else {
-            if (item.isGlow) {
+            const obj = item as CustomBody;
+            if (obj.isGlow) {
               // 반짝이는 효과
-              const currentColor = item.render.fillStyle;
+              const currentColor = obj.render.fillStyle;
               const values = extractHSLAValues(currentColor!);
               const [h, s, l, a] = values;
-              if (s < 40) item.glowFlag = false;
-              if (s > 99) item.glowFlag = true;
-              if (item.glowFlag) {
+              if (s < 40) obj.glowFlag = false;
+              if (s > 99) obj.glowFlag = true;
+              if (obj.glowFlag) {
                 const newColor = `hsla(${h}, ${s - 2}%, ${l}%, ${a})`;
-                item.render.fillStyle = newColor;
+                obj.render.fillStyle = newColor;
               } else {
                 const newColor = `hsla(${h}, ${s + 2}%, ${l}%, ${a})`;
-                item.render.fillStyle = newColor;
+                obj.render.fillStyle = newColor;
               }
             }
-            if (item.isPing) {
+            if (obj.isPing) {
               // 파장이 퍼져나가는 효과
-              if (item.pingFlag === 0) {
+              if (obj.pingFlag === 0) {
                 // pingFlag가 0일 경우 파장 생성
-                const x = item.position.x;
-                const y = item.position.y;
-                console.log(item.render.fillStyle);
+                const x = obj.position.x;
+                const y = obj.position.y;
                 const wave = Bodies.circle(
                   x,
                   y,
@@ -195,7 +190,7 @@ const MusicPlayer = ({
                   {
                     label: 'wave',
                     render: {
-                      strokeStyle: item.render.fillStyle,
+                      strokeStyle: obj.render.fillStyle,
                       lineWidth: 5,
                       fillStyle: `rgba(255, 0, 255, 0)`, // 초기 투명도 1로 설정
                     },
@@ -206,14 +201,13 @@ const MusicPlayer = ({
                 );
 
                 // 파장 생성 후 물리 엔진에 추가
-                World.add(engineRef.current.world, wave);
+                World.add(engineRef.current!.world, wave);
 
-                console.log(wave);
                 // pingFlag를 1로 리셋
-                item.pingFlag = 1;
+                obj.pingFlag = 1;
               } else {
                 // pingFlag가 0이 아닐 경우 0.05씩 감소
-                item.pingFlag -= 0.05;
+                obj.pingFlag! -= 0.2;
               }
             }
           }
@@ -253,8 +247,6 @@ const MusicPlayer = ({
             polygon.isPing = true;
             polygon.pingFlag = 0;
           }
-
-          console.log(polygon);
 
           World.add(engineRef.current.world, polygon);
           timeIdx.current += 1;
@@ -441,12 +433,6 @@ const MusicPlayer = ({
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    const stream = canvas.captureStream(60);
-    const video = videoRef.current;
-    if (video) {
-      video.srcObject = stream;
-    }
-
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = (window.innerWidth / 16) * 9;
@@ -597,23 +583,6 @@ const MusicPlayer = ({
       }
     };
   }, [isPaused]);
-
-  /** pip 버그 픽스 필요 */
-  const handlePip = () => {
-    const video = videoRef.current;
-    if (video) {
-      video.play();
-      video.addEventListener('leavepictureinpicture', onExitPip, false);
-      video.requestPictureInPicture();
-      video.style.display = 'none';
-    }
-  };
-
-  function onExitPip() {
-    if (videoRef.current) videoRef.current.removeEventListener('enterpictureinpicture', onExitPip);
-    navigate(location.pathname);
-  }
-
   return (
     <>
       <div css={s_container}>
@@ -705,7 +674,6 @@ const MusicPlayer = ({
                   >
                     Sub
                   </button>
-                  <BsPip onClick={handlePip} css={s_iconButton} height={'25px'} width={'25px'} />
                   <FaExpand onClick={handleFullScreen} css={s_iconButton} />
                 </div>
               </div>
@@ -734,7 +702,6 @@ const MusicPlayer = ({
           <div>{musicDetailInfo.releaseDate}</div>
         </div>
       </div>
-      <video ref={videoRef} style={{ display: 'none' }} />
     </>
   );
 };
