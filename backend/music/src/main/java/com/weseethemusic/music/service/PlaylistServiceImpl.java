@@ -222,6 +222,95 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(readOnly = true)
+    public PlaylistResponse getPlaylistDetail(Long playlistId) {
+        try {
+            // 플레이리스트 조회
+            Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
+
+            //음악 목록 조회
+            List<PlaylistMusic> playlistMusics = playlistMusicRepository.findByPlaylistIdOrderByOrder(
+                playlistId);
+
+            // 음악목록
+            List<Long> musicIds = new ArrayList<>();
+            for (PlaylistMusic playlistMusic : playlistMusics) {
+                musicIds.add(playlistMusic.getMusicId());
+            }
+
+            Map<Long, Music> musicMap = new HashMap<>();
+            int totalSeconds = 0;
+            Music representativeMusic = new Music();
+
+            // 음악 조회
+            if (!musicIds.isEmpty()) {
+                List<Music> musics = musicRepository.findAllById(musicIds);
+
+                // 재생시간 계산
+                for (Music music : musics) {
+                    musicMap.put(music.getId(), music);
+                    totalSeconds += music.getDuration();
+                }
+
+                // 대표 음악
+                PlaylistMusic latestMusic = playlistMusicRepository.findTopByPlaylistIdOrderByOrderDesc(
+                        playlistId)
+                    .orElse(null);
+                if (latestMusic != null) {
+                    representativeMusic = musicMap.get(latestMusic.getMusicId());
+                }
+            }
+
+            int[] durations = musicDetailService.calculateDuration(totalSeconds);
+
+            // 플레이리스트 기본 정보
+            PlaylistResponse response = createPlaylistResponse(
+                playlist,
+                representativeMusic,
+                durations,
+                playlistMusics.size()
+            );
+
+            // 수록곡 목록
+            List<PlaylistMusicResponse> musicResponses = new ArrayList<>();
+            for (PlaylistMusic playlistMusic : playlistMusics) {
+                Music music = musicMap.get(playlistMusic.getMusicId());
+                if (music == null || music.getAlbum() == null) {
+                    continue;
+                }
+
+                // 아티스트 정보 조회
+                List<Artist> artists = artistMusicRepository.findAllByMusic(music);
+                List<ArtistResponse> artistResponses = new ArrayList<>();
+                for (Artist artist : artists) {
+                    artistResponses.add(new ArtistResponse(
+                        artist.getId(),
+                        artist.getName()
+                    ));
+                }
+
+                // 음악 정보 응답
+                PlaylistMusicResponse musicResponse = new PlaylistMusicResponse(
+                    music.getId(),
+                    music.getName(),
+                    music.getAlbum().getImageName(),
+                    formatDuration(music.getDuration()),
+                    artistResponses
+                );
+                musicResponses.add(musicResponse);
+            }
+
+            response.setPlaylistMusics(musicResponses);
+            return response;
+
+        } catch (Exception e) {
+            log.error("플레이리스트 상세 정보 조회 중 오류 발생 - playlistId: {}", playlistId, e);
+            throw new RuntimeException("플레이리스트 상세 정보 조회에 실패했습니다.");
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId) {
         try {
             log.debug("플레이리스트 음악 조회 시작 - playlistId: {}", playlistId);

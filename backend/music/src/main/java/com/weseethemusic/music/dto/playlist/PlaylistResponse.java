@@ -1,5 +1,6 @@
 package com.weseethemusic.music.dto.playlist;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,6 @@ public class PlaylistResponse {
     private String image;
     private String totalDuration;
     private int totalMusicCount;
+    private List<PlaylistMusicResponse> playlistMusics;
 
 }
