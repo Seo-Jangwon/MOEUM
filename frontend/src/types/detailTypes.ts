@@ -1,18 +1,21 @@
 export type ListData = {
-  title: string;
+  id: string;
+  name: string;
   duration: string;
 };
 
 export type CardListData = {
+  id: string;
   name: string;
   image: string;
 };
 
 export type Detail = {
   coverTitle: string;
-  listType: string;
-  cardListType: string;
+  listTitle: string;
+  cardListTitle: string;
+  totalDuration?: string;
   image: string;
   listData: ListData[];
-  cardListData: CardListData[];
+  cardListData?: CardListData[];
 };
