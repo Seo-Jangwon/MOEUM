@@ -55,7 +55,7 @@ const LikePlayList = () => {
       url: '/musics/playlist/like',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           setLikePlayList(res.data.data);
           if (res.data.data.length !== 0) {

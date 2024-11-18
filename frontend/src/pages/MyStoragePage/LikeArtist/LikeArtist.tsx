@@ -18,7 +18,7 @@ const LikeArtist = () => {
       url: '/musics/artist/like',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           setLikeArtist(res.data.data);
           if (res.data.data.length !== 0) {

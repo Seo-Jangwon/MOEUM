@@ -14,7 +14,7 @@ const handleLike = (id: number) => {
     data: { id },
   })
     .then((res) => {
-      console.log(res);
+      // console.log(res);
     })
     .catch((err) => {
       console.log(err);
@@ -41,7 +41,7 @@ const PopularPlayList = () => {
       url: '/musics/popular/playlist',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           setPopularPlayList(res.data.data);
         }

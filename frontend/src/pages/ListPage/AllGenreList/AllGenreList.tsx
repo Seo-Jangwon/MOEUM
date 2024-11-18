@@ -25,7 +25,7 @@ const AllGenreList = ({ title }: ListPageProps) => {
       url: `/musics/todaygenre/${id}`
     })
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       if (res.data.code === 200) {
         const musicId = res.data.data.playlistId
         navigate(`/music?id=${id}&list=${musicId}`)
@@ -39,9 +39,8 @@ const AllGenreList = ({ title }: ListPageProps) => {
       url: '/musics/todaygenre',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
-          console.log(res.data.data);
           setGenreList(res.data.data.genres);
         }
       })
