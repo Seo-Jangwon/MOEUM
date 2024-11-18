@@ -116,10 +116,28 @@ public class PlaylistServiceImpl implements PlaylistService {
     public TodayGenreDto getTodayGenre(int genreId) {
         List<TodayGenreMusicDto> result = new ArrayList<>();
 
+        Playlist playlist = new Playlist();
+        playlist.setName("오늘의 추천 장르");
+        playlist.setMemberId(1L);
+        playlist.setPublic(true);
+        playlist.setCreatedAt(LocalDateTime.now());
+
+        long playlistId = playlistRepository.save(playlist).getId();
+
+        List<PlaylistMusic> playlistMusics = new ArrayList<>();
         List<Music> musics = likeMusicRepository.getPopularMusicsByGenre(genreId);
         int totalDuration = 0;
+        int i = 0;
 
         for (Music music : musics) {
+            PlaylistMusic pm = new PlaylistMusic();
+            pm.setPlaylistId(playlistId);
+            pm.setMusicId(music.getId());
+            pm.setOrder(++i);
+            pm.setAddedAt(LocalDateTime.now());
+
+            playlistMusics.add(pm);
+
             List<Artist> artists = artistMusicRepository.findAllByMusic(music);
             List<ArtistDto> artistDtos = new ArrayList<>();
 
@@ -138,12 +156,15 @@ public class PlaylistServiceImpl implements PlaylistService {
                 .artists(artistDtos).build());
         }
 
+        playlistMusicRepository.saveAll(playlistMusics);
+
         int[] finalDurations = musicDetailService.calculateDuration(totalDuration);
         String finalDuration =
             finalDurations[0] == 0 ? finalDurations[1] + "분 " + finalDurations[2] + "초"
                 : finalDurations[0] + "시간 " + finalDurations[1] + "분";
 
-        return TodayGenreDto.builder().totalDuration(finalDuration).musics(result).build();
+        return TodayGenreDto.builder().playlistId(playlistId).totalDuration(finalDuration)
+            .musics(result).build();
     }
 
     @Override
