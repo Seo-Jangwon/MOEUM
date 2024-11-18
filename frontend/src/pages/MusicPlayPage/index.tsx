@@ -108,7 +108,8 @@ const MusicPlayPage: React.FC = () => {
           console.log('망함 ㅅㄱ');
         }
         if (musicListDetailDataResponse.data.code === 200) {
-          setMusicListDetailInfo(musicListDetailDataResponse.data.data.recommendedMusics);
+          if (playListId.current) setMusicListDetailInfo(musicListDetailDataResponse.data.data.musics.playlistMusics);
+          else setMusicListDetailInfo(musicListDetailDataResponse.data.data.recommendedMusics);
         } else {
           console.log('망함 ㅅㄱ');
         }
@@ -152,6 +153,8 @@ const MusicPlayPage: React.FC = () => {
                 ? musicListDetailInfo![playListIdx.current! + 1].id
                 : musicListDetailInfo![0].id
             }
+            playListId={playListId.current ? playListId.current : undefined}
+            playListIdx={playListIdx.current ? playListIdx.current : undefined}
           />
           <PlayList
             musicData={musicListDetailInfo!}

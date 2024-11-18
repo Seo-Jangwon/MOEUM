@@ -6,10 +6,10 @@ import { Bodies, Engine, Events, IEventCollision, Render, Runner, Vector, World 
 import { useEffect, useRef, useState } from 'react';
 import { FaCirclePlay, FaExpand, FaPause } from 'react-icons/fa6';
 import { LiaBackwardSolid, LiaForwardSolid } from 'react-icons/lia';
-import { MdOutlineSync } from 'react-icons/md';
+import { MdOutlineLyrics, MdOutlineSync } from 'react-icons/md';
 import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
 import { TbPlaylistAdd } from 'react-icons/tb';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Data, LyricsI, musicDetailInfoI } from '..';
 import testSong from '../All I Want for Christmas Is You-2-M....mp3';
 import {
@@ -40,12 +40,16 @@ const MusicPlayer = ({
   musicDetailInfo,
   musicAnalyzedData,
   musicLyricsData,
+  playListId = undefined,
+  playListIdx = undefined,
 }: {
   currentMusicId: number;
   nextMusicId: number;
   musicDetailInfo: musicDetailInfoI;
   musicAnalyzedData: Data;
   musicLyricsData: LyricsI;
+  playListId?: number | undefined;
+  playListIdx?: number | undefined;
 }) => {
   const divRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -56,6 +60,8 @@ const MusicPlayer = ({
   const engineRef = useRef<Engine | null>(null);
   const renderRef = useRef<Render | null>(null);
   const runnerRef = useRef<Runner | null>(null);
+
+  const location = useLocation();
 
   const animationRef = useRef<number>();
 
@@ -71,6 +77,10 @@ const MusicPlayer = ({
   const [currentLyrics, setCurrentLyrics] = useState<string>('');
   const [isLyricsVisualized, setIsLyricsVisualized] = useState<boolean>(true);
   const [currentTimeLine, setCurrentTImeLine] = useState<number>(0);
+
+  function changeCurrentTimeLine() {
+    setCurrentTImeLine(audioSrcRef.current!.currentTime);
+  }
 
   /** 재생중인 노래가 끝났을 때 어떻게 할지 설정하는 함수
    * idx -> 0 그냥 끝남
@@ -123,7 +133,7 @@ const MusicPlayer = ({
       parseFloat(value[3]), // Alpha (opacity)
     ];
   }
-  // 3. Matter.js 물체의 strokeStyle에 접근하여 투명도만 낮추는 함수
+  // 물체의 strokeStyle에 접근하여 투명도만 낮추는 함수
   function adjustStrokeOpacityAndDelete(body: Matter.Body, engine: Matter.Engine): void {
     const currentStrokeStyle = body.render.strokeStyle; // 현재 strokeStyle 값
     if (currentStrokeStyle) {
@@ -141,7 +151,8 @@ const MusicPlayer = ({
   /** 애니메이션 실행 함수
    */
   function createObjectsAtTimes() {
-    if (audioSrcRef.current === null && lyricsData.current === null) return;
+    if (audioSrcRef.current === null) return;
+
     if (Math.abs(audioSrcRef.current!.currentTime - prevTimeRef.current) > 1) {
       audioTimeChanged();
       return;
@@ -156,7 +167,6 @@ const MusicPlayer = ({
           setCurrentLyrics(lyricsData.current![lyricsTimeIdx.current].lyric);
           lyricsTimeIdx.current++;
         }
-        setCurrentTImeLine(audioSrcRef.current.currentTime);
         engineRef.current?.world.bodies.forEach((item) => {
           if (item.label === 'wave') {
             adjustStrokeOpacityAndDelete(item, engineRef.current!);
@@ -183,22 +193,17 @@ const MusicPlayer = ({
                 // pingFlag가 0일 경우 파장 생성
                 const x = obj.position.x;
                 const y = obj.position.y;
-                const wave = Bodies.circle(
-                  x,
-                  y,
-                  10, // 기본 크기
-                  {
-                    label: 'wave',
-                    render: {
-                      strokeStyle: obj.render.fillStyle,
-                      lineWidth: 5,
-                      fillStyle: `rgba(255, 0, 255, 0)`, // 초기 투명도 1로 설정
-                    },
-                    isSensor: true, // 물리적 상호작용 없이 설정
-                    frictionAir: 0,
-                    collisionFilter: { group: -1 },
+                const wave = Bodies.circle(x, y, 10, {
+                  label: 'wave',
+                  render: {
+                    strokeStyle: obj.render.fillStyle,
+                    lineWidth: 5,
+                    fillStyle: `rgba(255, 0, 255, 0)`,
                   },
-                );
+                  isSensor: true, // 물리적 상호작용 없이 설정
+                  frictionAir: 0,
+                  collisionFilter: { group: -1 },
+                });
 
                 // 파장 생성 후 물리 엔진에 추가
                 World.add(engineRef.current!.world, wave);
@@ -220,7 +225,7 @@ const MusicPlayer = ({
           const x = canvasRef.current!.clientWidth / 2;
           const y = (canvasRef.current!.clientHeight * noteDatas.current[timeIdx.current].y) / 100;
           renderRef.current!.options.background =
-            backgroundDatas.current![noteDatas.current[timeIdx.current].section].color;
+            backgroundDatas.current![noteDatas.current[timeIdx.current].section - 1].color;
           const polygon = Bodies.polygon(
             x / 2,
             y,
@@ -397,33 +402,6 @@ const MusicPlayer = ({
         setPlayerBarVisible(false);
       }, 3000); // 3초 후 playerBar 숨김
     };
-    noteDatas.current = musicAnalyzedData.notes;
-    backgroundDatas.current = musicAnalyzedData.backgrounds;
-    vibrationsDatas.current = musicAnalyzedData.vibrations;
-
-    lyricsData.current = musicLyricsData.lyrics;
-
-    if (audioSrcRef.current) {
-      audioSrcRef.current.addEventListener('ended', () => {
-        if (endEventIdx.current === 0) {
-          if (animationRef.current) cancelAnimationFrame(animationRef.current);
-          timeIdx.current = 0;
-          setIsPaused(true);
-        } else if (endEventIdx.current === 1) {
-          if (audioSrcRef.current) {
-            timeIdx.current = 0;
-            audioSrcRef.current.currentTime = 0;
-            audioSrcRef.current?.play();
-          }
-        } else if (endEventIdx.current === 2) {
-          navigate(`/music?id=${nextMusicId}`);
-        }
-      });
-
-      audioSrcRef.current.src = testSong;
-      // audioSrcRef.current.src = musicDetailInfo.audioPath;
-      setAudioVolume(audioSrcRef.current.volume);
-    }
 
     const canvas = canvasRef.current;
 
@@ -570,6 +548,45 @@ const MusicPlayer = ({
     };
   }, []);
 
+  function toNextSong() {
+    if (endEventIdx.current === 0) {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      timeIdx.current = 0;
+      setIsPaused(true);
+    } else if (endEventIdx.current === 1) {
+      if (audioSrcRef.current) {
+        timeIdx.current = 0;
+        audioSrcRef.current.currentTime = 0;
+        audioSrcRef.current?.play();
+      }
+    } else if (endEventIdx.current === 2) {
+      if (playListId !== undefined) navigate(`/music?id=${nextMusicId}&list=${playListId}&idx=${playListIdx}`);
+      else navigate(`/music?id=${nextMusicId}`);
+    }
+  }
+
+  useEffect(() => {
+    noteDatas.current = musicAnalyzedData.notes;
+    backgroundDatas.current = musicAnalyzedData.backgrounds;
+    vibrationsDatas.current = musicAnalyzedData.vibrations;
+
+    lyricsData.current = musicLyricsData.lyrics;
+
+    if (audioSrcRef.current) {
+      audioSrcRef.current.currentTime = 0;
+      audioSrcRef.current.addEventListener('ended', toNextSong);
+      audioSrcRef.current.addEventListener('timeupdate', changeCurrentTimeLine);
+
+      audioSrcRef.current.src = testSong;
+      // audioSrcRef.current.src = musicDetailInfo.audioPath;
+      setAudioVolume(audioSrcRef.current.volume);
+    }
+    return () => {
+      audioSrcRef.current?.removeEventListener('ended', toNextSong);
+      audioSrcRef.current?.removeEventListener('timeupdate', changeCurrentTimeLine);
+    };
+  }, [location.search]);
+
   /** 영상의 재생 상태 변경 시 호출됨. 애니메이션 멈추거나 시작 */
   useEffect(() => {
     if (engineRef.current === null || renderRef.current === null) return;
@@ -591,15 +608,16 @@ const MusicPlayer = ({
           onClose={() => {
             setIsModalOpen(false);
           }}
+          musicId={currentMusicId}
         />
         <audio ref={audioSrcRef} />
         <div css={s_videoContainer} ref={divRef}>
           <canvas css={s_canvas} ref={canvasRef} onClick={changeVideoState} />
           <div ref={playerBarRef} css={s_playerBarContainer}>
-            <div css={s_lyrics}>{isLyricsVisualized ? currentLyrics : 'test'}</div>
+            <div css={s_lyrics}>{isLyricsVisualized ? currentLyrics : ''}</div>
             <div
               css={css`
-                display: ${playerBarVisible ? 'flex' : 'none'};
+                display: ${playerBarVisible ? 'flex' : ''};
                 ${s_palyerBar}
               `}
             >
@@ -626,11 +644,11 @@ const MusicPlayer = ({
               </div>
               <div css={s_playerBarController}>
                 <div>
-                  <MyHeart isLike={true} category={'music'} id={currentMusicId} size={24} />
-                  <TbPlaylistAdd onClick={() => setIsModalOpen(true)} />
+                  <MyHeart isLike={true} category={'music'} id={currentMusicId} size={18} />
+                  <TbPlaylistAdd onClick={() => setIsModalOpen(true)} css={s_iconButton} />
                 </div>
                 <div>
-                  <RxShuffle onClick={() => changeEndEventIdx(2)} />
+                  <RxShuffle onClick={() => changeEndEventIdx(2)} css={s_iconButton} />
                   <LiaBackwardSolid
                     onClick={() => {
                       if (audioSrcRef.current) {
@@ -638,15 +656,21 @@ const MusicPlayer = ({
                         audioSrcRef.current.currentTime = 0;
                       }
                     }}
+                    css={s_iconButton}
                   />
-                  {!isPaused ? <FaPause onClick={changeVideoState} /> : <FaCirclePlay onClick={changeVideoState} />}
-                  <LiaForwardSolid onClick={() => navigate(`/music?id=${nextMusicId}`)} />
-                  <MdOutlineSync onClick={() => changeEndEventIdx(1)} />
+                  {!isPaused ? (
+                    <FaPause onClick={changeVideoState} css={s_iconButton} />
+                  ) : (
+                    <FaCirclePlay onClick={changeVideoState} css={s_iconButton} />
+                  )}
+                  <LiaForwardSolid onClick={() => navigate(`/music?id=${nextMusicId}`)} css={s_iconButton} />
+                  <MdOutlineSync onClick={() => changeEndEventIdx(1)} css={s_iconButton} />
                 </div>
                 <div>
-                  <RxSpeakerLoud onClick={muteUnMute} />
+                  <RxSpeakerLoud onClick={muteUnMute} css={s_iconButton} />
                   <input
                     css={s_playerBarRange(audioVolume * 100)}
+                    style={{ width: '50px' }}
                     type="range"
                     max={1}
                     value={audioVolume}
@@ -666,14 +690,14 @@ const MusicPlayer = ({
                     css={s_iconButton}
                     onClick={toggleVisualization}
                   />
-                  <button
+                  <MdOutlineLyrics
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsLyricsVisualized((prev) => !prev);
                     }}
-                  >
-                    Sub
-                  </button>
+                    css={s_iconButton}
+                  />
+
                   <FaExpand onClick={handleFullScreen} css={s_iconButton} />
                 </div>
               </div>
@@ -689,7 +713,7 @@ const MusicPlayer = ({
                   key={index}
                   css={css`
                     :hover {
-                      text-decoration: underline;
+                      text-decoration: u<MdOutlineLyrics / >nderline;
                     }
                   `}
                   onClick={() => navigate(`/artist/${item.id}`)}
