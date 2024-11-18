@@ -22,7 +22,7 @@ const GenreList = () => {
       url: '/musics/todaygenre',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           setGenreData(res.data.data.genres);
         }
@@ -38,7 +38,7 @@ const GenreList = () => {
       url: `/musics/todaygenre/${id}`
     })
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       if (res.data.code === 200) {
         const musicId = res.data.data.playlistId
         navigate(`/music?id=${id}&list=${musicId}`)

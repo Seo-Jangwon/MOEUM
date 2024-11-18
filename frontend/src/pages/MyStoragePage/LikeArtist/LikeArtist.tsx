@@ -1,7 +1,7 @@
 import apiClient from '@/api/apiClient';
-import { s_div_item_container } from '@/pages/MainPage/PopularPlayList/style';
 import { useEffect, useState } from 'react';
 import { s_artist_button, s_artist_p } from '../style';
+import { s_div_item_container } from './style';
 
 interface Artist {
   id: number;
@@ -18,7 +18,7 @@ const LikeArtist = () => {
       url: '/musics/artist/like',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           setLikeArtist(res.data.data);
           if (res.data.data.length !== 0) {
@@ -41,7 +41,7 @@ const LikeArtist = () => {
           <>
             <div key={index}>
               <button css={s_artist_button}>
-                <img src={item.image} alt="라라" style={{ borderRadius: '100%' }} />
+                <img src={item.image} alt="라라" style={{ borderRadius: '100%', width: '100%'}} />
               </button>
               <p css={s_artist_p}>{item.name}</p>
             </div>

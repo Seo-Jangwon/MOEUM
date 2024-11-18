@@ -42,7 +42,7 @@ const MyPlayList = () => {
       url: '/musics/playlist/create',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           setMyPlayList(res.data.data.musics);
           if (res.data.data.musics.length !== 0) {

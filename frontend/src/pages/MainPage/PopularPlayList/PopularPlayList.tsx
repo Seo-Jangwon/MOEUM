@@ -14,7 +14,7 @@ const handleLike = (id: number) => {
     data: { id },
   })
     .then((res) => {
-      console.log(res);
+      // console.log(res);
     })
     .catch((err) => {
       console.log(err);
@@ -41,7 +41,7 @@ const PopularPlayList = () => {
       url: '/musics/popular/playlist',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           setPopularPlayList(res.data.data);
         }
@@ -63,7 +63,7 @@ const PopularPlayList = () => {
         </button>
       </div>
       <div css={s_div_item_container}>
-        {popularPlayList.map((item, index) => (
+        {popularPlayList.slice(0, 4).map((item, index) => (
           <div css={s_div_item_box} key={index}>
             <div css={s_icon_div}>
               <DotDotDot

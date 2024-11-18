@@ -1,6 +1,5 @@
-import apiClient from '@/api/apiClient';
 import { css } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import LikeAlbum from './LikeAlbum/LikeAlbum';
 import LikeArtist from './LikeArtist/LikeArtist';
 import LikeMusic from './LikeMusic/LikeMusic';
@@ -8,27 +7,12 @@ import LikePlayList from './LikePlayList/LikePlayList';
 import MyPlayList from './MyPlayList/MyPlayList';
 import { activeButtonStyle, inactiveButtonStyle, s_container, s_div_toggle, s_h3 } from './style';
 
-
 const MyStoragePage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('music');
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
   };
-
-  // 내 플레이리스트
-  useEffect(() => {
-    apiClient({
-      method: 'GET',
-      url: '/musics/playlist',
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   return (
     <div css={s_container}>
