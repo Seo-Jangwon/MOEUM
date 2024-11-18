@@ -1,8 +1,8 @@
 import apiClient from '@/api/apiClient';
-import { s_div_item_container, s_h5 } from '@/pages/MainPage/PopularPlayList/style';
+import { s_div_item_box } from '@/pages/MainPage/GenreList/style';
 import { useEffect, useState } from 'react';
 import { s_img } from '../LikeMusic/style';
-import { s_div_item_box } from '@/pages/MainPage/GenreList/style';
+import { s_div_item_container, s_h5 } from './style';
 
 interface Artist {
   id: number;
@@ -36,22 +36,20 @@ const LikeAlbum = () => {
       .catch((err) => {
         console.log(err);
       });
-  },[]);
+  }, []);
 
   return (
     <div css={s_div_item_container}>
       {!isExist ? (
-        <div style={{color: 'white'}}>좋아요한 앨범이 없습니다.</div>
+        <div style={{ color: 'white' }}>좋아요한 앨범이 없습니다.</div>
       ) : (
         likeAlbum.map((item, index) => (
-          <>
-            <div>
-              <button key={index} css={s_div_item_box}>
-                <img src={item.image} alt="라라" css={s_img} />
-              </button>
-              <h5 css={s_h5}>{item.name}</h5>
-            </div>
-          </>
+          <div key={index}>
+            <button css={s_div_item_box}>
+              <img src={item.image} alt="라라" css={s_img} />
+            </button>
+            <h5 css={s_h5}>{item.name}</h5>
+          </div>
         ))
       )}
     </div>
