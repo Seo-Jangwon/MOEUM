@@ -58,7 +58,7 @@ const GenreList = () => {
         </button>
       </div>
       <div css={s_div_item_container}>
-        {genreData.slice(0, 5).map((item, index) => (
+        {genreData.slice(0, 6).map((item, index) => (
           <div
             css={css`
               position: relative;
