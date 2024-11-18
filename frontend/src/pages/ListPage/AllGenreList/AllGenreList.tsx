@@ -68,6 +68,7 @@ const AllGenreList = ({ title }: ListPageProps) => {
               <img src={item.image} alt="image"  css={css`
                 width: 100%;
                 border-radius: 10px;
+                aspect-ratio: 1/1;
               `} />
               <h5 css={s_h5}>{item.name}</h5>
             </button>

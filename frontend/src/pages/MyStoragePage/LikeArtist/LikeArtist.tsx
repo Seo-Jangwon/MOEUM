@@ -39,7 +39,7 @@ const LikeArtist = () => {
         likeArtist.map((item, index) => (
           <div key={index}>
             <button css={s_artist_button}>
-              <img src={item.image} alt="라라" style={{ borderRadius: '100%', width: '100%', height: '120px' }} />
+              <img src={item.image} alt="라라" style={{ borderRadius: '100%', width: '100%', aspectRatio: '1/1'}} />
             </button>
             <p css={s_artist_p}>{item.name}</p>
           </div>
