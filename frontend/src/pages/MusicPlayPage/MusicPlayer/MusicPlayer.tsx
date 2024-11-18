@@ -14,9 +14,8 @@ import {
   s_canvas,
   s_container,
   s_iconButton,
-  s_infoContainer,
   s_lyrics,
-  s_palyerBar,
+  s_playerBar,
   s_playerBarContainer,
   s_playerBarController,
   s_playerBarRange,
@@ -616,7 +615,7 @@ const MusicPlayer = ({
             <div
               css={css`
                 display: ${playerBarVisible ? 'flex' : 'none'};
-                ${s_palyerBar}
+                ${s_playerBar}
               `}
             >
               <div>
@@ -697,7 +696,6 @@ const MusicPlayer = ({
                   <RxSpeakerLoud onClick={muteUnMute} css={s_iconButton} />
                   <input
                     css={s_playerBarRange(audioVolume * 100)}
-                    style={{ width: '50px' }}
                     type="range"
                     max={1}
                     value={audioVolume}
@@ -729,38 +727,6 @@ const MusicPlayer = ({
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div css={s_infoContainer}>
-          <div
-            css={css`
-              font-size: 3rem;
-              font-weight: 700;
-              margin-right: 20px;
-            `}
-          >
-            {musicDetailInfo.musicName}
-          </div>
-          <div css={css`
-            font-size: 1.25rem;
-            line-height: 1.2;
-          `}>
-            {musicDetailInfo.artists.map((item, index) => {
-              return (
-                <span
-                  key={index}
-                  css={css`
-                    :hover {
-                      text-decoration: underline;
-                    }
-                  `}
-                  onClick={() => navigate(`/artist/${item.id}`)}
-                >
-                  {item.name}
-                </span>
-              );
-            })}
-            <div>{musicDetailInfo.releaseDate}</div>
           </div>
         </div>
       </div>

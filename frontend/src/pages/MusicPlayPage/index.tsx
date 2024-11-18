@@ -7,7 +7,7 @@ import testLyricsData from './lyricsData.json';
 import testMusicDetailInfo from './musicDetailInfo.json';
 import MusicPlayer from './MusicPlayer/MusicPlayer';
 import PlayList from './PlayList/PlayList';
-import { s_container } from './style';
+import { s_container, s_content, s_infoContainer } from './style';
 
 export interface musicDetailInfoI {
   musicId: number;
@@ -142,26 +142,38 @@ const MusicPlayPage: React.FC = () => {
     <div css={s_container}>
       {isLoading ? null : (
         <>
-          <div></div>
-          <MusicPlayer
-            musicAnalyzedData={musicAnalyzedData}
-            musicDetailInfo={musicDetailInfo!}
-            currentMusicId={musicId.current!}
-            musicLyricsData={lyricsData!}
-            nextMusicId={
-              musicListDetailInfo!.length - 1 > playListIdx.current!
-                ? musicListDetailInfo![playListIdx.current! + 1].id
-                : musicListDetailInfo![0].id
-            }
-            playListId={playListId.current ? playListId.current : undefined}
-            playListIdx={playListIdx.current ? playListIdx.current : undefined}
-          />
-          <PlayList
-            musicData={musicListDetailInfo!}
-            variant={playListId.current ? 'playlist' : 'music'}
-            listId={playListId.current ? playListId.current : undefined}
-            listIdx={playListIdx.current ? playListIdx.current : undefined}
-          />
+          <div css={s_content}>
+            <MusicPlayer
+              musicAnalyzedData={musicAnalyzedData}
+              musicDetailInfo={musicDetailInfo!}
+              currentMusicId={musicId.current!}
+              musicLyricsData={lyricsData!}
+              nextMusicId={
+                musicListDetailInfo!.length - 1 > playListIdx.current!
+                  ? musicListDetailInfo![playListIdx.current! + 1].id
+                  : musicListDetailInfo![0].id
+              }
+              playListId={playListId.current ? playListId.current : undefined}
+              playListIdx={playListIdx.current ? playListIdx.current : undefined}
+            />
+            <PlayList
+              musicData={musicListDetailInfo!}
+              variant={playListId.current ? 'playlist' : 'music'}
+              listId={playListId.current ? playListId.current : undefined}
+              listIdx={playListIdx.current ? playListIdx.current : undefined}
+            />
+          </div>
+          <div css={s_infoContainer}>
+            <div className="music-title">{musicDetailInfo!.musicName}</div>
+            <div className="artist-list">
+              {musicDetailInfo!.artists.map((artist, index) => (
+                <span key={index} className="artist" onClick={() => navigate(`/artist/${artist.id}`)}>
+                  {artist.name}
+                </span>
+              ))}
+            </div>
+            <div className="release-date">발매일 : {musicDetailInfo!.releaseDate}</div>
+          </div>
         </>
       )}
     </div>
