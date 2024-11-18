@@ -79,7 +79,8 @@ const MusicPlayer = ({
   const [currentTimeLine, setCurrentTImeLine] = useState<number>(0);
 
   function changeCurrentTimeLine() {
-    setCurrentTImeLine(audioSrcRef.current!.currentTime);
+    if (audioSrcRef.current) setCurrentTImeLine(audioSrcRef.current.currentTime);
+    else setCurrentTImeLine(0);
   }
 
   /** 재생중인 노래가 끝났을 때 어떻게 할지 설정하는 함수
