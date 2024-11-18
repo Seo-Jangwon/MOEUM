@@ -73,30 +73,23 @@ public class MusicServiceImpl implements MusicService {
         List<GeneralAlbumDto> result = new ArrayList<>();
         List<Album> albums = likeAlbumRepository.findAllByMemberId(memberId);
 
-        log.info("albums: {}", albums.size());
-
         for (Album album : albums) {
             List<com.weseethemusic.music.dto.search.ArtistDto> artistDtos = new ArrayList<>();
-            List<Artist> artists = albumRepository.getAlbumArtists(album);
+            List<Music> musics = musicRepository.findAllByAlbum_Id(album.getId());
 
-            log.info("artists: {}", artists.size());
+            for (Music music : musics) {
+                List<Artist> artists = artistMusicRepository.findAllByMusic(music);
 
-            for (Artist artist : artists) {
-                artistDtos.add(
-                    com.weseethemusic.music.dto.search.ArtistDto.builder().id(artist.getId())
-                        .name(artist.getName()).build());
+                for (Artist artist : artists) {
+                    artistDtos.add(
+                        com.weseethemusic.music.dto.search.ArtistDto.builder().id(artist.getId())
+                            .name(artist.getName()).build());
+                }
             }
 
-            result.add(GeneralAlbumDto.builder()
-                .id(album.getId())
-                .name(album.getName())
-                .image(album.getImageName())
-                .artists(artistDtos)
-                .isLike(true)  // 좋아요 목록이므로 무조건 true
-                .build());
+            result.add(GeneralAlbumDto.builder().id(album.getId()).name(album.getName())
+                .image(album.getImageName()).artists(artistDtos).build());
         }
-
-        log.info("result: {}", result.size());
 
         return result;
     }
