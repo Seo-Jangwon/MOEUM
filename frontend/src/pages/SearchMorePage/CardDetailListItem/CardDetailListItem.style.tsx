@@ -3,7 +3,7 @@ import { css, Theme } from '@emotion/react';
 export const s_container = (theme: Theme) => css`
   display: flex;
   word-break: break-all;
-  border: 2px solid ${theme.colors.white};
+  border: 2px solid white;
   cursor: pointer;
   margin: 0 5%;
   width: 90%;
