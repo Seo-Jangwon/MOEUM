@@ -5,7 +5,7 @@ import com.weseethemusic.music.dto.playlist.LikeRequest;
 import com.weseethemusic.music.dto.playlist.PlaylistMusicResponse;
 import com.weseethemusic.music.dto.playlist.PlaylistResponse;
 import com.weseethemusic.music.dto.playlist.UpdatePlaylistRequest;
-import com.weseethemusic.music.service.PlaylistService;
+import com.weseethemusic.music.service.playlist.PlaylistService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +74,7 @@ public class PlaylistController {
         Map<String, Object> response = new HashMap<>();
         try {
 
-            PlaylistResponse playlistResponse = playlistService.getPlaylistDetail(playlistId);
+            PlaylistResponse playlistResponse = playlistService.getPlaylistDetail(playlistId, memberId);
             Map<String, Object> data = new HashMap<>();
             data.put("musics", playlistResponse);
 

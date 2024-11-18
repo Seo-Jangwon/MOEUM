@@ -22,4 +22,6 @@ public interface LikeMusicRepository extends JpaRepository<LikeMusic, LikeMusicI
     @Query("select lm.music from LikeMusic lm where lm.memberId = :memberId")
     List<Music> getMyLikeMusics(Long memberId);
 
+    boolean existsByMemberIdAndMusic_Id(Long memberId, Long musicId);
+
 }

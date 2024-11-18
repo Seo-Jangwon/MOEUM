@@ -15,5 +15,7 @@ public class PlaylistMusicResponse {
     private String albumImage;
     private String duration;
     private List<ArtistResponse> artists;
-    
+    private Boolean musicIsLike;
+    private Boolean albumIsLike;
+
 }

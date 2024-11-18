@@ -1,4 +1,4 @@
-package com.weseethemusic.music.service;
+package com.weseethemusic.music.service.musicVisualization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package com.weseethemusic.music.service;
+package com.weseethemusic.music.service.musicLike;
 
 import com.weseethemusic.music.dto.like.MusicDto;
 import java.util.List;
