@@ -67,7 +67,7 @@ export const s_div_data = css`
 `;
 
 export const s_h5_title = (theme: Theme) => css`
-  font-size: 70%;
+  font-size: 90%;
   font-weight: 800;
   color: ${theme.colors.white};
   display: -webkit-box; 
