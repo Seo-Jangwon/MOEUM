@@ -40,7 +40,7 @@ const LikeMusic = () => {
       url: '/musics/music/like',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           setLikeMusic(res.data.data);
           if (res.data.data.length !== 0) {
@@ -60,7 +60,7 @@ const LikeMusic = () => {
       data: { id },
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           setLikeMusic((prevLikeMusic) => prevLikeMusic.filter((music) => music.id !== id))
           if (likeMusic.length === 1) {
@@ -97,11 +97,11 @@ const LikeMusic = () => {
             </div>
             <div css={s_div_data}>
               <h5 css={s_h5_title}>{item.name}</h5> 
-              <p css={s_p_artist}>
+              <div css={s_p_artist}>
                 {item.artists.map((item, index) => (
                   <p key={index}>{item.name}</p>
                 ))}
-              </p>
+              </div>
             </div>
             <div onClick={(e) => e.stopPropagation()}>
               <DotDotDot

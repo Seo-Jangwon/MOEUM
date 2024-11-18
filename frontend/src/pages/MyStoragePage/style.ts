@@ -48,10 +48,7 @@ export const inactiveButtonStyle = (theme: Theme) => css`
 
 export const s_artist_button = css`
   border: 0;
-  border-radius: 100%;
   background: transparent;
-  overflow: hidden;
-  width: 100%;
   :hover {
     filter: brightness(50%);
     transition: 0.3s;

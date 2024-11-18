@@ -108,11 +108,7 @@ const SignUpPage = () => {
     }
 
     // 모든 검증을 통과하면 다음 페이지로 이동
-    console.log('닉네임:', nickname);
-    console.log('이메일:', email);
-    console.log('인증번호:', certificationNumber);
-    console.log('비밀번호:', password);
-    console.log('비밀번호 확인:', checkPassword);
+
 
     apiClient
       .post('/members/register', {
@@ -121,7 +117,7 @@ const SignUpPage = () => {
         password,
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (isValid) {
           alert('모음의 회원이 되신 것을 축하드립니다.')
           navigate('/signin');
@@ -147,7 +143,6 @@ const SignUpPage = () => {
         email,
       })
       .then((res) => {
-        console.log(res.data.code);
         if (res.data.code === 500) {
           setError('가입된 이메일입니다.');
         } else if (res.data.code === 200) {
@@ -168,14 +163,13 @@ const SignUpPage = () => {
 
   // 인증번호 확인 함수
   const handleCertificationCode = () => {
-    console.log('인증번호 확인');
     apiClient
       .post('/members/register/check/token', {
         email: email,
         token: certificationNumber,
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setIsValid(true);
         alert('인증에 성공했습니다.');
         setIsValidCertification(false);

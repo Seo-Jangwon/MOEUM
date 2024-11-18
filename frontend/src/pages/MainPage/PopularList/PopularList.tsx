@@ -51,7 +51,6 @@ const PopularList = () => {
       url: '/musics/popular',
     })
       .then((res) => {
-        console.log(res.data.data);
         if (res.data.code === 200) {
           setPopularList(res.data.data);
         }
@@ -69,7 +68,7 @@ const PopularList = () => {
       data: { id },
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -126,11 +125,11 @@ const PopularList = () => {
             </div>
             <div css={s_div_data}>
               <h5 css={s_h5_title}>{item.name}</h5>
-              <p css={s_p_artist}>
+              <div css={s_p_artist}>
                 {item.artists.map((item, index) => (
                   <p key={index}>{item.name}</p>
                 ))}
-              </p>
+              </div>
             </div>
             <div
               css={css`

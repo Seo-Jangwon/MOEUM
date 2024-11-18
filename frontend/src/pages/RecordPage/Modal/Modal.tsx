@@ -75,11 +75,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, musicId }) => {
       url: '/musics/playlist/create',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
-          console.log(res);
+          // console.log(res);
           setMyPlayList(res.data.data.musics);
-          console.log(myPlayList);
         } else if (res.data.code === 500) {
           alert('내부 서버 오류입니다.');
         } else {
@@ -101,7 +100,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, musicId }) => {
       url: `/musics/playlist/delete/${id}`,
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setMyPlayList((prevPlaylists) => prevPlaylists.filter((playlist) => playlist.id !== id));
       })
       .catch((err) => {
@@ -115,7 +114,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, musicId }) => {
       url: `/musics/playlist/${id}/add/${musicId}`,
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           alert('플레이리스트에 추가되었습니다.');
           fetchPlaylists();

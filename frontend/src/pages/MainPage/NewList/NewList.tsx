@@ -57,17 +57,14 @@ const NewList = () => {
       url: '/musics/latest',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
-          console.log(res.data.data);
           setLatestData(res.data.data);
-          console.log(latestData);
         }
       })
       .catch((err) => {
         console.log(err);
       });
-    console.log(latestData);
   }, []);
 
   const updateItemsPerPage = () => {
@@ -123,7 +120,7 @@ const NewList = () => {
       data: { id },
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
       })
       .catch((err) => {
         console.log(err);
