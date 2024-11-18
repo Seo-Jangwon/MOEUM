@@ -15,5 +15,7 @@ public interface LikeAlbumRepository extends JpaRepository<LikeAlbum, LikeAlbumI
     List<Album> findAllByMemberId(long memberId);
 
     void deleteLikeAlbumByMemberIdAndAlbum_Id(Long memberId, Long albumId);
-    
+
+    boolean existsByMemberIdAndAlbum_Id(Long memberId, Long albumId);
+
 }

@@ -41,7 +41,7 @@ const PopularList = () => {
   };
 
   const clickHandler = (index: number) => {
-    navigate(`/music?id=/${index}`);
+    navigate(`/music?id=${index}`);
   };
 //
   // 인기곡 30가지

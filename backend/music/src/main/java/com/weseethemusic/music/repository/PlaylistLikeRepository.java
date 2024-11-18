@@ -19,4 +19,6 @@ public interface PlaylistLikeRepository extends JpaRepository<PlaylistLike, Long
     List<Playlist> getPopularPlaylists();
 
     void deleteByPlaylistId(Long playlistId);
+
+    boolean existsByMemberIdAndPlaylist_Id(Long memberId, Long playlistId);
 }

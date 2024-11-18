@@ -8,11 +8,12 @@ import com.weseethemusic.music.dto.search.ArtistImageDto;
 import com.weseethemusic.music.dto.search.MusicDto;
 import com.weseethemusic.music.dto.search.PlaylistDto;
 import com.weseethemusic.music.dto.search.SearchDto;
-import com.weseethemusic.music.service.MusicSearchServiceImpl;
+import com.weseethemusic.music.service.musicSearch.MusicSearchServiceImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,11 +27,12 @@ public class MusicSearchController {
 
     // 음악 검색
     @GetMapping
-    public ResponseDto<SearchDto> searchMusic(@RequestParam("keyword") String keyword) {
+    public ResponseDto<SearchDto> searchMusic(@RequestParam("keyword") String keyword,
+        @RequestHeader(value = "X-Member-Id", required = false) Long memberId) {
         SearchDto result;
 
         try {
-            result = musicSearchService.searchMusic(keyword);
+            result = musicSearchService.searchMusic(keyword, memberId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -41,11 +43,11 @@ public class MusicSearchController {
     // 음악 모두 보기 검색
     @GetMapping("/music")
     public ResponseDto<List<MusicDto>> searchAllMusics(@RequestParam("keyword") String keyword,
-        Pageable pageable) {
+        Pageable pageable, @RequestHeader(value = "X-Member-Id", required = false) Long memberId) {
         List<MusicDto> result;
 
         try {
-            result = musicSearchService.searchAllMusics(keyword, pageable);
+            result = musicSearchService.searchAllMusics(keyword, pageable, memberId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
@@ -56,11 +58,12 @@ public class MusicSearchController {
     // 플레이리스트 모두 보기 검색
     @GetMapping("/playlist")
     public ResponseDto<List<PlaylistDto>> searchAllPlaylists(
-        @RequestParam("keyword") String keyword, Pageable pageable) {
+        @RequestParam("keyword") String keyword, Pageable pageable,
+        @RequestHeader(value = "X-Member-Id", required = false) Long memberId) {
         List<PlaylistDto> result;
 
         try {
-            result = musicSearchService.searchAllPlaylists(keyword, pageable);
+            result = musicSearchService.searchAllPlaylists(keyword, pageable, memberId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
@@ -71,11 +74,11 @@ public class MusicSearchController {
     // 앨범 모두 보기 검색
     @GetMapping("/album")
     public ResponseDto<List<AlbumDto>> searchAllAlbums(@RequestParam("keyword") String keyword,
-        Pageable pageable) {
+        Pageable pageable, @RequestHeader(value = "X-Member-Id", required = false) Long memberId) {
         List<AlbumDto> result;
 
         try {
-            result = musicSearchService.searchAllAlbums(keyword, pageable);
+            result = musicSearchService.searchAllAlbums(keyword, pageable, memberId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
@@ -86,11 +89,12 @@ public class MusicSearchController {
     // 아티스트 모두 보기 검색
     @GetMapping("/artist")
     public ResponseDto<List<ArtistImageDto>> searchAllArtists(
-        @RequestParam("keyword") String keyword, Pageable pageable) {
+        @RequestParam("keyword") String keyword, Pageable pageable,
+        @RequestHeader(value = "X-Member-Id", required = false) Long memberId) {
         List<ArtistImageDto> result;
 
         try {
-            result = musicSearchService.searchAllArtists(keyword, pageable);
+            result = musicSearchService.searchAllArtists(keyword, pageable, memberId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }

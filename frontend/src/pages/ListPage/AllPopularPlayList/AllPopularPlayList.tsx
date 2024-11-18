@@ -1,12 +1,13 @@
 import apiClient from '@/api/apiClient';
+import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { s_container } from '@/pages/MainPage/style';
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import { FaRegHeart } from 'react-icons/fa6';
 
 interface ListPageProps {
   title: string;
 }
-
 
 interface Music {
   id: number;
@@ -14,9 +15,22 @@ interface Music {
   image: string;
 }
 
-
 const AllPopularPlayList = ({ title }: ListPageProps) => {
   const [playList, setPlayList] = useState<Music[]>([]);
+
+  const handleLike = (id: number) => {
+    apiClient({
+      method: 'POST',
+      url: '/musics/music/like',
+      data: { id },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     apiClient({
@@ -69,7 +83,6 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
                   background: transparent;
                   border: 0;
                   position: relative;
-                  overflow: hidden;
                   :hover::before {
                     content: '';
                     position: absolute;
@@ -87,6 +100,42 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
                   }
                 `}
               >
+                <div
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              css={css`
+                position: absolute;
+                z-index: 122;
+                
+                right: 10px;
+                bottom: 10px;
+                :hover {
+                  background-color: #888;
+                  border-radius: 100%;
+                }
+                @media (max-width: 768px) {
+                  right: 5px;
+                  bottom: 50px;
+                }
+                
+              `}
+            >
+              <DotDotDot
+                data={[
+                  {
+                    iconImage: <FaRegHeart />,
+                    text: '좋아요',
+                    clickHandler: () => {
+                      handleLike(item.id); 
+                    },
+                    size: 20,
+                  },
+             
+               
+                ]}
+              />
+            </div>
                 <img
                   src={item.image}
                   alt="라라"
@@ -99,10 +148,15 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
               </button>
               <p
                 css={css`
-                  font-size: 24px;
+                  font-size: 18px;
                   font-weight: 700;
                   color: white;
                   text-align: center;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 1;
+                  -webkit-box-orient: vertical;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
                 `}
               >
                 {item.name}

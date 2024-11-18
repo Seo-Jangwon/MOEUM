@@ -10,6 +10,7 @@ import lombok.Setter;
 @Builder
 public class TodayGenreDto {
 
+    private long playlistId;
     private String totalDuration;
     private List<TodayGenreMusicDto> musics;
 

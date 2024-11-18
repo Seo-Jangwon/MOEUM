@@ -1,10 +1,10 @@
 import apiClient from '@/api/apiClient';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
-import { ReactNode, useEffect, useState } from 'react';
-import { FaRegTrashCan } from 'react-icons/fa6';
+import { css } from '@emotion/react';
+import { useEffect, useState } from 'react';
+import { FaRegHeart, FaRegTrashCan } from 'react-icons/fa6';
 import { RiMenuAddLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
-import lala from '../../assets/lalaticon/lala.jpg';
 import Modal from './Modal/Modal';
 import {
   s_container,
@@ -17,7 +17,6 @@ import {
   s_img,
   s_p,
 } from './style';
-import { css } from '@emotion/react';
 
 interface Artist {
   id: number;
@@ -25,48 +24,54 @@ interface Artist {
 }
 
 interface Record {
-  musicId: number;
-  title: string;
+  id: number;
+  name: string;
   albumImage: string;
   artists: Artist[];
+  duration: string;
 }
-
-// const mokData: { music: Record[] } = {
-//   music: [
-//     {
-//       id: 1,
-//       title: 'fkfㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ',
-//       image: 'lala.jpg',
-//       artist: 'LALA',
-//       time: '4:10',
-//       heart: true,
-//     },
-//     {
-//       id: 2,
-//       title: '라라',
-//       image: 'lala.jpg',
-//       artist: 'LALA',
-//       time: '4:10',
-//       heart: false,
-//     },
-//   ],
-// };
 
 const RecordPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isDropDown, setIsDropDown] = useState<boolean>(false);
   const [history, setHistory] = useState<Record[]>([]);
   const [isExist, setIsExist] = useState<boolean>(false);
   const navigate = useNavigate();
-  // 음악 재생 기록 조회
+  
+  const handleLike = (id: number) => {
+    apiClient({
+      method: 'POST',
+      url: '/musics/music/like',
+      data: { id },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleDelete = (id: number) => {
+    apiClient({
+      method: 'DELETE',
+      url: `recommendations/history/${id}`,
+    })
+      .then((res) => {
+        console.log(res);
+        setHistory((prevHistory) => prevHistory.filter((item) => item.id !== id));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   useEffect(() => {
     apiClient({
       method: 'GET',
       url: 'recommendations/history',
     })
       .then((res) => {
-        console.log(res);
         if (res.data.code === 200) {
+          console.log(res.data.data);
           setHistory(res.data.data);
           setIsExist(true);
         }
@@ -74,7 +79,7 @@ const RecordPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  });
+  }, []);
 
   // 모달 열기 함수
   const openModal = () => {
@@ -86,35 +91,6 @@ const RecordPage = () => {
     setIsModalOpen(false);
   };
 
-  // 드랍다운 닫기
-  const closeDropDown = () => {
-    setIsDropDown(false);
-  };
-  
-  interface DropDownItems {
-    iconImage: ReactNode;
-    text: string;
-    clickHandler: () => void;
-    size: number;
-  }
-
-  const items: DropDownItems[] = [
-    {
-      iconImage: <RiMenuAddLine />,
-      text: '플레이리스트 추가',
-      clickHandler: openModal,
-      size: 18,
-    },
-    {
-      iconImage: <FaRegTrashCan />,
-      text: '기록에서 삭제',
-      clickHandler: () => {
-        console.log('기록에서 삭제');
-      },
-      size: 18,
-    },
-  ];
-
   return (
     // 전체 레이아웃
     <div css={s_container}>
@@ -125,30 +101,57 @@ const RecordPage = () => {
       {/* 최근 음악 데이터 */}
       <div css={s_div_container}>
         {!isExist ? (
-          <div css={css`
-            color: gray;
-            font-size: 24px;
-          `}>음악을 시청해 주세요^^</div>
+          <div
+            css={css`
+              color: gray;
+              font-size: 24px;
+            `}
+          >
+            음악을 시청해 주세요^^
+          </div>
         ) : (
           history.map((item, index) => (
             <>
               <div key={index} css={s_div_item}>
                 {/* 이미지와 제목 */}
-                <div css={s_div_titie_img} onClick={() => navigate('/music/1')}>
+                <div css={s_div_titie_img} onClick={() => navigate(`/music?id=${item.id}`)}>
                   <div css={s_div_img}>
                     <img src={item.albumImage} alt="라라" css={s_img} />
                   </div>
-                  <h4 css={s_h4}>{item.title}</h4>
+                  <h4 css={s_h4}>{item.name}</h4>
                 </div>
                 {/* 아티스트 */}
                 <p css={s_p}>{item.artists[0].name}</p>
-                {/* 드롭다운 */}
-                <DotDotDot data={items} />
                 {/* 시간 */}
-                {/* <p css={s_p}>{item.}</p> */}
+                <p css={s_p}>{item.duration}</p>
+                {/* 드롭다운 */}
+                <DotDotDot
+                  data={[
+                    {
+                      iconImage: <FaRegHeart />,
+                      text: '좋아요',
+                      clickHandler: () => handleLike(item.id),
+                      size: 20,
+                    },
+                    {
+                      iconImage: <RiMenuAddLine />,
+                      text: '플레이리스트 추가',
+                      clickHandler: openModal,
+                      size: 20,
+                    },
+                    {
+                      iconImage: <FaRegTrashCan />,
+                      text: '기록에서 삭제',
+                      clickHandler: () => {
+                        handleDelete(item.id);
+                      },
+                      size: 20,
+                    },
+                  ]}
+                />
               </div>
               {/* 모달 컴포넌트 */}
-              <Modal isOpen={isModalOpen} onClose={closeModal} />
+              <Modal isOpen={isModalOpen} onClose={closeModal} musicId={item.musicId} />
             </>
           ))
         )}

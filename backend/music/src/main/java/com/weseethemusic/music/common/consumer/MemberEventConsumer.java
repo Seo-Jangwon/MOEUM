@@ -1,7 +1,7 @@
 package com.weseethemusic.music.common.consumer;
 
 import com.weseethemusic.common.event.DeleteMemberEvent;
-import com.weseethemusic.music.service.PlaylistService;
+import com.weseethemusic.music.service.playlist.PlaylistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

@@ -15,5 +15,6 @@ public class GeneralAlbumDto {
     private String name;
     private String image;
     private List<ArtistDto> artists;
+    private Boolean isLike;
 
 }
