@@ -66,9 +66,13 @@ public class MusicServiceImpl implements MusicService {
         List<GeneralAlbumDto> result = new ArrayList<>();
         List<Album> albums = likeAlbumRepository.findAllByMemberId(memberId);
 
+        log.info("albums: {}", albums.size());
+
         for (Album album : albums) {
             List<com.weseethemusic.music.dto.search.ArtistDto> artistDtos = new ArrayList<>();
             List<Artist> artists = albumRepository.getAlbumArtists(album);
+
+            log.info("artists: {}", artists.size());
 
             for (Artist artist : artists) {
                 artistDtos.add(
@@ -79,6 +83,8 @@ public class MusicServiceImpl implements MusicService {
             result.add(GeneralAlbumDto.builder().id(album.getId()).name(album.getName())
                 .image(album.getImageName()).artists(artistDtos).build());
         }
+
+        log.info("result: {}", result.size());
 
         return result;
     }
