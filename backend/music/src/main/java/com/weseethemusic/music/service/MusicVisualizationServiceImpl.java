@@ -103,33 +103,32 @@ public class MusicVisualizationServiceImpl implements MusicVisualizationService 
         return result;
     }
 
-    // 가사 시각화 데이터 불러오기
+    // 가사 데이터 불러오기
     public LyricListDto getMusicLyrics(long musicId) {
-        ObjectMapper mapper = new ObjectMapper();
         LyricListDto result = new LyricListDto();
 
-        try {
-            InputStream inputStream = getClass().getClassLoader()
-                .getResourceAsStream("lyrics.json");
-
-            if (inputStream == null) {
-                throw new IllegalArgumentException("File not found: lyrics.json");
-            }
-
-            JsonNode root = mapper.readTree(inputStream);
-            JsonNode dataNode = root.path("data");
-
-            List<LyricDto> lyrics = new ArrayList<>();
-
-            for (JsonNode lyricNode : dataNode.path("lyrics")) {
-                LyricDto lyricDto = mapper.treeToValue(lyricNode, LyricDto.class);
-                lyrics.add(lyricDto);
-            }
-
-            result.setLyrics(lyrics);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (musicId != 713 && musicId != 2510 && musicId != 145) {
+            musicId = 713;
         }
+
+        String jsonString = s3Service.readJsonFile(musicId + "-lyrics.json");
+
+        Gson gson = new Gson();
+        JsonObject root = JsonParser.parseString(jsonString).getAsJsonObject();
+        JsonObject dataNode = root.getAsJsonObject("data");
+
+        List<LyricDto> lyrics = new ArrayList<>();
+        JsonArray lyricsArray = dataNode.getAsJsonArray("lyrics");
+
+        for (int i = 0; i < lyricsArray.size(); i++) {
+            LyricDto lyricDto = gson.fromJson(lyricsArray.get(i),
+                LyricDto.class);
+            ;
+
+            lyrics.add(lyricDto);
+        }
+
+        result.setLyrics(lyrics);
 
         return result;
     }
