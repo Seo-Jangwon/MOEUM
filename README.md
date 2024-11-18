@@ -160,70 +160,23 @@
 
 - 색채 심리학 기반의 개인화 색상 질문 리스트
   
-  - ### **1. 오늘의 기분을 가장 잘 표현하는 단어를 선택해 주세요.**
-    
-    - 차분함 / 활기참 / 슬픔 / 설렘 / 긴장
-    
-    **의도:** 사용자의 현재 감정 상태를 반영한 색상 추천 (예: 차분함 → 파란색 계열).
+  - ### **1. 즐거움**
   
-  - ### **2. 특정 환경이 주는 느낌 중 어느 쪽이 더 마음에 드시나요?**
-    
-    - 숲속의 고요함
-    - 해변의 자유로움
-    - 도시의 활기찬 에너지
-    - 산의 웅장함
-    
-    **의도:** 사용자가 선호하는 환경의 색상과 분위기(자연 계열 vs. 인공적인 컬러)를 반영합니다.
+  - ### **2. 슬픔**
   
-  - ### **3. 하루 중 가장 좋아하는 시간은 언제인가요?**
-    
-    - 새벽 / 아침 / 오후 / 저녁 / 밤
-    
-    **의도:** 각 시간대가 주는 색감을 반영합니다 (예: 새벽 → 부드러운 파스텔, 저녁 → 따뜻한 오렌지 톤).
+  - ### **3. 고요함**
   
-  - ### **4. 색상을 통해 어떤 느낌을 전달하고 싶으신가요?**
-    
-    - 안정감 / 활력 / 창의성 / 집중력 / 따뜻함
-    
-    **의도:** 사용자의 목표(예: 집중력 향상)와 관련된 색상 팔레트를 추천합니다 (예: 집중 → 녹색 계열).
+  - ### **4. 요란함**
   
-  - ### **5. 평소에 좋아하는 색상은 무엇인가요?**
-    
-    - 파랑 / 빨강 / 노랑 / 초록 / 보라 / 기타
-    
-    **의도:** 사용자가 선호하는 색상을 기반으로 비슷한 색조나 보색을 추천합니다.
+  - ### **5. 놀람**
   
-  - ### **6. 특정한 기분이 들 때 피하고 싶은 색상이 있나요?**
-    
-    - 예: 빨강(스트레스) / 검정(우울함) / 노랑(불안) / 없음
-    
-    **의도:** 부정적인 감정을 유발하는 색상을 배제하고 추천합니다.
+  - ### **6. 차분함**
   
-  - ### **7. 특정 음악을 들을 때 어떤 색상이 떠오르나요?**
-    
-    - 예: 잔잔한 클래식 → 파스텔 계열 / 신나는 팝 → 강렬한 네온 색상
-    
-    **의도:** 음악과 시각화의 색상을 일치시켜 감각적 경험을 향상합니다.
+  - ### **7. 분노**
   
-  - ### **8. 특정 색상이 떠오르는 추억이 있나요?**
-    
-    - 예: 어린 시절의 노란 장난감 / 여행에서 본 바다의 파란색
-    
-    **의도:** 감정적으로 연결된 색상을 반영하여 더욱 의미 있는 팔레트를 추천합니다.
+  - ### **8. 사랑**
   
-  - ### **9. 현재 앱을 사용할 때 가장 원하는 효과는 무엇인가요?**
-    
-    - 편안한 기분 / 에너지 충전 / 창의적 영감 / 집중력 향상 / 감성적 만족
-    
-    **의도:** 사용자의 목표에 부합하는 색상(예: 편안함 → 파란색 계열, 창의성 → 보라색)을 추천합니다.
-  
-  - ### **10. 시각적 자극이 강한 색상을 선호하시나요, 부드러운 색상을 선호하시나요?**
-    
-    - 강한 자극 (네온, 비비드) / 부드러운 자극 (파스텔, 모노톤) / 상관없음
-    
-    **의도:** 사용자가 선호하는 색조의 강도에 맞춘 팔레트를 제공합니다.
-  
-  이 10가지 질문들은 사용자가 색상과 감정의 관계를 심리학적으로 탐구할 수 있도록 유도하며, 색상 팔레트 설정 과정을 더욱 의미 있고 개인화된 경험으로 만듭니다.
+  이 8가지 질문들은 사용자가 색상과 감정의 관계를 심리학적으로 탐구할 수 있도록 유도하며, 색상 팔레트 설정 과정을 더욱 의미 있고 개인화된 경험으로 만듭니다.
 
 - 시각적 디스플레이를 만들 때 고려 요소들
   
@@ -263,29 +216,16 @@
   12. 감정 (Emotion):
       - Keras/TensorFlow (Python): 사용자 정의 LSTM 모델
       - OpenSmile (C++/Python): 감정 관련 특성 추출
-  
-  시각화 시 고려해야 할 점들:
-  
-  1. 단순성: 너무 복잡하지 않게 만들어 이해하기 쉽도록 함
-  2. 일관성: 같은 음악 요소는 항상 같은 방식으로 표현
-  3. 실시간 반응: 음악과 동기화되어 실시간으로 변화하도록 함
-  4. 개인화: 사용자가 원하는 대로 시각 효과를 조절할 수 있게 함
-  5. 문화적 맥락: 색상이나 형태의 문화적 의미를 고려
-  6. 화면 크기와 해상도: 다양한 기기에서 잘 보이도록 설계
-  7. 시각적 피로도: 장시간 보아도 눈의 피로가 적도록 설계
-  8. 청각장애 정도: 사용자의 청각장애 정도에 따라 조절 가능하게 함
-  9. 학습 곡선: 처음 사용하는 사람도 쉽게 이해할 수 있도록 직관적으로 설계
-  10. 예술성: 단순한 정보 전달을 넘어 심미적 만족을 줄 수 있도록 함
 
 ## 관련 논문 정리
 
 [p_nanayakkara_2013_2.pdf](https://prod-files-secure.s3.us-west-2.amazonaws.com/24674912-6290-4358-94bd-a0518db2c00b/09395d5e-eb4a-44f7-bc77-68059c0d9cd7/p_nanayakkara_2013_2.pdf)
 
-![논문1](C:\Users\SSAFY\Desktop\1119\misc\images\thesis1.png)
+![논문1](./thesis1.png)
 
-<img title="" src="file:///C:/Users/SSAFY/Desktop/1119/misc/images/thesis2.png" alt="논문2" width="372">
+![논문2](./thesis2.PNG)
 
-<img title="" src="file:///C:/Users/SSAFY/Desktop/1119/misc/images/thesis3.png" alt="논문3" width="309">
+![논문3](./thesis3.PNG)
 
 ## 목업
 
@@ -293,7 +233,7 @@
 
 ## ERD
 
-![erd](C:\Users\SSAFY\Desktop\1119\misc\images\erd.png)
+![erd](./erd.png)
 
 ## 요구사항 명세서 (유즈 케이스)
 
@@ -305,17 +245,17 @@
 
 ## 데이터 분석
 
-![music](C:\Users\SSAFY\Desktop\1119\misc\images\music.PNG)
+![music](./music.PNG)
 
-![beat](C:\Users\SSAFY\Desktop\1119\misc\images\beat.PNG)
+![beat](./beat.PNG)
 
-![beat_num](C:\Users\SSAFY\Desktop\1119\misc\images\beat_num.PNG)
+![beat_num](./beat_num.PNG)
 
-![mode](C:\Users\SSAFY\Desktop\1119\misc\images\mod.PNG)
+![mode](./mod.PNG)
 
-![pitich](C:\Users\SSAFY\Desktop\1119\misc\images\pitch.PNG)
+![pitich](./pitch.PNG)
 
-<img title="" src="file:///C:/Users/SSAFY/Desktop/1119/misc/images/shape.PNG" alt="shape" width="671">
+![shape](./shape.PNG)
 
 ## 팀 소개
 
@@ -333,20 +273,20 @@
 
 ### 메인 페이지
 
-![메인 페이지](C:\Users\SSAFY\Desktop\1119\misc\images\main.png)
+![메인 페이지](./main.png)
 
 ### Login 페이지
 
-![login](C:\Users\SSAFY\Desktop\1119\misc\images\login.png)
+![login](./login.png)
 
 ### Calibration 페이지
 
-![calibration](C:\Users\SSAFY\Desktop\1119\misc\images\calibration.png)
+![calibration](./calibration.png)
 
 ### Visualization
 
-![music_v](C:\Users\SSAFY\Desktop\1119\misc\images\visualization.PNG)
+![music_v](./visualization.PNG)
 
 ### Playlist 페이지
 
-![playlist](C:\Users\SSAFY\Desktop\1119\misc\images\playlist.png)
+![playlist](./playlist.png)
