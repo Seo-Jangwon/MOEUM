@@ -44,7 +44,7 @@ const RecordPage = () => {
       data: { id },
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -57,7 +57,7 @@ const RecordPage = () => {
       url: `recommendations/history/${id}`,
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setHistory((prevHistory) => prevHistory.filter((item) => item.id !== id));
       })
       .catch((err) => {
@@ -71,7 +71,6 @@ const RecordPage = () => {
     })
       .then((res) => {
         if (res.data.code === 200) {
-          console.log(res.data.data);
           setHistory(res.data.data);
           setIsExist(true);
         }

@@ -48,7 +48,7 @@ const AllNewList = ({ title }: ListPageProps) => {
       data: { id },
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -65,9 +65,8 @@ const AllNewList = ({ title }: ListPageProps) => {
       url: '/musics/latest',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
-          console.log(res.data.data);
           setNewList(res.data.data);
         }
       })

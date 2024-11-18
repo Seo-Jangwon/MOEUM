@@ -29,7 +29,7 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
       data: { id },
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -42,9 +42,8 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
       url: '/musics/popular/playlist',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
-          console.log(res.data.data);
           setPlayList(res.data.data);
         }
       })

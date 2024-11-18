@@ -55,7 +55,7 @@ const LikePlayList = () => {
       url: '/musics/playlist/like',
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code === 200) {
           setLikePlayList(res.data.data);
           if (res.data.data.length !== 0) {
@@ -91,7 +91,7 @@ const LikePlayList = () => {
             }}
           >
             <button key={index} css={s_div_button}>
-              <img src={item.image} alt="lala" style={{ width: '100%', height: '100%' }} />
+              <img src={item.image} alt="lala" style={{ width: '100%' }} />
             </button>
             <p css={s_playlist_p}>{item.name}</p>
             <div

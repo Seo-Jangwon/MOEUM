@@ -23,7 +23,7 @@ const DetailListItem = ({ id, index, name, duration }: DetailListItemProps) => {
       url: `/recommendations/history/${id}`,
     })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
       })
       .catch((err) => {
         console.log(err);
