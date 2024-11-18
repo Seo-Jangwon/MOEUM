@@ -11,7 +11,7 @@ export const s_videoContainer = css`
   align-items: center;
   justify-content: center;
   display: flex;
-  height: 100%;
+  width: 100%;
   aspect-ratio: 16/9;
   position: relative;
 `;
