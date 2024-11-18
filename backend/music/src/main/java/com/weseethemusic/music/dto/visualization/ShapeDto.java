@@ -18,6 +18,7 @@ public class ShapeDto {
     private int width;
     private String[] effect;
     private int[] direction = new int[2];
+    private String color;
     private int sides;
     private double angle;
 

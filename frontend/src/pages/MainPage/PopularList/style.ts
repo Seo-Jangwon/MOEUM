@@ -41,10 +41,12 @@ export const s_popular_box = (theme: Theme) => css`
   transition: 0.3s;
   :hover > div > img {
     filter: brightness(0.5);
+    transition: 0.3s;
   }
 
   :hover > div > div > img {
     filter: brightness(50%);
+    transition: 0.3s;
   }
   :hover > div > div > .icon {
     opacity: 1;

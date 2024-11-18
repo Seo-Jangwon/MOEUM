@@ -1,17 +1,14 @@
 import apiClient from '@/api/apiClient';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import CardDetailListItem from './CardDetailListItem/CardDetailListItem';
 import { s_container, s_titleContainer } from './style';
-export type SearchDetailVariants = 'music' | 'album' | 'artist' | 'playlist';
 
-interface SearchDetailPageProps {
-  variant: SearchDetailVariants;
-}
+const SearchCategories = new Set(['music', 'album', 'artist', 'playlist']);
 
 export interface MusicI {
   id: number;
-  title: string;
+  name: string;
   albumImage: string;
   artists: { id: number; name: string }[];
 }
@@ -22,7 +19,8 @@ export interface dataI {
   image: string;
 }
 
-const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
+const SearchMorePage = () => {
+  const { category } = useParams();
   const titleList = new Map<string, string>([
     ['music', '음악'],
     ['album', '앨범'],
@@ -35,7 +33,8 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
   const currentPage = useRef<number>(1);
   const observerDivRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const isDataLoading = useRef<boolean>(true);
+  const isDataLoading = useRef<boolean>(false);
+  const location = useLocation();
 
   const [musicDatas, setMusicDatas] = useState<MusicI[]>([]);
   function addMusicDatas(newDatas: MusicI[]) {
@@ -49,22 +48,23 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
   function getMusicDatas() {
     if (isDataLoading.current) return;
     isDataLoading.current = true;
+
     apiClient({
       method: 'GET',
-      url: `/musics/search/${variant}`,
+      url: `/musics/search/${category}`,
       params: { keyword: searchParams.get('keyword'), page: currentPage.current },
     })
       .then((response) => {
         if (response.data.code === 200) {
-          if (variant === 'music') {
+          if (category === 'music') {
             if (response.data.data.length > 0) {
-              addMusicDatas(response.data.data.musics);
+              addMusicDatas(response.data.data);
               currentPage.current = currentPage.current + 1;
               isDataLoading.current = false;
             }
           } else {
             if (response.data.data.length > 0) {
-              addNotMusicDatas(response.data.data[variant + 's']);
+              addNotMusicDatas(response.data.data);
               currentPage.current = currentPage.current + 1;
               isDataLoading.current = false;
             }
@@ -78,31 +78,43 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
         console.log(err);
       });
   }
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       () => {
-        if (!isLoading) getMusicDatas();
+        getMusicDatas();
       },
       { root: null, threshold: 1.0 },
     );
-    if (observerDivRef.current) {
-      observer.observe(observerDivRef.current);
-    }
-    const keyword = searchParams.get('keyword');
-    if (keyword === null || keyword === '') {
-      navigate('/');
-    } else {
-      getMusicDatas();
-    }
+    if (observerDivRef.current) observer.observe(observerDivRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
+
+  useEffect(() => {
+    const keyword = searchParams.get('keyword');
+    if (keyword === null || keyword === '') navigate('/');
+    else getMusicDatas();
+
+    return () => {
+      setMusicDatas([]);
+    };
+  }, [location.search]);
+
+  if (!category || !SearchCategories.has(category)) {
+    navigate('/notfound');
+    return;
+  }
   return (
     <>
-      <div css={s_titleContainer}>{titleList.get(variant)}</div>
+      <div css={s_titleContainer}>{titleList.get(category)}</div>
       {isLoading ? (
         <div>로딩중</div>
       ) : (
         <div css={s_container}>
-          {variant === 'music' ? (
+          {category === 'music' ? (
             <>
               {musicDatas.map((item, index) => {
                 return (
@@ -110,7 +122,7 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
                     category="music"
                     imageUrl={item.albumImage}
                     itemId={item.id}
-                    name={item.title}
+                    name={item.name}
                     artist={
                       <>
                         {item.artists.map((artist, idx) => (
@@ -118,7 +130,6 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
                             style={{ paddingRight: '5px' }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              console.log(artist.id);
                               navigate(`/artist/${artist.id}}`);
                             }}
                             key={idx}

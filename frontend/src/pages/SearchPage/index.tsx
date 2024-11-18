@@ -7,7 +7,7 @@ import { s_container } from './style';
 
 export interface MusicI {
   id: number;
-  title: string;
+  name: string;
   albumImage: string;
   artists: { id: number; name: string }[];
 }

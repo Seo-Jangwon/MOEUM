@@ -11,7 +11,6 @@ import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
 import { TbPlaylistAdd } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Data, LyricsI, musicDetailInfoI } from '..';
-import testSong from '../All I Want for Christmas Is You-2-M....mp3';
 import {
   s_canvas,
   s_container,
@@ -79,7 +78,8 @@ const MusicPlayer = ({
   const [currentTimeLine, setCurrentTImeLine] = useState<number>(0);
 
   function changeCurrentTimeLine() {
-    setCurrentTImeLine(audioSrcRef.current!.currentTime);
+    if (audioSrcRef.current) setCurrentTImeLine(audioSrcRef.current.currentTime);
+    else setCurrentTImeLine(0);
   }
 
   /** 재생중인 노래가 끝났을 때 어떻게 할지 설정하는 함수
@@ -576,9 +576,7 @@ const MusicPlayer = ({
       audioSrcRef.current.currentTime = 0;
       audioSrcRef.current.addEventListener('ended', toNextSong);
       audioSrcRef.current.addEventListener('timeupdate', changeCurrentTimeLine);
-
-      audioSrcRef.current.src = testSong;
-      // audioSrcRef.current.src = musicDetailInfo.audioPath;
+      audioSrcRef.current.src = `https://moeum.s3.ap-northeast-2.amazonaws.com/${currentMusicId}`;
       setAudioVolume(audioSrcRef.current.volume);
     }
     return () => {
