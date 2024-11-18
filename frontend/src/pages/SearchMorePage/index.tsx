@@ -1,13 +1,10 @@
 import apiClient from '@/api/apiClient';
 import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import CardDetailListItem from './CardDetailListItem/CardDetailListItem';
 import { s_container, s_titleContainer } from './style';
-export type SearchDetailVariants = 'music' | 'album' | 'artist' | 'playlist';
 
-interface SearchDetailPageProps {
-  variant: SearchDetailVariants;
-}
+const SearchCategories = new Set(['music', 'album', 'artist', 'playlist']);
 
 export interface MusicI {
   id: number;
@@ -22,7 +19,8 @@ export interface dataI {
   image: string;
 }
 
-const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
+const SearchMorePage = () => {
+  const { category } = useParams();
   const titleList = new Map<string, string>([
     ['music', '음악'],
     ['album', '앨범'],
@@ -50,14 +48,15 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
   function getMusicDatas() {
     if (isDataLoading.current) return;
     isDataLoading.current = true;
+
     apiClient({
       method: 'GET',
-      url: `/musics/search/${variant}`,
+      url: `/musics/search/${category}`,
       params: { keyword: searchParams.get('keyword'), page: currentPage.current },
     })
       .then((response) => {
         if (response.data.code === 200) {
-          if (variant === 'music') {
+          if (category === 'music') {
             if (response.data.data.length > 0) {
               addMusicDatas(response.data.data);
               currentPage.current = currentPage.current + 1;
@@ -103,14 +102,19 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
       setMusicDatas([]);
     };
   }, [location.search]);
+
+  if (!category || !SearchCategories.has(category)) {
+    navigate('/notfound');
+    return;
+  }
   return (
     <>
-      <div css={s_titleContainer}>{titleList.get(variant)}</div>
+      <div css={s_titleContainer}>{titleList.get(category)}</div>
       {isLoading ? (
         <div>로딩중</div>
       ) : (
         <div css={s_container}>
-          {variant === 'music' ? (
+          {category === 'music' ? (
             <>
               {musicDatas.map((item, index) => {
                 return (
@@ -118,7 +122,7 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
                     category="music"
                     imageUrl={item.albumImage}
                     itemId={item.id}
-                    name={item.title}
+                    name={item.name}
                     artist={
                       <>
                         {item.artists.map((artist, idx) => (

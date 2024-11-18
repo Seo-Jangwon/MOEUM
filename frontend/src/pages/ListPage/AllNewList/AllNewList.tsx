@@ -1,7 +1,12 @@
 import apiClient from '@/api/apiClient';
+import DotDotDot from '@/components/DotDotDot/DotDotDot';
 import { s_container } from '@/pages/MainPage/style';
+import Modal from '@/pages/RecordPage/Modal/Modal';
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
+import { FaRegHeart } from 'react-icons/fa6';
+import { PiPlaylist } from 'react-icons/pi';
+import { useNavigate } from 'react-router-dom';
 
 interface ListPageProps {
   title: string;
@@ -21,6 +26,38 @@ interface Music {
 
 const AllNewList = ({ title }: ListPageProps) => {
   const [newList, setNewList] = useState<Music[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [musicId, setMusicId] = useState<number>(0)
+  const navigate = useNavigate()
+
+
+  const openModal = (id: number) => {
+    setIsModalOpen(true);
+    setMusicId(id)
+  };
+  
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+  const handleLike = (id: number) => {
+    apiClient({
+      method: 'POST',
+      url: '/musics/music/like',
+      data: { id },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handlePlayClick = (index: number) => {
+    navigate(`/music?id=${index}`);
+  };
 
   useEffect(() => {
     apiClient({
@@ -72,7 +109,6 @@ const AllNewList = ({ title }: ListPageProps) => {
                   background: transparent;
                   border: 0;
                   position: relative;
-                  overflow: hidden;
                   :hover::before {
                     content: '';
                     position: absolute;
@@ -89,6 +125,9 @@ const AllNewList = ({ title }: ListPageProps) => {
                     transition: opacity 0.3s;
                   }
                 `}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handlePlayClick(item.id)}}
               >
                 <img
                   src={item.image}
@@ -96,9 +135,49 @@ const AllNewList = ({ title }: ListPageProps) => {
                   css={css`
                     width: 100%;
                     border-radius: 20px;
-                    display: block;
                   `}
                 />
+                <div
+                onClick={(e) => {
+                  e.stopPropagation()
+                }}
+              css={css`
+                position: absolute;
+                z-index: 122;
+                right: 10px;
+                bottom: 20px;
+                :hover {
+                  background-color: #888;
+                  border-radius: 100%;
+                }
+                @media (max-width: 768px) {
+                  right: 5px;
+                  bottom: 50px;
+                }
+                
+              `}
+            >
+              <DotDotDot
+                data={[
+                  {
+                    iconImage: <FaRegHeart />,
+                    text: '좋아요',
+                    clickHandler: () => {
+                      handleLike(item.id); 
+                    },
+                    size: 20,
+                  },
+                  {
+                    iconImage: <PiPlaylist />,
+                    text: '플레이리스트 추가',
+                    clickHandler: () => {
+                      openModal(item.id);
+                    },
+                    size: 20,
+                  },
+                ]}
+              />
+            </div>
               </button>
               <p
                 css={css`
@@ -114,6 +193,8 @@ const AllNewList = ({ title }: ListPageProps) => {
           ))}
         </div>
       </div>
+      <Modal isOpen={isModalOpen} onClose={closeModal} musicId={musicId} />
+
     </div>
   );
 };

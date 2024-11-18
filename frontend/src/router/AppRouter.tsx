@@ -1,9 +1,8 @@
 import AppLayout from '@/layouts/AppLayout';
 import PrivateLayout from '@/layouts/PrivateLayout';
 import MusicPlayPage from '@/pages/MusicPlayPage';
-import SparkleEffect from '@/pages/test/test';
 import { lazy } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 const DetailPage = lazy(() => import('@/pages/DetailPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const SettingPage = lazy(() => import('@/pages/SettingPage'));
@@ -24,17 +23,20 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />,
-    errorElement: <ErrorPage />,
+    errorElement: <Navigate to="/notfound" />, // Layout이 적용된 자식 요소로 navigation
     children: [
       {
         index: true,
         element: <MainPage />,
       },
       {
+        path: 'notfound',
+        element: <ErrorPage />,
+      },
+      {
         path: 'welcome',
         element: <WelcomePage />,
       },
-      { path: 'test', element: <SparkleEffect /> },
       {
         path: 'signin',
         element: <SignInPage />,
@@ -64,6 +66,16 @@ const router = createBrowserRouter([
         element: <ListPage />,
       },
       {
+        path: 'search',
+        children: [
+          { index: true, element: <SearchPage /> },
+          {
+            path: ':category',
+            element: <SearchMorePage />,
+          },
+        ],
+      },
+      {
         element: <PrivateLayout />,
         children: [
           {
@@ -89,28 +101,6 @@ const router = createBrowserRouter([
           {
             path: 'profile',
             element: <ProfilePage />,
-          },
-        ],
-      },
-      {
-        path: 'search',
-        children: [
-          { index: true, element: <SearchPage /> },
-          {
-            path: 'music',
-            element: <SearchMorePage variant="music" />,
-          },
-          {
-            path: 'album',
-            element: <SearchMorePage variant="album" />,
-          },
-          {
-            path: 'artist',
-            element: <SearchMorePage variant="artist" />,
-          },
-          {
-            path: 'playlist',
-            element: <SearchMorePage variant="playlist" />,
           },
         ],
       },

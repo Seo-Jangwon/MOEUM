@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MusicVisualizationDto {
 
+    private List<BackgroundDto> backgrounds;
     private List<TimeDurationDto> vibrations;
     private List<ShapeDto> notes;
 
