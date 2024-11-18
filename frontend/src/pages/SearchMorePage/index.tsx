@@ -59,13 +59,13 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
         if (response.data.code === 200) {
           if (variant === 'music') {
             if (response.data.data.length > 0) {
-              addMusicDatas(response.data.data.musics);
+              addMusicDatas(response.data.data);
               currentPage.current = currentPage.current + 1;
               isDataLoading.current = false;
             }
           } else {
             if (response.data.data.length > 0) {
-              addNotMusicDatas(response.data.data[variant + 's']);
+              addNotMusicDatas(response.data.data);
               currentPage.current = currentPage.current + 1;
               isDataLoading.current = false;
             }
@@ -81,21 +81,24 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
   }
 
   useEffect(() => {
-    const keyword = searchParams.get('keyword');
-    if (keyword === null || keyword === '') {
-      navigate('/');
-    } else {
-      getMusicDatas();
-    }
     const observer = new IntersectionObserver(
       () => {
-        if (!isLoading) getMusicDatas();
+        getMusicDatas();
       },
       { root: null, threshold: 1.0 },
     );
-    if (observerDivRef.current) {
-      observer.observe(observerDivRef.current);
-    }
+    if (observerDivRef.current) observer.observe(observerDivRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const keyword = searchParams.get('keyword');
+    if (keyword === null || keyword === '') navigate('/');
+    else getMusicDatas();
+
     return () => {
       setMusicDatas([]);
     };
@@ -123,7 +126,6 @@ const SearchMorePage = ({ variant }: SearchDetailPageProps) => {
                             style={{ paddingRight: '5px' }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              console.log(artist.id);
                               navigate(`/artist/${artist.id}}`);
                             }}
                             key={idx}

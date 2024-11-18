@@ -11,7 +11,6 @@ import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
 import { TbPlaylistAdd } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Data, LyricsI, musicDetailInfoI } from '..';
-import testSong from '../All I Want for Christmas Is You-2-M....mp3';
 import {
   s_canvas,
   s_container,
@@ -577,9 +576,7 @@ const MusicPlayer = ({
       audioSrcRef.current.currentTime = 0;
       audioSrcRef.current.addEventListener('ended', toNextSong);
       audioSrcRef.current.addEventListener('timeupdate', changeCurrentTimeLine);
-
-      audioSrcRef.current.src = testSong;
-      // audioSrcRef.current.src = musicDetailInfo.audioPath;
+      audioSrcRef.current.src = `https://moeum.s3.ap-northeast-2.amazonaws.com/${currentMusicId}`;
       setAudioVolume(audioSrcRef.current.volume);
     }
     return () => {
