@@ -2,12 +2,11 @@ import lylicsVisualizationButton from '@/assets/lylicsVisualizationButton.svg';
 import Modal from '@/pages/RecordPage/Modal/Modal';
 import useSettingStore from '@/stores/settingStore';
 import { css } from '@emotion/react';
-import { Bodies, Engine, Events, Render, Runner, Vector, World } from 'matter-js';
+import { Bodies, Engine, Events, IEventCollision, Render, Runner, Vector, World } from 'matter-js';
 import { useEffect, useRef, useState } from 'react';
-import { BsPip } from 'react-icons/bs';
 import { FaCirclePlay, FaExpand, FaPause } from 'react-icons/fa6';
 import { LiaBackwardSolid, LiaForwardSolid } from 'react-icons/lia';
-import { MdOutlineSync } from 'react-icons/md';
+import { MdOutlineLyrics, MdOutlineSync } from 'react-icons/md';
 import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
 import { TbPlaylistAdd } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -28,22 +27,32 @@ import {
 } from './MusicPlayer.style';
 import MyHeart from './MyHeart';
 
+interface CustomBody extends Matter.Body {
+  isGlow: boolean; // 반짝임 여부
+  isPing: boolean;
+  glowFlag?: boolean;
+  pingFlag?: number;
+}
+
 const MusicPlayer = ({
   currentMusicId,
   nextMusicId,
   musicDetailInfo,
   musicAnalyzedData,
   musicLyricsData,
+  playListId = undefined,
+  playListIdx = undefined,
 }: {
   currentMusicId: number;
   nextMusicId: number;
   musicDetailInfo: musicDetailInfoI;
   musicAnalyzedData: Data;
   musicLyricsData: LyricsI;
+  playListId?: number | undefined;
+  playListIdx?: number | undefined;
 }) => {
   const divRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerBarRef = useRef<HTMLDivElement | null>(null);
   const audioSrcRef = useRef<HTMLAudioElement | null>(null);
   const prevTimeRef = useRef<number>(0);
@@ -51,6 +60,8 @@ const MusicPlayer = ({
   const engineRef = useRef<Engine | null>(null);
   const renderRef = useRef<Render | null>(null);
   const runnerRef = useRef<Runner | null>(null);
+
+  const location = useLocation();
 
   const animationRef = useRef<number>();
 
@@ -67,6 +78,11 @@ const MusicPlayer = ({
   const [isLyricsVisualized, setIsLyricsVisualized] = useState<boolean>(true);
   const [currentTimeLine, setCurrentTImeLine] = useState<number>(0);
 
+  function changeCurrentTimeLine() {
+    if (audioSrcRef.current) setCurrentTImeLine(audioSrcRef.current.currentTime);
+    else setCurrentTImeLine(0);
+  }
+
   /** 재생중인 노래가 끝났을 때 어떻게 할지 설정하는 함수
    * idx -> 0 그냥 끝남
    * idx -> 1 반복 재생
@@ -75,7 +91,10 @@ const MusicPlayer = ({
   function changeEndEventIdx(idx: number) {
     endEventIdx.current = idx;
   }
-  const data = useRef<Data['notes']>();
+  const noteDatas = useRef<Data['notes']>();
+  const backgroundDatas = useRef<Data['backgrounds']>();
+  const vibrationsDatas = useRef<Data['vibrations']>();
+
   const lyricsData = useRef<LyricsI['lyrics']>();
 
   /** 영상의 재생 상태 변경하는 함수 */
@@ -93,28 +112,53 @@ const MusicPlayer = ({
   }
 
   const navigate = useNavigate();
-  const location = useLocation();
   const [playerBarVisible, setPlayerBarVisible] = useState<boolean>(false);
   const timeoutId = useRef<NodeJS.Timeout>();
 
   /** 백그라운드로 이동했다가 돌아왔을 떄 실행하는 함수. 딜레이로 인해 갑자기 생성되는 물체들 지움 */
   function onVisibiliyChanged() {
     if (document.visibilityState === 'visible') {
-      if (data.current && audioSrcRef.current) {
+      if (noteDatas.current && audioSrcRef.current) {
         deleteAllShape();
       }
+    }
+  }
+  function extractHSLAValues(hsla: string): [number, number, number, number] {
+    const tempStr1 = hsla.slice(5, -1);
+    const value = tempStr1.split(',');
+    // 배열 형태로 반환
+    return [
+      parseFloat(value[0]), // Hue
+      parseFloat(value[1]), // Saturation
+      parseFloat(value[2]), // Lightness
+      parseFloat(value[3]), // Alpha (opacity)
+    ];
+  }
+  // 물체의 strokeStyle에 접근하여 투명도만 낮추는 함수
+  function adjustStrokeOpacityAndDelete(body: Matter.Body, engine: Matter.Engine): void {
+    const currentStrokeStyle = body.render.strokeStyle; // 현재 strokeStyle 값
+    if (currentStrokeStyle) {
+      const [h, s, l, a] = extractHSLAValues(currentStrokeStyle);
+
+      if (a < 0.05) {
+        World.remove(engine.world, body);
+      }
+      const newStrokeStyle = `hsla(${h}, ${s}%, ${l}%, ${a - 0.02})`;
+      body.render.strokeStyle = newStrokeStyle; // 새로운 strokeStyle을 적용
+      body.circleRadius! += canvasRef.current!.clientWidth / 150;
     }
   }
 
   /** 애니메이션 실행 함수
    */
   function createObjectsAtTimes() {
-    if (audioSrcRef.current === null && lyricsData.current === null) return;
+    if (audioSrcRef.current === null) return;
+
     if (Math.abs(audioSrcRef.current!.currentTime - prevTimeRef.current) > 1) {
       audioTimeChanged();
       return;
     }
-    if (data.current && timeIdx.current < data.current.length - 1) {
+    if (noteDatas.current && timeIdx.current < noteDatas.current.length - 1) {
       if (audioSrcRef.current) {
         prevTimeRef.current = audioSrcRef.current.currentTime;
         if (
@@ -124,33 +168,91 @@ const MusicPlayer = ({
           setCurrentLyrics(lyricsData.current![lyricsTimeIdx.current].lyric);
           lyricsTimeIdx.current++;
         }
-        setCurrentTImeLine(audioSrcRef.current.currentTime);
-        engineRef.current?.world.bodies.forEach((item) => {});
+        engineRef.current?.world.bodies.forEach((item) => {
+          if (item.label === 'wave') {
+            adjustStrokeOpacityAndDelete(item, engineRef.current!);
+          } else {
+            const obj = item as CustomBody;
+            if (obj.isGlow) {
+              // 반짝이는 효과
+              const currentColor = obj.render.fillStyle;
+              const values = extractHSLAValues(currentColor!);
+              const [h, s, l, a] = values;
+              if (s < 40) obj.glowFlag = false;
+              if (s > 99) obj.glowFlag = true;
+              if (obj.glowFlag) {
+                const newColor = `hsla(${h}, ${s - 2}%, ${l}%, ${a})`;
+                obj.render.fillStyle = newColor;
+              } else {
+                const newColor = `hsla(${h}, ${s + 2}%, ${l}%, ${a})`;
+                obj.render.fillStyle = newColor;
+              }
+            }
+            if (obj.isPing) {
+              // 파장이 퍼져나가는 효과
+              if (obj.pingFlag === 0) {
+                // pingFlag가 0일 경우 파장 생성
+                const x = obj.position.x;
+                const y = obj.position.y;
+                const wave = Bodies.circle(x, y, 10, {
+                  label: 'wave',
+                  render: {
+                    strokeStyle: obj.render.fillStyle,
+                    lineWidth: 5,
+                    fillStyle: `rgba(255, 0, 255, 0)`,
+                  },
+                  isSensor: true, // 물리적 상호작용 없이 설정
+                  frictionAir: 0,
+                  collisionFilter: { group: -1 },
+                });
+
+                // 파장 생성 후 물리 엔진에 추가
+                World.add(engineRef.current!.world, wave);
+
+                // pingFlag를 1로 리셋
+                obj.pingFlag = 1;
+              } else {
+                // pingFlag가 0이 아닐 경우 0.05씩 감소
+                obj.pingFlag! -= 0.2;
+              }
+            }
+          }
+        });
         if (
-          audioSrcRef.current?.currentTime >= data.current[timeIdx.current].time &&
+          audioSrcRef.current?.currentTime >= noteDatas.current[timeIdx.current].time &&
           engineRef.current !== null &&
           divRef.current
         ) {
           const x = canvasRef.current!.clientWidth / 2;
-          const y = (canvasRef.current!.clientHeight * data.current[timeIdx.current].y) / 100;
+          const y = (canvasRef.current!.clientHeight * noteDatas.current[timeIdx.current].y) / 100;
+          renderRef.current!.options.background =
+            backgroundDatas.current![noteDatas.current[timeIdx.current].section - 1].color;
           const polygon = Bodies.polygon(
             x / 2,
             y,
-            data.current[timeIdx.current].sides,
-            data.current[timeIdx.current].width,
+            noteDatas.current[timeIdx.current].sides,
+            noteDatas.current[timeIdx.current].width,
+
             {
-              angle: data.current[timeIdx.current].angle,
+              render: { fillStyle: noteDatas.current[timeIdx.current].color },
+              angle: noteDatas.current[timeIdx.current].angle,
               mass: 100,
               label: '',
               force: Vector.create(
-                (divRef.current.clientWidth / 500) * data.current[timeIdx.current].direction[0],
-                (divRef.current.clientHeight / 300) * data.current[timeIdx.current].direction[1] * -1,
+                (divRef.current.clientWidth / 500) * noteDatas.current[timeIdx.current].direction[0],
+                (divRef.current.clientHeight / 300) * noteDatas.current[timeIdx.current].direction[1] * -1,
               ),
               frictionAir: 0,
               collisionFilter: { group: -1 },
               position: { x, y },
             },
-          );
+          ) as CustomBody;
+
+          polygon.isGlow = polygon.glowFlag = noteDatas.current[timeIdx.current].effect.some((str) => str === 'GLOW');
+          if (noteDatas.current[timeIdx.current].effect.some((str) => str === 'PING')) {
+            polygon.isPing = true;
+            polygon.pingFlag = 0;
+          }
 
           World.add(engineRef.current.world, polygon);
           timeIdx.current += 1;
@@ -169,7 +271,6 @@ const MusicPlayer = ({
    */
   function deleteAllShape() {
     if (engineRef.current) {
-      console.log('asdf');
       const bodies = [...engineRef.current.world.bodies];
       bodies.forEach((body) => {
         if (body.label !== 'wall') {
@@ -199,17 +300,33 @@ const MusicPlayer = ({
     }
   }
 
+  /**왼쪽의 벽과 충돌 시 사라지게 하는 이벤트 함수 */
+  function handleObjectCollide(event: IEventCollision<Engine>) {
+    event.pairs.forEach((pair) => {
+      const { bodyA, bodyB } = pair;
+      if (bodyA.label === 'wall' && bodyB.label !== 'wall') {
+        if (engineRef.current) {
+          World.remove(engineRef.current?.world, bodyB);
+        }
+      } else if (bodyB.label === 'wall' && bodyA.label !== 'wall') {
+        if (engineRef.current) {
+          World.remove(engineRef.current?.world, bodyA);
+        }
+      }
+    });
+  }
+
   /** 오디오의 현재 재생 시간을 사용자가 조정 했을 경우 */
   function audioTimeChanged() {
-    if (data.current && audioSrcRef.current) {
+    if (noteDatas.current && audioSrcRef.current) {
       deleteAllShape();
       prevTimeRef.current = audioSrcRef.current.currentTime;
-      if (audioSrcRef.current.currentTime > data.current[timeIdx.current].time) {
+      if (audioSrcRef.current.currentTime > noteDatas.current[timeIdx.current].time) {
         // 앞으로 이동했을 때
 
         while (
-          timeIdx.current < data.current.length - 2 &&
-          data.current[timeIdx.current].time < audioSrcRef.current.currentTime
+          timeIdx.current < noteDatas.current.length - 2 &&
+          noteDatas.current[timeIdx.current].time < audioSrcRef.current.currentTime
         ) {
           timeIdx.current++;
         }
@@ -221,7 +338,7 @@ const MusicPlayer = ({
         }
       } else {
         // 뒤로 이동했을 때
-        while (timeIdx.current > 0 && data.current[timeIdx.current].time > audioSrcRef.current.currentTime) {
+        while (timeIdx.current > 0 && noteDatas.current[timeIdx.current].time > audioSrcRef.current.currentTime) {
           timeIdx.current--;
         }
         while (
@@ -286,31 +403,6 @@ const MusicPlayer = ({
         setPlayerBarVisible(false);
       }, 3000); // 3초 후 playerBar 숨김
     };
-    data.current = musicAnalyzedData.notes;
-
-    lyricsData.current = musicLyricsData.lyrics;
-
-    if (audioSrcRef.current) {
-      audioSrcRef.current.addEventListener('ended', () => {
-        if (endEventIdx.current === 0) {
-          if (animationRef.current) cancelAnimationFrame(animationRef.current);
-          timeIdx.current = 0;
-          setIsPaused(true);
-        } else if (endEventIdx.current === 1) {
-          if (audioSrcRef.current) {
-            timeIdx.current = 0;
-            audioSrcRef.current.currentTime = 0;
-            audioSrcRef.current?.play();
-          }
-        } else if (endEventIdx.current === 2) {
-          navigate(`/music?id=${nextMusicId}`);
-        }
-      });
-
-      audioSrcRef.current.src = testSong;
-      // audioSrcRef.current.src = musicDetailInfo.audioPath;
-      setAudioVolume(audioSrcRef.current.volume);
-    }
 
     const canvas = canvasRef.current;
 
@@ -320,19 +412,59 @@ const MusicPlayer = ({
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    const stream = canvas.captureStream(60);
-    const video = videoRef.current;
-    if (video) {
-      video.srcObject = stream;
-    }
-
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = (window.innerWidth / 16) * 9;
+
+      if (engineRef.current) {
+        const bodies = [...engineRef.current.world.bodies];
+        bodies.forEach((body) => {
+          World.remove(engineRef.current!.world, body);
+        });
+      }
+
+      const windowWidth = window.screen.width;
+      const windowHeight = window.screen.height;
+
+      const wallLeft = Bodies.rectangle(-250, windowHeight / 2, 5, windowHeight + 1000, {
+        label: 'wall',
+        isStatic: true,
+        render: {
+          fillStyle: '#121212',
+        },
+      });
+
+      const wallRight = Bodies.rectangle(windowWidth + 500, windowHeight / 2, 5, windowHeight + 1000, {
+        label: 'wall',
+        isStatic: true,
+        render: {
+          fillStyle: '#121212',
+        },
+      });
+
+      const wallTop = Bodies.rectangle(windowWidth / 2, -250, windowWidth + 1000, 5, {
+        label: 'wall',
+        isStatic: true,
+        render: {
+          fillStyle: '#121212',
+        },
+      });
+
+      const wallBottom = Bodies.rectangle(windowWidth / 2, windowHeight + 250, windowWidth + 1000, 10, {
+        label: 'wall',
+        isStatic: true,
+        render: {
+          fillStyle: '#121212',
+        },
+      });
+      World.add(engineRef.current!.world, wallLeft);
+
+      World.add(engineRef.current!.world, wallRight);
+      World.add(engineRef.current!.world, wallTop);
+      World.add(engineRef.current!.world, wallBottom);
     };
 
     window.addEventListener('resize', resize);
-    resize();
 
     engineRef.current = Engine.create();
     renderRef.current = Render.create({
@@ -342,7 +474,7 @@ const MusicPlayer = ({
 
       options: {
         wireframes: false,
-        background: '#ffadff',
+        background: '#000',
       },
     });
 
@@ -366,7 +498,7 @@ const MusicPlayer = ({
       },
     });
 
-    const wallRight = Bodies.rectangle(windowWidth + 250, windowHeight / 2, 5, windowHeight + 1000, {
+    const wallRight = Bodies.rectangle(windowWidth + 500, windowHeight / 2, 5, windowHeight + 1000, {
       label: 'wall',
       isStatic: true,
       render: {
@@ -394,18 +526,7 @@ const MusicPlayer = ({
     World.add(engineRef.current.world, wallTop);
     World.add(engineRef.current.world, wallBottom);
 
-    /**왼쪽의 벽과 충돌 시 사라지게 하는 이벤트 함수 */
-    Events.on(engineRef.current, 'collisionStart', (event) => {
-      console.log(engineRef.current?.world.bodies);
-      event.pairs.forEach((pair) => {
-        const { bodyA, bodyB } = pair;
-        if (bodyA.label === 'wall' && bodyB.label !== 'wall') {
-          if (engineRef.current) World.remove(engineRef.current?.world, bodyB);
-        } else if (bodyB.label === 'wall' && bodyA.label !== 'wall') {
-          if (engineRef.current) World.remove(engineRef.current?.world, bodyA);
-        }
-      });
-    });
+    Events.on(engineRef.current, 'collisionStart', handleObjectCollide);
 
     document.addEventListener('visibilitychange', onVisibiliyChanged);
     document.addEventListener('keydown', MusicPlayPageKeyboardEvent);
@@ -428,6 +549,45 @@ const MusicPlayer = ({
     };
   }, []);
 
+  function toNextSong() {
+    if (endEventIdx.current === 0) {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      timeIdx.current = 0;
+      setIsPaused(true);
+    } else if (endEventIdx.current === 1) {
+      if (audioSrcRef.current) {
+        timeIdx.current = 0;
+        audioSrcRef.current.currentTime = 0;
+        audioSrcRef.current?.play();
+      }
+    } else if (endEventIdx.current === 2) {
+      if (playListId !== undefined) navigate(`/music?id=${nextMusicId}&list=${playListId}&idx=${playListIdx}`);
+      else navigate(`/music?id=${nextMusicId}`);
+    }
+  }
+
+  useEffect(() => {
+    noteDatas.current = musicAnalyzedData.notes;
+    backgroundDatas.current = musicAnalyzedData.backgrounds;
+    vibrationsDatas.current = musicAnalyzedData.vibrations;
+
+    lyricsData.current = musicLyricsData.lyrics;
+
+    if (audioSrcRef.current) {
+      audioSrcRef.current.currentTime = 0;
+      audioSrcRef.current.addEventListener('ended', toNextSong);
+      audioSrcRef.current.addEventListener('timeupdate', changeCurrentTimeLine);
+
+      audioSrcRef.current.src = testSong;
+      // audioSrcRef.current.src = musicDetailInfo.audioPath;
+      setAudioVolume(audioSrcRef.current.volume);
+    }
+    return () => {
+      audioSrcRef.current?.removeEventListener('ended', toNextSong);
+      audioSrcRef.current?.removeEventListener('timeupdate', changeCurrentTimeLine);
+    };
+  }, [location.search]);
+
   /** 영상의 재생 상태 변경 시 호출됨. 애니메이션 멈추거나 시작 */
   useEffect(() => {
     if (engineRef.current === null || renderRef.current === null) return;
@@ -441,24 +601,6 @@ const MusicPlayer = ({
       }
     };
   }, [isPaused]);
-
-  /** pip 버그 픽스 필요 */
-  const handlePip = () => {
-    const video = videoRef.current;
-    if (video) {
-      video.play();
-      video.addEventListener('leavepictureinpicture', onExitPip, false);
-      video.requestPictureInPicture();
-      video.style.display = 'none';
-    }
-  };
-
-  function onExitPip() {
-    console.log(location.pathname);
-    if (videoRef.current) videoRef.current.removeEventListener('enterpictureinpicture', onExitPip);
-    navigate(location.pathname);
-  }
-
   return (
     <>
       <div css={s_container}>
@@ -467,16 +609,16 @@ const MusicPlayer = ({
           onClose={() => {
             setIsModalOpen(false);
           }}
-          id={currentMusicId}
+          musicId={currentMusicId}
         />
         <audio ref={audioSrcRef} />
         <div css={s_videoContainer} ref={divRef}>
           <canvas css={s_canvas} ref={canvasRef} onClick={changeVideoState} />
           <div ref={playerBarRef} css={s_playerBarContainer}>
-            <div css={s_lyrics}>{isLyricsVisualized ? currentLyrics : 'test'}</div>
+            <div css={s_lyrics}>{isLyricsVisualized ? currentLyrics : ''}</div>
             <div
               css={css`
-                display: ${playerBarVisible ? 'flex' : 'none'};
+                display: ${playerBarVisible ? 'flex' : ''};
                 ${s_palyerBar}
               `}
             >
@@ -503,11 +645,11 @@ const MusicPlayer = ({
               </div>
               <div css={s_playerBarController}>
                 <div>
-                  <MyHeart isLike={true} category={'music'} id={currentMusicId} size={24} />
-                  <TbPlaylistAdd onClick={() => setIsModalOpen(true)} />
+                  <MyHeart isLike={true} category={'music'} id={currentMusicId} size={18} />
+                  <TbPlaylistAdd onClick={() => setIsModalOpen(true)} css={s_iconButton} />
                 </div>
                 <div>
-                  <RxShuffle onClick={() => changeEndEventIdx(2)} />
+                  <RxShuffle onClick={() => changeEndEventIdx(2)} css={s_iconButton} />
                   <LiaBackwardSolid
                     onClick={() => {
                       if (audioSrcRef.current) {
@@ -515,15 +657,21 @@ const MusicPlayer = ({
                         audioSrcRef.current.currentTime = 0;
                       }
                     }}
+                    css={s_iconButton}
                   />
-                  {!isPaused ? <FaPause onClick={changeVideoState} /> : <FaCirclePlay onClick={changeVideoState} />}
-                  <LiaForwardSolid onClick={() => navigate(`/music?id=${nextMusicId}`)} />
-                  <MdOutlineSync onClick={() => changeEndEventIdx(1)} />
+                  {!isPaused ? (
+                    <FaPause onClick={changeVideoState} css={s_iconButton} />
+                  ) : (
+                    <FaCirclePlay onClick={changeVideoState} css={s_iconButton} />
+                  )}
+                  <LiaForwardSolid onClick={() => navigate(`/music?id=${nextMusicId}`)} css={s_iconButton} />
+                  <MdOutlineSync onClick={() => changeEndEventIdx(1)} css={s_iconButton} />
                 </div>
                 <div>
-                  <RxSpeakerLoud onClick={muteUnMute} />
+                  <RxSpeakerLoud onClick={muteUnMute} css={s_iconButton} />
                   <input
                     css={s_playerBarRange(audioVolume * 100)}
+                    style={{ width: '50px' }}
                     type="range"
                     max={1}
                     value={audioVolume}
@@ -543,15 +691,14 @@ const MusicPlayer = ({
                     css={s_iconButton}
                     onClick={toggleVisualization}
                   />
-                  <button
+                  <MdOutlineLyrics
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsLyricsVisualized((prev) => !prev);
                     }}
-                  >
-                    Sub
-                  </button>
-                  <BsPip onClick={handlePip} css={s_iconButton} height={'25px'} width={'25px'} />
+                    css={s_iconButton}
+                  />
+
                   <FaExpand onClick={handleFullScreen} css={s_iconButton} />
                 </div>
               </div>
@@ -567,7 +714,7 @@ const MusicPlayer = ({
                   key={index}
                   css={css`
                     :hover {
-                      text-decoration: underline;
+                      text-decoration: u<MdOutlineLyrics / >nderline;
                     }
                   `}
                   onClick={() => navigate(`/artist/${item.id}`)}
@@ -580,7 +727,6 @@ const MusicPlayer = ({
           <div>{musicDetailInfo.releaseDate}</div>
         </div>
       </div>
-      <video ref={videoRef} style={{ display: 'none' }} />
     </>
   );
 };

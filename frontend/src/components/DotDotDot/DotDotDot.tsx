@@ -7,7 +7,7 @@ import { s_icon } from './style';
 interface DropDownItems {
   iconImage: ReactNode;
   text: string;
-  clickHandler: () => void;
+  clickHandler: (e: React.MouseEvent<HTMLButtonElement>) => void;
   size: number;
 }
 

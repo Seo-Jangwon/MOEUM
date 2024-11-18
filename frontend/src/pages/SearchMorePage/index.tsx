@@ -1,6 +1,6 @@
 import apiClient from '@/api/apiClient';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import CardDetailListItem from './CardDetailListItem/CardDetailListItem';
 import { s_container, s_titleContainer } from './style';
 
@@ -8,7 +8,7 @@ const SearchCategories = new Set(['music', 'album', 'artist', 'playlist']);
 
 export interface MusicI {
   id: number;
-  title: string;
+  name: string;
   albumImage: string;
   artists: { id: number; name: string }[];
 }
@@ -33,7 +33,8 @@ const SearchMorePage = () => {
   const currentPage = useRef<number>(1);
   const observerDivRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const isDataLoading = useRef<boolean>(true);
+  const isDataLoading = useRef<boolean>(false);
+  const location = useLocation();
 
   const [musicDatas, setMusicDatas] = useState<MusicI[]>([]);
   function addMusicDatas(newDatas: MusicI[]) {
@@ -79,6 +80,12 @@ const SearchMorePage = () => {
   }
 
   useEffect(() => {
+    const keyword = searchParams.get('keyword');
+    if (keyword === null || keyword === '') {
+      navigate('/');
+    } else {
+      getMusicDatas();
+    }
     const observer = new IntersectionObserver(
       () => {
         if (!isLoading) getMusicDatas();
@@ -88,15 +95,15 @@ const SearchMorePage = () => {
     if (observerDivRef.current) {
       observer.observe(observerDivRef.current);
     }
-    const keyword = searchParams.get('keyword');
-    if (keyword === null || keyword === '') {
-      navigate('/');
-    } else {
-      getMusicDatas();
-    }
-  }, []);
+    return () => {
+      setMusicDatas([]);
+    };
+  }, [location.search]);
 
-  if (!category || !SearchCategories.has(category)) return new Error();
+  if (!category || !SearchCategories.has(category)) {
+    navigate('/notfound');
+    return;
+  }
   return (
     <>
       <div css={s_titleContainer}>{titleList.get(category)}</div>
@@ -112,7 +119,7 @@ const SearchMorePage = () => {
                     category="music"
                     imageUrl={item.albumImage}
                     itemId={item.id}
-                    name={item.title}
+                    name={item.name}
                     artist={
                       <>
                         {item.artists.map((artist, idx) => (

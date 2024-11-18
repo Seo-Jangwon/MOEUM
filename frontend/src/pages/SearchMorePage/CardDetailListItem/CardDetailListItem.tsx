@@ -1,12 +1,7 @@
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {} from '../style';
-import {
-  s_container,
-  s_image,
-  s_imageContainer,
-  s_textContainer,
-} from './CardDetailListItem.style';
+import { s_container, s_image, s_imageContainer, s_textContainer } from './CardDetailListItem.style';
 
 const CardDetailListItem = ({
   imageUrl,
@@ -34,10 +29,8 @@ const CardDetailListItem = ({
       onClick={() => {
         if (category !== 'music') navigate(`/${category}/${itemId}`, { replace });
         else {
-          if (playlistid) {
-            navigate(`/music?id=${itemId}&list=${playlistid}&idx=${playlistidx}`, { replace });
-          }
-          navigate(`/music?`, { replace });
+          if (playlistid) navigate(`/music?id=${itemId}&list=${playlistid}&idx=${playlistidx}`, { replace });
+          else navigate(`/music?id=${itemId}`, { replace });
         }
       }}
     >

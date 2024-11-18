@@ -27,7 +27,7 @@ const PlayList = ({
             itemId={item.id}
             key={index}
             playlistid={listId}
-            playlistidx={listIdx}
+            playlistidx={index}
             replace={true}
             artist={
               <>
