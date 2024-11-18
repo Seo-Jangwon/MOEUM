@@ -33,6 +33,7 @@ export const s_popular_container = css`
 export const s_popular_box = (theme: Theme) => css`
   display: flex;
   align-items: center;
+  position: relative;
   justify-content: space-between;
   background-color: ${theme.colors.gray};
   border-radius: 20px;
@@ -67,6 +68,10 @@ export const s_h5_title = (theme: Theme) => css`
   font-size: 70%;
   font-weight: 800;
   color: ${theme.colors.white};
+  display: -webkit-box; 
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical; 
+  overflow: hidden; 
   @media (max-width: 1024px) {
     font-size: 80%;
   }
@@ -79,6 +84,10 @@ export const s_p_artist = css`
   font-size: 80%;
   font-weight: 700;
   color: #aaa;
+  display: -webkit-box; 
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical; 
+  overflow: hidden; 
   @media (max-width: 1024px) {
     font-size: 75%;
   }

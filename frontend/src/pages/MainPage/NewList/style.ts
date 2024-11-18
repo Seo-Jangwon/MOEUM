@@ -104,6 +104,10 @@ export const s_p = (theme: Theme) => css`
   font-weight: 600;
   font-size: 18px;
   padding-left: 5px;
+  display: -webkit-box; 
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical; 
+  overflow: hidden; 
   @media (max-width: 1024px) {
     font-size: 12px;
   }
