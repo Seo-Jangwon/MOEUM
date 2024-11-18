@@ -60,14 +60,19 @@ export const s_palyerBar = css`
 `;
 
 export const s_lyrics = css`
-  font-size: 2rem;
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+  @media (min-width: 768px) {
+    font-size: 1.5rem;
+  }
   margin-bottom: 10px;
 `;
 
 export const s_playerBarRange = (progress: number) => css`
-  width: 100%;
+  flex-grow: 1;
   height: 6px;
-  transition: opacity 0.2s;
+  transition: opacity 0.5s;
   appearance: none;
   border-radius: 10px;
   cursor: pointer;
@@ -113,11 +118,19 @@ export const s_playerBarController = css`
   }
   > div:nth-of-type(3) {
     justify-content: flex-end;
+    column-gap: 1.5px;
   }
 `;
 
 export const s_iconButton = css`
-  width: 25px;
-  height: 25px;
-  font-size: 25px;
+  @media (max-width: 768px) {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+  @media (min-width: 768px) {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
 `;
