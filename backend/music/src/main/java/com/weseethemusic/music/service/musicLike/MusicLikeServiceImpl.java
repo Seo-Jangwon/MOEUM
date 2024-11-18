@@ -1,4 +1,4 @@
-package com.weseethemusic.music.service;
+package com.weseethemusic.music.service.musicLike;
 
 import com.weseethemusic.music.common.entity.Artist;
 import com.weseethemusic.music.common.entity.LikeAlbum;
@@ -14,6 +14,7 @@ import com.weseethemusic.music.repository.LikeAlbumRepository;
 import com.weseethemusic.music.repository.LikeArtistRepository;
 import com.weseethemusic.music.repository.LikeMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
+import com.weseethemusic.music.service.musicDetail.MusicDetailServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

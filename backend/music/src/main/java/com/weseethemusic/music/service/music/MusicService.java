@@ -1,4 +1,4 @@
-package com.weseethemusic.music.service;
+package com.weseethemusic.music.service.music;
 
 import com.weseethemusic.music.dto.general.GeneralAlbumDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
@@ -10,17 +10,17 @@ import java.util.List;
 
 public interface MusicService {
 
-    List<GeneralMusicDto> getPopularMusics();
+    List<GeneralMusicDto> getPopularMusics(Long memberId);
 
-    List<GeneralMusicDto> getLatestMusics();
+    List<GeneralMusicDto> getLatestMusics(Long memberId);
 
-    List<GeneralDiscographyDto> getAllDiscography(long artistId);
+    List<GeneralDiscographyDto> getAllDiscography(long artistId, Long memberId);
 
     List<ArtistImageDto> getArtistLikes(long memberId);
 
     List<GeneralAlbumDto> getAlbumLikes(long memberId);
 
-    List<GeneralPlaylistDto> getPopularPlaylists();
+    List<GeneralPlaylistDto> getPopularPlaylists(Long memberId);
 
     TodayGenreListDto getGenres();
 

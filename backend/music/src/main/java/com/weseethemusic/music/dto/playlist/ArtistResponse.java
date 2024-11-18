@@ -11,4 +11,5 @@ public class ArtistResponse {
 
     private Long id;
     private String name;
+    private Boolean isLike;
 }

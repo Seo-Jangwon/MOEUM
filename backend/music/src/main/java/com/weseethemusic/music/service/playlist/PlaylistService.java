@@ -1,11 +1,10 @@
-package com.weseethemusic.music.service;
+package com.weseethemusic.music.service.playlist;
 
 import com.weseethemusic.music.dto.playlist.CreatePlaylistRequest;
 import com.weseethemusic.music.dto.playlist.PlaylistMusicResponse;
 import com.weseethemusic.music.dto.playlist.PlaylistResponse;
 import com.weseethemusic.music.dto.playlist.TodayGenreDto;
 import java.util.List;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface PlaylistService {
@@ -14,10 +13,9 @@ public interface PlaylistService {
 
     void deletePlaylist(Long memberId, Long playlistId);
 
-    @Transactional(readOnly = true)
-    PlaylistResponse getPlaylistDetail(Long playlistId);
+    PlaylistResponse getPlaylistDetail(Long playlistId, Long memberId);
 
-    List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId);
+    List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId, Long memberId);
 
     List<PlaylistResponse> getMyPlaylists(Long memberId);
 

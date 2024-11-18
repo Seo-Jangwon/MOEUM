@@ -13,5 +13,5 @@ public class GeneralDiscographyDto {
     private String name;
     private String image;
     private String releaseDate;
-
+    private Boolean isLike;
 }

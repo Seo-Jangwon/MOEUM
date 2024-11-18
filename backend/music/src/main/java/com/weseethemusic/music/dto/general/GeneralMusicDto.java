@@ -17,5 +17,6 @@ public class GeneralMusicDto {
     private String name;
     private String image;
     private List<ArtistDto> artists;
+    private Boolean isLike;
 
 }

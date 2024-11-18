@@ -15,5 +15,6 @@ public interface LikeArtistRepository extends JpaRepository<LikeArtist, LikeArti
     List<Artist> findAllByMemberId(long memberId);
 
     void deleteByMemberIdAndArtist_Id(Long memberId, Long artistId);
-    
+
+    boolean existsByMemberIdAndArtist_Id(Long memberId, Long artistId);
 }

@@ -12,5 +12,6 @@ public class AlbumDto {
     private long id;
     private String name;
     private String image;
-    
+    private Boolean isLike;
+
 }
