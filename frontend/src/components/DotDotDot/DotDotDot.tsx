@@ -3,6 +3,7 @@ import { ReactNode, useState } from 'react';
 import { AiOutlineMore } from 'react-icons/ai';
 import DropDown from '../DropDown/DropDown';
 import { s_container, s_contentList, s_icon } from './style';
+import { css } from '@emotion/react';
 
 interface DropDownItems {
   iconImage: ReactNode;
@@ -42,6 +43,7 @@ const DotDotDot: React.FC<DotDotDotProps> = ({ data }) => {
         >
           <DropDown data={data} closeDropdown={() => setIsDropDown(false)} />
         </ul>
+      </ul>
       )}
     </div>
   );
