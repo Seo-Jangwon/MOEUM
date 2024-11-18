@@ -10,7 +10,6 @@ import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
 import { TbPlaylistAdd } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Data, LyricsI, musicDetailInfoI } from '..';
-import testImg from './bg.png';
 import {
   s_canvas,
   s_container,
@@ -225,8 +224,8 @@ const MusicPlayer = ({
           const x = canvasRef.current!.clientWidth / 2;
           const y = (canvasRef.current!.clientHeight * noteDatas.current[timeIdx.current].y) / 100;
 
-          // renderRef.current!.options.background =            backgroundDatas.current![noteDatas.current[timeIdx.current].section - 1].color;
-          renderRef.current!.options.background = testImg;
+          renderRef.current!.options.background =
+            backgroundDatas.current![noteDatas.current[timeIdx.current].section - 1].color;
           const polygon = Bodies.polygon(
             x / 2,
             y,
