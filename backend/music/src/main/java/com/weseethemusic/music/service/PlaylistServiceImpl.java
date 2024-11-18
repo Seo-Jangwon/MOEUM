@@ -77,6 +77,13 @@ public class PlaylistServiceImpl implements PlaylistService {
                 playlistMusicRepository.save(playlistMusic);
             }
 
+            PlaylistLike playlistLike = new PlaylistLike();
+            playlistLike.setMemberId(memberId);
+            playlistLike.setPlaylist(savedPlaylist);
+            playlistLike.setCreatedAt(LocalDateTime.now());
+
+            playlistLikeRepository.save(playlistLike);
+
             return savedPlaylist.getId();
         } catch (Exception e) {
             log.error("플레이리스트 생성 중 오류 발생", e);
