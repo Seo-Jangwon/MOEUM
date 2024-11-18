@@ -2,15 +2,15 @@
 
 ---------
 
-- 프로젝트명: 모음(모두의 음악), 너의 목소리가 보여
+- 프로젝트명: 모음 (모두의 음악)
 
 - 서비스 특징: 청각 장애인을 위한 음악 시각화 서비스
 
 - 주요 기능
   
-  - AI를 활용한 음악 시각화
+  - 데이터 분석 및 AI 모델을 활용한 음악 시각화
   
-  - AI를 활용한 가사 시각화
+  - AI 모델을 활용한 가사 시각화
   
   - 음악 추천 알고리즘
   
@@ -36,8 +36,6 @@
   
   - matter.js를 활용해 프론트엔드 상에서 Unity와 같은 물리엔진(예: RigidBody, Conllider 등) 구현
   
-  - tone.js를 활용해 사용자가 커스텀 할 수 있는 EQ 기능 제공
-  
   - Librosa + FastAPI를 활용해 음악 분석
   
   - MSA 도입
@@ -45,7 +43,7 @@
 - 기술 스택
   
   - 백엔드
-    - Java 17, Spring Boot 3. 3. 4, Python 3.10, FastAPI 0.11.0, ElasticSearch
+    - Java 17, Spring Boot 3. 3. 5, Python 3.10, FastAPI 0.11.0, ElasticSearch
   - 프론트엔드
     - React 18.3.1, TypeScript, Zustand, Emotion, Matter.js
   - DB
@@ -67,49 +65,38 @@
   
   # MVP
   
-  *(* 초록색: 차별화된 기능 / 보라색: 일반적인 기능)*
-  
   ## ✅ 음악 시각화
   
   1. 음파 분석
-  2. 1의 결과물을 바탕으로 음악의 악기, 볼륨, 강세, 박자 등 음악 구성 요소 수치화
-  3. 2의 결과물을 단색, 그라데이션, 색상이 특정 방향으로 번지는 속도, 도형 등으로 시각화
   
-  > **시각화 디자인**
-  > 
-  > 1. 분위기 : color (gradient)
-  >    
-  >    1. mode : 장/단조
-  >    2. liveliness → 세 개의 property를 수치로 환산해서 표현
-  >       1. danceability
-  >       2. energy
-  >       3. valence
-  > 
-  > 2. 박자 : line
-  > 
-  > 3. 음 : shape, 간단한 기초 도형들의 조합으로 표현 (시스템)
-  >    
-  >    1. key(C~B)
-  >    2. volume
-  >    3. *악기가 사용된 정도*
-  > 
-  > 4. 재생시간 : gradation
-  > - 시각화 참고자료
-  > 
-  > <aside>
-  > 
-  > - [Taste Visualization for Pixar&#39;s Ratatouille (Synesthesia) - Michel Gagné - 1080P - YouTube](https://www.youtube.com/watch?v=xizttM_Cbuc)
-  > - https://www.fastcompany.com/90822202/what-sound-looks-like-according-to-ai </aside>
+  2. 1의 결과물을 바탕으로 음악의 악기, 볼륨, 강세, 박자 등 음악 구성 요소 수치화
+  
+  3. 2의 결과물을 단색, 그라데이션, 색상이 특정 방향으로 번지는 속도, 도형 등으로 시각화
+     
+     **시각화 디자인**
+  
+  4. 분위기 : color (gradient)
+     
+     1. mode : 장/단조
+     2. liveliness → 세 개의 property를 수치로 환산해서 표현
+        1. danceability
+        2. energy
+        3. valence
+  
+  5. 박자 : line
+  
+  6. 음 : shape, 간단한 기초 도형들의 조합으로 표현 (시스템)
+     
+     1. key(C~B)
+     2. volume
+     3. *Timbre*
+  - 시각화 참고자료
   
   ## ✅ 가사 시각화 (On/Off 가능)
   
   1. 음악 정보 사이트에서 재생 시간에 싱크된 가사 정보 크롤링
   2. 1의 결과물을 DB에 저장
   3. 음악을 시각화한 결과물에 맞춰 비슷한 분위기로 가사를 시각화한 결과물을 합성
-  
-  <aside>
-  
-  - [The Weeknd, Ariana Grande - Die For You (Remix / Lyric Video) - YouTube](https://www.youtube.com/watch?v=YQ-qToZUybM) </aside>
   
   ## 음악 추천
   
@@ -123,93 +110,51 @@
     - 공유시 시각화 결과물 스크린샷 → 대표 이미지 설정 (png로 다운로드 가능)
   
   ---
-  
-  # 의견
-  
-  - IoT 기기를 사용해서 진동으로 음악을 표현해 보자
-  
-  - 리액트 네이티브를 이용해서 핸드폰으로 쓸 수 있게 만들어보자
-    
-    - https://reactnative.dev/docs/vibration
-    - 진동 패턴을 지정할 수 있음 → 반응성 테스트 필요
-  
-  - 추천: 머하웃 사용, 검색: 엘라스틱서치 사용 (Spark 고려)
-  
-  - 발표, 시연시 서비스 대상에게 공감할 수 있을 만한 방식 도입 要
-  
-  - 추가
-    
-    - 청각장애인의 연주 → 음, 박자 등이 맞는지 시각적 반응 피드백
-  
-  - **발표, 공감대 형성이 중요**
-  
-  - 음악의 작곡 배경, 설명 ⇒ AI로 스토리라인 비주얼화
-    
-    - 음악 그 자체에 대한 추상적인 색채 표현
-    - 얽힌 이야기에 대한 짧은 영상화
-      - (기존 사례) 커스텀 동화 + AI
-  
-  - 청각장애인을 위한 기능 강화
-    
-    - (예) 클래식: 음악 배경 등 설명 텍스트로 함께 제공
-    - (예) 슈베르트, <마왕>: 부가적인 정보를 함께
-  
-  - 기술적으로 어렵다면 크롤링으로 해결# MVP
-    
-    *(* 초록색: 차별화된 기능 / 보라색: 일반적인 기능)*
-    
-    ## ✅ 음악 시각화
-    
-    1. 음파 분석
-    2. 1의 결과물을 바탕으로 음악의 악기, 볼륨, 강세, 박자 등 음악 구성 요소 수치화
-    3. 2의 결과물을 단색, 그라데이션, 색상이 특정 방향으로 번지는 속도, 도형 등으로 시각화
-    
-    > **시각화 디자인**
-    > 
-    > 1. 분위기 : color (gradient)
-    >    
-    >    1. mode : 장/단조
-    >    2. liveliness → 세 개의 property를 수치로 환산해서 표현
-    >       1. danceability
-    >       2. energy
-    >       3. valence
-    > 
-    > 2. 박자 : line
-    > 
-    > 3. 음 : shape, 간단한 기초 도형들의 조합으로 표현 (시스템)
-    >    
-    >    1. key(C~B)
-    >    2. volume
-    >    3. *악기가 사용된 정도*
-    > 
-    > 4. 재생시간 : gradation
-    > - 시각화 참고자료
-    > 
-    > <aside>
-    > 
-    > - [Taste Visualization for Pixar&#39;s Ratatouille (Synesthesia) - Michel Gagné - 1080P - YouTube](https://www.youtube.com/watch?v=xizttM_Cbuc)
-    > - https://www.fastcompany.com/90822202/what-sound-looks-like-according-to-ai </aside>
-    
-    ## ✅ 가사 시각화 (On/Off 가능)
-    
-    1. 음악 정보 사이트에서 재생 시간에 싱크된 가사 정보 크롤링
-    2. 1의 결과물을 DB에 저장
-    3. 음악을 시각화한 결과물에 맞춰 비슷한 분위기로 가사를 시각화한 결과물을 합성
-    
-    <aside>
-    
-    - [The Weeknd, Ariana Grande - Die For You (Remix / Lyric Video) - YouTube](https://www.youtube.com/watch?v=YQ-qToZUybM) </aside>
-    
-    ## 음악 추천
-    
-    1. 좋아요, 1분 이상 들은 음악 기록을 바탕으로 비슷한 음파 형태의 음악 추천
-    2. 비슷한 기록을 가진 사람들의 플레이리스트를 바탕으로 음악 추천
-    
-    ## 나만의 플레이리스트
-    
-    - 음악 좋아요
-    - 나만의 플레이리스트 제작 및 공유
-      - 공유시 시각화 결과물 스크린샷 → 대표 이미지 설정 (png로 다운로드 가능)
+
+## ✅ 음악 시각화
+
+1. 음파 분석
+
+2. 1의 결과물을 바탕으로 음악의 악기, 볼륨, 강세, 박자 등 음악 구성 요소 수치화
+
+3. 2의 결과물을 단색, 그라데이션, 색상이 특정 방향으로 번지는 속도, 도형 등으로 시각화
+   
+   **시각화 디자인**
+
+4. 분위기 : color (gradient)
+   
+   1. mode : 장/단조
+   
+   2. liveliness → 세 개의 property를 수치로 환산해서 표현
+      
+      1. danceability
+      2. energy
+      3. valence
+   
+   3. 박자 : line
+   
+   4. 음 : shape, 간단한 기초 도형들의 조합으로 표현 (시스템)
+      
+      1. key(C~B)
+      2. volume
+      3. Timbre
+      - [Taste Visualization for Pixar&#39;s Ratatouille (Synesthesia) - Michel Gagné - 1080P - YouTube](https://www.youtube.com/watch?v=xizttM_Cbuc)
+      - https://www.fastcompany.com/90822202/what-sound-looks-like-according-to-ai 
+      - ## ✅ 가사 시각화 (On/Off 가능)
+      1. 음악 정보 사이트에서 재생 시간에 싱크된 가사 정보 크롤링
+      2. 1의 결과물을 DB에 저장
+      3. 음악을 시각화한 결과물에 맞춰 비슷한 분위기로 가사를 시각화한 결과물을 합성
+
+## 음악 추천
+
+1. 좋아요, 1분 이상 들은 음악 기록을 바탕으로 비슷한 음파 형태의 음악 추천
+2. 비슷한 기록을 가진 사람들의 플레이리스트를 바탕으로 음악 추천
+
+## 나만의 플레이리스트
+
+- 음악 좋아요
+- 나만의 플레이리스트 제작 및 공유
+- 공유시 시각화 결과물 스크린샷 → 대표 이미지 설정 (png로 다운로드 가능)
 
 ## 시각화 시 고려 사항
 
@@ -344,7 +289,7 @@
 
 ## 목업
 
-![mockup](C:\Users\SSAFY\Desktop\1119\misc\images\mockup.png)
+[Figma](https://www.figma.com/design/qnEjrx5V49SdbmEzvRzRwr/%EB%AA%A8%EC%9D%8C?node-id=40-122&node-type=canvas&t=ngScSy8CDDuy8iQt-0)
 
 ## ERD
 
@@ -397,6 +342,10 @@
 ### Calibration 페이지
 
 ![calibration](C:\Users\SSAFY\Desktop\1119\misc\images\calibration.png)
+
+### Visualization
+
+![music_v](C:\Users\SSAFY\Desktop\1119\misc\images\visualization.PNG)
 
 ### Playlist 페이지
 
