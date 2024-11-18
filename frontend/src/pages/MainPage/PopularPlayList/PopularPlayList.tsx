@@ -63,7 +63,7 @@ const PopularPlayList = () => {
         </button>
       </div>
       <div css={s_div_item_container}>
-        {popularPlayList.map((item, index) => (
+        {popularPlayList.slice(0, 4).map((item, index) => (
           <div css={s_div_item_box} key={index}>
             <div css={s_icon_div}>
               <DotDotDot
