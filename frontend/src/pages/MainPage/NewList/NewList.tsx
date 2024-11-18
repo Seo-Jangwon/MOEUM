@@ -6,11 +6,13 @@ import playMusic from '../image/playMusic.json';
 
 import apiClient from '@/api/apiClient';
 import DotDotDot from '@/components/DotDotDot/DotDotDot';
-import { css } from '@emotion/react';
+import Modal from '@/pages/RecordPage/Modal/Modal';
+import { PiPlaylist } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import {
   s_button,
   s_button_all,
+  s_dropdownButton,
   s_div_button,
   s_div_h3,
   s_div_header,
@@ -22,8 +24,6 @@ import {
   s_p,
   s_play_button,
 } from './style';
-import { PiPlaylist } from 'react-icons/pi';
-import Modal from '@/pages/RecordPage/Modal/Modal';
 
 interface Music {
   id: number;
@@ -39,18 +39,17 @@ const NewList = () => {
   const navigate = useNavigate();
   const [latestData, setLatestData] = useState<Music[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [musicId, setMusicId] = useState<number>(0)
+  const [musicId, setMusicId] = useState<number>(0);
 
   const openModal = (id: number) => {
     setIsModalOpen(true);
-    setMusicId(id)
+    setMusicId(id);
   };
 
   // 모달 닫기 함수
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
 
   useEffect(() => {
     apiClient({
@@ -62,7 +61,7 @@ const NewList = () => {
         if (res.data.code === 200) {
           console.log(res.data.data);
           setLatestData(res.data.data);
-          console.log(latestData);          
+          console.log(latestData);
         }
       })
       .catch((err) => {
@@ -154,22 +153,7 @@ const NewList = () => {
       <div css={s_div_list} ref={listRef}>
         {latestData.map((item, index) => (
           <div key={index} css={s_div_img}>
-            <div
-              css={css`
-                position: absolute;
-                z-index: 122;
-                right: 10px;
-                bottom: 50px;
-                :hover {
-                  background-color: #888;
-                  border-radius: 100%;
-                }
-                @media (max-width: 768px) {
-                  right: 5px;
-                  bottom: 50px;
-                }
-              `}
-            >
+            <div css={s_dropdownButton}>
               <DotDotDot
                 data={[
                   {

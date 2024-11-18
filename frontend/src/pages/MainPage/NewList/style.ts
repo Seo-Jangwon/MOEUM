@@ -104,10 +104,10 @@ export const s_p = (theme: Theme) => css`
   font-weight: 600;
   font-size: 18px;
   padding-left: 5px;
-  display: -webkit-box; 
+  display: -webkit-box;
   -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical; 
-  overflow: hidden; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   @media (max-width: 1024px) {
     font-size: 12px;
   }
@@ -142,4 +142,19 @@ export const s_button_all = (theme: Theme) => css`
   padding: 2px 4px;
   color: ${theme.colors.lightgray};
   background: transparent;
+`;
+
+export const s_dropdownButton = css`
+  position: absolute;
+  z-index: 122;
+  right: 10px;
+  bottom: 50px;
+  :hover {
+    background-color: #888;
+    border-radius: 100%;
+  }
+  @media (max-width: 768px) {
+    right: 5px;
+    bottom: 50px;
+  }
 `;
