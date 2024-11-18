@@ -1,8 +1,8 @@
-import { css } from '@emotion/react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import useClickOutside from '@/hooks/useClickOutside';
+import { ReactNode, useState } from 'react';
 import { AiOutlineMore } from 'react-icons/ai';
 import DropDown from '../DropDown/DropDown';
-import { s_icon } from './style';
+import { s_container, s_contentList, s_icon } from './style';
 
 interface DropDownItems {
   iconImage: ReactNode;
@@ -17,41 +17,17 @@ interface DotDotDotProps {
 
 const DotDotDot: React.FC<DotDotDotProps> = ({ data }) => {
   const [isDropDown, setIsDropDown] = useState<boolean>(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useClickOutside<HTMLDivElement>(() => setIsDropDown(false));
 
   const handleDropDown = () => {
     setIsDropDown(!isDropDown);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropDown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   return (
-    <div ref={dropdownRef}>
+    <div css={s_container} ref={dropdownRef}>
       <AiOutlineMore css={s_icon} onClick={handleDropDown} size={data[0].size} />
       {isDropDown && (
-        <ul
-          css={css`
-            position: absolute;
-            background-color: #444;
-            white-space: nowrap;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 0;
-            list-style: none;
-          `}
-        >
+        <ul css={s_contentList}>
           <DropDown data={data} closeDropdown={() => setIsDropDown(false)} />
         </ul>
       )}

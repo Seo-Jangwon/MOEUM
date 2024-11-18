@@ -13,8 +13,7 @@ const s_heart = (theme: Theme) =>
   });
 
 const DetailCoverHeart = ({ isLike, size }: DetailCoverHeartProps) => {
-  if (isLike) return <IoMdHeart size={size} css={s_heart} />;
-  else return <CiHeart size={size} color="white" />;
+  return <figure>{isLike ? <IoMdHeart size={size} css={s_heart} /> : <CiHeart size={size} color="white" />}</figure>;
 };
 
 export default DetailCoverHeart;
