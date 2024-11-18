@@ -66,12 +66,8 @@ export const s_artist_p = (theme: Theme) => css`
 `;
 
 export const s_playlist_p = (theme: Theme) => css`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   text-align: center;
   font-size: 16px;
   font-weight: 700;
-  color: ${theme.colors.primary};
+  color: ${theme.colors.white};
 `;
