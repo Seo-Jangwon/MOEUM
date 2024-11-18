@@ -9,15 +9,15 @@ const TITLE_BY_VARIANTS = {
   playlist: { listTitle: '플레이리스트' },
 };
 
-const detailApiPath = (variant: DetailVariants) => {
+const getDetailApiPath = (variant: DetailVariants) => {
   return variant === 'playlist' ? `/musics/playlist/detail` : `/musics/detail/${variant}`;
 };
 
-const useFetchDetail = (variant: DetailVariants, id: string) => {
-  const { isPending, isError, data, error, isSuccess } = useQuery({
+const useGetDetailByQuery = (variant: DetailVariants, id: string) => {
+  return useQuery({
     queryKey: ['detail', variant, id],
     queryFn: async () => {
-      const { data } = (await apiClient.get(`${detailApiPath(variant)}/${id}`)).data;
+      const { data } = (await apiClient.get(`${getDetailApiPath(variant)}/${id}`)).data;
       const normalizedData = { ...TITLE_BY_VARIANTS[variant], coverTitle: data.name, image: data.image } as Detail;
 
       switch (variant) {
@@ -25,7 +25,8 @@ const useFetchDetail = (variant: DetailVariants, id: string) => {
           normalizedData.totalDuration = data.totalDuration;
           normalizedData.listData = data.musics;
           normalizedData.cardListData = data.artists.slice(0, 5);
-          break; 
+          normalizedData.isLike = data.isLike;
+          break;
 
         case 'artist':
           normalizedData.listData = data.popular?.slice(0, 10).map((el: { [key: string]: string }) => ({
@@ -34,6 +35,8 @@ const useFetchDetail = (variant: DetailVariants, id: string) => {
             duration: el.musicDuration,
           }));
           normalizedData.cardListData = data.discography.slice(0, 5);
+          normalizedData.isLike = data.isLike;
+
           break;
 
         case 'playlist': {
@@ -46,6 +49,7 @@ const useFetchDetail = (variant: DetailVariants, id: string) => {
             name: el.title,
             duration: el.duration,
           }));
+          normalizedData.isLike = playListData.isLike;
           break;
         }
       }
@@ -53,8 +57,6 @@ const useFetchDetail = (variant: DetailVariants, id: string) => {
       return normalizedData;
     },
   });
-
-  return { isPending, isError, data, error, isSuccess };
 };
 
-export default useFetchDetail;
+export default useGetDetailByQuery;
