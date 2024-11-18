@@ -6,6 +6,7 @@ import com.weseethemusic.music.common.entity.Genre;
 import com.weseethemusic.music.common.entity.Music;
 import com.weseethemusic.music.common.entity.Playlist;
 import com.weseethemusic.music.common.entity.PlaylistMusic;
+import com.weseethemusic.music.common.service.PresignedUrlService;
 import com.weseethemusic.music.dto.detail.ArtistDto;
 import com.weseethemusic.music.dto.general.GeneralAlbumDto;
 import com.weseethemusic.music.dto.general.GeneralDiscographyDto;
@@ -46,6 +47,7 @@ public class MusicServiceImpl implements MusicService {
     private final PlaylistLikeRepository playlistLikeRepository;
     private final PlaylistMusicRepository playlistMusicRepository;
     private final GenreRepository genreRepository;
+    private final PresignedUrlService presignedUrlService;
 
     // 좋아요 한 아티스트 목록 조회
     @Override
@@ -137,7 +139,13 @@ public class MusicServiceImpl implements MusicService {
         List<Genre> genres = genreRepository.findAll();
 
         for (Genre genre : genres) {
-            result.add(RealTodayGenreDto.fromEntity(genre));
+            RealTodayGenreDto realTodayGenreDto = new RealTodayGenreDto();
+            String presignedUrl = presignedUrlService.getPresignedUrl("g" + genre.getId()+".jpg");
+
+            realTodayGenreDto.setId(genre.getId());
+            realTodayGenreDto.setName(genre.getName());
+            realTodayGenreDto.setImage(presignedUrl);
+            result.add(realTodayGenreDto);
         }
 
         return TodayGenreListDto.builder().genres(result).build();
