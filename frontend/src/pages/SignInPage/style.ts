@@ -33,7 +33,7 @@ export const s_error_box = css`
   border-radius: 4px;
   display: flex;
   font-size: 18px;
-  padding: 4px;
+  padding: 8px;
   padding-left: 16px;
   gap: 8px;
 `;

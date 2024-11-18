@@ -97,7 +97,7 @@ const LikePlayList = () => {
             <div
               css={css`
                 position: absolute;
-                bottom: 10px;
+                bottom: 20px;
                 right: 10px;
               `}
               onClick={(e) => {
