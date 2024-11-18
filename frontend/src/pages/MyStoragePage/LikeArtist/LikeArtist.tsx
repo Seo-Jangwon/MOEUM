@@ -22,30 +22,27 @@ const LikeArtist = () => {
         if (res.data.code === 200) {
           setLikeArtist(res.data.data);
           if (res.data.data.length !== 0) {
-            setIsExist(true)
+            setIsExist(true);
           }
-          
         }
       })
       .catch((err) => {
         console.log(err);
       });
-  },[]);
+  }, []);
 
   return (
     <div css={s_div_item_container}>
       {!isExist ? (
-        <div style={{color: 'white'}}>좋아요한 아티스트가 없습니다.</div>
+        <div style={{ color: 'white' }}>좋아요한 아티스트가 없습니다.</div>
       ) : (
         likeArtist.map((item, index) => (
-          <>
-            <div key={index}>
-              <button css={s_artist_button}>
-                <img src={item.image} alt="라라" style={{ borderRadius: '100%', width: '100%'}} />
-              </button>
-              <p css={s_artist_p}>{item.name}</p>
-            </div>
-          </>
+          <div key={index}>
+            <button css={s_artist_button}>
+              <img src={item.image} alt="라라" style={{ borderRadius: '100%', width: '100%', height: '120px' }} />
+            </button>
+            <p css={s_artist_p}>{item.name}</p>
+          </div>
         ))
       )}
     </div>
