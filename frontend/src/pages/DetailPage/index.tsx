@@ -1,7 +1,7 @@
 import apiClient from '@/api/apiClient';
-import useFetchDetail from '@/hooks/useFetchDetail';
+import useGetDetailByQuery from '@/hooks/useGetDetailByQuery';
 import Flex from '@/layouts/Wrapper/Flex';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Navigate, useParams } from 'react-router-dom';
 import DetailCardList from './DetailCardList/DetailCardList';
 import DetailCover from './DetailCover/DetailCover';
@@ -16,15 +16,26 @@ interface DetailPageProps {
 
 const DetailPage = ({ variant }: DetailPageProps) => {
   const { id } = useParams();
-  const { isPending, isError, data, refetch } = useFetchDetail(variant, id!);
-  const mutation = useMutation({
-    mutationFn: async () => {
-      await apiClient.post(`/musics/${variant}/like`, { id });
-    },
+  const { isPending, isError, data } = useGetDetailByQuery(variant, id!);
+  const queryClient = useQueryClient();
+  const onSuccess = () => queryClient.invalidateQueries({ queryKey: ['detail'] });
+
+  const like = useMutation({
+    mutationFn: () => apiClient.post(`/musics/${variant}/like`, { id }),
+    onSuccess,
+  });
+
+  const unlike = useMutation({
+    mutationFn: () => apiClient.delete(`/musics/${variant}/like`),
+    onSuccess,
   });
 
   const handleLike = () => {
-    mutation.mutate();
+    if (data?.isLike) {
+      unlike.mutate();
+      return;
+    }
+    like.mutate();
   };
 
   if (isPending) return null;
