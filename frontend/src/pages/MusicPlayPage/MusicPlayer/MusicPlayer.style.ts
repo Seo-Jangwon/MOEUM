@@ -48,6 +48,8 @@ export const s_playerBarContainer = css`
   left: 0;
   align-items: center;
   width: 100%;
+  margin: 3px 0;
+  color: #f7f7f7;
 `;
 
 export const s_palyerBar = css`
@@ -123,6 +125,7 @@ export const s_playerBarController = css`
 `;
 
 export const s_iconButton = css`
+  color: #f7f7f7;
   @media (max-width: 768px) {
     width: 16px;
     height: 16px;

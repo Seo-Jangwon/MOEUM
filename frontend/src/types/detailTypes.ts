@@ -18,4 +18,5 @@ export type Detail = {
   image: string;
   listData: ListData[];
   cardListData?: CardListData[];
+  isLike: boolean;
 };

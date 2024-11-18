@@ -1,4 +1,3 @@
-import lylicsVisualizationButton from '@/assets/lylicsVisualizationButton.svg';
 import Modal from '@/pages/RecordPage/Modal/Modal';
 import useSettingStore from '@/stores/settingStore';
 import { css } from '@emotion/react';
@@ -616,7 +615,7 @@ const MusicPlayer = ({
             <div css={s_lyrics}>{isLyricsVisualized ? currentLyrics : ''}</div>
             <div
               css={css`
-                display: ${playerBarVisible ? 'flex' : ''};
+                display: ${playerBarVisible ? 'flex' : 'none'};
                 ${s_palyerBar}
               `}
             >
@@ -644,7 +643,36 @@ const MusicPlayer = ({
               <div css={s_playerBarController}>
                 <div>
                   <MyHeart isLike={true} category={'music'} id={currentMusicId} size={18} />
-                  <TbPlaylistAdd onClick={() => setIsModalOpen(true)} css={s_iconButton} />
+                  <TbPlaylistAdd
+                    onClick={() => setIsModalOpen(true)}
+                    style={{ marginRight: '10px' }}
+                    css={s_iconButton}
+                  />
+                  {audioSrcRef.current ? (
+                    <>
+                      <span>
+                        {Math.floor(currentTimeLine / 60) +
+                          ':' +
+                          Math.floor(currentTimeLine % 60)
+                            .toString()
+                            .padStart(2, '0')}
+                      </span>
+                      <span> / </span>{' '}
+                      <span>
+                        {audioSrcRef.current.duration >= 60
+                          ? Math.floor(audioSrcRef.current.duration / 60) +
+                            ':' +
+                            Math.floor(audioSrcRef.current.duration % 60)
+                              .toString()
+                              .padStart(2, '0')
+                          : Math.floor(audioSrcRef.current.duration % 60)
+                              .toString()
+                              .padStart(2, '0')}
+                      </span>
+                    </>
+                  ) : (
+                    'asdf'
+                  )}
                 </div>
                 <div>
                   <RxShuffle onClick={() => changeEndEventIdx(2)} css={s_iconButton} />
@@ -683,12 +711,12 @@ const MusicPlayer = ({
                       }
                     }}
                   />
-                  <img
+                  {/*  <img
                     src={lylicsVisualizationButton}
                     alt="가사 시각화 버튼"
                     css={s_iconButton}
                     onClick={toggleVisualization}
-                  />
+                  /> */}
                   <MdOutlineLyrics
                     onClick={(e) => {
                       e.stopPropagation();
