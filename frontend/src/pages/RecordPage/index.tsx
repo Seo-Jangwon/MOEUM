@@ -136,7 +136,7 @@ const RecordPage = () => {
                 {/* 이미지와 제목 */}
                 <div css={s_div_titie_img} onClick={() => navigate('/music/1')}>
                   <div css={s_div_img}>
-                    <img src={lala} alt="라라" css={s_img} />
+                    <img src={item.albumImage} alt="라라" css={s_img} />
                   </div>
                   <h4 css={s_h4}>{item.title}</h4>
                 </div>
