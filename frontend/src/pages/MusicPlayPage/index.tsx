@@ -114,8 +114,8 @@ const MusicPlayPage: React.FC = () => {
           console.log('망함 ㅅㄱ');
         }
         if (musicAnalyzedDataResponse.data.code === 200) {
-          // setMusicAnalyzedData(musicAnalyzedDataResponse.data.data);
-          setMusicAnalyzedData(testAnalyzedData.data);
+          setMusicAnalyzedData(musicAnalyzedDataResponse.data.data);
+          // setMusicAnalyzedData(testAnalyzedData.data);
         } else {
           console.log('망함 ㅅㄱ!');
         }
