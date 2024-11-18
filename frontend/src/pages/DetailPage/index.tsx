@@ -45,7 +45,7 @@ const DetailPage = ({ variant }: DetailPageProps) => {
       <main css={s_container}>
         <DetailCover
           isLike={data!.isLike}
-          musicId={data?.listData[0].id}
+          musicId={!data.listData.length ? undefined : data!.listData[0].id}
           handleLike={handleLike}
           playListId={id!}
           variant={variant}
