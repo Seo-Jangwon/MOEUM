@@ -11,28 +11,9 @@ export const s_videoContainer = css`
   align-items: center;
   justify-content: center;
   display: flex;
-  @media (max-width: 768px) {
-    width: 90%;
-    flex-direction: column;
-  }
-  @media (min-width: 768px) {
-    width: 100%;
-  }
+  height: 100%;
   aspect-ratio: 16/9;
   position: relative;
-`;
-
-export const s_infoContainer = css`
-  display: flex;
-  padding: 10px;
-  /* flex-direction: column; */
-  width: 100%;
-  align-items: flex-start;
-  /* justify-content: center; */
-  margin-top: 10px;
-  @media (max-width: 768px) {
-    padding-left: 5%;
-  }
 `;
 
 export const s_canvas = css`
@@ -49,16 +30,18 @@ export const s_playerBarContainer = css`
   left: 0;
   align-items: center;
   width: 100%;
-  margin: 3px 0;
   color: #f7f7f7;
+  padding: 10px 0;
+  max-height: 120px;
 `;
 
-export const s_palyerBar = css`
+export const s_playerBar = css`
   flex-direction: column;
   width: 100%;
+  max-height: 120px; // Consistent maximum height
   > div {
     width: 95%;
-    margin: 0 2.5%;
+    margin: 4px 2.5%;
   }
 `;
 
@@ -74,7 +57,7 @@ export const s_lyrics = css`
 `;
 
 export const s_playerBarRange = (progress: number) => css`
-  flex-grow: 1;
+  /* flex-grow: 1; */
   height: 6px;
   transition: opacity 0.5s;
   appearance: none;
@@ -134,8 +117,9 @@ export const s_iconButton = css`
     font-size: 16px;
   }
   @media (min-width: 768px) {
-    width: 20px;
-    height: 20px;
-    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
   }
+  margin: 0 5px;
 `;

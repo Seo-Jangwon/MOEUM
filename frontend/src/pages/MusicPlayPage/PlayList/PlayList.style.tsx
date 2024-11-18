@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 
 export const s_container = css`
-
   padding: 20px 5px;
   background-color: #444;
+  color: white;
   @media (max-width: 768px) {
     width: 95%;
     padding-top: 30px;
