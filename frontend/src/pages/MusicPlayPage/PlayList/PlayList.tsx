@@ -17,6 +17,7 @@ const PlayList = ({
   const navigate = useNavigate();
   return (
     <div css={s_container}>
+      
       <div css={s_playListTitle}>{variant === 'music' ? '추천곡' : '재생목록'}</div>
       {musicData.map((item, index) => {
         return (
