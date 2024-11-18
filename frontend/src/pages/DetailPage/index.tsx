@@ -1,5 +1,7 @@
+import apiClient from '@/api/apiClient';
 import useFetchDetail from '@/hooks/useFetchDetail';
 import Flex from '@/layouts/Wrapper/Flex';
+import { useMutation } from '@tanstack/react-query';
 import { Navigate, useParams } from 'react-router-dom';
 import DetailCardList from './DetailCardList/DetailCardList';
 import DetailCover from './DetailCover/DetailCover';
@@ -14,14 +16,26 @@ interface DetailPageProps {
 
 const DetailPage = ({ variant }: DetailPageProps) => {
   const { id } = useParams();
-  const { isPending, isError, data } = useFetchDetail(variant, id!);
+  const { isPending, isError, data, refetch } = useFetchDetail(variant, id!);
+  const mutation = useMutation({
+    mutationFn: async () => {
+      await apiClient.post(`/musics/${variant}/like`, { id });
+    },
+  });
+
+  const handleLike = () => {
+    mutation.mutate();
+  };
+
   if (isPending) return null;
   if (isError) return <Navigate to="/notfound" />;
   return (
     <Flex>
       <main css={s_container}>
         <DetailCover
+          isLike={data!.isLike}
           musicId={data?.listData[0].id}
+          handleLike={handleLike}
           playListId={id!}
           variant={variant}
           title={data!.coverTitle}

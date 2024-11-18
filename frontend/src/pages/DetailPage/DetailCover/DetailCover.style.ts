@@ -23,6 +23,14 @@ export const s_article = css`
   align-items: end;
   width: 100%;
   justify-content: space-between;
+
+  svg {
+    transition: ease-in-out 0.3s;
+    :hover {
+      transform: scale(1.2);
+      filter: brightness(0.8);
+    }
+  }
 `;
 
 export const s_title = css`
@@ -33,12 +41,3 @@ export const s_title = css`
   line-height: normal;
 `;
 
-export const s_playButton = css`
-  svg {
-    transition: ease-in-out 0.3s;
-    :hover {
-      transform: scale(1.2);
-      filter: brightness(0.8);
-    }
-  }
-`;

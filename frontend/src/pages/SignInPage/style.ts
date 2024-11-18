@@ -7,6 +7,7 @@ export const s_container = (theme: Theme) => css`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  justify-self: center;
   gap: 48px;
   color: ${theme.colors.white};
   width: 30rem;

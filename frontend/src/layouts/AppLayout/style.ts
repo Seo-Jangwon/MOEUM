@@ -7,8 +7,8 @@ export const s_container = css`
 
 export const s_content = css`
   position: absolute;
-  display: flex;
-  justify-content: center;
+  /* display: flex; */
+  /* justify-content: center; */
   top: 80px;
   left: 0;
   width: 100%;
