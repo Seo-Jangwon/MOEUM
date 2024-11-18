@@ -167,7 +167,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, musicId }) => {
                     }}
                   >
                     <div css={s_div_img}>
-                      <img src={lala} alt="라라" css={s_img} />
+                      <img src={item.image} alt="라라" css={s_img} />
                     </div>
                     <div
                       css={css`

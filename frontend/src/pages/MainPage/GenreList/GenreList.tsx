@@ -38,7 +38,9 @@ const GenreList = () => {
   },[]);
 
   const handleMusicPage = (path: string) => {
-    navigate(path);
+    console.log(path  + " hey");
+    
+    navigate(`/playlist/${path}`);
   };
 
   const handleLike = (id: number) => {
@@ -73,7 +75,7 @@ const GenreList = () => {
             `}
             key={index}
           >
-            <button key={index} css={s_div_item_box} onClick={() => handleMusicPage(`playlist/${item.id}`)}>
+            <button key={index} css={s_div_item_box} onClick={() => handleMusicPage(`${item.id}`)}>
               <img src={item.image} alt="라라" css={s_img} />
               <h5 css={s_h5}>{item.name}</h5>
             </button>
