@@ -53,7 +53,7 @@ public class MusicController {
         try {
             result = musicService.getAlbumLikes(memberId);
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
         return ResponseDto.res(200, result);
@@ -139,7 +139,7 @@ public class MusicController {
         try {
             result = playlistService.getTodayGenre(genreId);
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
         return ResponseDto.res(200, result);
