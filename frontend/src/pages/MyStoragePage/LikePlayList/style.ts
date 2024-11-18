@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 
 export const s_div_button = css`
 width: 36vw;
-height: 10vw;
+height: 7vw;
 overflow: hidden;
 border: none;
 background: transparent;
