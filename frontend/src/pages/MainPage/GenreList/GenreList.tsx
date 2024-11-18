@@ -32,9 +32,19 @@ const GenreList = () => {
       });
   }, []);
 
-  const handleMusicPage = (path: string) => {
-    navigate(`/genre/${path}`);
-  };
+  const hadnleNavigate = (id: number) => {
+    apiClient({
+      method: 'GET',
+      url: `/musics/todaygenre/${id}`
+    })
+    .then((res) => {
+      console.log(res);
+      if (res.data.code === 200) {
+        const musicId = res.data.data.playlistId
+        navigate(`/music?id=${id}&list=${musicId}`)
+      }
+    })
+  }
 
   return (
     <>
@@ -55,7 +65,7 @@ const GenreList = () => {
             `}
             key={index}
           >
-            <button key={index} css={s_div_item_box} onClick={() => handleMusicPage(`${item.id}`)}>
+            <button key={index} css={s_div_item_box} onClick={() => hadnleNavigate(item.id)}>
               <img src={item.image} alt="라라" css={s_img} />
               <h5 css={s_h5}>{item.name}</h5>
             </button>

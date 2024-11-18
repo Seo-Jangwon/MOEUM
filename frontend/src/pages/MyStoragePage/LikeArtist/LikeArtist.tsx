@@ -35,7 +35,7 @@ const LikeArtist = () => {
   return (
     <div css={s_div_item_container}>
       {!isExist ? (
-        <div style={{color: 'white'}}>좋아요한 아티스타가 없습니다.</div>
+        <div style={{color: 'white'}}>좋아요한 아티스트가 없습니다.</div>
       ) : (
         likeArtist.map((item, index) => (
           <>

@@ -4,6 +4,7 @@ import { s_container } from '@/pages/MainPage/style';
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { FaRegHeart } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 
 interface ListPageProps {
   title: string;
@@ -15,8 +16,11 @@ interface Music {
   image: string;
 }
 
+
+
 const AllPopularPlayList = ({ title }: ListPageProps) => {
   const [playList, setPlayList] = useState<Music[]>([]);
+  const navigate = useNavigate()
 
   const handleLike = (id: number) => {
     apiClient({
@@ -99,6 +103,9 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
                     transition: opacity 0.3s;
                   }
                 `}
+                onClick={() => {
+                  navigate(`/playlist/${item.id}`)
+                }}
               >
                 <div
                 onClick={(e) => {

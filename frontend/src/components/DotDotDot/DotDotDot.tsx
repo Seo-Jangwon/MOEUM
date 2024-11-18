@@ -28,6 +28,18 @@ const DotDotDot: React.FC<DotDotDotProps> = ({ data }) => {
       <AiOutlineMore css={s_icon} onClick={handleDropDown} size={data[0].size} />
       {isDropDown && (
         <ul css={s_contentList}>
+        <ul
+          css={css`
+            position: absolute;
+            background-color: #444;
+            white-space: nowrap;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 0;
+            list-style: none;
+            z-index: 1;
+          `}
+        >
           <DropDown data={data} closeDropdown={() => setIsDropDown(false)} />
         </ul>
       )}
