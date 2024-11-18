@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { s_div_img, s_img } from './style';
 import { FaRegHeart } from 'react-icons/fa6';
 import { PiPlaylist } from 'react-icons/pi';
+import { useNavigate } from 'react-router-dom';
 
 interface Artist {
   id: number;
@@ -31,6 +32,7 @@ const LikeMusic = () => {
   const [likeMusic, setLikeMusic] = useState<Music[]>([]);
   const [isExist, setIsExist] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const navigate = useNavigate()
 
   useEffect(() => {
     apiClient({
@@ -87,21 +89,21 @@ const LikeMusic = () => {
         <div style={{ color: 'white' }}>좋아요한 음악이 없습니다.</div>
       ) : (
         likeMusic.map((item, index) => (
-          <div key={index} css={s_popular_box}>
+          <div key={index} css={s_popular_box} onClick={() => navigate(`/music?id=${item.id}`)}>
             <div>
               <div css={s_div_img}>
                 <img src={item.albumImage} alt={item.name} css={s_img} />
               </div>
             </div>
             <div css={s_div_data}>
-              <h5 css={s_h5_title}>{item.name}</h5>
+              <h5 css={s_h5_title}>{item.name}</h5> 
               <p css={s_p_artist}>
                 {item.artists.map((item, index) => (
                   <p key={index}>{item.name}</p>
                 ))}
               </p>
             </div>
-            <div>
+            <div onClick={(e) => e.stopPropagation()}>
               <DotDotDot
                 data={[
                   {
