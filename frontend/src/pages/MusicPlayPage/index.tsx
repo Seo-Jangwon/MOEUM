@@ -33,6 +33,7 @@ export interface MusicI {
 export interface Data {
   vibrations: { time: number; duration: number }[];
   notes: Note[];
+  backgrounds: { start: number; end: number; color: string }[];
 }
 
 export interface Note {
@@ -43,6 +44,7 @@ export interface Note {
   width: number;
   effect: string[];
   direction: number[];
+  color: string;
   sides: number;
   angle: number;
 }
@@ -97,7 +99,7 @@ const MusicPlayPage: React.FC = () => {
             ? apiClient({ method: 'GET', url: `/musics/playlist/detail/${playListId.current}` })
             : apiClient({ method: 'GET', url: `/recommendations?musicId=${musicId.current}` }),
           apiClient({ method: 'GET', url: `/musics/visualization/${musicId.current}` }),
-          apiClient({ method: 'GET', url: `/player/lyrics/${musicId.current}` }),
+          apiClient({ method: 'GET', url: `/musics/visualization/${musicId.current}/lyrics` }),
         ]);
 
         if (musicDetailDataResponse.data.code === 200) {
@@ -106,12 +108,14 @@ const MusicPlayPage: React.FC = () => {
           console.log('망함 ㅅㄱ');
         }
         if (musicListDetailDataResponse.data.code === 200) {
-          setMusicListDetailInfo(musicListDetailDataResponse.data.data);
+          if (playListId.current) setMusicListDetailInfo(musicListDetailDataResponse.data.data.musics.playlistMusics);
+          else setMusicListDetailInfo(musicListDetailDataResponse.data.data.recommendedMusics);
         } else {
           console.log('망함 ㅅㄱ');
         }
         if (musicAnalyzedDataResponse.data.code === 200) {
-          setMusicAnalyzedData(musicAnalyzedDataResponse.data.data);
+          // setMusicAnalyzedData(musicAnalyzedDataResponse.data.data);
+          setMusicAnalyzedData(testAnalyzedData.data);
         } else {
           console.log('망함 ㅅㄱ!');
         }
@@ -149,6 +153,8 @@ const MusicPlayPage: React.FC = () => {
                 ? musicListDetailInfo![playListIdx.current! + 1].id
                 : musicListDetailInfo![0].id
             }
+            playListId={playListId.current ? playListId.current : undefined}
+            playListIdx={playListIdx.current ? playListIdx.current : undefined}
           />
           <PlayList
             musicData={musicListDetailInfo!}
