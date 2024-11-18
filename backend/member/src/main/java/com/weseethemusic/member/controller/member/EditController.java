@@ -108,7 +108,7 @@ public class EditController {
         }
     }
 
-    @PutMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/profileimg", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> updateProfileImage(
         @RequestHeader("X-Member-Id") Long memberId,
         @ModelAttribute EditRequestDto editRequestDto) {
