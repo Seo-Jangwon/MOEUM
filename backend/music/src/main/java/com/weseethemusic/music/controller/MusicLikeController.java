@@ -4,7 +4,7 @@ import com.weseethemusic.music.common.exception.CustomException;
 import com.weseethemusic.music.common.exception.ErrorCode;
 import com.weseethemusic.music.dto.ResponseDto;
 import com.weseethemusic.music.dto.like.MusicDto;
-import com.weseethemusic.music.service.MusicLikeServiceImpl;
+import com.weseethemusic.music.service.musicLike.MusicLikeServiceImpl;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;

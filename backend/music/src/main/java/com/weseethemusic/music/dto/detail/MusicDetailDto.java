@@ -23,4 +23,7 @@ public class MusicDetailDto {
     private String duration;
     private String releaseDate;
     private List<MusicDetailArtistDto> artists;
+    private Boolean musicIsLike;
+    private Boolean AlbumIsLike;
+
 }

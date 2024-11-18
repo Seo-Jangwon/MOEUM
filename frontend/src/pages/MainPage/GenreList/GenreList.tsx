@@ -40,8 +40,8 @@ const GenreList = () => {
     .then((res) => {
       console.log(res);
       if (res.data.code === 200) {
-        const musicId = res.data.data.musics[0].id
-        navigate(`/music?id=${musicId}&list=${id}`)
+        const musicId = res.data.data.playlistId
+        navigate(`/music?id=${id}&list=${musicId}`)
       }
     })
   }

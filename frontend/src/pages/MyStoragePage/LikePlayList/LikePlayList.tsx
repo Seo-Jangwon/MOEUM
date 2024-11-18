@@ -72,6 +72,7 @@ const LikePlayList = () => {
     <div
       css={css`
         display: flex;
+        flex-wrap: wrap;
         gap: 20px;
       `}
     >

@@ -175,10 +175,13 @@ const ProfilePage = () => {
         .then((response) => {
           if (response.data.code === 200) {
             setPasswordText('새롭게 사용하실 비밀번호를 입력해주세요.');
+            setSubmitData('');
+            passwordFlag.current = true;
           } else if (response.data.code === 602) {
             alert('비밀번호가 일치하지 않습니다. 다시 시도해 주십시오.');
+            navigate(0);
           } else {
-            alert('오류가 발생하였습니다. 다시 시도해 주십시오');
+            alert('비밀번호 형식을 맞춰주세요');
             navigate(0);
           }
         })
@@ -197,11 +200,11 @@ const ProfilePage = () => {
           if (response.data.code === 200) {
             alert('비밀번호 변경이 완료되었습니다.');
           } else {
-            alert('잘못된 접근입니다.');
+            alert('비밀번호는 8~15자, 영문, 숫자, 특수문자를 포함해야 합니다.');
           }
         })
         .catch((err) => {
-          alert('오류가 발생하였습니다. 다시 시도해 주십시오.');
+          alert('비밀번호는 8~15자, 영문, 숫자, 특수문자를 포함해야 합니다.');
           console.log(err);
         })
         .finally(() => {
@@ -326,7 +329,10 @@ const ProfilePage = () => {
         {isModalOpen ? <Modal {...editModalComponentsData[modalDataIdx.current]} /> : null}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div>
-            <img src={profileImage} css={{ backgroundColor: 'gray', opacity: 0.7, borderRadius: '25px' }} />
+            <img
+              src={profileImage}
+              css={{ backgroundColor: 'gray', opacity: 0.7, borderRadius: '50px', width: '70px', height: '70px' }}
+            />
           </div>
           &nbsp;
           <p>{nickname}</p>

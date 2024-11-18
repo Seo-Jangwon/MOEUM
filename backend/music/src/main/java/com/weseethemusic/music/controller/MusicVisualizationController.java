@@ -5,7 +5,7 @@ import com.weseethemusic.music.common.exception.ErrorCode;
 import com.weseethemusic.music.dto.ResponseDto;
 import com.weseethemusic.music.dto.visualization.LyricListDto;
 import com.weseethemusic.music.dto.visualization.MusicVisualizationDto;
-import com.weseethemusic.music.service.MusicVisualizationServiceImpl;
+import com.weseethemusic.music.service.musicVisualization.MusicVisualizationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

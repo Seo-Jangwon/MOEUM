@@ -1,4 +1,4 @@
-package com.weseethemusic.music.service;
+package com.weseethemusic.music.service.music;
 
 import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
@@ -29,6 +29,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,13 +49,18 @@ public class MusicServiceImpl implements MusicService {
 
     // 좋아요 한 아티스트 목록 조회
     @Override
+    @Transactional(readOnly = true)
     public List<ArtistImageDto> getArtistLikes(long memberId) {
         List<ArtistImageDto> result = new ArrayList<>();
         List<Artist> artists = likeArtistRepository.findAllByMemberId(memberId);
 
         for (Artist artist : artists) {
-            result.add(ArtistImageDto.builder().id(artist.getId()).name(artist.getName())
-                .image(artist.getImageName()).build());
+            result.add(ArtistImageDto.builder()
+                .id(artist.getId())
+                .name(artist.getName())
+                .image(artist.getImageName())
+                .isLike(true)  // 좋아요 목록이므로 무조건 true
+                .build());
         }
 
         return result;
@@ -62,6 +68,7 @@ public class MusicServiceImpl implements MusicService {
 
     // 좋아요 한 앨범 목록 조회
     @Override
+    @Transactional(readOnly = true)
     public List<GeneralAlbumDto> getAlbumLikes(long memberId) {
         List<GeneralAlbumDto> result = new ArrayList<>();
         List<Album> albums = likeAlbumRepository.findAllByMemberId(memberId);
@@ -76,8 +83,13 @@ public class MusicServiceImpl implements MusicService {
                         .name(artist.getName()).build());
             }
 
-            result.add(GeneralAlbumDto.builder().id(album.getId()).name(album.getName())
-                .image(album.getImageName()).artists(artistDtos).build());
+            result.add(GeneralAlbumDto.builder()
+                .id(album.getId())
+                .name(album.getName())
+                .image(album.getImageName())
+                .artists(artistDtos)
+                .isLike(true)  // 좋아요 목록이므로 무조건 true
+                .build());
         }
 
         return result;
@@ -85,7 +97,8 @@ public class MusicServiceImpl implements MusicService {
 
     // 인기 플레이리스트 조회
     @Override
-    public List<GeneralPlaylistDto> getPopularPlaylists() {
+    @Transactional(readOnly = true)
+    public List<GeneralPlaylistDto> getPopularPlaylists(Long memberId) {
         List<GeneralPlaylistDto> result = new ArrayList<>();
         List<Playlist> playlists = playlistLikeRepository.getPopularPlaylists();
 
@@ -98,9 +111,18 @@ public class MusicServiceImpl implements MusicService {
                 music = musicRepository.findById(playlistMusic.getMusicId()).orElse(null);
             }
 
-            result.add(GeneralPlaylistDto.builder().id(playlist.getId()).name(playlist.getName())
+            boolean isLike = false;
+            if (memberId != null) {
+                isLike = playlistLikeRepository.existsByMemberIdAndPlaylist_Id(memberId,
+                    playlist.getId());
+            }
+
+            result.add(GeneralPlaylistDto.builder()
+                .id(playlist.getId())
+                .name(playlist.getName())
                 .image(music == null ? "https://picsum.photos/500/500"
                     : music.getAlbum().getImageName())
+                .isLike(isLike)
                 .build());
         }
 
@@ -109,6 +131,7 @@ public class MusicServiceImpl implements MusicService {
 
     // 전체 장르 목록 조회
     @Override
+    @Transactional(readOnly = true)
     public TodayGenreListDto getGenres() {
         List<RealTodayGenreDto> result = new ArrayList<>();
         List<Genre> genres = genreRepository.findAll();
@@ -123,34 +146,47 @@ public class MusicServiceImpl implements MusicService {
 
     // 인기 30곡 조회
     @Override
-    public List<GeneralMusicDto> getPopularMusics() {
-        return toMusicDto(likeMusicRepository.getPopularMusics());
+    @Transactional(readOnly = true)
+    public List<GeneralMusicDto> getPopularMusics(Long memberId) {
+        return toMusicDto(likeMusicRepository.getPopularMusics(), memberId);
     }
 
     // 최신 발매곡 조회
     @Override
-    public List<GeneralMusicDto> getLatestMusics() {
-        return toMusicDto(musicRepository.getLatestMusics());
+    @Transactional(readOnly = true)
+    public List<GeneralMusicDto> getLatestMusics(Long memberId) {
+        return toMusicDto(musicRepository.getLatestMusics(), memberId);
     }
 
     // 아티스트 전체 디스코그래피 조회
     @Override
-    public List<GeneralDiscographyDto> getAllDiscography(long artistId) {
+    @Transactional(readOnly = true)
+    public List<GeneralDiscographyDto> getAllDiscography(long artistId, Long memberId) {
         artistRepository.findById(artistId).orElseThrow();
 
         List<GeneralDiscographyDto> result = new ArrayList<>();
         List<Album> albums = albumRepository.getDiscographyByArtist(artistId);
 
         for (Album album : albums) {
-            result.add(GeneralDiscographyDto.builder().id(album.getId()).name(album.getName())
-                .releaseDate(album.getReleaseDate().toString()).image(album.getImageName())
+            boolean isLike = false;
+            if (memberId != null) {
+                isLike = likeAlbumRepository.existsByMemberIdAndAlbum_Id(memberId, album.getId());
+            }
+
+            result.add(GeneralDiscographyDto.builder()
+                .id(album.getId())
+                .name(album.getName())
+                .releaseDate(album.getReleaseDate().toString())
+                .image(album.getImageName())
+                .isLike(isLike)
                 .build());
         }
 
         return result;
     }
 
-    private List<GeneralMusicDto> toMusicDto(List<Music> musics) {
+
+    private List<GeneralMusicDto> toMusicDto(List<Music> musics, Long memberId) {
         List<GeneralMusicDto> result = new ArrayList<>();
 
         for (Music music : musics) {
@@ -164,8 +200,17 @@ public class MusicServiceImpl implements MusicService {
                     ArtistDto.builder().id(artist.getId()).name(artist.getName()).build());
             }
 
-            result.add(GeneralMusicDto.builder().id(music.getId()).name(music.getName())
-                .artists(artistDtos).image(albumRepository.getAlbumImage(music.getAlbum().getId()))
+            boolean isLike = false;
+            if (memberId != null) {
+                isLike = likeMusicRepository.existsByMemberIdAndMusic_Id(memberId, music.getId());
+            }
+
+            result.add(GeneralMusicDto.builder()
+                .id(music.getId())
+                .name(music.getName())
+                .artists(artistDtos)
+                .image(albumRepository.getAlbumImage(music.getAlbum().getId()))
+                .isLike(isLike)
                 .build());
         }
 

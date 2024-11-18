@@ -1,4 +1,4 @@
-package com.weseethemusic.music.service;
+package com.weseethemusic.music.service.musicVisualization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,20 +57,20 @@ public class MusicVisualizationServiceImpl implements MusicVisualizationService 
             String rightColor = "";
 
             leftColor = switch (colors[0]) {
-                case "Happy" -> "hsla(56, 100%, 49%, 1), ";
-                case "Content" -> "hsla(133, 100%, 36%, 1), ";
-                case "Sad" -> "hsla(241, 100%, 18%, 1), ";
-                default -> "hsla(270, 100%, 24%, 1), ";
+                case "Happy" -> "hsla(56, 100%, 49%, 1)";
+                case "Content" -> "hsla(133, 100%, 36%, 1)";
+                case "Sad" -> "hsla(241, 100%, 18%, 1)";
+                default -> "hsla(270, 100%, 24%, 1)";
             };
 
             rightColor = switch (colors[1]) {
-                case "Silent" -> "hsla(216, 100%, 11%, 1))";
-                case "Quiet" -> "hsla(192, 100%, 36%, 1))";
-                case "Loud" -> "hsla(10, 100%, 37%, 1))";
-                default -> "hsla(320, 100%, 37%, 1))";
+                case "Silent" -> "hsla(216, 100%, 11%, 1)";
+                case "Quiet" -> "hsla(192, 100%, 36%, 1)";
+                case "Loud" -> "hsla(10, 100%, 37%, 1)";
+                default -> "hsla(320, 100%, 37%, 1)";
             };
 
-            String color = "linear-gradient(to bottom, " + leftColor + rightColor;
+            String color = rightColor;
             backgroundDto.setColor(color);
 
             backgrounds.add(backgroundDto);

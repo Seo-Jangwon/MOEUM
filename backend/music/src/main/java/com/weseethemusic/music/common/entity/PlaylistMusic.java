@@ -21,4 +21,5 @@ public class PlaylistMusic {
     private Long musicId;
     private double order;
     private LocalDateTime addedAt;
+    
 }

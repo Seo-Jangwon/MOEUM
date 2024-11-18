@@ -50,6 +50,7 @@ const DotDotDot: React.FC<DotDotDotProps> = ({ data }) => {
             border-radius: 8px;
             margin: 0;
             list-style: none;
+            z-index: 1;
           `}
         >
           <DropDown data={data} closeDropdown={() => setIsDropDown(false)} />
