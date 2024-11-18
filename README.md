@@ -72,25 +72,31 @@
   2. 1의 결과물을 바탕으로 음악의 악기, 볼륨, 강세, 박자 등 음악 구성 요소 수치화
   
   3. 2의 결과물을 단색, 그라데이션, 색상이 특정 방향으로 번지는 속도, 도형 등으로 시각화
+  
+  **시각화 디자인**
+  
+  1. 분위기 : color (gradient)
+  
+  2. mode : 장/단조
+  
+  3. liveliness → 세 개의 property를 수치로 환산해서 표현
      
-     **시각화 디자인**
+     1. danceability
+     2. energy
+     3. valence
   
-  4. 분위기 : color (gradient)
-     
-     1. mode : 장/단조
-     2. liveliness → 세 개의 property를 수치로 환산해서 표현
-        1. danceability
-        2. energy
-        3. valence
+  4. 박자 : line
   
-  5. 박자 : line
-  
-  6. 음 : shape, 간단한 기초 도형들의 조합으로 표현 (시스템)
+  5. 음 : shape, 간단한 기초 도형들의 조합으로 표현 (시스템)
      
      1. key(C~B)
      2. volume
      3. *Timbre*
   - 시각화 참고자료
+    
+    - [Taste Visualization for Pixar's Ratatouille (Synesthesia) - Michel Gagné - 1080P - YouTube](https://www.youtube.com/watch?v=xizttM_Cbuc)
+    
+    - https://www.fastcompany.com/90822202/what-sound-looks-like-according-to-ai
   
   ## ✅ 가사 시각화 (On/Off 가능)
   
@@ -110,51 +116,6 @@
     - 공유시 시각화 결과물 스크린샷 → 대표 이미지 설정 (png로 다운로드 가능)
   
   ---
-
-## ✅ 음악 시각화
-
-1. 음파 분석
-
-2. 1의 결과물을 바탕으로 음악의 악기, 볼륨, 강세, 박자 등 음악 구성 요소 수치화
-
-3. 2의 결과물을 단색, 그라데이션, 색상이 특정 방향으로 번지는 속도, 도형 등으로 시각화
-   
-   **시각화 디자인**
-
-4. 분위기 : color (gradient)
-   
-   1. mode : 장/단조
-   
-   2. liveliness → 세 개의 property를 수치로 환산해서 표현
-      
-      1. danceability
-      2. energy
-      3. valence
-   
-   3. 박자 : line
-   
-   4. 음 : shape, 간단한 기초 도형들의 조합으로 표현 (시스템)
-      
-      1. key(C~B)
-      2. volume
-      3. Timbre
-      - [Taste Visualization for Pixar&#39;s Ratatouille (Synesthesia) - Michel Gagné - 1080P - YouTube](https://www.youtube.com/watch?v=xizttM_Cbuc)
-      - https://www.fastcompany.com/90822202/what-sound-looks-like-according-to-ai 
-      - ## ✅ 가사 시각화 (On/Off 가능)
-      1. 음악 정보 사이트에서 재생 시간에 싱크된 가사 정보 크롤링
-      2. 1의 결과물을 DB에 저장
-      3. 음악을 시각화한 결과물에 맞춰 비슷한 분위기로 가사를 시각화한 결과물을 합성
-
-## 음악 추천
-
-1. 좋아요, 1분 이상 들은 음악 기록을 바탕으로 비슷한 음파 형태의 음악 추천
-2. 비슷한 기록을 가진 사람들의 플레이리스트를 바탕으로 음악 추천
-
-## 나만의 플레이리스트
-
-- 음악 좋아요
-- 나만의 플레이리스트 제작 및 공유
-- 공유시 시각화 결과물 스크린샷 → 대표 이미지 설정 (png로 다운로드 가능)
 
 ## 시각화 시 고려 사항
 
@@ -221,11 +182,11 @@
 
 [p_nanayakkara_2013_2.pdf](https://prod-files-secure.s3.us-west-2.amazonaws.com/24674912-6290-4358-94bd-a0518db2c00b/09395d5e-eb4a-44f7-bc77-68059c0d9cd7/p_nanayakkara_2013_2.pdf)
 
-![논문1](./thesis1.png)
+![논문1](./misc/images/thesis1.png)
 
-![논문2](./thesis2.PNG)
+![논문2](./misc/images/thesis2.PNG)
 
-![논문3](./thesis3.PNG)
+![논문3](./misc/images/thesis3.PNG)
 
 ## 목업
 
@@ -233,7 +194,7 @@
 
 ## ERD
 
-![erd](./erd.png)
+![erd](./misc/images/erd.png)
 
 ## 요구사항 명세서 (유즈 케이스)
 
@@ -245,17 +206,17 @@
 
 ## 데이터 분석
 
-![music](./music.PNG)
+![music](./misc/images/music.PNG)
 
-![beat](./beat.PNG)
+![beat](./misc/images/beat.PNG)
 
-![beat_num](./beat_num.PNG)
+![beat_num](./misc/images/beat_num.PNG)
 
-![mode](./mod.PNG)
+![mode](./misc/images/mod.PNG)
 
-![pitich](./pitch.PNG)
+![pitich](./misc/images/pitch.PNG)
 
-![shape](./shape.PNG)
+![shape](./misc/images/shape.PNG)
 
 ## 팀 소개
 
@@ -273,20 +234,20 @@
 
 ### 메인 페이지
 
-![메인 페이지](./main.png)
+![메인 페이지](./misc/images/main.png)
 
 ### Login 페이지
 
-![login](./login.png)
+![login](./misc/images/login.png)
 
 ### Calibration 페이지
 
-![calibration](./calibration.png)
+![calibration](./misc/images/calibration.png)
 
 ### Visualization
 
-![music_v](./visualization.PNG)
+![music_v](./misc/images/visualization.PNG)
 
 ### Playlist 페이지
 
-![playlist](./playlist.png)
+![playlist](./misc/images/playlist.png)
