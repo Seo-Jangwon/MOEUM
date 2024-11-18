@@ -224,6 +224,7 @@ const MusicPlayer = ({
         ) {
           const x = canvasRef.current!.clientWidth / 2;
           const y = (canvasRef.current!.clientHeight * noteDatas.current[timeIdx.current].y) / 100;
+
           renderRef.current!.options.background =
             backgroundDatas.current![noteDatas.current[timeIdx.current].section - 1].color;
           const polygon = Bodies.polygon(
@@ -473,7 +474,7 @@ const MusicPlayer = ({
 
       options: {
         wireframes: false,
-        background: '#000',
+        background: '#141414',
       },
     });
 
@@ -711,7 +712,7 @@ const MusicPlayer = ({
                   key={index}
                   css={css`
                     :hover {
-                      text-decoration: u<MdOutlineLyrics / >nderline;
+                      text-decoration: underline;
                     }
                   `}
                   onClick={() => navigate(`/artist/${item.id}`)}

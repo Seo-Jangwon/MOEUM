@@ -8,13 +8,7 @@ import { IoIosArrowDown, IoIosArrowDropright, IoIosArrowUp } from 'react-icons/i
 import { PiVibrate } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import SettingComponent from './Components/SettingComponent/SettingComponent';
-import {
-  s_componentsContainer,
-  s_inputBar,
-  s_inputContainer,
-  s_inputsContainer,
-  s_titleContainer,
-} from './style';
+import { s_componentsContainer, s_inputBar, s_inputContainer, s_inputsContainer, s_titleContainer } from './style';
 
 interface settingComponentsData {
   iconImage: ReactNode;
@@ -23,15 +17,7 @@ interface settingComponentsData {
 }
 const SettingPage = () => {
   const navigate = useNavigate();
-  const {
-    vibration,
-    toggleVibration,
-    visualization,
-    toggleVisualization,
-    blindness,
-    eq,
-    changeEq,
-  } = useSettingStore();
+  const { vibration, toggleVibration, visualization, toggleVisualization, blindness, eq, changeEq } = useSettingStore();
   const [isEqOpen, setIsEqOpen] = useState<boolean>(false);
   const [eqValues, setEqValues] = useState<number[]>([0, 0, 0]);
   function changeEqOpenState() {
@@ -70,11 +56,7 @@ const SettingPage = () => {
       rightButton: (
         <>
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            {isEqOpen ? (
-              <IoIosArrowUp onClick={changeEqOpenState} />
-            ) : (
-              <IoIosArrowDown onClick={changeEqOpenState} />
-            )}
+            {isEqOpen ? <IoIosArrowUp onClick={changeEqOpenState} /> : <IoIosArrowDown onClick={changeEqOpenState} />}
           </div>
           <div
             css={css`
@@ -95,8 +77,8 @@ const SettingPage = () => {
                   settingChanged();
                 }}
                 type="range"
-                min={0}
-                max={100}
+                min={-10}
+                max={10}
                 step={1}
                 name=""
                 id=""
@@ -115,8 +97,8 @@ const SettingPage = () => {
                 onMouseUp={() => {
                   settingChanged();
                 }}
-                min={0}
-                max={100}
+                min={-10}
+                max={10}
                 step={1}
               />
             </div>
@@ -133,8 +115,8 @@ const SettingPage = () => {
                 onMouseUp={() => {
                   settingChanged();
                 }}
-                min={0}
-                max={100}
+                min={-10}
+                max={10}
                 step={1}
                 name=""
                 id=""
