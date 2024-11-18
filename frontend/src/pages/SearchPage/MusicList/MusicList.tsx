@@ -35,7 +35,7 @@ const MusicList = ({ musicList, keyword, category }: { musicList: MusicI[]; keyw
             >
               <img src={musicList[0].albumImage} alt="이미지" css={s_firstElementImage} />
               <div css={s_firstElementText}>
-                <div>{musicList[0].title}</div>
+                <div>{musicList[0].name}</div>
                 <div>
                   {' '}
                   {musicList[0].artists.map((artist, index) => {
@@ -61,7 +61,7 @@ const MusicList = ({ musicList, keyword, category }: { musicList: MusicI[]; keyw
                   <div css={s_otherElement} onClick={() => navigate(`/music?id=${item.id}`)} key={index}>
                     <div css={s_otherElementLeftChild}>
                       <img css={s_otherElementImage} src={item.albumImage} alt="" />
-                      {item.title}
+                      {item.name}
                     </div>
                     <div css={s_otherElementRightChild}>
                       {item.artists.map((artist, index) => {
