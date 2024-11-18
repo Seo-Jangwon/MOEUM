@@ -4,6 +4,7 @@ import { s_container } from "@/pages/MainPage/style";
 import { css } from "@emotion/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface ListPageProps {
   title: string;

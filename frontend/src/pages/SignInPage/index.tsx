@@ -1,7 +1,4 @@
 import apiClient from '@/api/apiClient';
-import facebookLogo from '@/assets/oauth/faceboook_logo.svg';
-import googleLogo from '@/assets/oauth/google_logo.svg';
-import kakaoLogo from '@/assets/oauth/kakao_logo.svg';
 import Button from '@/components/Button/Button';
 import Input from '@/components/Input/Input';
 import useAuthStore from '@/stores/authStore';
@@ -10,20 +7,7 @@ import { isValidEmail, isValidPassword } from '@/utils/validator';
 import { useState } from 'react';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
-import OauthButton from './components/OauthButton/OauthButton';
-import {
-  Line,
-  s_button,
-  s_container,
-  s_content,
-  s_error_box,
-  s_form,
-  s_line_text,
-  s_links,
-  s_oauth_box,
-  s_oauth_box_button,
-  s_titlebox,
-} from './style';
+import { s_button, s_container, s_content, s_error_box, s_form, s_links, s_titlebox } from './style';
 
 const SignInPage = () => {
   const [email, setEmail] = useState('');
@@ -91,7 +75,7 @@ const SignInPage = () => {
           <Link to="/signup">회원가입</Link>
         </ul>
       </section>
-      <section css={s_oauth_box}>
+      {/* <section css={s_oauth_box}>
         <div css={s_line_text}>
           <Line />
           <p>다른 방법으로 계속하기</p>
@@ -102,7 +86,7 @@ const SignInPage = () => {
           <OauthButton to="/oauth/kakao" Icon={kakaoLogo} title="Kakao" />
           <OauthButton to="/oauth/facebook" Icon={facebookLogo} title="Facebook" />
         </div>
-      </section>
+      </section> */}
     </main>
   );
 };
