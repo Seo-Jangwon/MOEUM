@@ -56,6 +56,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     // 재생 기록 선택 삭제
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deletePlayHistory(Long memberId, Long musicId) {
         historyRepository.deleteByMemberIdAndMusic_Id(memberId, musicId);
     }
