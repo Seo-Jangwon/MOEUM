@@ -18,5 +18,6 @@ public class PlaylistResponse {
     private String totalDuration;
     private int totalMusicCount;
     private List<PlaylistMusicResponse> playlistMusics;
+    private Boolean isLike;
 
 }

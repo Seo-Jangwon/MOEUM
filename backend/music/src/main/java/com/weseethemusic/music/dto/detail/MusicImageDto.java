@@ -15,5 +15,6 @@ public class MusicImageDto {
     private String name;
     private String duration;
     private List<ArtistImageDto> artists;
+    private Boolean isLike;
 
 }

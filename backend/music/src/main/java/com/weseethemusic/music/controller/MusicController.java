@@ -10,8 +10,8 @@ import com.weseethemusic.music.dto.general.GeneralPlaylistDto;
 import com.weseethemusic.music.dto.playlist.TodayGenreDto;
 import com.weseethemusic.music.dto.playlist.TodayGenreListDto;
 import com.weseethemusic.music.dto.search.ArtistImageDto;
-import com.weseethemusic.music.service.MusicServiceImpl;
-import com.weseethemusic.music.service.PlaylistServiceImpl;
+import com.weseethemusic.music.service.music.MusicService;
+import com.weseethemusic.music.service.playlist.PlaylistService;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MusicController {
 
-    private final MusicServiceImpl musicService;
-    private final PlaylistServiceImpl playlistService;
+    private final MusicService musicService;
+    private final PlaylistService playlistService;
 
     // 좋아요 한 아티스트 목록 조회
     @GetMapping("/artist/like")
@@ -61,11 +61,12 @@ public class MusicController {
 
     // 인기 30곡 조회
     @GetMapping("/popular")
-    public ResponseDto<List<GeneralMusicDto>> getPopularMusics() {
+    public ResponseDto<List<GeneralMusicDto>> getPopularMusics(
+        @RequestHeader(value = "X-Member-Id", required = false) Long memberId) {
         List<GeneralMusicDto> popularMusicDtos;
 
         try {
-            popularMusicDtos = musicService.getPopularMusics();
+            popularMusicDtos = musicService.getPopularMusics(memberId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
@@ -75,11 +76,12 @@ public class MusicController {
 
     // 최신 발매곡 조회
     @GetMapping("/latest")
-    public ResponseDto<List<GeneralMusicDto>> getLatestMusics() {
+    public ResponseDto<List<GeneralMusicDto>> getLatestMusics(
+        @RequestHeader(value = "X-Member-Id", required = false) Long memberId) {
         List<GeneralMusicDto> latestMusicDtos;
 
         try {
-            latestMusicDtos = musicService.getLatestMusics();
+            latestMusicDtos = musicService.getLatestMusics(memberId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
@@ -89,11 +91,12 @@ public class MusicController {
 
     // 인기 플레이리스트 조회
     @GetMapping("/popular/playlist")
-    public ResponseDto<List<GeneralPlaylistDto>> getPopularPlaylists() {
+    public ResponseDto<List<GeneralPlaylistDto>> getPopularPlaylists(
+        @RequestHeader(value = "X-Member-Id", required = false) Long memberId) {
         List<GeneralPlaylistDto> popularPlaylistDtos;
 
         try {
-            popularPlaylistDtos = musicService.getPopularPlaylists();
+            popularPlaylistDtos = musicService.getPopularPlaylists(memberId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, "내부 서버 오류");
         }
@@ -103,11 +106,12 @@ public class MusicController {
 
     // 아티스트 전체 디스코그래피 조회
     @GetMapping("/artist/{artistId}/discography")
-    public ResponseDto<List<GeneralDiscographyDto>> getAllDiscography(@PathVariable long artistId) {
+    public ResponseDto<List<GeneralDiscographyDto>> getAllDiscography(@PathVariable long artistId,
+        @RequestHeader(value = "X-Member-Id", required = false) Long memberId) {
         List<GeneralDiscographyDto> result;
 
         try {
-            result = musicService.getAllDiscography(artistId);
+            result = musicService.getAllDiscography(artistId, memberId);
         } catch (NoSuchElementException e) {
             throw new CustomException(ErrorCode.NOT_FOUND, "아티스트 정보를 찾을 수 없습니다.");
         } catch (Exception e) {

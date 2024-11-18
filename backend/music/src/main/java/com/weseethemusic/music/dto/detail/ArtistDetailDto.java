@@ -18,5 +18,6 @@ public class ArtistDetailDto {
     private String image;
     private List<DiscographyAlbumDto> discography;
     private List<PopularMusicDto> popular;
+    private Boolean isLike;
 
 }

@@ -19,10 +19,11 @@ public class AlbumDetailDto {
     private String releaseDate;
     private List<ArtistImageDto> artists;
     private List<MusicImageDto> musics;
+    private Boolean isLike;
 
     @Builder
     public AlbumDetailDto(long id, String name, String image, String totalDuration,
-        String releaseDate, List<ArtistImageDto> artists, List<MusicImageDto> musics) {
+        String releaseDate, List<ArtistImageDto> artists, List<MusicImageDto> musics, Boolean isLike) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -30,6 +31,7 @@ public class AlbumDetailDto {
         this.releaseDate = releaseDate;
         this.artists = artists;
         this.musics = musics;
+        this.isLike = isLike;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.weseethemusic.music.service;
+package com.weseethemusic.music.service.playlist;
 
 import com.weseethemusic.music.common.entity.Album;
 import com.weseethemusic.music.common.entity.Artist;
@@ -15,11 +15,14 @@ import com.weseethemusic.music.dto.playlist.TodayGenreDto;
 import com.weseethemusic.music.dto.playlist.TodayGenreMusicDto;
 import com.weseethemusic.music.repository.AlbumRepository;
 import com.weseethemusic.music.repository.ArtistMusicRepository;
+import com.weseethemusic.music.repository.LikeAlbumRepository;
+import com.weseethemusic.music.repository.LikeArtistRepository;
 import com.weseethemusic.music.repository.LikeMusicRepository;
 import com.weseethemusic.music.repository.MusicRepository;
 import com.weseethemusic.music.repository.PlaylistLikeRepository;
 import com.weseethemusic.music.repository.PlaylistMusicRepository;
 import com.weseethemusic.music.repository.PlaylistRepository;
+import com.weseethemusic.music.service.musicDetail.MusicDetailServiceImpl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +48,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final ArtistMusicRepository artistMusicRepository;
     private final PlaylistLikeRepository playlistLikeRepository;
     private final LikeMusicRepository likeMusicRepository;
-
+    private final LikeAlbumRepository likeAlbumRepository;
+    private final LikeArtistRepository likeArtistRepository;
     private final MusicDetailServiceImpl musicDetailService;
     private final AlbumRepository albumRepository;
 
@@ -186,7 +190,7 @@ public class PlaylistServiceImpl implements PlaylistService {
                 }
 
                 PlaylistResponse response = createPlaylistResponse(playlist, music, durations,
-                    totalMusicCount);
+                    totalMusicCount, memberId);
                 responses.add(response);
             }
 
@@ -222,7 +226,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(readOnly = true)
-    public PlaylistResponse getPlaylistDetail(Long playlistId) {
+    public PlaylistResponse getPlaylistDetail(Long playlistId, Long memberId) {
         try {
             // 플레이리스트 조회
             Playlist playlist = playlistRepository.findById(playlistId)
@@ -268,7 +272,8 @@ public class PlaylistServiceImpl implements PlaylistService {
                 playlist,
                 representativeMusic,
                 durations,
-                playlistMusics.size()
+                playlistMusics.size(),
+                memberId
             );
 
             // 수록곡 목록
@@ -283,10 +288,28 @@ public class PlaylistServiceImpl implements PlaylistService {
                 List<Artist> artists = artistMusicRepository.findAllByMusic(music);
                 List<ArtistResponse> artistResponses = new ArrayList<>();
                 for (Artist artist : artists) {
+                    Boolean artistIsLike = null;
+                    if (memberId != null) {
+                        artistIsLike = likeArtistRepository.existsByMemberIdAndArtist_Id(memberId,
+                            artist.getId());
+                    }
                     artistResponses.add(new ArtistResponse(
                         artist.getId(),
-                        artist.getName()
+                        artist.getName(),
+                        artistIsLike
                     ));
+                }
+
+                Boolean musicIsLike = null;
+                if (memberId != null) {
+                    musicIsLike = likeMusicRepository.existsByMemberIdAndMusic_Id(memberId,
+                        music.getId());
+                }
+
+                Boolean albumIsLike = null;
+                if (memberId != null) {
+                    albumIsLike = likeAlbumRepository.existsByMemberIdAndAlbum_Id(memberId,
+                        music.getAlbum().getId());
                 }
 
                 // 음악 정보 응답
@@ -295,7 +318,9 @@ public class PlaylistServiceImpl implements PlaylistService {
                     music.getName(),
                     music.getAlbum().getImageName(),
                     formatDuration(music.getDuration()),
-                    artistResponses
+                    artistResponses,
+                    musicIsLike,
+                    albumIsLike
                 );
                 musicResponses.add(musicResponse);
             }
@@ -311,7 +336,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId) {
+    public List<PlaylistMusicResponse> getPlaylistMusics(Long playlistId, Long memberId) {
         try {
             log.debug("플레이리스트 음악 조회 시작 - playlistId: {}", playlistId);
 
@@ -361,14 +386,31 @@ public class PlaylistServiceImpl implements PlaylistService {
 
                 List<ArtistResponse> artistResponses = new ArrayList<>();
                 for (Artist artist : artists) {
+                    Boolean artistIsLike = null;
+                    if (memberId != null) {
+                        artistIsLike = likeArtistRepository.existsByMemberIdAndArtist_Id(memberId,
+                            artist.getId());
+                    }
                     ArtistResponse artistResponse = new ArtistResponse(artist.getId(),
-                        artist.getName());
+                        artist.getName(), artistIsLike);
                     artistResponses.add(artistResponse);
+                }
+
+                Boolean musicIsLike = null;
+                if (memberId != null) {
+                    musicIsLike = likeMusicRepository.existsByMemberIdAndMusic_Id(memberId,
+                        music.getId());
+                }
+
+                Boolean albumIsLike = null;
+                if (memberId != null) {
+                    albumIsLike = likeAlbumRepository.existsByMemberIdAndAlbum_Id(memberId,
+                        music.getAlbum().getId());
                 }
 
                 PlaylistMusicResponse response = new PlaylistMusicResponse(music.getId(),
                     music.getName(), album.getImageName(), formatDuration(music.getDuration()),
-                    artistResponses);
+                    artistResponses, musicIsLike, albumIsLike);
                 responses.add(response);
             }
 
@@ -421,7 +463,7 @@ public class PlaylistServiceImpl implements PlaylistService {
                 }
 
                 PlaylistResponse response = createPlaylistResponse(playlist, music, durations,
-                    totalMusicCount);
+                    totalMusicCount, memberId);
                 responses.add(response);
             }
 
@@ -482,7 +524,7 @@ public class PlaylistServiceImpl implements PlaylistService {
                 }
 
                 PlaylistResponse response = createPlaylistResponse(playlist, music, durations,
-                    totalMusicCount);
+                    totalMusicCount, memberId);
                 responses.add(response);
             }
 
@@ -527,7 +569,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             }
 
             // 업데이트된 목록 반환
-            return getPlaylistMusics(playlistId);
+            return getPlaylistMusics(playlistId, null);
         } catch (Exception e) {
             log.error("플레이리스트 수정 중 오류 발생", e);
             throw new RuntimeException("플레이리스트 수정에 실패했습니다.");
@@ -567,7 +609,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             playlistMusicRepository.save(playlistMusic);
 
             // 업데이트된 목록 반환
-            return getPlaylistMusics(playlistId);
+            return getPlaylistMusics(playlistId, null);
         } catch (Exception e) {
             log.error("플레이리스트 수정 중 오류 발생", e);
             throw new RuntimeException("플레이리스트 수정에 실패했습니다.");
@@ -581,10 +623,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             Optional<PlaylistLike> existingLike = playlistLikeRepository.findByMemberIdAndPlaylistId(
                 memberId, playlistId);
 
-            if (existingLike.isPresent()) {
-                // 이미 좋아요가 있으면 취소
-                playlistLikeRepository.delete(existingLike.get());
-            } else {
+            if (existingLike.isEmpty()) {
                 // 플레이리스트 존재 확인
                 Playlist playlist = playlistRepository.findById(playlistId)
                     .orElseThrow(() -> new RuntimeException("플레이리스트를 찾을 수 없습니다."));
@@ -607,7 +646,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void disLikePlaylist(Long playlistId, Long memberId) {
         try {
-            PlaylistLike playlistLike = playlistLikeRepository.findByMemberIdAndPlaylistId(memberId,
+            PlaylistLike playlistLike = playlistLikeRepository.findByMemberIdAndPlaylistId(
+                memberId,
                 playlistId).orElseThrow(() -> new RuntimeException("좋아요하지 않은 플레이리스트입니다."));
 
             playlistLikeRepository.delete(playlistLike);
@@ -617,8 +657,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         }
     }
 
-    private PlaylistResponse createPlaylistResponse(Playlist playlist, Music music, int[] durations,
-        int totalMusicCount) {
+    private PlaylistResponse createPlaylistResponse(Playlist playlist, Music music,
+        int[] durations,
+        int totalMusicCount, Long memberId) {
         PlaylistResponse response = new PlaylistResponse();
         response.setId(playlist.getId());
         response.setName(playlist.getName());
@@ -627,6 +668,13 @@ public class PlaylistServiceImpl implements PlaylistService {
         response.setTotalDuration(durations[0] == 0 ? durations[1] + "분 " + durations[2] + "초"
             : durations[0] + "시간 " + durations[1] + "분");
         response.setTotalMusicCount(totalMusicCount);
+
+        Boolean isLike = null;
+        if (memberId != null) {
+            isLike = playlistLikeRepository.existsByMemberIdAndPlaylist_Id(memberId,
+                playlist.getId());
+        }
+        response.setIsLike(isLike);
         return response;
     }
 

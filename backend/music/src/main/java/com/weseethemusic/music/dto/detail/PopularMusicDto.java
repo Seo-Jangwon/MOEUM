@@ -12,5 +12,6 @@ public class PopularMusicDto {
     private long id;
     private String musicName;
     private String musicDuration;
+    private Boolean isLike;
 
 }
