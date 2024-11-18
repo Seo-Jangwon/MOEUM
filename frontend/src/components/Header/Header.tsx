@@ -44,7 +44,11 @@ const Header = ({ search }: HeaderProps) => {
           {isLoggedIn ? (
             <Link to="/profile" css={s_profileButton}>
               {userInfo.profileImage ? (
-                <img src={userInfo.profileImage} alt="profile" style={{ width: '100%', height: '100%' }} />
+                <img
+                  src={userInfo.profileImage}
+                  alt="profile"
+                  style={{ width: '35px', borderRadius: '50px', height: '35px' }}
+                />
               ) : (
                 <PiUserCircle size={32} />
               )}
