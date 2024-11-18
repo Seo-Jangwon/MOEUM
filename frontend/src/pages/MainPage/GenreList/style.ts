@@ -47,6 +47,7 @@ export const s_div_item_box = css`
 export const s_img = css`
   width: 100%;
   border-radius: 20px;
+  aspect-ratio: 1/1;
 `;
 
 export const s_h5 = (theme: Theme) => css`
