@@ -732,8 +732,19 @@ const MusicPlayer = ({
           </div>
         </div>
         <div css={s_infoContainer}>
-          <div>{musicDetailInfo.musicName}</div>
-          <div>
+          <div
+            css={css`
+              font-size: 3rem;
+              font-weight: 700;
+              margin-right: 20px;
+            `}
+          >
+            {musicDetailInfo.musicName}
+          </div>
+          <div css={css`
+            font-size: 1.25rem;
+            line-height: 1.2;
+          `}>
             {musicDetailInfo.artists.map((item, index) => {
               return (
                 <span
@@ -749,8 +760,8 @@ const MusicPlayer = ({
                 </span>
               );
             })}
+            <div>{musicDetailInfo.releaseDate}</div>
           </div>
-          <div>{musicDetailInfo.releaseDate}</div>
         </div>
       </div>
     </>

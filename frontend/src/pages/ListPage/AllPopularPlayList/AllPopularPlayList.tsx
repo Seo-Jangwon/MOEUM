@@ -16,11 +16,9 @@ interface Music {
   image: string;
 }
 
-
-
 const AllPopularPlayList = ({ title }: ListPageProps) => {
   const [playList, setPlayList] = useState<Music[]>([]);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleLike = (id: number) => {
     apiClient({
@@ -28,9 +26,7 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
       url: '/musics/music/like',
       data: { id },
     })
-      .then((res) => {
-        // console.log(res);
-      })
+      .then(() => {})
       .catch((err) => {
         console.log(err);
       });
@@ -42,7 +38,6 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
       url: '/musics/popular/playlist',
     })
       .then((res) => {
-        // console.log(res);
         if (res.data.code === 200) {
           setPlayList(res.data.data);
         }
@@ -79,9 +74,8 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
           `}
         >
           {playList.map((item, index) => (
-            <div>
+            <div key={index}>
               <button
-                key={index}
                 css={css`
                   background: transparent;
                   border: 0;
@@ -103,45 +97,42 @@ const AllPopularPlayList = ({ title }: ListPageProps) => {
                   }
                 `}
                 onClick={() => {
-                  navigate(`/playlist/${item.id}`)
+                  navigate(`/playlist/${item.id}`);
                 }}
               >
                 <div
-                onClick={(e) => {
-                  e.stopPropagation()
-                }}
-              css={css`
-                position: absolute;
-                z-index: 122;
-                
-                right: 10px;
-                bottom: 10px;
-                :hover {
-                  background-color: #888;
-                  border-radius: 100%;
-                }
-                @media (max-width: 768px) {
-                  right: 5px;
-                  bottom: 50px;
-                }
-                
-              `}
-            >
-              <DotDotDot
-                data={[
-                  {
-                    iconImage: <FaRegHeart />,
-                    text: '좋아요',
-                    clickHandler: () => {
-                      handleLike(item.id); 
-                    },
-                    size: 20,
-                  },
-             
-               
-                ]}
-              />
-            </div>
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  css={css`
+                    position: absolute;
+                    z-index: 122;
+
+                    right: 10px;
+                    bottom: 10px;
+                    :hover {
+                      background-color: #888;
+                      border-radius: 100%;
+                    }
+                    @media (max-width: 768px) {
+                      right: 5px;
+                      bottom: 50px;
+                    }
+                  `}
+                >
+                  <DotDotDot
+                    data={[
+                      {
+                        iconImage: <FaRegHeart />,
+                        text: '좋아요',
+                        clickHandler: () => {
+                          handleLike(item.id);
+                        },
+                        size: 20,
+                      },
+                    ]}
+                  />
+                </div>
                 <img
                   src={item.image}
                   alt="라라"
