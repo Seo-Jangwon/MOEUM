@@ -110,7 +110,7 @@ const Calibration = () => {
             />
           </div>
         ) : (
-          <div css={css``}>완료하였습니다.</div>
+          <div style={{color: 'white'}}>완료하였습니다.</div>
         )}
         <div>
           <ProgressBar currentIndex={currentIndex} total={mokData.length} />

@@ -3,6 +3,7 @@ import { s_div_item_box, s_div_item_container, s_h5 } from "@/pages/MainPage/Gen
 import { s_container } from "@/pages/MainPage/style";
 import { css } from "@emotion/react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ListPageProps {
   title: string;
@@ -16,9 +17,22 @@ interface Music {
 
 const AllGenreList = ({ title }: ListPageProps) => {
   const [genreList, setGenreList] = useState<Music[]>([]);
+  const navigate = useNavigate()
 
+  const hadnleNavigate = (id: number) => {
+    apiClient({
+      method: 'GET',
+      url: `/musics/todaygenre/${id}`
+    })
+    .then((res) => {
+      console.log(res);
+      if (res.data.code === 200) {
+        const musicId = res.data.data.playlistId
+        navigate(`/music?id=${id}&list=${musicId}`)
+      }
+    })
+  }
 
-  // 나중에 api 나오면 수정하기
   useEffect(() => {
     apiClient({
       method: 'GET',
@@ -51,7 +65,7 @@ const AllGenreList = ({ title }: ListPageProps) => {
         </div>
         <div css={s_div_item_container}>
           {genreList.map((item, index) => (
-            <button key={index} css={s_div_item_box}>
+            <button key={index} css={s_div_item_box} onClick={() => hadnleNavigate(item.id)}>
               <img src={item.image} alt="image"  css={css`
                 width: 100%;
                 border-radius: 10px;
