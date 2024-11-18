@@ -75,7 +75,7 @@ public class EditController {
         }
     }
 
-    @PutMapping(value = "/password")
+    @PutMapping(value = "/credentials")
     public ResponseEntity<Map<String, Object>> updatePassword(
         @RequestHeader("X-Member-Id") Long memberId,
         EditRequestDto editRequestDto) {
