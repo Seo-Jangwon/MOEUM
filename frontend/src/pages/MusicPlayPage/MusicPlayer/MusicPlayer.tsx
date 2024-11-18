@@ -1,4 +1,3 @@
-import lylicsVisualizationButton from '@/assets/lylicsVisualizationButton.svg';
 import Modal from '@/pages/RecordPage/Modal/Modal';
 import useSettingStore from '@/stores/settingStore';
 import { css } from '@emotion/react';
@@ -11,6 +10,7 @@ import { RxShuffle, RxSpeakerLoud } from 'react-icons/rx';
 import { TbPlaylistAdd } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Data, LyricsI, musicDetailInfoI } from '..';
+import testImg from './bg.png';
 import {
   s_canvas,
   s_container,
@@ -225,8 +225,8 @@ const MusicPlayer = ({
           const x = canvasRef.current!.clientWidth / 2;
           const y = (canvasRef.current!.clientHeight * noteDatas.current[timeIdx.current].y) / 100;
 
-          renderRef.current!.options.background =
-            backgroundDatas.current![noteDatas.current[timeIdx.current].section - 1].color;
+          // renderRef.current!.options.background =            backgroundDatas.current![noteDatas.current[timeIdx.current].section - 1].color;
+          renderRef.current!.options.background = testImg;
           const polygon = Bodies.polygon(
             x / 2,
             y,
@@ -616,7 +616,7 @@ const MusicPlayer = ({
             <div css={s_lyrics}>{isLyricsVisualized ? currentLyrics : ''}</div>
             <div
               css={css`
-                display: ${playerBarVisible ? 'flex' : ''};
+                display: ${playerBarVisible ? 'flex' : 'none'};
                 ${s_palyerBar}
               `}
             >
@@ -644,7 +644,36 @@ const MusicPlayer = ({
               <div css={s_playerBarController}>
                 <div>
                   <MyHeart isLike={true} category={'music'} id={currentMusicId} size={18} />
-                  <TbPlaylistAdd onClick={() => setIsModalOpen(true)} css={s_iconButton} />
+                  <TbPlaylistAdd
+                    onClick={() => setIsModalOpen(true)}
+                    style={{ marginRight: '10px' }}
+                    css={s_iconButton}
+                  />
+                  {audioSrcRef.current ? (
+                    <>
+                      <span>
+                        {Math.floor(currentTimeLine / 60) +
+                          ':' +
+                          Math.floor(currentTimeLine % 60)
+                            .toString()
+                            .padStart(2, '0')}
+                      </span>
+                      <span> / </span>{' '}
+                      <span>
+                        {audioSrcRef.current.duration >= 60
+                          ? Math.floor(audioSrcRef.current.duration / 60) +
+                            ':' +
+                            Math.floor(audioSrcRef.current.duration % 60)
+                              .toString()
+                              .padStart(2, '0')
+                          : Math.floor(audioSrcRef.current.duration % 60)
+                              .toString()
+                              .padStart(2, '0')}
+                      </span>
+                    </>
+                  ) : (
+                    'asdf'
+                  )}
                 </div>
                 <div>
                   <RxShuffle onClick={() => changeEndEventIdx(2)} css={s_iconButton} />
@@ -683,12 +712,12 @@ const MusicPlayer = ({
                       }
                     }}
                   />
-                  <img
+                  {/*  <img
                     src={lylicsVisualizationButton}
                     alt="가사 시각화 버튼"
                     css={s_iconButton}
                     onClick={toggleVisualization}
-                  />
+                  /> */}
                   <MdOutlineLyrics
                     onClick={(e) => {
                       e.stopPropagation();
