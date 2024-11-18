@@ -26,7 +26,6 @@ const LikeAlbum = () => {
       url: '/musics/album/like',
     })
       .then((res) => {
-        // console.log(res);
         if (res.data.code === 200) {
           setLikeAlbum(res.data.data);
           if (res.data.data.length !== 0) {
