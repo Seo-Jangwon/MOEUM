@@ -4,9 +4,11 @@ import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { FaPlay, FaRegHeart } from 'react-icons/fa6';
 import { FiActivity } from 'react-icons/fi';
+import { PiPlaylist } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import { s_button_all, s_div_header } from '../NewList/style';
 import { s_div_data, s_div_h3, s_h5_title, s_p_artist, s_popular_box, s_popular_container } from './style';
+import Modal from '@/pages/RecordPage/Modal/Modal';
 
 interface Artist {
   id: number;
@@ -23,10 +25,25 @@ interface Music {
 const PopularList = () => {
   const navigate = useNavigate();
   const [popularList, setPopularList] = useState<Music[]>([]);
-  const clickHandler = (index: number) => {
-    navigate(`music/${index}`);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [musicId, setMusicId] = useState<number>(0)
+
+
+  const openModal = (id: number) => {
+    setIsModalOpen(true);
+    setMusicId(id)
+
   };
 
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const clickHandler = (index: number) => {
+    navigate(`/music?id=/${index}`);
+  };
+//
   // 인기곡 30가지
   useEffect(() => {
     apiClient({
@@ -136,12 +153,19 @@ const PopularList = () => {
                     clickHandler: () => handleLike(item.id),
                     size: 20,
                   },
+                  {
+                    iconImage: <PiPlaylist />,
+                    text: '플레이리스트 추가',
+                    clickHandler: () => openModal(item.id),
+                    size: 20,
+                  },
                 ]}
               />
             </div>
           </div>
         ))}
       </div>
+      <Modal isOpen={isModalOpen} onClose={closeModal} musicId={musicId} />
     </>
   );
 };

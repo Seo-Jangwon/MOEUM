@@ -20,14 +20,17 @@ const LikeArtist = () => {
       .then((res) => {
         console.log(res);
         if (res.data.code === 200) {
-          setIsExist(true);
           setLikeArtist(res.data.data);
+          if (res.data.data.length !== 0) {
+            setIsExist(true)
+          }
+          
         }
       })
       .catch((err) => {
         console.log(err);
       });
-  });
+  },[]);
 
   return (
     <div css={s_div_item_container}>

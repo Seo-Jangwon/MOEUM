@@ -64,7 +64,7 @@ export const s_div_data = css`
 `;
 
 export const s_h5_title = (theme: Theme) => css`
-  font-size: 120%;
+  font-size: 70%;
   font-weight: 800;
   color: ${theme.colors.white};
   @media (max-width: 1024px) {
@@ -76,7 +76,7 @@ export const s_h5_title = (theme: Theme) => css`
 `;
 
 export const s_p_artist = css`
-  font-size: 105%;
+  font-size: 80%;
   font-weight: 700;
   color: #aaa;
   @media (max-width: 1024px) {

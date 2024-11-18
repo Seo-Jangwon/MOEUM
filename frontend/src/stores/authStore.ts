@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import useUserInfoStore from './userInfoStore';
 
 interface AuthStore {
   isLoggedIn: boolean;
@@ -7,6 +8,8 @@ interface AuthStore {
   setAccessToken: (token: string) => void;
   signOut: () => void;
 }
+
+const resetUserInfo = useUserInfoStore.getState().resetUserInfo;
 
 const useAuthStore = create<AuthStore>()(
   persist(
@@ -18,6 +21,7 @@ const useAuthStore = create<AuthStore>()(
       },
       signOut: () => {
         set({ accessToken: '', isLoggedIn: false });
+        resetUserInfo();
         window.location.href = '/';
       },
     }),

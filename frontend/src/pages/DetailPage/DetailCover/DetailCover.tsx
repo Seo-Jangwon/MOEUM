@@ -1,5 +1,3 @@
-import DetailCardList from '../DetailCardList/DetailCardList';
-import DetailList from '../DetailList/DetailList';
 import { s_article, s_container, s_title } from './DetailCover.style';
 import DetailCoverHeart from './DetailCoverHeart';
 

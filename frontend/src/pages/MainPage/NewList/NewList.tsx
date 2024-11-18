@@ -22,6 +22,8 @@ import {
   s_p,
   s_play_button,
 } from './style';
+import { PiPlaylist } from 'react-icons/pi';
+import Modal from '@/pages/RecordPage/Modal/Modal';
 
 interface Music {
   id: number;
@@ -36,6 +38,19 @@ const NewList = () => {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const navigate = useNavigate();
   const [latestData, setLatestData] = useState<Music[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [musicId, setMusicId] = useState<number>(0)
+
+  const openModal = (id: number) => {
+    setIsModalOpen(true);
+    setMusicId(id)
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
 
   useEffect(() => {
     apiClient({
@@ -47,9 +62,7 @@ const NewList = () => {
         if (res.data.code === 200) {
           console.log(res.data.data);
           setLatestData(res.data.data);
-          console.log(latestData);
-          console.log("fuck you");
-          
+          console.log(latestData);          
         }
       })
       .catch((err) => {
@@ -102,7 +115,7 @@ const NewList = () => {
 
   const handlePlayClick = (index: number) => {
     setPlayingIndex((prevIndex) => (prevIndex === index ? null : index));
-    navigate(`music/${index}`);
+    navigate(`music?id=${index}`);
   };
   const handleLike = (id: number) => {
     apiClient({
@@ -144,16 +157,16 @@ const NewList = () => {
             <div
               css={css`
                 position: absolute;
-                z-index: 1;
+                z-index: 122;
                 right: 10px;
-                bottom: 40px;
+                bottom: 50px;
                 :hover {
                   background-color: #888;
                   border-radius: 100%;
                 }
                 @media (max-width: 768px) {
                   right: 5px;
-                  bottom: 20px;
+                  bottom: 50px;
                 }
               `}
             >
@@ -163,6 +176,12 @@ const NewList = () => {
                     iconImage: <FaRegHeart />,
                     text: '좋아요',
                     clickHandler: () => handleLike(item.id),
+                    size: 20,
+                  },
+                  {
+                    iconImage: <PiPlaylist />,
+                    text: '플레이리스트 추가',
+                    clickHandler: () => openModal(item.id),
                     size: 20,
                   },
                 ]}
@@ -181,6 +200,7 @@ const NewList = () => {
             </div>
           </div>
         ))}
+        <Modal isOpen={isModalOpen} onClose={closeModal} musicId={musicId} />
       </div>
     </>
   );

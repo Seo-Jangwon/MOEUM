@@ -4,7 +4,7 @@ import {
   backgroundClipBallPaths,
   backgroundContainBallPaths,
   headerWithoutSearchPaths,
-  WithoutHeaderPaths,
+  withoutHeaderPaths,
 } from '@/constants/path/pathMap';
 import useThemeStore from '@/stores/themeStore';
 import globalStyles from '@/styles/globalStyles';
@@ -16,7 +16,7 @@ import ScrollToTop from './ScrollToTop/ScrollToTop';
 import { s_container, s_content } from './style';
 
 const getHeader = (pathName: string) => {
-  if (WithoutHeaderPaths.includes(pathName.split('/')[1])) return null;
+  if (withoutHeaderPaths.includes(pathName.split('/')[1])) return null;
   if (headerWithoutSearchPaths.includes(pathName.split('/')[1])) return <Header search={false} />;
   return <Header search={true} />;
 };
