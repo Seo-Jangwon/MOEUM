@@ -121,6 +121,7 @@ public class PlaylistServiceImpl implements PlaylistService {
         playlist.setMemberId(1L);
         playlist.setPublic(true);
         playlist.setCreatedAt(LocalDateTime.now());
+        playlist.setUpdatedAt(LocalDateTime.now());
 
         long playlistId = playlistRepository.save(playlist).getId();
 
