@@ -20,7 +20,13 @@ const DetailPage = ({ variant }: DetailPageProps) => {
   return (
     <Flex>
       <main css={s_container}>
-        <DetailCover title={data!.coverTitle} background={data!.image} />
+        <DetailCover
+          musicId={data?.listData[0].id}
+          playListId={id!}
+          variant={variant}
+          title={data!.coverTitle}
+          background={data!.image}
+        />
         <DetailList title={data!.listTitle as string} data={data!.listData} totalDuration={data!.totalDuration} />
         {!!data?.cardListData?.length && (
           <DetailCardList variant={variant} title={data.cardListTitle} data={data.cardListData} />
