@@ -1,4 +1,4 @@
-import { css, Theme } from '@emotion/react';
+import { css } from '@emotion/react';
 
 export const s_container = css`
   display: flex;
@@ -39,7 +39,7 @@ export const s_canvas = css`
   aspect-ratio: 16/9;
 `;
 
-export const s_playerBarContainer = (theme: Theme) => css`
+export const s_playerBarContainer = css`
   display: flex;
   position: absolute;
   flex-direction: column;
@@ -49,7 +49,7 @@ export const s_playerBarContainer = (theme: Theme) => css`
   align-items: center;
   width: 100%;
   margin: 3px 0;
-  color: ${theme.colors.dark};
+  color: #f7f7f7;
 `;
 
 export const s_palyerBar = css`
@@ -124,8 +124,8 @@ export const s_playerBarController = css`
   }
 `;
 
-export const s_iconButton = (theme: Theme) => css`
-  color: ${theme.colors.dark};
+export const s_iconButton = css`
+  color: #f7f7f7;
   @media (max-width: 768px) {
     width: 16px;
     height: 16px;
