@@ -3,7 +3,7 @@ import PrivateLayout from '@/layouts/PrivateLayout';
 import MusicPlayPage from '@/pages/MusicPlayPage';
 import SparkleEffect from '@/pages/test/test';
 import { lazy } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 const DetailPage = lazy(() => import('@/pages/DetailPage'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const SettingPage = lazy(() => import('@/pages/SettingPage'));
@@ -24,11 +24,15 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />,
-    errorElement: <ErrorPage />,
+    errorElement: <Navigate to="/notfound" />,
     children: [
       {
         index: true,
         element: <MainPage />,
+      },
+      {
+        path: 'notfound',
+        element: <ErrorPage />,
       },
       {
         path: 'welcome',
