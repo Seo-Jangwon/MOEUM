@@ -68,12 +68,16 @@ public class MusicServiceImpl implements MusicService {
 
         for (Album album : albums) {
             List<com.weseethemusic.music.dto.search.ArtistDto> artistDtos = new ArrayList<>();
-            List<Artist> artists = albumRepository.getAlbumArtists(album);
+            List<Music> musics = musicRepository.findAllByAlbum_Id(album.getId());
 
-            for (Artist artist : artists) {
-                artistDtos.add(
-                    com.weseethemusic.music.dto.search.ArtistDto.builder().id(artist.getId())
-                        .name(artist.getName()).build());
+            for (Music music : musics) {
+                List<Artist> artists = artistMusicRepository.findAllByMusic(music);
+
+                for (Artist artist : artists) {
+                    artistDtos.add(
+                        com.weseethemusic.music.dto.search.ArtistDto.builder().id(artist.getId())
+                            .name(artist.getName()).build());
+                }
             }
 
             result.add(GeneralAlbumDto.builder().id(album.getId()).name(album.getName())
