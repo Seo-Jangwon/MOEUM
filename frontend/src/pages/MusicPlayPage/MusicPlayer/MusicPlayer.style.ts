@@ -24,10 +24,11 @@ export const s_videoContainer = css`
 
 export const s_infoContainer = css`
   display: flex;
-  flex-direction: column;
+  padding: 10px;
+  /* flex-direction: column; */
   width: 100%;
   align-items: flex-start;
-  justify-content: center;
+  /* justify-content: center; */
   margin-top: 10px;
   @media (max-width: 768px) {
     padding-left: 5%;

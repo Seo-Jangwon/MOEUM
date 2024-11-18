@@ -124,7 +124,7 @@ const LikeMusic = () => {
           </div>
         ))
       )}
-      <Modal isOpen={isModalOpen} onClose={closeModal} />
+      <Modal isOpen={isModalOpen} onClose={closeModal}  />
     </div>
   );
 };
