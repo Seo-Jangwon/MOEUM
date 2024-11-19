@@ -32,7 +32,7 @@ def make():
         device=device
     )
     
-    result = pipe("musics/We Will Rock You (Movie Mix)-11-Que....mp3", return_timestamps="word")
+    result = pipe("musics/Something Just Like This-5-The Chai....mp3", return_timestamps="word")
     result = result["chunks"]
     
     f = open('./lyrics_timestamp.txt', 'w')
@@ -43,3 +43,5 @@ def make():
         f.write('\n')
     
     f.close()
+
+make()
