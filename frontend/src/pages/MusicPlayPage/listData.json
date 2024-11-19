@@ -1,0 +1,33 @@
+{
+  "code": 200,
+  "data": {
+    "recommendedMusics": [
+      {
+        "id": 3,
+        "title": "Crimson Horizon",
+        "duration": "03분45초",
+        "albumImage": "http://dummyimage.com/600x600.png/cc0000/ffffff",
+        "artists": [
+          {
+            "id": 1,
+            "name": "Jolynn Horsefield"
+          }
+        ],
+        "genre": "Pop"
+      },
+      {
+        "id": 6,
+        "title": "Golden Sunrise",
+        "duration": "03분22초",
+        "albumImage": "http://dummyimage.com/600x600.png/dddddd/000000",
+        "artists": [
+          {
+            "id": 2,
+            "name": "Polly Dufore"
+          }
+        ],
+        "genre": "Disco"
+      }
+    ]
+  }
+}

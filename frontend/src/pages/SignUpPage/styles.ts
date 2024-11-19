@@ -19,3 +19,10 @@ export const s_p = (theme: Theme) => css`
   ${theme.colors.white};
   margin: 20px;
 `;
+
+export const s_div_signUpBox = css`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+`;

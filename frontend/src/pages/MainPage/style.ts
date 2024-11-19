@@ -1,10 +1,18 @@
 import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 
-export const Title = styled.div`
-  font-size: 48px;
+export const s_container = css`
+  display: flex;
+  width: 75%;
+  flex-direction: column;
+  margin: 0 auto;
+  gap: 120px;
+  @media(max-width: 768px) {
+    gap: 60px;
+  }
 `;
 
-export const Text = css`
-  font-size: 12px;
+export const s_box = css`
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 `;
