@@ -1,15 +1,14 @@
-import { ComponentProps } from 'react';
 import { buttonStyle } from './Button.style';
-import { ButtonType } from './Button.type';
+import { ButtonVariants } from './Button.type';
 
-export interface ButtonProps extends ComponentProps<'button'> {
-  variant: ButtonType;
+export interface ButtonProps extends React.ComponentProps<'button'> {
+  variant: ButtonVariants;
   children: React.ReactNode;
 }
 
 const Button = ({ variant, children, ...restProps }: ButtonProps) => {
   return (
-    <button css={(theme) => buttonStyle(theme, variant)} {...restProps}>
+    <button type="button" css={(theme) => buttonStyle(theme, variant)} {...restProps}>
       {children}
     </button>
   );

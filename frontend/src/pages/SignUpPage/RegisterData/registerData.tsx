@@ -1,10 +1,6 @@
-import { useState } from 'react';
-import { s_input, s_button_send, s_main, s_icon_yes, s_icon_no } from './styles';
-import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
-import { FaRegCircleXmark } from 'react-icons/fa6';
 import Button from '@/components/Button/Button';
-import { css } from '@emotion/react';
-import { theme } from '@/styles/theme';
+import { useState } from 'react';
+import { s_button_send, s_input, s_main } from './styles';
 
 interface LoginDataProps {
   value: string;
@@ -17,6 +13,8 @@ interface LoginDataProps {
   passwordValue?: string;
   certification?: boolean;
   isNickname?: boolean;
+  disabled?: boolean;
+  onBlur?: () => void
 }
 
 const RegisterData = ({
@@ -30,13 +28,15 @@ const RegisterData = ({
   passwordValue = '',
   certification = false,
   isNickname = false,
+  disabled,
+  onBlur,
 }: LoginDataProps) => {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(placeholder);
   const [email] = useState(isEmail);
-  const [isValidPassword, setIsValidPassword] = useState(false);
-  const [isPasswordMatch, setIsPasswordMatch] = useState(false);
+  const [isValidPassword, setIsValidPassword] = useState(true);
+  const [isPasswordMatch, setIsPasswordMatch] = useState(true);
   const [showIcon, setShowIcon] = useState(false);
-  const [isValidInput, setIsValidInput] = useState(true); // <--- 추가: 입력값이 유효한지 여부를 저장하는 상태
+  const [isValidInput, setIsValidInput] = useState(true);
 
   // 닉네임 형식
   const validateNickname = (nickname: string) => {
@@ -50,9 +50,13 @@ const RegisterData = ({
     const nickname = e.target.value;
 
     if (isNickname) {
-      const result = validateNickname(nickname);
-      setIsValidInput(result);
-      return result;
+      if (nickname.length > 0) {
+        const result = validateNickname(nickname);
+        setIsValidInput(result);
+      }
+      else {
+        setIsValidInput(true)
+      }
     }
   };
 
@@ -70,8 +74,12 @@ const RegisterData = ({
 
     if (isEmail) {
       const result = validateEmail(email);
-      setShowIcon(result);
-      setIsValidInput(result);
+      if (email.length > 0) {
+        setShowIcon(result);
+        setIsValidInput(result);
+      } else {
+        setIsValidInput(true);
+      }
     }
   };
 
@@ -92,14 +100,22 @@ const RegisterData = ({
 
     if (isPassword) {
       const isValid = validatePassword(password);
-      setIsValidPassword(isValid);
-      setIsValidInput(isValid);
+      if (password.length > 0) {
+        setIsValidPassword(isValid);
+        setIsValidInput(isValid);
+      } else {
+        setIsValidInput(true);
+      }
     }
 
     if (checkPassword) {
       const isMatch = password === passwordValue;
-      setIsPasswordMatch(isMatch);
-      setIsValidInput(isMatch);
+      if (password.length > 0) {
+        setIsPasswordMatch(isMatch);
+        setIsValidInput(isMatch);
+      } else {
+        setIsValidInput(true);
+      }
     }
   };
 
@@ -113,13 +129,18 @@ const RegisterData = ({
           isEmail ? handleEmailChange : isNickname ? handleNicknameChange : handlePasswordChange
         }
         onFocus={() => setCurrentPlaceholder('')}
-        onBlur={() => setCurrentPlaceholder(placeholder)}
+        onBlur={() => {
+          setCurrentPlaceholder(placeholder);
+          if (onBlur) {
+            onBlur()
+          }
+        }}
         css={(theme) => s_input(theme, isValidInput)}
       />
       {/* 이메일 버튼 토글 */}
       <div css={s_button_send}>
         {email && showIcon && (
-          <Button variant="grad" onClick={onSend}>
+          <Button variant="grad" onClick={onSend} type="button" disabled={disabled}>
             전송
           </Button>
         )}
@@ -128,33 +149,11 @@ const RegisterData = ({
       {/* 인증코드 확인 버튼 토글 */}
       <div css={s_button_send}>
         {certification && (
-          <Button variant="grad" onClick={onSend}>
+          <Button variant="grad" onClick={onSend} type="button">
             확인
           </Button>
         )}
       </div>
-
-      {/* 비밀번호 정규식 확인 토글 */}
-      {isPassword && showIcon && (
-        <span>
-          {isValidPassword ? (
-            <IoMdCheckmarkCircleOutline css={s_icon_yes} />
-          ) : (
-            <FaRegCircleXmark css={s_icon_no} />
-          )}
-        </span>
-      )}
-
-      {/* 비밀번호 일치 확인 토글 */}
-      {checkPassword && showIcon && (
-        <span>
-          {isPasswordMatch ? (
-            <IoMdCheckmarkCircleOutline css={s_icon_yes} />
-          ) : (
-            <FaRegCircleXmark css={s_icon_no} />
-          )}
-        </span>
-      )}
       <br />
     </div>
   );

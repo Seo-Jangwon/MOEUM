@@ -1,13 +1,30 @@
-import { ComponentProps } from 'react';
 import { s_input } from './Input.style';
 
-interface InputProps extends ComponentProps<'input'> {
+interface InputProps extends React.ComponentPropsWithoutRef<'input'> {
   value: string;
   placeholder: string;
 }
 
-const Input = ({ ...restProps }: InputProps) => {
-  return <input css={s_input} type="text" {...restProps} />;
+const Input = ({ value, placeholder, ...restProps }: InputProps) => {
+  return (
+    <input
+      css={s_input}
+      value={value}
+      placeholder={placeholder}
+      onFocus={(e) => {
+        if (value === '') {
+          e.target.placeholder = '';
+        }
+      }}
+      onBlur={(e) => {
+        if (value === '') {
+          e.target.placeholder = placeholder;
+        }
+      }}
+      type="text"
+      {...restProps}
+    />
+  );
 };
 
 export default Input;

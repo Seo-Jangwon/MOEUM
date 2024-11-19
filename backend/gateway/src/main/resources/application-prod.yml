@@ -1,0 +1,35 @@
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: member-service
+          uri: http://moeum-member:8081
+          predicates:
+            - Path=/members/**
+            - Path=/settings/**
+            - Method=POST,GET,PUT,DELETE
+          metadata:
+            health-check-url: /actuator/health
+
+        - id: music-service
+          uri: http://moeum-music:8082
+          predicates:
+            - Path=/musics/**
+            - Method=POST,GET,PUT,DELETE
+          metadata:
+            health-check-url: /actuator/health
+
+        - id: recommendation-service
+          uri: http://moeum-recommendation:8083
+          predicates:
+            - Path=/recommendations/**
+            - Method=POST,GET,PUT,DELETE
+          metadata:
+            health-check-url: /actuator/health
+
+service:
+  url:
+    member: http://moeum-member:8081
+    music: http://moeum-music:8082
+    recommendations: http://moeum-recommendation:8083
