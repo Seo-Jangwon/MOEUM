@@ -2,7 +2,7 @@ import { css, Theme } from '@emotion/react';
 
 export const s_container = css`
   display: flex;
-  position: fixed;
+  position: sticky;
   width: 100%;
   top: 0;
   left: 0;

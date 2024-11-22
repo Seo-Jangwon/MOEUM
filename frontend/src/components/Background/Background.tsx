@@ -7,15 +7,12 @@ interface BackgroundProps {
 }
 
 const Background = ({ ball }: BackgroundProps) => {
+  if (!ball) return null;
   return (
-    <S.Container>
-      {!!ball && (
-        <>
-          <S.PrimaryBall ball={ball} />
-          <S.SecondaryBall ball={ball} />
-        </>
-      )}
-    </S.Container>
+    <>
+      <S.PrimaryBall ball={ball} />
+      <S.SecondaryBall ball={ball} />
+    </>
   );
 };
 

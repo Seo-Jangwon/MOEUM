@@ -1,18 +1,15 @@
-import { css } from '@emotion/react';
+import { css, Theme } from '@emotion/react';
 
-export const s_container = css`
-  height: 100%;
-  position: relative;
+export const s_container = (theme: Theme) => css`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: ${theme.colors.background};
 `;
 
 export const s_content = css`
-  position: absolute;
-  /* display: flex; */
-  /* justify-content: center; */
-  top: 80px;
-  left: 0;
+  display: flex;
+  justify-content: center;
   width: 100%;
-  height: calc(100vh - 80px);
-  min-height: 600px;
-  z-index: -1;
+  /* min-height: 600px; */
 `;

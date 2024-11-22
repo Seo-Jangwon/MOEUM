@@ -2,13 +2,12 @@ import styled from '@emotion/styled';
 import { BallType } from './Background';
 
 export const Container = styled.div`
-  position: fixed;
-  z-index: -1;
+  /* z-index: -1; */
   height: 100vh;
   width: 100vw;
   top: 0;
   left: 0;
-  background: ${({ theme }) => theme.colors.background};
+  /* background: transparent; */
 `;
 
 const SIZE = '20vw';
@@ -19,7 +18,7 @@ const BALL_POSITION = {
 };
 
 export const PrimaryBall = styled.figure<{ ball: BallType }>`
-  position: absolute;
+  position: fixed;
   left: ${({ ball }) => BALL_POSITION[ball]};
   bottom: 5vw;
   height: ${SIZE};
@@ -28,11 +27,12 @@ export const PrimaryBall = styled.figure<{ ball: BallType }>`
   background-color: ${({ theme }) => theme.colors.primary};
   border-radius: 100%;
   mix-blend-mode: screen;
+  z-index: 90;
   filter: blur(2vw);
 `;
 
 export const SecondaryBall = styled.figure<{ ball: BallType }>`
-  position: absolute;
+  position: fixed;
   right: ${({ ball }) => BALL_POSITION[ball]};
   top: 10vh;
   height: ${SIZE};
@@ -41,5 +41,6 @@ export const SecondaryBall = styled.figure<{ ball: BallType }>`
   background-color: ${({ theme }) => theme.colors.secondary};
   border-radius: 100%;
   mix-blend-mode: screen;
+  z-index: 90;
   filter: blur(2vw);
 `;
