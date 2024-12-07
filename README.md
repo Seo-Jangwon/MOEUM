@@ -1,8 +1,18 @@
-## 프로젝트 소개
+# 📜 목차
 
----------
+1. [프로젝트 소개 및 핵심 기능](#1-프로젝트-소개-및-핵심-기능-)
+2. [팀원 구성](#2-팀원-구성-)
+3. [아이디어 기획](#3-아이디어-기획)
+4. [시각화 시 고려 사항](#4-시각화-시-고려-사항)
+5. [관련 논문 정리](#5-관련-논문-정리)
+6. [요구사항 명세서](#6-요구사항-명세서)
+7. [API 명세서](#7-API-명세서)
+8. [데이터 분석](#8-데이터-분석)
+9. [실행 화면](#9-실행-화면)
 
-- 프로젝트명: 모음 (모두의 음악)
+# 1. 프로젝트 소개 및 핵심 기능 🔍
+
+- 프로젝트명: 모두의 음악
 
 - 서비스 특징: 청각 장애인을 위한 음악 시각화 서비스
 
@@ -43,7 +53,7 @@
 - 기술 스택
   
   - 백엔드
-    - Java 17, Spring Boot 3. 3. 5, Python 3.10, FastAPI 0.11.0, ElasticSearch
+  - Java 17, Spring Boot 3. 3. 5, Python 3.10, FastAPI 0.11.0, ElasticSearch, RabbitMQ
   - 프론트엔드
     - React 18.3.1, TypeScript, Zustand, Emotion, Matter.js
   - DB
@@ -51,9 +61,16 @@
   - Infra
     - Ubuntu 24.04, Docker, Jenkins
 
-## 아이디어 기획
+# 2. 팀원 구성 👥
 
------
+| **민서령**                              | **박병우**                                 | **서장원**                                  | **김재혁**                              | **김시현**                              | **최진오**                                 |
+| ------------------------------------ | --------------------------------------- | ---------------------------------------- | ------------------------------------ | ------------------------------------ | --------------------------------------- |
+| 팀장, 백엔드                                  | 백엔드                                     | 백엔드 팀장                                      | 프론트엔드 팀장                                | 프론트엔드                                | 프론트엔드, DevOps                                   |
+| [GitHub](https://github.com/mremule) | [Github](https://github.com/byeongwooPark) | [Github](https://github.com/Seo-Jangwon) | [Github](https://github.com/kayas1) | [Github](https://github.com/kimsihyeon24) | [Github](https://github.com/sidamodev) |
+
+
+# 3. 아이디어 기획
+
 
 - 주제: 청각 장애인을 위한 음악 시각화 서비스
 
@@ -63,9 +80,9 @@
   
   - 10~20대 트렌디한 경험을 추구하는 비장애인
   
-  # MVP
+  ## MVP
   
-  ## ✅ 음악 시각화
+  ### ✅ 음악 시각화
   
   1. 음파 분석
   
@@ -98,44 +115,45 @@
     
     - https://www.fastcompany.com/90822202/what-sound-looks-like-according-to-ai
   
-  ## ✅ 가사 시각화 (On/Off 가능)
+  ### ✅ 가사 시각화 (On/Off 가능)
   
   1. 음악 정보 사이트에서 재생 시간에 싱크된 가사 정보 크롤링
   2. 1의 결과물을 DB에 저장
   3. 음악을 시각화한 결과물에 맞춰 비슷한 분위기로 가사를 시각화한 결과물을 합성
   
-  ## 음악 추천
+  ### 음악 추천
   
   1. 좋아요, 1분 이상 들은 음악 기록을 바탕으로 비슷한 음파 형태의 음악 추천
   2. 비슷한 기록을 가진 사람들의 플레이리스트를 바탕으로 음악 추천
   
-  ## 나만의 플레이리스트
+  ### 나만의 플레이리스트
   
   - 음악 좋아요
   - 나만의 플레이리스트 제작 및 공유
     - 공유시 시각화 결과물 스크린샷 → 대표 이미지 설정 (png로 다운로드 가능)
   
-  ---
+  
 
-## 시각화 시 고려 사항
+
+# 4. 시각화 시 고려 사항
 
 - 색채 심리학 기반의 개인화 색상 질문 리스트
   
-  - ### **1. 즐거움**
+  **1. 즐거움**
   
-  - ### **2. 슬픔**
+  **2. 슬픔**
   
-  - ### **3. 고요함**
+  **3. 고요함**
   
-  - ### **4. 요란함**
+  **4. 요란함**
   
-  - ### **5. 놀람**
+  **5. 놀람**
   
-  - ### **6. 차분함**
+  **6. 차분함**
   
-  - ### **7. 분노**
+  **7. 분노**
   
-  - ### **8. 사랑**
+  **8. 사랑**
   
   이 8가지 질문들은 사용자가 색상과 감정의 관계를 심리학적으로 탐구할 수 있도록 유도하며, 색상 팔레트 설정 과정을 더욱 의미 있고 개인화된 경험으로 만듭니다.
 
@@ -178,33 +196,23 @@
       - Keras/TensorFlow (Python): 사용자 정의 LSTM 모델
       - OpenSmile (C++/Python): 감정 관련 특성 추출
 
-## 관련 논문 정리
+# 5. 관련 논문 정리
 
-[p_nanayakkara_2013_2.pdf](https://prod-files-secure.s3.us-west-2.amazonaws.com/24674912-6290-4358-94bd-a0518db2c00b/09395d5e-eb4a-44f7-bc77-68059c0d9cd7/p_nanayakkara_2013_2.pdf)
+[Notion – 논문1](https://www.notion.so/1-Enhancing-Musical-Experience-for-the-Hearing-Impaired-Using-Visual-and-Haptic-Displays-120d3d8d97a08034932eef10f368b55d)
 
-![논문1](./misc/images/thesis1.png)
+[Notion – 논문2](https://www.notion.so/2-Music-to-Facial-Expressions-Emotion-Based-Music-Visualization-for-the-Hearing-Impaired-7bd46412b07c4d20946748c9f32a4a65)
 
-![논문2](./misc/images/thesis2.PNG)
+[Notion – 논문3](https://www.notion.so/3-An-Enhanced-Musical-Experience-for-the-Deaf-Design-and-Evaluation-of-a-Music-Display-and-a-Hapti-f0f4c35447f74278afdbcd8ee8fe706a)
 
-![논문3](./misc/images/thesis3.PNG)
-
-## 목업
-
-[Figma](https://www.figma.com/design/qnEjrx5V49SdbmEzvRzRwr/%EB%AA%A8%EC%9D%8C?node-id=40-122&node-type=canvas&t=ngScSy8CDDuy8iQt-0)
-
-## ERD
-
-![erd](./misc/images/erd.png)
-
-## 요구사항 명세서 (유즈 케이스)
+# 6. 요구사항 명세서
 
 [Notion – Use Case](https://www.notion.so/341064e1d74c4d9cbd39d698f37916ef)
 
-## API 명세서
+# 7. API 명세서
 
 [Notion – API 명세서](https://www.notion.so/API-abe308c4ddd042d5925242acf4daae0d)
 
-## 데이터 분석
+# 8. 데이터 분석
 
 ![music](./misc/images/music.PNG)
 
@@ -218,19 +226,7 @@
 
 ![shape](./misc/images/shape.PNG)
 
-## 팀 소개
-
-- 민서령: 팀장/기획/백엔드 코드 리뷰 진행, 백엔드 개발, ERD작성, API 명세서 작성, AI 음악 시각화
-
-- 서장원: 부팀장/백엔드 팀장, ERD 작성, API 명세서 작성, 추천 알고리즘 구현
-
-- 박병우: QA 엔지니어, ERD 작성, API 명세서 작성, AI 가사 시각화
-
-- 김재혁: 프론트엔드 팀장
-
-- 김시현: 프로젝트 매니저/프론트엔드 코드 리뷰 진행
-
-- 최진오: DevOps 엔지니어/디자인 리더
+# 9. 실행 화면
 
 ### 메인 페이지
 
