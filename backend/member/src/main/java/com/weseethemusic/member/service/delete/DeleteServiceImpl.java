@@ -174,10 +174,23 @@ public class DeleteServiceImpl implements DeleteService {
             return;
         }
 
-        saga.fail("플레이리스트 삭제 실패");
-        sagaRepository.save(saga);
+        try {
+            Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+            member.setDeletedAt(null);
+            memberRepository.save(member);
+            log.info("사용자 {} 삭제 요청 롤백 완료", memberId);
 
-        log.info("회원 삭제 실패 처리 완료. sagaId: {}", sagaId);
+            saga.fail("플레이리스트 삭제 실패로 인한 롤백 완료");
+            sagaRepository.save(saga);
+
+            log.info("회원 삭제 실패 롤백 처리 완료. sagaId: {}", sagaId);
+        } catch (Exception e) {
+            log.error("회원 삭제 실패 롤백 처리 중 오류 발생. sagaId: {}", sagaId, e);
+            saga.fail("롤백 처리 중 오류 발생: " + e.getMessage());
+            sagaRepository.save(saga);
+            throw new RuntimeException("회원 삭제 실패 롤백 처리 실패", e);
+        }
     }
 
     /**
