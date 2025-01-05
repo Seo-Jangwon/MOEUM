@@ -29,27 +29,26 @@ public class Member {
     @Column(nullable = false)
     private String email;
 
-    @Column(length = 20)
+    @Column(length = 500)
     private String password;
 
-    @Column(nullable = false, length = 12)
+    @Column(nullable = false)
     private String nickname;
 
     @Column
     private String provider;
 
-    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Column(nullable = false)
-    // @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();
+
+    @Column
+    private Date lastLoginAt = new Date();
 
     @Column(nullable = false)
     @ColumnDefault("false")
     private boolean bIsDeleted = false;
 
-    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Column
-    // @Temporal(TemporalType.TIMESTAMP)
     private Date deletedAt;
 
     @Column

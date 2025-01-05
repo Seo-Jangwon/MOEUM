@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import com.weseethemusic.member.common.entity.Member;
 import com.weseethemusic.member.common.service.PresignedUrlService;
 import com.weseethemusic.member.common.service.S3Service;
-import com.weseethemusic.member.dto.member.EditResponseDto;
+import com.weseethemusic.member.dto.member.MemberInfoDto;
 import com.weseethemusic.member.repository.member.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
@@ -77,7 +77,7 @@ class EditServiceImplTest {
         when(memberRepository.save(any(Member.class))).thenReturn(testMember);
 
         // when
-        EditResponseDto result = editService.updateNickname(USER_ID, newNickname);
+        MemberInfoDto result = editService.updateNickname(USER_ID, newNickname);
 
         // then
         assertThat(result).isNotNull();
@@ -128,7 +128,7 @@ class EditServiceImplTest {
         when(memberRepository.save(any(Member.class))).thenReturn(testMember);
 
         // when
-        EditResponseDto result = editService.updatePassword(USER_ID, newPassword);
+        MemberInfoDto result = editService.updatePassword(USER_ID, newPassword);
 
         // then
         assertThat(result).isNotNull();
@@ -155,7 +155,7 @@ class EditServiceImplTest {
         when(memberRepository.save(any(Member.class))).thenReturn(testMember);
 
         // when
-        EditResponseDto result = editService.updateProfileImage(USER_ID, file);
+        MemberInfoDto result = editService.updateProfileImage(USER_ID, file);
 
         // then
         assertThat(result).isNotNull();
@@ -192,7 +192,7 @@ class EditServiceImplTest {
         // when & then
         assertThatThrownBy(() -> editService.updateNickname(USER_ID, maliciousNickname))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("유효하지 않은");
+            .hasMessageContaining("2-20자의 한글, 영문, 숫자만 허용");
     }
 
     @Test
@@ -204,7 +204,7 @@ class EditServiceImplTest {
         // when & then
         assertThatThrownBy(() -> editService.updateNickname(USER_ID, maliciousNickname))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("유효하지 않은");
+            .hasMessageContaining("2-20자의 한글, 영문, 숫자만 허용");
     }
 
     @Test
@@ -216,7 +216,7 @@ class EditServiceImplTest {
         // when & then
         assertThatThrownBy(() -> editService.updateNickname(USER_ID, maliciousNickname))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("2-20자의 한글, 영문, 숫자만 허용");  // 실제 메시지로 수정
+            .hasMessageContaining("2-20자의 한글, 영문, 숫자만 허용");
     }
 
     @Test
@@ -271,7 +271,7 @@ class EditServiceImplTest {
         // when & then
         assertThatThrownBy(() -> editService.updateProfileImage(USER_ID, file))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("유효하지 않은");
+            .hasMessageContaining("지원하지 않는 파일 형식");
     }
 
     @Test
@@ -289,7 +289,7 @@ class EditServiceImplTest {
         // when & then
         assertThatThrownBy(() -> editService.updateProfileImage(USER_ID, file))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("유효하지 않은");
+            .hasMessageContaining("지원하지 않는 파일 형식");
     }
 
     @Test

@@ -1,0 +1,76 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: rec-service
+  profiles:
+    active: local
+  config:
+    import:
+      - classpath:application-secret.yml
+
+  management:
+    endpoint:
+      health:
+        show-details: always
+    endpoints:
+      web:
+        exposure:
+          include: health,metrics,prometheus
+    metrics:
+      tags:
+        application: ${spring.application.name}
+      distribution:
+        percentiles-histogram:
+          http.server.requests: true
+        sla:
+          http.server.requests: 1ms,5ms,10ms,50ms,100ms,200ms,500ms,1s,5s
+
+rabbitmq:
+  exchange:
+    name: moeum.exchange
+  queue:
+    genre-sync: moeum.queue.genre.sync
+    genre-sync-result: moeum.queue.genre.sync.result
+    music-sync: moeum.queue.music.sync
+    music-sync-result: moeum.queue.music.sync.result
+    artist-sync: moeum.queue.artist.sync
+    artist-sync-result: moeum.queue.artist.sync.result
+    album-sync: moeum.queue.album.sync
+    album-sync-result: moeum.queue.album.sync.result
+    member-delete: moeum.queue.member.delete
+    member-delete-result: moeum.queue.member.delete.result
+  routing:
+    genre-sync: moeum.routing.genre.sync
+    genre-sync-result: moeum.routing.genre.sync.result
+    music-sync: moeum.routing.music.sync
+    music-sync-result: moeum.routing.music.sync.result
+    artist-sync: moeum.routing.artist.sync
+    artist-sync-result: moeum.routing.artist.sync.result
+    album-sync: moeum.routing.album.sync
+    album-sync-result: moeum.routing.album.sync.result
+    member-delete: moeum.routing.member.delete
+    member-delete-result: moeum.routing.member.delete.result
+
+  resilience4j:
+    circuitbreaker:
+      configs:
+        default:
+          slidingWindowSize: 10
+          minimumNumberOfCalls: 5
+          permittedNumberOfCallsInHalfOpenState: 3
+          waitDurationInOpenState: 5s
+          failureRateThreshold: 50
+    timelimiter:
+      configs:
+        default:
+          timeoutDuration: 3s
+
+  logging:
+    level:
+      com.weseethemusic.recommendation: DEBUG
+      org.elasticsearch.client: DEBUG
+      org.springframework.security: INFO
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE

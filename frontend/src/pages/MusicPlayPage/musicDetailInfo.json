@@ -1,0 +1,16 @@
+{
+  "code": 200,
+  "data": {
+    "musicId": 1,
+    "musicName": "노래 이름",
+    "albumId": 0,
+    "albumName": "앨범 이름",
+    "albumImage": "",
+    "albumIndex": 1,
+    "audioPath": "https://youtu.be/FtDyxkzpFes",
+    "genre": ["장르"],
+    "duration": "115",
+    "releaseDate": "2024-11-14",
+    "artists": [{ "id": 1, "name": "가수1" }]
+  }
+}

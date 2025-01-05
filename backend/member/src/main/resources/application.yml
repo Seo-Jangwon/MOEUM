@@ -3,12 +3,12 @@ server:
 
 spring:
   application:
-    name: auth-service
+    name: member-service
   profiles:
-    active: local,secret
+    active: local
   config:
     import:
-      - optional:file:./application-secret.yml
+      - classpath:application-secret.yml
 
   mail:
     host: smtp.gmail.com

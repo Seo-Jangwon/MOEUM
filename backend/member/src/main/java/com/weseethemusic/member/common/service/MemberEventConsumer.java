@@ -1,6 +1,6 @@
 package com.weseethemusic.member.common.service;
 
-import com.weseethemusic.common.dto.DeleteMemberEvent;
+import com.weseethemusic.common.event.DeleteMemberEvent;
 import com.weseethemusic.member.service.delete.DeleteServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
