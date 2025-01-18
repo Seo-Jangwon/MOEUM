@@ -24,10 +24,11 @@ public class MusicGenreSyncResultConsumer {
 
         switch (event.getEventType()) {
             case COMPLETED -> sagaService.completeSaga(event.getSagaId());
-            case FAILED -> sagaService.failSaga(
-                event.getSagaId(),
-                String.format("장르 동기화 실패 - genreId: %d", event.getGenre().getId())
-            );
+            case FAILED -> {
+                String errorMessage = String.format("장르 동기화 실패 - genreId: %d",
+                    event.getGenre().getId());
+                sagaService.handleError(event.getSagaId(), errorMessage);
+            }
         }
     }
 
