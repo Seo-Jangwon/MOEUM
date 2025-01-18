@@ -9,6 +9,8 @@ import com.weseethemusic.common.event.AlbumSyncEvent;
 import com.weseethemusic.common.event.ArtistSyncEvent;
 import com.weseethemusic.common.event.GenreSyncEvent;
 import com.weseethemusic.common.event.MusicSyncEvent;
+import com.weseethemusic.music.common.entity.Album;
+import com.weseethemusic.music.common.entity.Genre;
 import com.weseethemusic.music.common.entity.SyncSagaForRecommendation;
 import com.weseethemusic.music.common.entity.SyncSagaForRecommendation.OperationType;
 import com.weseethemusic.music.common.publisher.MusicEventPublisher;
@@ -117,7 +119,8 @@ public class SyncSagaService {
     public void handleGenreNotFound(String sagaId, int genreId, String errorMessage) {
         sagaRepository.findBySagaId(sagaId).ifPresent(saga -> {
             // 장르를 찾아서 다시 동기화 시도
-            genreRepository.findById(genreId).ifPresent(genre -> {
+            if (genreRepository.findById(genreId).isPresent()) {
+                Genre genre = genreRepository.findById(genreId).get();
                 // 장르 동기화 이벤트 발행
                 SyncSagaForRecommendation genreSaga = startGenreSync(genreId, OperationType.CREATE);
                 eventPublisher.publishGenreEvent(new GenreSyncEvent(
@@ -137,9 +140,17 @@ public class SyncSagaService {
                         null
                     ));
                 });
-            });
-            saga.fail(errorMessage); // 현재의 saga는 실패 처리
-            sagaRepository.save(saga);
+
+            } else {
+                // 재시도해도 장르가 없으면 원본 데이터 롤백
+                rollbackEntity(saga);
+                saga.fail(errorMessage);
+                sagaRepository.save(saga);
+                log.error("장르를 찾을 수 없어 동기화 실패. 원본 데이터 롤백 완료. sagaId={}, genreId={}",
+                    sagaId, genreId);
+
+
+            }
         });
     }
 
@@ -147,8 +158,9 @@ public class SyncSagaService {
     public void handleAlbumNotFound(String sagaId, long albumId, String errorMessage) {
         sagaRepository.findBySagaId(sagaId).ifPresent(saga -> {
             // 앨범을 찾아서 다시 동기화 시도
-            albumRepository.findById(albumId).ifPresent(album -> {
+            if (albumRepository.findById(albumId).isPresent()) {
                 // 앨범 동기화 이벤트 발행
+                Album album = albumRepository.findById(albumId).get();
                 SyncSagaForRecommendation albumSaga = startAlbumSync(albumId, OperationType.CREATE);
                 eventPublisher.publishAlbumEvent(new AlbumSyncEvent(
                     AlbumSyncEvent.EventType.STARTED,
@@ -167,48 +179,88 @@ public class SyncSagaService {
                         null
                     ));
                 });
-            });
-            saga.fail(errorMessage); // 현재의 saga는 실패 처리
-            sagaRepository.save(saga);
+            } else {
+                rollbackEntity(saga);
+                saga.fail(errorMessage);
+                sagaRepository.save(saga);
+                log.error("앨범을 찾을 수 없어 동기화 실패. 원본 데이터 롤백 완료. sagaId={}, albumId={}",
+                    sagaId, albumId);
+            }
         });
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void handleArtistNotFound(String sagaId, List<Long> artistIds, String errorMessage) {
         sagaRepository.findBySagaId(sagaId).ifPresent(saga -> {
-            // 각 아티스트를 찾아서 다시 동기화 시도
+            // 아티스트들의 존재 여부 확인
+            boolean allArtistsExist = true;
             for (Long artistId : artistIds) {
-                artistRepository.findById(artistId).ifPresent(artist -> {
-                    // 아티스트 동기화 이벤트 발행
-                    SyncSagaForRecommendation artistSaga = startArtistSync(artistId,
-                        OperationType.CREATE);
-                    eventPublisher.publishArtistEvent(new ArtistSyncEvent(
-                        ArtistSyncEvent.EventType.STARTED,
-                        ArtistDto.fromEntity(artist),
-                        artistSaga.getSagaId()
-                    ));
-                });
+                if (!artistRepository.findById(artistId).isPresent()) {
+                    allArtistsExist = false;
+                    break;
+                }
             }
 
-            // 모든 아티스트 동기화 이벤트를 발행한 후 음악도 다시 동기화
-            musicRepository.findById(saga.getTargetId()).ifPresent(music -> {
-                SyncSagaForRecommendation musicSaga = startMusicSync(music.getId(),
-                    OperationType.CREATE);
-                eventPublisher.publishMusicEvent(new MusicSyncEvent(
-                    MusicSyncEvent.EventType.STARTED,
-                    MusicDto.fromEntity(music),
-                    musicSaga.getSagaId(), null
-                ));
-            });
+            if (allArtistsExist) {
+                // 각 아티스트를 찾아서 다시 동기화 시도
+                for (Long artistId : artistIds) {
+                    artistRepository.findById(artistId).ifPresent(artist -> {
+                        // 아티스트 동기화 이벤트 발행
+                        SyncSagaForRecommendation artistSaga = startArtistSync(artistId,
+                            OperationType.CREATE);
+                        eventPublisher.publishArtistEvent(new ArtistSyncEvent(
+                            ArtistSyncEvent.EventType.STARTED,
+                            ArtistDto.fromEntity(artist),
+                            artistSaga.getSagaId()
+                        ));
+                    });
+                }
 
-            saga.fail(errorMessage); // 현재의 saga는 실패 처리
-            sagaRepository.save(saga);
+                // 모든 아티스트 동기화 이벤트를 발행한 후 음악도 다시 동기화
+                musicRepository.findById(saga.getTargetId()).ifPresent(music -> {
+                    SyncSagaForRecommendation musicSaga = startMusicSync(music.getId(),
+                        OperationType.CREATE);
+                    eventPublisher.publishMusicEvent(new MusicSyncEvent(
+                        MusicSyncEvent.EventType.STARTED,
+                        MusicDto.fromEntity(music),
+                        musicSaga.getSagaId(),
+                        null
+                    ));
+                });
+            } else {
+                // 하나라도 없으면 원본 데이터 롤백
+                rollbackEntity(saga);
+                saga.fail(errorMessage);
+                sagaRepository.save(saga);
+                log.error("아티스트를 찾을 수 없어 동기화 실패. 원본 데이터 롤백 완료. sagaId={}, artistIds={}",
+                    sagaId, artistIds);
+            }
         });
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void handleError(String sagaId, String errorMessage) {
-        log.error("음악 동기화 완전히 실패. saga 실패, sagaId={}. errorMessage={}", sagaId, errorMessage);
-        failSaga(sagaId, errorMessage);
+        sagaRepository.findBySagaId(sagaId).ifPresent(saga -> {
+            rollbackEntity(saga);
+            saga.fail(errorMessage);
+            sagaRepository.save(saga);
+            log.error("동기화 완전히 실패. 원본 데이터 롤백 완료. sagaId={}, type={}, targetId={}, errorMessage={}",
+                sagaId, saga.getType(), saga.getTargetId(), errorMessage);
+        });
+    }
+
+    private void rollbackEntity(SyncSagaForRecommendation saga) {
+        try {
+            switch (saga.getType()) {
+                case MUSIC_SYNC -> musicRepository.deleteById(saga.getTargetId());
+                case GENRE_SYNC -> genreRepository.deleteById(saga.getTargetId().intValue());
+                case Album_SYNC -> albumRepository.deleteById(saga.getTargetId());
+                case ARTIST_SYNC -> artistRepository.deleteById(saga.getTargetId());
+            }
+        } catch (Exception e) {
+            log.error("원본 데이터 롤백 중 에러 발생. sagaId={}, type={}, targetId={}",
+                saga.getSagaId(), saga.getType(), saga.getTargetId(), e);
+            throw new RuntimeException("롤백 실패", e);
+        }
     }
 }
